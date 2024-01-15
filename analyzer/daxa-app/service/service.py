@@ -1,11 +1,11 @@
 # Copyright (c) 2024 Daxa. All rights reserved.
 
 from datetime import datetime, timezone
-from json import dumps
 
 from models.models import Chain, LoaderMetadata, Metadata, VectorDb, PackageInfo, AiDataModel, AiDocs, AiApp
-from libs.entity_classifier import EntityClassifier
+from entity_classifier.entity_classifier import EntityClassifier
 from utils.utils import write_json_to_file, read_json_file
+
 from libs.logger import logger
 
 
