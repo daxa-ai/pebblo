@@ -1,7 +1,8 @@
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 
-from rag.analyzer.entity_classifier.config import Entities
+# from rag.analyzer.entity_classifier.config import Entities
+from entity_classifier.config import Entities
 
 # logger = get_logger("rag.analyzer.entity_classifier")
 
