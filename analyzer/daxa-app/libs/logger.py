@@ -1,5 +1,5 @@
 """
-Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
+Copyright (c) 2024 Daxa. All rights reserved.
 
 Module to handle logging functionality
 """

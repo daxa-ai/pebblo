@@ -1,46 +1,15 @@
 # Copyright (c) 2024 Daxa. All rights reserved.
 from pydantic import BaseModel, Field
 from typing import Optional, List, Union
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 class Metadata(BaseModel):
-    createdAt: datetime = datetime.now(timezone.utc)
-    modifiedAt: datetime = datetime.now(timezone.utc)
-    cloudAccountId: Optional[str]
-    customerId: Optional[str]
-    tenantId: Optional[str]
+    createdAt: datetime = datetime.now()
+    modifiedAt: datetime = datetime.now()
 
     class Config:
         arbitrary_types_allowed = True
-
-
-class PackageInfo(BaseModel):
-    projectHomePage: Optional[str]
-    documentationUrl: Optional[str]
-    pypiUrl: Optional[str]
-    licenceType: Optional[str]
-    installedVia: Optional[str]
-    location: Optional[str]
-
-
-class VectorDb(BaseModel):
-    name: str
-    version: str
-    embeddingModel: str
-    location: Optional[str]
-    packageInfo: Optional[PackageInfo] = Field(default_factory=PackageInfo)
-
-
-class AppModel(BaseModel):
-    name: str
-    vendor: Optional[str]
-
-
-class Chain(BaseModel):
-    name: Optional[str]
-    vectorDbs: Optional[List[VectorDb]] = []
-    model: Optional[AppModel]
 
 
 class LoaderMetadata(BaseModel):
@@ -48,8 +17,7 @@ class LoaderMetadata(BaseModel):
     sourcePath: str
     sourceType: str
     sourceFiles: Optional[list] = []
-    lastModified: Optional[datetime] = datetime.now(timezone.utc)
-
+    lastModified: Optional[datetime] = datetime.now()
 
 
 class AiDataModel(BaseModel):
@@ -61,7 +29,6 @@ class AiDataModel(BaseModel):
 
 
 class AiDocs(BaseModel):
-    name: str  # aiapp_name
     metadata: Metadata
     doc: str
     sourcePath: str
@@ -72,7 +39,6 @@ class AiDocs(BaseModel):
     topicCount: int
     topics: dict
     policyViolations: Optional[List[dict]] = []
-    # label_feedback: Optional[List[LabelFeedback]] = []
 
 
 class FrameworkInfo(BaseModel):
@@ -95,15 +61,13 @@ class InstanceDetail(BaseModel):
 
 class AiApp(BaseModel):
     name: str
+    owner: str
     pluginVersion: Optional[str]
-    createdAt: datetime = datetime.now(timezone.utc)
-    deployedAt: datetime = datetime.now(timezone.utc)
+    createdAt: datetime = datetime.now()
+    deployedAt: datetime = datetime.now()
     instanceDetails: Optional[InstanceDetail]
-    chains: Optional[List[Chain]] = []
     loaders: Optional[List[LoaderMetadata]] = []
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     metadata: Metadata
-    lastUsed: datetime = datetime.now(timezone.utc)
-    # promptStats: PromptStats = Field(default_factory=PromptStats)
-    # Policy violations and sensitive info
-    policyViolations: Optional[List[dict]] = []  # list of policy id, title and other details
+    lastUsed: datetime = datetime.now()
+    policyViolations: Optional[List[dict]] = []
