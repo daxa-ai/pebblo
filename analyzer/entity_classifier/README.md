@@ -13,7 +13,7 @@ Currently we are supporting following Entities:
 ## How to use
 
 ```
-from rag.analyzer.entity_classifier.entity_classifier import EntityClassifier
+from analyzer.entity_classifier.entity_classifier import EntityClassifier
 
 text = <Input Data>
 entity_classifier_obj = EntityClassifier(text)
