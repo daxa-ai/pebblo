@@ -12,3 +12,7 @@ class Entities(Enum):
     US_BANK_NUMBER = "US Bank Account Number"
     IBAN_CODE = "IBAN code"
     US_ITIN = "US ITIN"
+
+
+class ConfidenceScore(Enum):
+    Entity = "0.80"

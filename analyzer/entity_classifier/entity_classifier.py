@@ -1,7 +1,7 @@
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 
-from analyzer.entity_classifier.config import Entities
+from analyzer.entity_classifier.config import Entities, ConfidenceScore
 
 # logger = get_logger("rag.analyzer.entity_classifier")
 
@@ -32,6 +32,7 @@ class EntityClassifier:
             # logger.info("Presidio Entity Classifier Started.")
             # logger.info(f"Data Input: {self.input_text}")
             analyzer_results = self.analyzer.analyze(text=self.input_text, language='en')
+            analyzer_results = [result for result in analyzer_results if result.score >= float(ConfidenceScore.Entity.value)]
             anonymized_text = self.anonymizer.anonymize(text=self.input_text, analyzer_results=analyzer_results)
             presidio_response = anonymized_text.items
             # logger.info(f"Presidio Entity Classifier Response: {presidio_response}")
