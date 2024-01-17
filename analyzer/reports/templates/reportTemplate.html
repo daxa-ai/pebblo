@@ -7,8 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
     <title>Daxa Report</title>
   </head>
   <body class="bg-main">
@@ -16,12 +15,12 @@
       <div class="header flex justify-between inter pt-8 pb-8 pl-8 pr-8">
         <div class="flex mt-auto">
           <div class="flex items-center">
-            <img src="./assets/app-logo.svg" />
+            <img src="../assets/app-logo.svg" />
           </div>
           <div class="flex flex-col ml-2">
             <div class="flex items-center">
               <div class="font-14 surface-100">{{ data.name }}</div>
-              <img class="ml-1" src="./assets/aws-logo.svg" />
+              <img class="ml-1" src="../assets/aws-logo.svg" />
             </div>
             <div class="flex surface-60 font-10 mt-1">
               <div>
@@ -41,6 +40,17 @@
         </div>
       </div>
       <div class="content pt-4 pr-9 pb-4 pl-9">
+        <div class="mb-3">
+          <div class="font-10 medium inline inter">
+            Description:
+            <span class="normal"
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore. Ut enim ad minim veniam, quis
+              nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+              con, Duis aute irure dolor in repreh</span
+            >
+          </div>
+        </div>
         <div class="card mb-3">
           <div class="pt-2 pl-3 pb-2 pr-3">
             <div class="card__title inter items-center">
@@ -93,10 +103,10 @@
               <tbody class="inter surface-10 font-10">
                 {% for item in data.topFindings %}
                 <tr>
-                  <td>{{ item.fileName|default('') }}</td>
+                  <td>{{ item.fileName|default('-') }}</td>
                   <td>
                     <div class="bar__graph flex gap-10px">
-                      <div>{{ item.count|default('') }}</div>
+                      <div>{{ item.count|default('-') }}</div>
                       <!--<div class="graph shrink-1">
                         <div class="filled"></div>
                       </div>-->
@@ -114,7 +124,13 @@
               <div class="heading medium font-12">Instance Details</div>
             </div>
             <div class="card__body">
-              <table>
+              <table class="fixed">
+                <colgroup>
+                  <col width="25%" />
+                  <col width="25%" />
+                  <col width="25%" />
+                  <col width="25%" />
+                </colgroup>
                 <tbody>
                   <tr>
                     <td class="border-none font-10">
@@ -122,40 +138,40 @@
                         <div class="divider bg-surface-70"></div>
                         <div class="flex flex-col ml-2 w-fit">
                           <div class="surface-40">IP</div>
-                          <div class="surface-10 mt-1">
+                          <div class="surface-10 mt-1 break-word">
                             {{ data.instanceDetails.ip }}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td class="border-none font-10">
-                      <div class="card__body--details flex ml-9">
+                      <div class="card__body--details flex ml-5">
                         <div class="divider bg-surface-70"></div>
-                        <div class="flex flex-col ml-2">
-                          <div class="surface-40">Path</div>
-                          <div class="surface-10 mt-1">
-                            {{ data.instanceDetails.path }}
+                        <div class="flex flex-col ml-2 w-100">
+                          <div class="surface-40">Created At</div>
+                          <div class="surface-10 mt-1 w-120 break-word">
+                            {{ data.createdAt }}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td class="border-none font-10">
-                      <div class="card__body--details flex ml-9">
+                      <div class="card__body--details flex ml-5">
                         <div class="divider bg-surface-70"></div>
-                        <div class="flex flex-col ml-2">
+                        <div class="flex flex-col ml-2 w-fit">
                           <div class="surface-40">Runtime</div>
-                          <div class="surface-10 mt-1">
+                          <div class="surface-10 mt-1 break-word">
                             {{ data.instanceDetails.runtime }}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td class="border-none font-10">
-                      <div class="card__body--details flex ml-9">
+                      <div class="card__body--details flex ml-5">
                         <div class="divider bg-surface-70"></div>
-                        <div class="flex flex-col ml-2">
+                        <div class="flex flex-col ml-2 w-fit">
                           <div class="surface-40">Language Version</div>
-                          <div class="surface-10 mt-1">
+                          <div class="surface-10 mt-1 break-word">
                             {{ data.instanceDetails.languageVersion }}
                           </div>
                         </div>
@@ -167,31 +183,31 @@
                       <div class="card__body--details flex">
                         <div class="divider bg-surface-70"></div>
                         <div class="flex flex-col ml-2 w-fit">
-                          <div class="surface-40">Created At</div>
-                          <div class="surface-10 mt-1">
-                            {{ data.instanceDetails.createdAt|default('') }}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="border-none font-10">
-                      <div class="card__body--details flex ml-9">
-                        <div class="divider bg-surface-70"></div>
-                        <div class="flex flex-col ml-2">
                           <div class="surface-40">Host</div>
-                          <div class="surface-10 mt-1">
+                          <div class="surface-10 mt-1 break-word">
                             {{ data.instanceDetails.host }}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td class="border-none font-10">
-                      <div class="card__body--details flex ml-9">
+                      <div class="card__body--details flex ml-5">
                         <div class="divider bg-surface-70"></div>
-                        <div class="flex flex-col ml-2">
+                        <div class="flex flex-col ml-2 w-fit">
                           <div class="surface-40">Language</div>
-                          <div class="surface-10 mt-1">
+                          <div class="surface-10 mt-1 break-word">
                             {{ data.instanceDetails.language }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="border-none font-10" colspan="2">
+                      <div class="card__body--details flex ml-5">
+                        <div class="divider bg-surface-70"></div>
+                        <div class="flex flex-col ml-2 w-100">
+                          <div class="surface-40">Path</div>
+                          <div class="surface-10 mt-1 break-word w-300">
+                            {{ data.instanceDetails.path }}
                           </div>
                         </div>
                       </div>
@@ -223,12 +239,12 @@
                   </tr>
                 </thead>
                 <tbody class="inter surface-10 font-10">
-                  <!--<tr>
-                    <td>Data Report Name_13012024</td>
-                    <td class="text-end">24</td>
-                    <td class="text-end">12</td>
-                    <td class="text-end">10 Jan 2024</td>
-                  </tr>-->
+                  <tr>
+                    <td>-</td>
+                    <td class="text-end">-</td>
+                    <td class="text-end">-</td>
+                    <td class="text-end">-</td>
+                  </tr>
                 </tbody>
               </table>
             </div>

@@ -21,12 +21,21 @@
 .w-fit {
   width: fit-content;
 }
+.w-300 {
+  width: 300px;
+}
+.w-120 {
+  width: 120px;
+}
 /* DISPLAY PROPERTY */
 .flex {
   display: flex;
 }
 .inline {
   display: inline;
+}
+.contents {
+  display: contents;
 }
 .grid {
   display: grid;
@@ -435,6 +444,10 @@
   border-radius: 2px;
 }
 
+.break-word {
+  overflow-wrap: break-word;
+}
+
 /* Common styles end */
 
 /* CARD */
@@ -465,6 +478,9 @@
 }
 table {
   width: 100%;
+}
+table.fixed {
+  table-layout: fixed;
 }
 th,
 td {
