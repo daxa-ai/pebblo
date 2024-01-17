@@ -2,10 +2,12 @@
 
 from datetime import datetime
 from entity_classifier.entity_classifier import EntityClassifier
+from topic_classifier.topic_classifier import TopicClassifier
+from reports.reports import Reports
 from enums.enums import CacheDir
-from utils.utils import write_json_to_file, read_json_file
+from utils.utils import write_json_to_file, read_json_file, get_full_path
 from libs.logger import logger
-from models.models import LoaderMetadata, Metadata, AiDataModel, AiDocs, AiApp
+from models.models import LoaderMetadata, Metadata, AiDataModel, AiDocs, AiApp, ReportModel, Snippets, Summary, TopFindings
 
 
 class AppDiscover:
@@ -40,7 +42,7 @@ class AppDiscover:
                 "type": runtime_dict.get("type"),
                 "platform": runtime_dict.get("platform"),
                 "os": runtime_dict.get("os"),
-                "os_version": runtime_dict.get("os_version")
+                "osVersion": runtime_dict.get("os_version")
 
             }
             logger.debug(f"AI_APPS [{application_name}]: Instance Details: {instance_details}")
@@ -63,7 +65,7 @@ class AppDiscover:
             }
             ai_app_obj = AiApp(**ai_app)
             logger.debug(f"Final Output For Discovery Call: {ai_app_obj.dict()}")
-            file_path = f"{CacheDir.home_dir.value}/{application_name}/{self.load_id}/{CacheDir.report_file_name.value}"
+            file_path = f"{CacheDir.home_dir.value}/{application_name}/{self.load_id}/{CacheDir.metadata_file_path.value}"
             write_json_to_file(ai_app_obj.dict(), file_path)
             # return {"Request Processed Successfully"}
             # TODO: remove below line after testing.
@@ -85,10 +87,11 @@ class AppLoaderDoc:
                                topics={}, topicCount=0)
         try:
             if doc_info.data:
-                classifier_obj = EntityClassifier(doc_info.data)
-                topics, topic_count = {}, 0 # classifier_obj.topic_classifier(doc_info.data)
-                entities, entity_count = classifier_obj.presidio_entity_classifier()
-                secrets, secret_count = {}, 0 # classifier_obj.secret_classifier(doc_info.data)
+                entity_classifier_obj = EntityClassifier(doc_info.data)
+                topic_classifier_obj = TopicClassifier(doc_info.data)
+                topics, topic_count = topic_classifier_obj.topic_classifier()
+                entities, entity_count = entity_classifier_obj.presidio_entity_classifier()
+                secrets, secret_count = entity_classifier_obj.presidio_secret_classifier()
                 entities.update(secrets)
                 entity_count += secret_count
                 doc_info.topics = topics
@@ -99,6 +102,68 @@ class AppLoaderDoc:
         except Exception as e:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
             return doc_info
+
+    def _report_formatter(self, app_details):
+        """
+            Format Report as in required format
+        """
+        total_findings = 0
+        file_count_restricted_data = 0
+        data_source_count = 1
+        data_source_snippets = list()
+        loader_source_files = app_details.get("loader_source_files", [])
+        loader_source_snippets = {}
+        file_count = 0
+        snippet_count = 0
+
+        for doc in app_details["docs"]:
+            # getting snippet details only if snippet has restricted entities or topics.
+            findings = doc["entityCount"] + doc["topicCount"]
+            source_path = doc.get("sourcePath")
+            if source_path in loader_source_snippets.keys():
+                loader_source_snippets[source_path] = loader_source_snippets[source_path] + findings
+                total_findings += findings
+                snippet_count += 1
+            else:
+                loader_source_snippets[source_path] = findings
+                total_findings += findings
+                snippet_count += 1
+                file_count += 1
+
+            if findings > 0:
+                snippet = Snippets(snippet=doc["doc"],
+                                   sourcePath=source_path,
+                                   findings=doc["entityCount"] + doc["topicCount"])
+                data_source_snippets.append(snippet.dict())
+
+        app_details['loader_source_files'] = [
+            {"name": f"{key}", "count": loader_source_snippets[key]}for key in loader_source_snippets]
+
+        file_count_restricted_data = len(loader_source_snippets)
+        report_summary = Summary(
+            findings=total_findings,
+            totalFiles=file_count,
+            filesWithRestrictedData=file_count_restricted_data,
+            dataSources=data_source_count,
+            owner=app_details["owner"]
+        )
+
+        # Filter 5 Findings
+        top_5_findings = sorted(loader_source_snippets.items(), key=lambda d: d[1], reverse=True)[:5]
+        top_5_finding_objects = [{"fileName": filename, "count": count} for filename, count in top_5_findings]
+
+        report_dict = ReportModel(
+            name=app_details["name"],
+            description=" ",  # app_details["description"],
+            instanceDetails=app_details["instanceDetails"],
+            framework=app_details["framework"],
+            reportSummary=report_summary,
+            topFindings=top_5_finding_objects,
+            lastModified=datetime.now(),
+            dataSources=[]
+        )
+
+        return report_dict.dict()
 
     def process_request(self):
         """This process is entrypoint function for loader doc API implementation."""
@@ -113,17 +178,17 @@ class AppLoaderDoc:
             app_metadata = read_json_file(app_metadata_file_path)
             if not app_metadata:
                 return {"Message": "App details not present, Please call discovery api first"}
-            load_id = app_metadata.get("current_load_id")
+
+            prev_load_id = app_metadata.get("current_load_id")
+            load_id = self.data['load_id']
 
             # Get current app details from load id
-            run_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
-            app_details = read_json_file(run_file_path)
+            report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
+            app_load_metadata_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.metadata_file_path.value}"
+            app_details = read_json_file(app_load_metadata_file_path)
 
             # Create Apps Object
-            metadata_obj = Metadata(
-                    createdAt=datetime.now(),
-                    modifiedAt=datetime.now()
-                )
+            metadata_obj = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
             last_used = datetime.now()
 
             # Get Loader Details
@@ -151,15 +216,22 @@ class AppLoaderDoc:
                                                      sourceType=source_type,
                                                      lastModified=last_used)
                     loader_list.append(new_loader_data.dict())
+                    app_details["loaders"] = loader_list
 
             doc_list = self.data.get('docs', [])
-            docs = []
+
+            load_metadata_file = read_json_file(app_load_metadata_file_path)
+            if not load_metadata_file:
+                # TODO: Handle the case where discover call did not happen, but loader doc is being called.
+                logger.error("Could not read metadata file. Exiting.")
+                return
+
+            docs = load_metadata_file.get('docs', [])
             for doc in doc_list:
                 # Get Classifier Response
                 doc_info: AiDataModel = self._get_classifier_response(doc)
                 if doc:
-                    loader_docs_data = AiDocs(
-                                              appId=load_id,
+                    loader_docs_data = AiDocs(appId=load_id,
                                               metadata=metadata_obj,
                                               doc=doc.get('doc'),
                                               sourcePath=doc.get('source_path'),
@@ -175,14 +247,24 @@ class AppLoaderDoc:
             logger.debug(f"Loader Doc Details: {docs}")
             app_details["docs"] = docs
 
-            # Update modifiedAt & lastUsed timestamp
-            app_details["metadata"]["modifiedAt"] = last_used
-            app_details["lastUsed"] = last_used
-            logger.debug(f"Final Report with doc details: {app_details}")
+            new_report = self._report_formatter(app_details)
+            logger.debug(f"Final Report with doc details: {new_report}")
 
+            # Write current state to the file.
+            write_json_to_file(new_report, app_load_metadata_file_path)
             # This write will overwrite app_discovery Report
-            file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
-            write_json_to_file(app_details, file_path)
+            loading_end = self.data['loading_end']
+            if loading_end:
+                logger.debug("Loading finished, generating report")
+                write_json_to_file(new_report, report_file_path)
+                # PDF Report path
+                pdf_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.pdf_report_file_name.value}"
+                full_file_path = get_full_path(pdf_report_file_path)
+                report_obj = Reports()
+                report_obj.generate_report(new_report, full_file_path)
+
+            # return {"Loader Doc API processed successfully."}
+            # TODO: Remove below line after testing.
             return {"Loader Doc Response": docs}
 
         except Exception as ex:

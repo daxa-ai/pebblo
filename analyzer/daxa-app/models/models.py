@@ -57,6 +57,7 @@ class InstanceDetail(BaseModel):
     platform: Optional[str]
     os: Optional[str]
     osVersion: Optional[str]
+    createdAt: datetime = datetime.now()
 
 
 class AiApp(BaseModel):
@@ -71,3 +72,43 @@ class AiApp(BaseModel):
     metadata: Metadata
     lastUsed: datetime = datetime.now()
     policyViolations: Optional[List[dict]] = []
+
+
+class Summary(BaseModel):
+    findings: int
+    totalFiles: int
+    filesWithRestrictedData: int
+    dataSources: int
+    owner: str
+    createdAt: datetime = datetime.now()
+
+
+class TopFindings(BaseModel):
+    fileName: str
+    count: int
+
+
+class Snippets(BaseModel):
+    snippet: str
+    sourcePath: str
+    findings: int
+
+
+class DataSource(BaseModel):
+    name: str
+    sourcePaht: str
+    sourceType: str
+    summary: Optional[Summary]
+    topFindings: dict
+    snippets: Optional[Snippets]
+
+
+class ReportModel(BaseModel):
+    name: str
+    description: str
+    framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
+    reportSummary: Optional[Summary]
+    topFindings: Optional[List[TopFindings]]
+    instanceDetails: Optional[InstanceDetail]
+    dataSources: Optional[List[DataSource]]
+    lastModified: datetime
