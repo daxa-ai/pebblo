@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Daxa Report</title>
+  </head>
+  <body class="bg-main">
+    <div class="main">
+      <div class="header flex justify-between inter pt-8 pb-8 pl-8 pr-8">
+        <div class="flex mt-auto">
+          <div class="flex items-center">
+            <img src="./assets/app-logo.svg" />
+          </div>
+          <div class="flex flex-col ml-2">
+            <div class="flex items-center">
+              <div class="font-14 surface-100">{{ data.name }}</div>
+              <img class="ml-1" src="./assets/aws-logo.svg" />
+            </div>
+            <div class="flex surface-60 font-10 mt-1">
+              <div>
+                {{ data.framework.name|capitalize }} {{ data.framework.version
+                }}
+              </div>
+              <div class="divider bg-surface-60 ml-2"></div>
+              <div class="ml-2">Owner: {{ data.reportSummary.owner }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify_content surface-60 flex-col gap-1 text-end">
+          <div class="font-14">Data Report</div>
+          <div class="font-12">
+            Generated On: {{ date.strftime('%B %d, %Y') }}
+          </div>
+        </div>
+      </div>
+      <div class="content pt-4 pr-9 pb-4 pl-9">
+        <div class="card mb-3">
+          <div class="pt-2 pl-3 pb-2 pr-3">
+            <div class="card__title inter items-center">
+              <div class="heading font-12 medium">Report Summary</div>
+              <div class="sub-heading font-10 ml-2">
+                Current Load By {{ data.reportSummary.owner }}, {{
+                data.reportSummary.createdAt }}
+              </div>
+            </div>
+            <div class="card__body flex gap-13">
+              <div class="key--value">
+                <div class="manrope font-22 critical semi-bold">
+                  {{ data.reportSummary.findings|default('0') }}
+                </div>
+                <div class="inter font-10 surface-10">Findings</div>
+              </div>
+              <div class="key--value ml-13">
+                <div class="manrope font-22 critical semi-bold text-start">
+                  {{ data.reportSummary.filesWithRestrictedData|default('0') }}
+                  <span class="surface-10 font-12 normal pb-1 mt-auto"
+                    >/{{ data.reportSummary.totalFile|default('0') }}</span
+                  >
+                </div>
+
+                <div class="inter font-10 surface-10">Files With Findings</div>
+              </div>
+              <div class="key--value ml-13">
+                <div class="manrope font-22 surface-10 semi-bold">
+                  {{ data.reportSummary.dataSources|default('0') }}
+                </div>
+                <div class="inter font-10 surface-10">
+                  Number of Data Source
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card inter mb-3">
+          <div class="pt-2 pl-3 pb-2 pr-3">
+            <div class="heading font-12 medium">
+              Top 5 Files With Most Findings
+            </div>
+            <table>
+              <thead class="inter font-10 surface-50">
+                <tr>
+                  <th class="text-start medium">Filename</th>
+                  <th class="text-start medium">Findings</th>
+                </tr>
+              </thead>
+              <tbody class="inter surface-10 font-10">
+                {% for item in data.topFindings %}
+                <tr>
+                  <td>{{ item.fileName|default('') }}</td>
+                  <td>
+                    <div class="bar__graph flex gap-10px">
+                      <div>{{ item.count|default('') }}</div>
+                      <!--<div class="graph shrink-1">
+                        <div class="filled"></div>
+                      </div>-->
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card inter mb-3">
+          <div class="pt-2 pl-3 pb-2 pr-3">
+            <div class="card__title">
+              <div class="heading medium font-12">Instance Details</div>
+            </div>
+            <div class="card__body">
+              <table>
+                <tbody>
+                  <tr>
+                    <td class="border-none font-10">
+                      <div class="card__body--details flex">
+                        <div class="divider bg-surface-70"></div>
+                        <div class="flex flex-col ml-2 w-fit">
+                          <div class="surface-40">IP</div>
+                          <div class="surface-10 mt-1">
+                            {{ data.instanceDetails.ip }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="border-none font-10">
+                      <div class="card__body--details flex ml-9">
+                        <div class="divider bg-surface-70"></div>
+                        <div class="flex flex-col ml-2">
+                          <div class="surface-40">Path</div>
+                          <div class="surface-10 mt-1">
+                            {{ data.instanceDetails.path }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="border-none font-10">
+                      <div class="card__body--details flex ml-9">
+                        <div class="divider bg-surface-70"></div>
+                        <div class="flex flex-col ml-2">
+                          <div class="surface-40">Runtime</div>
+                          <div class="surface-10 mt-1">
+                            {{ data.instanceDetails.runtime }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="border-none font-10">
+                      <div class="card__body--details flex ml-9">
+                        <div class="divider bg-surface-70"></div>
+                        <div class="flex flex-col ml-2">
+                          <div class="surface-40">Language Version</div>
+                          <div class="surface-10 mt-1">
+                            {{ data.instanceDetails.languageVersion }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border-none font-10">
+                      <div class="card__body--details flex">
+                        <div class="divider bg-surface-70"></div>
+                        <div class="flex flex-col ml-2 w-fit">
+                          <div class="surface-40">Created At</div>
+                          <div class="surface-10 mt-1">
+                            {{ data.instanceDetails.createdAt|default('') }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="border-none font-10">
+                      <div class="card__body--details flex ml-9">
+                        <div class="divider bg-surface-70"></div>
+                        <div class="flex flex-col ml-2">
+                          <div class="surface-40">Host</div>
+                          <div class="surface-10 mt-1">
+                            {{ data.instanceDetails.host }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="border-none font-10">
+                      <div class="card__body--details flex ml-9">
+                        <div class="divider bg-surface-70"></div>
+                        <div class="flex flex-col ml-2">
+                          <div class="surface-40">Language</div>
+                          <div class="surface-10 mt-1">
+                            {{ data.instanceDetails.language }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card inter">
+          <div class="pt-2 pl-3 pb-2 pr-3">
+            <div class="card__title">
+              <div class="heading font-12">Load History</div>
+              <!--<div class="sub-heading font-10 ml-2">
+                Last 2 Generated Reports
+              </div>-->
+            </div>
+            <div class="card__body">
+              <table width="100%">
+                <thead class="inter font-10 surface-50">
+                  <tr>
+                    <th class="text-start medium">Report Name</th>
+                    <th class="text-start medium text-end">Findings</th>
+                    <th class="text-start medium text-end">
+                      Files With Findings
+                    </th>
+                    <th class="text-start medium text-end">Generated On</th>
+                  </tr>
+                </thead>
+                <tbody class="inter surface-10 font-10">
+                  <!--<tr>
+                    <td>Data Report Name_13012024</td>
+                    <td class="text-end">24</td>
+                    <td class="text-end">12</td>
+                    <td class="text-end">10 Jan 2024</td>
+                  </tr>-->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
