@@ -1,7 +1,11 @@
+"""
+Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
+"""
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 
-from analyzer.entity_classifier.config import Entities, ConfidenceScore
+from analyzer.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities
+from analyzer.entity_classifier.utils.utils import get_restricted_entities, add_custom_regex_analyzer_registry
 
 # logger = get_logger("rag.analyzer.entity_classifier")
 
@@ -11,6 +15,16 @@ class EntityClassifier:
         self.input_text = input_text
         self.analyzer = AnalyzerEngine()
         self.anonymizer = AnonymizerEngine()
+
+    def analyze_response(self):
+        analyzer_results = self.analyzer.analyze(text=self.input_text, language='en')
+        analyzer_results = [result for result in analyzer_results if result.score >= float(ConfidenceScore.Entity.value)]
+        return analyzer_results
+
+    def anomyze_response(self, analyzer_results):
+        anonymized_text = self.anonymizer.anonymize(text=self.input_text, analyzer_results=analyzer_results)
+        response = anonymized_text.items
+        return response
 
     def presidio_entity_classifier(self):
         """
@@ -31,13 +45,10 @@ class EntityClassifier:
         try:
             # logger.info("Presidio Entity Classifier Started.")
             # logger.info(f"Data Input: {self.input_text}")
-            analyzer_results = self.analyzer.analyze(text=self.input_text, language='en')
-            analyzer_results = [result for result in analyzer_results if result.score >= float(ConfidenceScore.Entity.value)]
-            anonymized_text = self.anonymizer.anonymize(text=self.input_text, analyzer_results=analyzer_results)
-            presidio_response = anonymized_text.items
-            # logger.info(f"Presidio Entity Classifier Response: {presidio_response}")
-            restricted_entities, total_count = self._get_restricted_entities(presidio_response)
-
+            analyzer_results = self.analyze_response()
+            response = self.anomyze_response(analyzer_results)
+            # logger.info(f"Presidio Entity Classifier Response: {response}")
+            restricted_entities, total_count = get_restricted_entities(Entities, response)
             # logger.info(f"Presidio Entity Classifier Finished {restricted_entities}")
             # logger.info(f"Entity Total count. {total_count}")
             return restricted_entities, total_count
@@ -45,14 +56,35 @@ class EntityClassifier:
             # logger.error(f"Presidio Entity Classifier Failed, Exception: {e}")
             return restricted_entities, total_count
 
-    @staticmethod
-    def _get_restricted_entities(presidio_response):
-        restricted_entity_groups = dict()
-        total_count = 0
-        for entity in presidio_response:
-            if entity.entity_type in Entities.__members__:
-                mapped_entity = Entities[entity.entity_type].value
-                restricted_entity_groups[mapped_entity] = restricted_entity_groups.get(mapped_entity, 0) + 1
-                total_count += 1
+    def presidio_secret_classifier(self):
+        """
+        Find regex patterns in the given input data.
 
-        return restricted_entity_groups, total_count
+        Parameters:
+        - input_data (str): The input string to search for regex patterns.
+
+        Returns:
+        dict: A dictionary containing key associated with regex patterns and their counts in the input data.
+        Example:
+        {
+            'AWS API ID': 3, # SecretKey: Count of Occurrences of secret key
+            'AWS API Secret': 1
+        },
+        total_count: 4 # total count of all SecretKeys Occurrences
+        """
+        # logger.info("Presidio Secret Entity Classifier Started.")
+        # logger.info(f"Data Input: {self.input_text}")
+
+        # Adding custom analyzer
+        custom_recognizer = add_custom_regex_analyzer_registry()
+        if custom_recognizer:
+            for recognizer in custom_recognizer:
+                self.analyzer.registry.add_recognizer(recognizer)
+
+        analyzer_results = self.analyze_response()
+        response = self.anomyze_response(analyzer_results)
+        # logger.info(f"Presidio Secret Entity Classifier Response: {response}")
+        secret_entities, total_count = get_restricted_entities(SecretEntities, response)
+        # logger.info(f"Presidio Secret Entity Classifier Finished {secret_entities}")
+        # logger.info(f"Secret Entity Total count. {total_count}")
+        return secret_entities, total_count
