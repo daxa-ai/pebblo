@@ -44,12 +44,7 @@
         <div class="mb-3">
           <div class="font-10 medium inline inter">
             Description:
-            <span class="normal"
-              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore. Ut enim ad minim veniam, quis
-              nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              con, Duis aute irure dolor in repreh</span
-            >
+            <span class="normal">{{ data.description }} </span>
           </div>
         </div>
         <div class="card mb-3">
@@ -72,7 +67,7 @@
                 <div class="manrope font-22 critical semi-bold text-start">
                   {{ data.reportSummary.filesWithRestrictedData|default('0') }}
                   <span class="surface-10 font-12 normal pb-1 mt-auto"
-                    >/{{ data.reportSummary.totalFile|default('0') }}</span
+                    >/{{ data.reportSummary.totalFiles|default('0') }}</span
                   >
                 </div>
 
