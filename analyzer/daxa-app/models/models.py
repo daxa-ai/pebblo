@@ -46,7 +46,7 @@ class FrameworkInfo(BaseModel):
     version: Optional[str]
 
 
-class InstanceDetail(BaseModel):
+class InstanceDetails(BaseModel):
     type: Optional[str]
     host: Optional[str]
     path: Optional[str]
@@ -57,17 +57,55 @@ class InstanceDetail(BaseModel):
     platform: Optional[str]
     os: Optional[str]
     osVersion: Optional[str]
+    createdAt: datetime = datetime.now()
 
 
 class AiApp(BaseModel):
+    metadata: Metadata
     name: str
     owner: str
     pluginVersion: Optional[str]
+    instanceDetails: Optional[InstanceDetails]
+    framework: Optional[FrameworkInfo]
+    lastUsed: datetime
+
+
+class Summary(BaseModel):
+    findings: int
+    totalFiles: int
+    filesWithRestrictedData: int
+    dataSources: int
+    owner: str
     createdAt: datetime = datetime.now()
-    deployedAt: datetime = datetime.now()
-    instanceDetails: Optional[InstanceDetail]
-    loaders: Optional[List[LoaderMetadata]] = []
+
+
+class TopFindings(BaseModel):
+    fileName: str
+    count: int
+
+
+class Snippets(BaseModel):
+    snippet: str
+    sourcePath: str
+    findings: int
+    findingType: str
+
+
+class DataSource(BaseModel):
+    name: str
+    sourcePath: str
+    sourceType: str
+    summary: Optional[Summary]
+    findings: Optional[List]
+    # snippets: Optional[List[Snippets]]
+
+
+class ReportModel(BaseModel):
+    name: str
+    description: str
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    metadata: Metadata
-    lastUsed: datetime = datetime.now()
-    policyViolations: Optional[List[dict]] = []
+    reportSummary: Optional[Summary]
+    topFindings: Optional[List[TopFindings]]
+    instanceDetails: Optional[InstanceDetails]
+    dataSources: Optional[List[DataSource]]
+    lastModified: datetime
