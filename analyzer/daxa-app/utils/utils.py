@@ -1,6 +1,5 @@
 import json
-from os import makedirs, path, name
-from datetime import datetime
+from os import makedirs, path
 from json import JSONEncoder, dump
 from libs.logger import logger
 
@@ -27,6 +26,7 @@ def write_json_to_file(data, file_path):
 
 
 def read_json_file(file_path):
+    full_file_path = ""
     try:
         full_file_path = get_full_path(file_path)
         with open(full_file_path, 'r') as file:

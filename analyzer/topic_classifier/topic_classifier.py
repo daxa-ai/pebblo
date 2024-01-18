@@ -1,7 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import pipeline
 
-from analyzer.topic_classifier.config import ConfidenceScore, Topics
+from topic_classifier.config import ConfidenceScore, Topics
 
 
 class TopicClassifier:

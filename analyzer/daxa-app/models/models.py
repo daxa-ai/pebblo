@@ -46,7 +46,7 @@ class FrameworkInfo(BaseModel):
     version: Optional[str]
 
 
-class InstanceDetail(BaseModel):
+class InstanceDetails(BaseModel):
     type: Optional[str]
     host: Optional[str]
     path: Optional[str]
@@ -61,17 +61,13 @@ class InstanceDetail(BaseModel):
 
 
 class AiApp(BaseModel):
+    metadata: Metadata
     name: str
     owner: str
     pluginVersion: Optional[str]
-    createdAt: datetime = datetime.now()
-    deployedAt: datetime = datetime.now()
-    instanceDetails: Optional[InstanceDetail]
-    loaders: Optional[List[LoaderMetadata]] = []
-    framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    metadata: Metadata
-    lastUsed: datetime = datetime.now()
-    policyViolations: Optional[List[dict]] = []
+    instanceDetails: Optional[InstanceDetails]
+    framework: Optional[FrameworkInfo]
+    lastUsed: datetime
 
 
 class Summary(BaseModel):
@@ -92,15 +88,16 @@ class Snippets(BaseModel):
     snippet: str
     sourcePath: str
     findings: int
+    findingType: str
 
 
 class DataSource(BaseModel):
     name: str
-    sourcePaht: str
+    sourcePath: str
     sourceType: str
     summary: Optional[Summary]
-    topFindings: dict
-    snippets: Optional[Snippets]
+    findings: Optional[List]
+    # snippets: Optional[List[Snippets]]
 
 
 class ReportModel(BaseModel):
@@ -109,6 +106,6 @@ class ReportModel(BaseModel):
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary]
     topFindings: Optional[List[TopFindings]]
-    instanceDetails: Optional[InstanceDetail]
+    instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]
     lastModified: datetime
