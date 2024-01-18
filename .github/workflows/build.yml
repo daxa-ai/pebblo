@@ -1,5 +1,5 @@
 
-name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
+name: build
 
 on:
   push:
