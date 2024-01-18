@@ -1,13 +1,13 @@
-from enum import Enum
+TOPIC_CONFIDENCE_SCORE = 0.60
+TOKENIZER_PATH = "daxa-ai/topic-classifier-rc1"
+CLASSIFIER_PATH = "daxa-ai/topic-classifier-rc1"
 
+# from enum import Enum
 
-class Topics(Enum):
-    """
-    Enumeration of all possible topics
-    """
-    MEDICAL_ADVICE = "Medical Advice"
-    HARMFUL_ADVICE = "Harmful Advice"
-
-
-class ConfidenceScore(Enum):
-    Topic = "0.60"
+# class ConfidenceScore(Enum):
+#     Topic = "0.60"
+#
+#
+# class ModelPath(Enum):
+#     TOKENIZER = "daxa-ai/topic-classifier-rc1"
+#     CLASSIFIER = "daxa-ai/topic-classifier-rc1"
