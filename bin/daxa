@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from app import service
+from analyzer.app import service
 
 def main() -> None:
     service.start()
