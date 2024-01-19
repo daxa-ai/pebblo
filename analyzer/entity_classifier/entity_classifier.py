@@ -4,10 +4,10 @@ Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 
-from entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities
-from entity_classifier.utils.utils import get_entities, add_custom_regex_analyzer_registry
+from analyzer.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities
+from analyzer.entity_classifier.utils.utils import get_entities, add_custom_regex_analyzer_registry
 
-from entity_classifier.libs.logger import logger
+from analyzer.entity_classifier.libs.logger import logger
 
 
 class EntityClassifier:
