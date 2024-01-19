@@ -19,11 +19,12 @@ jobs:
       with:
         python-version: "3.x"
     - name: Install pypa/build
-      run: >-
-        python3 -m
-        pip install
-        build
-        --user
+      run: |
+        cd analyzer
+        pip install build
+        python -m build --wheel
+        ls -la 
+        ls -la dist/
     - name: Build a binary wheel and a source tarball
       run: python3 -m build
     - name: Store the distribution packages
