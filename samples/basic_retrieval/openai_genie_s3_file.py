@@ -19,7 +19,7 @@ class OpenAIGenieS3:
         self.app_name = "rahul_s3_file_app_2"
         self.loader = DaxaSafeLoader(
             S3FileLoader(bucket, key),
-            self.app_name
+            self.app_name, "rahul", "some_App_Description"
         )
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)

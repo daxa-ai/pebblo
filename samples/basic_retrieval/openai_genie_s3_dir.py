@@ -17,7 +17,7 @@ logging.basicConfig(level=20)
 
 class OpenAIGenieS3Dir:
     def __init__(self, bucket: str):
-        self.loader = DaxaSafeLoader(S3DirectoryLoader(bucket), "s3_dir_loader_App1")
+        self.loader = DaxaSafeLoader(S3DirectoryLoader(bucket), "s3_dir_loader_App1", "rahul", "some_App_Description")
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
         self.vectordb = self.embeddings(self.filtered_docs)
