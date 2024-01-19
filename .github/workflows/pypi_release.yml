@@ -1,7 +1,7 @@
 name: Daxa Analyzer release on PyPi
 on:
   workflow_run:
-      workflows: ["build"]
+      workflows: ["Build Package"]
       branches: [main]
       types:
         - completed
