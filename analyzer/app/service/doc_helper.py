@@ -4,10 +4,10 @@
 """
 
 from datetime import datetime
-from app.libs.logger import logger
-from app.models.models import Metadata, AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource
-from entity_classifier.entity_classifier import EntityClassifier
-from topic_classifier.topic_classifier import TopicClassifier
+from analyzer.app.libs.logger import logger
+from analyzer.app.models.models import Metadata, AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource
+from analyzer.entity_classifier.entity_classifier import EntityClassifier
+from analyzer.topic_classifier.topic_classifier import TopicClassifier
 
 # Init topic classifier
 topic_classifier_obj = TopicClassifier()

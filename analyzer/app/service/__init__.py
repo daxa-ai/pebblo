@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from app.routers.routers import router_instance
+from analyzer.app.routers.routers import router_instance
 
 from topic_classifier.topic_classifier import TopicClassifier
 

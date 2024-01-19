@@ -3,8 +3,8 @@ from setuptools import setup, find_packages
 setup(
     name="daxa",
     python_requires=">=3.7",
-    version="0.1.0",
-    url="https://test.pypi.org/legacy/",
+    version="0.1.1",
+    url="https://github.com/daxa-ai/daxa-analyzer-rc1",
     license="Other/Proprietary License",
     description="Daxa OpenSource",
     long_description="Daxa OpenSource TBD",
