@@ -1,7 +1,7 @@
 import json
 from os import makedirs, path
 from json import JSONEncoder, dump
-from libs.logger import logger
+from app.libs.logger import logger
 
 
 class DatetimeEncoder(JSONEncoder):
