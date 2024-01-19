@@ -1,6 +1,6 @@
 # Copyright (c) 2024 Daxa. All rights reserved.
 from fastapi import APIRouter
-from service.service import AppDiscover, AppLoaderDoc
+from app.service.service import AppDiscover, AppLoaderDoc
 
 
 class App:

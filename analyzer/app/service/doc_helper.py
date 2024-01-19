@@ -4,8 +4,8 @@
 """
 
 from datetime import datetime
-from libs.logger import logger
-from models.models import Metadata, AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource
+from app.libs.logger import logger
+from app.models.models import Metadata, AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource
 from entity_classifier.entity_classifier import EntityClassifier
 from topic_classifier.topic_classifier import TopicClassifier
 

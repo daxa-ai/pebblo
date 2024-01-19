@@ -2,11 +2,11 @@
 
 from datetime import datetime
 from reports.reports import Reports
-from enums.enums import CacheDir
-from utils.utils import write_json_to_file, read_json_file, get_full_path
-from libs.logger import logger
-from models.models import LoaderMetadata, Metadata, AiApp, InstanceDetails
-from service.doc_helper import DocHelper
+from app.enums.enums import CacheDir
+from app.utils.utils import write_json_to_file, read_json_file, get_full_path
+from app.libs.logger import logger
+from app.models.models import LoaderMetadata, Metadata, AiApp, InstanceDetails
+from app.service.doc_helper import DocHelper
 
 
 class AppDiscover:
