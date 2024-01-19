@@ -1,5 +1,5 @@
 
-name: Build Package
+name: Build Package And publish on PyPi
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
       - main
 jobs:
   build:
-    name: Build distribution
+    name: build_distribution
     runs-on: ubuntu-latest
 
     steps:
@@ -30,3 +30,22 @@ jobs:
       with:
         name: python-package-distributions
         path: analyzer/dist/
+
+  release-on-pypi:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: qa
+      url: https://test.pypi.org/p/daxa-analyzer-rc1
+    permissions:
+      id-token: write
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: python-package-distributions
+          path: analyzer/dist/
+      - name: Publish Daxa Distribution to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
