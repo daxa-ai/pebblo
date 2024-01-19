@@ -1,9 +1,24 @@
+import os
 from enum import Enum
 from operator import itemgetter
 
 import joblib
 import torch
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizerFast
+
+from analyzer.topic_classifier.libs.logger import logger
+
+# Use os.environ.get() to retrieve the value of the environment variable
+huggingface_token = os.environ.get("HF_TOKEN")
+
+# Check if the environment variable exists
+if huggingface_token is not None:
+    logger.debug(f"HF_TOKEN is: {huggingface_token}")
+    from huggingface_hub import login
+
+    login(token=huggingface_token)
+else:
+    logger.warning("HF_TOKEN is not set.")
 
 
 # TODO: Refactor following code
@@ -18,8 +33,8 @@ class Topics(Enum):
 TOPIC_CONFIDENCE_SCORE = 0.60
 
 # Paths
-MODEL_PATH = "data/Models/Model Safetensors"  # Path to your saved model
-LABEL_ENCODER_PATH = "data/Models/label encoder.joblib"  # Path to your saved label encoder
+MODEL_PATH = 'daxa-ai/Daxa-Classifier-Bert'  # Path to your saved model
+LABEL_ENCODER_PATH = 'daxa-ai/Daxa-Classifier-Bert'  # Path to your saved label encoder
 TOKENIZER_PATH = 'distilbert-base-uncased'
 
 
@@ -49,23 +64,23 @@ class TextClassifier:
             # highest_prob = np.max(probabilities_np)
             # return sorted_probs, highest_prob_label, highest_prob
             # TODO: Finalize the return value format
-            return self._get_restricted_topics(sorted_probs)
+            return self._get_topics(sorted_probs)
         except Exception as e:
             print(f"Error while performing topic classification. Reason: {e}")
             return []
 
     @staticmethod
-    def _get_restricted_topics(topic_model_response):
-        restricted_topics = dict()
+    def _get_topics(topic_model_response):
+        topics = dict()
         for topic in topic_model_response:
             if topic["score"] < float(TOPIC_CONFIDENCE_SCORE):
                 continue
             if topic["label"] in Topics.__members__:
                 mapped_topic = Topics[topic["label"]].value
-                restricted_topics[mapped_topic] = topic["score"]
+                topics[mapped_topic] = topic["score"]
         final_topic = {}
-        if len(restricted_topics) > 0:
-            most_possible_advice = max(restricted_topics, key=restricted_topics.get)
+        if len(topics) > 0:
+            most_possible_advice = max(topics, key=topics.get)
             final_topic = {most_possible_advice: 1}
         return final_topic, len(final_topic.keys())
 

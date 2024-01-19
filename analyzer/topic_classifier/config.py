@@ -2,5 +2,5 @@
 TOPIC_CONFIDENCE_SCORE = 0.60
 
 # Model paths
-TOKENIZER_PATH = "daxa-ai/topic-classifier-rc1"
-CLASSIFIER_PATH = "daxa-ai/topic-classifier-rc1"
+TOKENIZER_PATH = 'daxa-ai/Daxa-Classifier-Bert'
+CLASSIFIER_PATH = 'daxa-ai/Daxa-Classifier-Bert'

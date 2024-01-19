@@ -9,6 +9,9 @@ from app.models.models import Metadata, AiDataModel, AiDocs, ReportModel, Snippe
 from entity_classifier.entity_classifier import EntityClassifier
 from topic_classifier.topic_classifier import TopicClassifier
 
+# Init topic classifier
+topic_classifier_obj = TopicClassifier()
+
 
 class DocHelper:
     def __init__(self, app_details, data, load_id):
@@ -23,8 +26,7 @@ class DocHelper:
         try:
             if doc_info.data:
                 entity_classifier_obj = EntityClassifier(doc_info.data)
-                topic_classifier_obj = TopicClassifier(doc_info.data)
-                topics, topic_count = topic_classifier_obj.topic_classifier()
+                topics, topic_count = topic_classifier_obj.predict(doc_info.data)
                 entities, entity_count = entity_classifier_obj.presidio_entity_classifier()
                 secrets, secret_count = entity_classifier_obj.presidio_secret_classifier()
                 # secrets, secret_count = {}, 0
