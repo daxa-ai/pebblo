@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet" />
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./index.css" />
     <title>Daxa Report</title>
   </head>
@@ -500,89 +501,37 @@
       <div>
         <div class="inter flex items-center">
           <div class="font-14 surface-10">Snippets</div>
-          <div class="font-12 surface-10-opacity ml-2">
-            Showing 100 out of 234
-          </div>
+          <!--<div class="font-12 surface-10-opacity ml-2">
+            Showing {{ findingDetails.length }} out of 
+          </div>-->
         </div>
+        {% for item in findingDetails %}
         <div class="mt-4">
           <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
-            <div class="surface-10 font-13">Medical Advice</div>
+            <div class="surface-10 font-13">{{ item.labelName }}</div>
             <div class="sub-heading ml-2 surface-50 font-12">
-              Showing 2 Snippets out of 23
+              Showing {{ item.count }} Snippets out of {{ item.snippetCount }}
             </div>
           </div>
+          {% for snippet in item.snippets %}
           <div class="key-value">
             <div class="surface-50 font-12">Snippet</div>
-            <div class="surface-10 font-13 mt-2">
-              Heart disease requires a change in lifestyle such as a healthy
-              diet. Also, regular blood pressure screenings would help
-            </div>
+            <div class="surface-10 font-13 mt-2">{{ snippet.snippet }}</div>
           </div>
           <div class="key-value">
             <div class="surface-50 font-12">Retrieved From</div>
-            <div class="surface-10 font-13 mt-2">
-              s3://health-data-etl-38738/kb/health-advice.pdf
-            </div>
+            <div class="surface-10 font-13 mt-2">{{ snippet.sourcePath }}</div>
           </div>
           <div class="key-value">
             <div class="surface-50 font-12">Finding</div>
-            <div class="surface-10 font-13 chip mt-2 inline-block">
-              Sensitive Identifiers
-            </div>
+            <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
           </div>
           <div
-            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
+            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"
+          ></div>
+          {% endfor %}
         </div>
-        <div class="mt-4">
-          <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
-            <div class="surface-10 font-13">Medical Advice</div>
-            <div class="sub-heading ml-2 surface-50 font-12">
-              Showing 2 Snippets out of 23
-            </div>
-          </div>
-          <div class="key-value">
-            <div class="surface-50 font-12">Snippet</div>
-            <div class="surface-10 font-13 mt-2">
-              Heart disease requires a change in lifestyle such as a healthy
-              diet. Also, regular blood pressure screenings would help
-            </div>
-          </div>
-          <div class="key-value">
-            <div class="surface-50 font-12">Retrieved From</div>
-            <div class="surface-10 font-13 mt-2">
-              s3://health-data-etl-38738/kb/health-advice.pdf
-            </div>
-          </div>
-          <div class="key-value">
-            <div class="surface-50 font-12">Finding</div>
-            <div class="surface-10 font-13 chip mt-2 inline-block">
-              Sensitive Identifiers
-            </div>
-          </div>
-          <div
-            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
-        </div>
-        <div class="mt-4">
-          <div class="key-value m-0">
-            <div class="surface-50 font-12">Snippet</div>
-            <div class="surface-10 font-13 mt-2">
-              Heart disease requires a change in lifestyle such as a healthy
-              diet. Also, regular blood pressure screenings would help
-            </div>
-          </div>
-          <div class="key-value">
-            <div class="surface-50 font-12">Retrieved From</div>
-            <div class="surface-10 font-13 mt-2">
-              s3://health-data-etl-38738/kb/health-advice.pdf
-            </div>
-          </div>
-          <div class="key-value">
-            <div class="surface-50 font-12">Finding</div>
-            <div class="surface-10 font-13 chip mt-2 inline-block">
-              Sensitive Identifiers
-            </div>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </section>
   </body>
