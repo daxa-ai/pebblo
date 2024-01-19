@@ -45,11 +45,17 @@ body {
 .inline {
   display: inline;
 }
+.inline-block {
+  display: inline-block;
+}
 .contents {
   display: contents;
 }
 .grid {
   display: grid;
+}
+.inline-flex {
+  display: inline-flex;
 }
 /* FLEX PROPERTY */
 .flex-col {
@@ -97,6 +103,10 @@ body {
   margin: 2px 0px;
   flex-shrink: 0;
 }
+.divider-horizontal {
+  width: 100%;
+  height: 1px;
+}
 /* FONT WEIGHT PROPERTY */
 .font-thin {
   font-weight: 200;
@@ -129,7 +139,11 @@ body {
 .bg-surface-10 {
   background: #191c2e;
 }
-.bg-surface-10-opacity {
+.bg-surface-10-opacity-20 {
+  background: #191c2e;
+  opacity: 0.2;
+}
+.bg-surface-10-opacity-50 {
   background: #191c2e;
   opacity: 0.5;
 }
@@ -193,10 +207,20 @@ body {
 .font-28 {
   font-size: 28px;
 }
+.font-32 {
+  font-size: 32px;
+}
 .font-48 {
   font-size: 48px;
 }
+.font-64 {
+  font-size: 64px;
+}
 /* MARGIN */
+.m-0 {
+  margin: 0 !important;
+}
+
 .ml-1 {
   margin-left: 4px;
 }
@@ -226,6 +250,9 @@ body {
 }
 .ml-13 {
   margin-left: 72px;
+}
+.ml-24 {
+  margin-left: 112px;
 }
 
 .mr-1 {
@@ -336,6 +363,9 @@ body {
 .p-0 {
   padding: 0 !important;
 }
+.pl-0 {
+  padding-left: 0 !important;
+}
 .pl-1 {
   padding-left: 4px;
 }
@@ -363,9 +393,13 @@ body {
 .pl-9 {
   padding-left: 36px;
 }
+.pl-13 {
+  padding-left: 52px;
+}
 .pl-23 {
   padding-left: 92px;
 }
+
 .pr-1 {
   padding-right: 4px;
 }
@@ -393,6 +427,9 @@ body {
 }
 .pr-9 {
   padding-right: 36px;
+}
+.pr-13 {
+  padding-right: 52px;
 }
 .pr-23 {
   padding-right: 92px;
@@ -424,9 +461,16 @@ body {
 .pt-9 {
   padding-top: 36px;
 }
+.pt-10 {
+  padding-top: 40px;
+}
+.pt-12 {
+  padding-top: 48px;
+}
 .pt-42 {
   padding-top: 168px;
 }
+
 .pb-1 {
   padding-bottom: 4px;
 }
@@ -453,6 +497,9 @@ body {
 }
 .pb-9 {
   padding-bottom: 36px;
+}
+.pb-10 {
+  padding-bottom: 40px;
 }
 
 /* BORDER */
@@ -539,4 +586,17 @@ div {
 }
 .card__body {
   margin-top: 12px;
+}
+
+.key-value {
+  font-family: "Inter", sans-serif;
+  margin-top: 12px;
+  padding: 0 12px;
+}
+
+/* CHIP DESIGN */
+.chip {
+  padding: 4px 10px;
+  border-radius: 2px;
+  border: 1px solid #ebebeb;
 }

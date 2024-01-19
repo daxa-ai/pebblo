@@ -8,6 +8,7 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
       rel="stylesheet" />
+    <link rel="stylesheet" href="./index.css" />
     <title>Daxa Report</title>
   </head>
   <body>
@@ -30,7 +31,7 @@
         </div>
       </div>
     </section>
-    <section class="bg-main p-0">
+    <!-- <section class="bg-main p-0">
       <div class="header flex justify-between inter pt-8 pb-8 pl-8 pr-8">
         <div class="flex mt-auto">
           <div class="flex items-center">
@@ -85,7 +86,7 @@
                 <div class="manrope font-22 critical semi-bold text-start">
                   {{ data.reportSummary.filesWithRestrictedData|default('0') }}
                   <span class="surface-10 font-12 normal pb-1 mt-auto"
-                    >/{{ data.reportSummary.totalFile|default('0') }}</span
+                    >/{{ data.reportSummary.totalFiles|default('0') }}</span
                   >
                 </div>
 
@@ -127,9 +128,6 @@
                   <td>
                     <div class="bar__graph flex gap-10px">
                       <div>{{ item.count|default('-') }}</div>
-                      <!--<div class="graph shrink-1">
-                        <div class="filled"></div>
-                      </div>-->
                     </div>
                   </td>
                 </tr>
@@ -170,7 +168,7 @@
                         <div class="flex flex-col ml-2 w-100">
                           <div class="surface-40">Created At</div>
                           <div class="surface-10 mt-1 w-120 break-word">
-                            {{ data.createdAt }}
+                            {{ data.instanceDetails.createdAt }}
                           </div>
                         </div>
                       </div>
@@ -242,9 +240,6 @@
           <div class="pt-2 pl-3 pb-2 pr-3">
             <div class="card__title">
               <div class="heading font-12">Load History</div>
-              <!--<div class="sub-heading font-10 ml-2">
-                Last 2 Generated Reports
-              </div>-->
             </div>
             <div class="card__body">
               <table class="fixed">
@@ -271,18 +266,212 @@
           </div>
         </div>
       </div>
+    </section> -->
+
+    <section class="p-0">
+      <div class="bg-white pl-13 pr-13 pt-8 pb-8">
+        <div class="medium flex inter items-center">
+          <div class="surface-10 font-13">Description:</div>
+          <div class="normal surface-10-opacity font-12 ml-1">
+            {{data.description}}
+          </div>
+        </div>
+      </div>
+      <div class="bg-main pt-12 pb-10 pl-13 pr-13">
+        <div class="inter flex items-center">
+          <div class="surface-10 font-14">Report Summary</div>
+          <div class="surface-10-opacity font-12 ml-2">
+            Current Load By John Doe, 10 Jan 2024
+          </div>
+        </div>
+        <div class="flex inter">
+          <div>
+            <div class="critical font-64 manrope font-thin">
+              {{ data.reportSummary.findings|default('0') }}
+            </div>
+            <div class="surface-10 font-13">Findings</div>
+          </div>
+          <div class="ml-24 font-thin manrope">
+            <div class="manrope font-64 critical text-start inline-flex">
+              {{ data.reportSummary.filesWithRestrictedData|default('0') }}
+              <span class="surface-10 font-32 normal pb-1 mt-auto"
+                >/{{ data.reportSummary.totalFiles|default('0') }}</span
+              >
+            </div>
+            <div class="surface-10 font-13">Files With Findings</div>
+          </div>
+          <div class="ml-24">
+            <div class="surface-10 font-64 manrope font-thin">
+              {{ data.reportSummary.dataSources|default('0') }}
+            </div>
+            <div class="surface-10 font-13">Number of Data Source</div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white pt-10 pb-10 pl-13 pr-13">
+        <div>
+          <div class="surface-10 font-14 inter medium">
+            Top 5 Files With Most Findings
+          </div>
+          <div class="mt-3 inter">
+            <table class="fixed">
+              <thead class="font-12">
+                <tr>
+                  <th class="medium">File Name</th>
+                  <th></th>
+                  <th class="medium text-end">Findings - Topics</th>
+                  <th class="medium text-end">Findings - Entities</th>
+                </tr>
+              </thead>
+              <tbody class="surface-10 font-13">
+                {% for item in data.topFindings %}
+                <tr>
+                  <td colspan="2">{{ item.fileName|default('-') }}</td>
+                  <td class="text-end">{{ item.count|default('-') }}</td>
+                  <td class="text-end">-</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-12">
+          <div class="inter flex items-center">
+            <div class="surface-10 font-14 medium">Load History</div>
+            <div class="surface-10-opacity ml-2 font-12">Last 5 Reports</div>
+          </div>
+          <div class="mt-3 inter">
+            <table class="fixed">
+              <thead class="font-12">
+                <tr>
+                  <th class="medium">Report Name</th>
+                  <th></th>
+                  <th class="medium text-end">Findings</th>
+                  <th class="medium text-end">Files With Findings</th>
+                  <th class="medium text-end">Generated On</th>
+                </tr>
+              </thead>
+              <tbody class="surface-10 font-13">
+                <tr>
+                  <td colspan="2">-</td>
+                  <td class="text-end">-</td>
+                  <td class="text-end">-</td>
+                  <td class="text-end">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-12">
+          <div class="surface-10 font-14 inter medium">Instance Details</div>
+          <div class="mt-3 inter">
+            <table class="fixed">
+              <colgroup>
+                <col width="33%" />
+                <col width="33%" />
+                <col width="33%" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td class="border-none font-13 pl-0">
+                    <div class="card__body--details flex">
+                      <div class="divider bg-surface-70"></div>
+                      <div class="flex flex-col ml-2">
+                        <div class="surface-40 font-12">IP</div>
+                        <div class="surface-10 mt-1">
+                          {{ data.instanceDetails.ip }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-none font-13 pl-0">
+                    <div class="card__body--details flex">
+                      <div class="divider bg-surface-70"></div>
+                      <div class="flex flex-col ml-2">
+                        <div class="surface-40 font-12">Runtime</div>
+                        <div class="surface-10 mt-1">
+                          {{ data.instanceDetails.runtime }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-none font-13 pl-0">
+                    <div class="card__body--details flex">
+                      <div class="divider bg-surface-70"></div>
+                      <div class="flex flex-col ml-2">
+                        <div class="surface-40 font-12">Language</div>
+                        <div class="surface-10 mt-1">
+                          {{ data.instanceDetails.language }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border-none font-13 pl-0">
+                    <div class="card__body--details flex">
+                      <div class="divider bg-surface-70"></div>
+                      <div class="flex flex-col ml-2">
+                        <div class="surface-40 font-12">Created At</div>
+                        <div class="surface-10 mt-1">
+                          {{ data.instanceDetails.createdAt }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-none font-13 pl-0">
+                    <div class="card__body--details flex">
+                      <div class="divider bg-surface-70"></div>
+                      <div class="flex flex-col ml-2">
+                        <div class="surface-40 font-12">Host</div>
+                        <div class="surface-10 mt-1">
+                          {{ data.instanceDetails.host }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-none font-13 pl-0">
+                    <div class="card__body--details flex">
+                      <div class="divider bg-surface-70"></div>
+                      <div class="flex flex-col ml-2">
+                        <div class="surface-40 font-12">Language Version</div>
+                        <div class="surface-10 mt-1">
+                          {{ data.instanceDetails.languageVersion }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border-none font-13 pl-0" colspan="3">
+                    <div class="card__body--details flex">
+                      <div class="divider bg-surface-70"></div>
+                      <div class="flex flex-col ml-2">
+                        <div class="surface-40 font-12">Path</div>
+                        <div class="surface-10 mt-1 break-word">
+                          {{ data.instanceDetails.path }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </section>
     <section>
       <div>
         <div class="surface-10 inter font-14 medium flex">
           <div>Data Source 1:</div>
           <img class="ml-1" src="../assets/aws_s3.png" alt="S3 logo" />
-          <div class="ml-1">S3 Directory Loader</div>
+          <div class="ml-1">{{ datastores.name }}</div>
         </div>
         <div class="surface-10-opacity inter font-12 flex">
-          <div>Source: s3://health-data-etl-38738/kb</div>
+          <div>Source: {{ datastores.sourcePath }}</div>
           <div class="divider bg-surface-10-opacity ml-2"></div>
-          <div class="ml-2">Size: 12 GB</div>
+          <div class="ml-2">Size: -</div>
         </div>
       </div>
 
@@ -296,16 +485,105 @@
           </tr>
         </thead>
         <tbody class="surface-10 font-13 inter">
+          {% for item in datastores.findingsSummary %}
           <tr>
-            <td>Topic</td>
-            <td>Medical Advice</td>
-            <td class="text-end">12</td>
-            <td class="text-end">24</td>
+            <td>{{ item.findingsType|capitalize }}</td>
+            <td>{{item.labelName}}</td>
+            <td class="text-end">{{item.fileCount}}</td>
+            <td class="text-end">{{item.snippetCount}}</td>
           </tr>
+          {% endfor %}
         </tbody>
       </table>
     </section>
+    <section>
+      <div>
+        <div class="inter flex items-center">
+          <div class="font-14 surface-10">Snippets</div>
+          <div class="font-12 surface-10-opacity ml-2">
+            Showing 100 out of 234
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
+            <div class="surface-10 font-13">Medical Advice</div>
+            <div class="sub-heading ml-2 surface-50 font-12">
+              Showing 2 Snippets out of 23
+            </div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Snippet</div>
+            <div class="surface-10 font-13 mt-2">
+              Heart disease requires a change in lifestyle such as a healthy
+              diet. Also, regular blood pressure screenings would help
+            </div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Retrieved From</div>
+            <div class="surface-10 font-13 mt-2">
+              s3://health-data-etl-38738/kb/health-advice.pdf
+            </div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Finding</div>
+            <div class="surface-10 font-13 chip mt-2 inline-block">
+              Sensitive Identifiers
+            </div>
+          </div>
+          <div
+            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
+        </div>
+        <div class="mt-4">
+          <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
+            <div class="surface-10 font-13">Medical Advice</div>
+            <div class="sub-heading ml-2 surface-50 font-12">
+              Showing 2 Snippets out of 23
+            </div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Snippet</div>
+            <div class="surface-10 font-13 mt-2">
+              Heart disease requires a change in lifestyle such as a healthy
+              diet. Also, regular blood pressure screenings would help
+            </div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Retrieved From</div>
+            <div class="surface-10 font-13 mt-2">
+              s3://health-data-etl-38738/kb/health-advice.pdf
+            </div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Finding</div>
+            <div class="surface-10 font-13 chip mt-2 inline-block">
+              Sensitive Identifiers
+            </div>
+          </div>
+          <div
+            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
+        </div>
+        <div class="mt-4">
+          <div class="key-value m-0">
+            <div class="surface-50 font-12">Snippet</div>
+            <div class="surface-10 font-13 mt-2">
+              Heart disease requires a change in lifestyle such as a healthy
+              diet. Also, regular blood pressure screenings would help
+            </div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Retrieved From</div>
+            <div class="surface-10 font-13 mt-2">
+              s3://health-data-etl-38738/kb/health-advice.pdf
+            </div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Finding</div>
+            <div class="surface-10 font-13 chip mt-2 inline-block">
+              Sensitive Identifiers
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </body>
 </html>
-
-<!-- <div style="page-break-before: always"></div> -->
