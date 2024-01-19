@@ -1,13 +1,6 @@
-from enum import Enum
+# Confidence score
+TOPIC_CONFIDENCE_SCORE = 0.60
 
-
-class Topics(Enum):
-    """
-    Enumeration of all possible topics
-    """
-    MEDICAL_ADVICE = "Medical Advice"
-    HARMFUL_ADVICE = "Harmful Advice"
-
-
-class ConfidenceScore(Enum):
-    Topic = "0.60"
+# Model paths
+TOKENIZER_PATH = 'daxa-ai/Daxa-Classifier-Bert'
+CLASSIFIER_PATH = 'daxa-ai/Daxa-Classifier-Bert'

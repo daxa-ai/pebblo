@@ -7,3 +7,4 @@ torch==2.1.2
 transformers==4.36.2
 jinja2==2.11.3
 weasyprint==60.2
+scikit-learn==1.4.0
