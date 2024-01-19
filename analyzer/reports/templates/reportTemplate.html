@@ -6,13 +6,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet" />
     <title>Daxa Report</title>
   </head>
-  <body class="bg-main">
-    <div class="main">
+  <body>
+    <section class="cover-page pl-23 pr-23 pt-42">
+      <div class="surface-60 inter font-48 font-thin">Data Report</div>
+      <div class="mt-9">
+        <div class="surface-60 inter font-48 font-thin">
+          {{data.framework.name|capitalize}}
+        </div>
+        <div class="purple-10 inter font-28 mt-2">
+          Langchain {{data.framework.version}}
+        </div>
+      </div>
+      <div class="mt-11">
+        <div class="purple-10 font-13 inter font-thin">
+          Application Owner: {{ data.reportSummary.owner }}
+        </div>
+        <div class="purple-10 font-13 inter font-thin mt-2">
+          Report Generated On {{ date.strftime('%B %d, %Y') }}
+        </div>
+      </div>
+    </section>
+    <section class="bg-main p-0">
       <div class="header flex justify-between inter pt-8 pb-8 pl-8 pr-8">
         <div class="flex mt-auto">
           <div class="flex items-center">
@@ -44,7 +62,7 @@
         <div class="mb-3">
           <div class="font-10 medium inline inter">
             Description:
-            <span class="normal">{{ data.description }} </span>
+            <span class="normal">{{data.description}}</span>
           </div>
         </div>
         <div class="card mb-3">
@@ -67,7 +85,7 @@
                 <div class="manrope font-22 critical semi-bold text-start">
                   {{ data.reportSummary.filesWithRestrictedData|default('0') }}
                   <span class="surface-10 font-12 normal pb-1 mt-auto"
-                    >/{{ data.reportSummary.totalFiles|default('0') }}</span
+                    >/{{ data.reportSummary.totalFile|default('0') }}</span
                   >
                 </div>
 
@@ -89,17 +107,23 @@
             <div class="heading font-12 medium">
               Top 5 Files With Most Findings
             </div>
-            <table>
+            <table class="fixed mt-3">
               <thead class="inter font-10 surface-50">
-                <tr>
+                <tr class="bg-main">
                   <th class="text-start medium">Filename</th>
+                  <th></th>
+                  <th></th>
                   <th class="text-start medium">Findings</th>
                 </tr>
               </thead>
               <tbody class="inter surface-10 font-10">
                 {% for item in data.topFindings %}
                 <tr>
-                  <td>{{ item.fileName|default('-') }}</td>
+                  <td colspan="3">
+                    <div class="w-90 break-word">
+                      {{ item.fileName|default('-') }}
+                    </div>
+                  </td>
                   <td>
                     <div class="bar__graph flex gap-10px">
                       <div>{{ item.count|default('-') }}</div>
@@ -146,7 +170,7 @@
                         <div class="flex flex-col ml-2 w-100">
                           <div class="surface-40">Created At</div>
                           <div class="surface-10 mt-1 w-120 break-word">
-                            {{ data.instanceDetails.createdAt }}
+                            {{ data.createdAt }}
                           </div>
                         </div>
                       </div>
@@ -223,7 +247,7 @@
               </div>-->
             </div>
             <div class="card__body">
-              <table width="100%">
+              <table class="fixed">
                 <thead class="inter font-10 surface-50">
                   <tr>
                     <th class="text-start medium">Report Name</th>
@@ -247,6 +271,41 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
+    <section>
+      <div>
+        <div class="surface-10 inter font-14 medium flex">
+          <div>Data Source 1:</div>
+          <img class="ml-1" src="../assets/aws_s3.png" alt="S3 logo" />
+          <div class="ml-1">S3 Directory Loader</div>
+        </div>
+        <div class="surface-10-opacity inter font-12 flex">
+          <div>Source: s3://health-data-etl-38738/kb</div>
+          <div class="divider bg-surface-10-opacity ml-2"></div>
+          <div class="ml-2">Size: 12 GB</div>
+        </div>
+      </div>
+
+      <table class="mt-4 fixed">
+        <thead class="font-12 inter">
+          <tr>
+            <th class="text-start">Finding Type</th>
+            <th class="text-start">Finding</th>
+            <th class="text-end">Source Files</th>
+            <th class="text-end">Snippets</th>
+          </tr>
+        </thead>
+        <tbody class="surface-10 font-13 inter">
+          <tr>
+            <td>Topic</td>
+            <td>Medical Advice</td>
+            <td class="text-end">12</td>
+            <td class="text-end">24</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </body>
 </html>
+
+<!-- <div style="page-break-before: always"></div> -->
