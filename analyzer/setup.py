@@ -4,7 +4,7 @@ setup(
     name="daxa",
     python_requires=">=3.7",
     version="0.1.0",
-    url="https://github.com/daxa-ai/daxa-analyzer-rc",
+    url='https://test.pypi.org/legacy/'
     license="Other/Proprietary License",
     description="Daxa OpenSource",
     long_description="Daxa OpenSource TBD",
