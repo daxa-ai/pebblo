@@ -48,10 +48,11 @@ class DocHelper:
             if label_name in data_source_findings.keys():
                 data_source_findings[label_name]["labelName"] = label_name
                 data_source_findings[label_name]["snippetCount"] += 1
-                data_source_findings[label_name]["fileCount"] += 1
                 data_source_findings[label_name]["count"] += value
                 data_source_findings[label_name]["findingsType"] = entity_type
                 data_source_findings[label_name]["snippets"].append(snippet.dict())
+                unique_source_paths = set(snippet["sourcePath"] for snippet in data_source_findings[label_name]["snippets"])
+                data_source_findings[label_name]["fileCount"] = len(unique_source_paths)
             else:
                 dict_obj = {f"labelName": label_name, "count": value, "findingsType": entity_type, "snippetCount": 1,
                             "fileCount": file_count}
@@ -134,7 +135,10 @@ class DocHelper:
     def _generate_final_report(self, report_metadata_init):
         logger.debug("In Function: _generate_final_report")
         loader_source_snippets = report_metadata_init["loader_source_snippets"]
-        file_count_restricted_data = len(loader_source_snippets)
+        file_count_restricted_data = 0
+        for file_list in self.app_details["loader_source_files"]:
+            for file_dict in file_list:
+                file_count_restricted_data += file_dict.get("count", 0)
         report_summary = Summary(
             findings=report_metadata_init["total_findings"],
             findings_entities=report_metadata_init["findings_entities"],
