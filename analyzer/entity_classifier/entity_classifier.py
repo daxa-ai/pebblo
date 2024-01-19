@@ -75,7 +75,7 @@ class EntityClassifier:
         total_count = 0
         try:
             logger.info("Presidio Secret Entity Classifier Started.")
-            logger.info(f"Data Input: {self.input_text}")
+            logger.info(f"Data Input: {input_text}")
 
             # Adding custom analyzer
             custom_recognizer = add_custom_regex_analyzer_registry()
