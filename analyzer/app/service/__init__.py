@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from analyzer.app.routers.routers import router_instance
 
-from topic_classifier.topic_classifier import TopicClassifier
+from analyzer.topic_classifier.topic_classifier import TopicClassifier
 
 
 def start():
