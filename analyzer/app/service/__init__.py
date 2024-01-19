@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from analyzer.app.routers.routers import router_instance
 
 from analyzer.topic_classifier.topic_classifier import TopicClassifier
-from analyzer.entity_classifier.entity_classifier import EntityClassifier
+from entity_classifier.entity_classifier import EntityClassifier
 
 
 def start():
