@@ -1,5 +1,5 @@
 # Copyright (c) 2024 Daxa. All rights reserved.
-from app.api.api import App
+from analyzer.app.api.api import App
 
 # Create an instance of APp with a specific prefix
 router_instance = App(prefix="/v1")

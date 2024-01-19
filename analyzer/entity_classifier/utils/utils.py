@@ -3,8 +3,8 @@ Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 """
 from presidio_analyzer import Pattern, PatternRecognizer
 
-from entity_classifier.utils.config import SecretEntities, ConfidenceScore
-from entity_classifier.utils.regex_pattern import regex_secrets_patterns
+from analyzer.entity_classifier.utils.config import SecretEntities, ConfidenceScore
+from analyzer.entity_classifier.utils.regex_pattern import regex_secrets_patterns
 
 
 def get_restricted_entities(entities_enum, response):

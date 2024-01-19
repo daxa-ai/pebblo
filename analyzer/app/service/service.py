@@ -1,12 +1,12 @@
 # Copyright (c) 2024 Daxa. All rights reserved.
 
 from datetime import datetime
-from reports.reports import Reports
-from app.enums.enums import CacheDir
-from app.utils.utils import write_json_to_file, read_json_file, get_full_path
-from app.libs.logger import logger
-from app.models.models import LoaderMetadata, Metadata, AiApp, InstanceDetails
-from app.service.doc_helper import DocHelper
+from analyzer.reports.reports import Reports
+from analyzer.app.enums.enums import CacheDir
+from analyzer.app.utils.utils import write_json_to_file, read_json_file, get_full_path
+from analyzer.app.libs.logger import logger
+from analyzer.app.models.models import LoaderMetadata, Metadata, AiApp, InstanceDetails
+from analyzer.app.service.doc_helper import DocHelper
 
 
 class AppDiscover:
