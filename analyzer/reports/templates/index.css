@@ -1,10 +1,15 @@
 @page {
-  size: Letter;
-  margin: 0in 0in 0in 0in;
+  size: A4;
+  margin: 0px;
 }
 * {
   margin: 0;
   padding: 0;
+}
+
+body {
+  height: 1200px;
+  width: 100%;
 }
 /* Common styles start */
 /* FONT FAMILY */
@@ -15,11 +20,14 @@
   font-family: "Manrope", sans-serif;
 }
 /* WIDTH PROPERTY */
+.w-fit {
+  width: fit-content;
+}
 .w-100 {
   width: 100%;
 }
-.w-fit {
-  width: fit-content;
+.w-90 {
+  width: 90%;
 }
 .w-300 {
   width: 300px;
@@ -28,17 +36,26 @@
   width: 120px;
 }
 /* DISPLAY PROPERTY */
+.none {
+  display: none;
+}
 .flex {
   display: flex;
 }
 .inline {
   display: inline;
 }
+.inline-block {
+  display: inline-block;
+}
 .contents {
   display: contents;
 }
 .grid {
   display: grid;
+}
+.inline-flex {
+  display: inline-flex;
 }
 /* FLEX PROPERTY */
 .flex-col {
@@ -79,41 +96,21 @@
 .shrink-1 {
   flex-shrink: 1 !important;
 }
-/* padding PROPERTY */
-.padding-2px {
-  padding: 2px;
-}
-.padding-6px {
-  padding: 6px;
-}
-.padding-10px {
-  padding: 10px;
-}
-.padding-1 {
-  padding: 4px;
-}
-.padding-2 {
-  padding: 8px;
-}
-.padding-3 {
-  padding: 12px;
-}
-.padding-4 {
-  padding: 16px;
-}
-.padding-9 {
-  padding: 36px;
-}
-.padding-13 {
-  padding: 72px;
-}
+
 /* DIVIDER */
 .divider {
   width: 1px;
   margin: 2px 0px;
   flex-shrink: 0;
 }
+.divider-horizontal {
+  width: 100%;
+  height: 1px;
+}
 /* FONT WEIGHT PROPERTY */
+.font-thin {
+  font-weight: 200;
+}
 .normal {
   font-weight: 400;
 }
@@ -142,14 +139,29 @@
 .bg-surface-10 {
   background: #191c2e;
 }
+.bg-surface-10-opacity-20 {
+  background: #191c2e;
+  opacity: 0.2;
+}
+.bg-surface-10-opacity-50 {
+  background: #191c2e;
+  opacity: 0.5;
+}
 .bg-surface-70 {
   background: #ced0dc;
 }
 .surface-40 {
   color: #606686;
 }
+.purple-10 {
+  color: #8a79ab;
+}
 .surface-20 {
   color: #3b3e52;
+}
+.surface-10-opacity {
+  color: #191c2e;
+  opacity: 0.5;
 }
 .surface-10 {
   color: #191c2e;
@@ -183,13 +195,32 @@
 .font-12 {
   font-size: 12px;
 }
+.font-13 {
+  font-size: 13px;
+}
 .font-14 {
   font-size: 14px;
 }
 .font-22 {
   font-size: 22px;
 }
+.font-28 {
+  font-size: 28px;
+}
+.font-32 {
+  font-size: 32px;
+}
+.font-48 {
+  font-size: 48px;
+}
+.font-64 {
+  font-size: 64px;
+}
 /* MARGIN */
+.m-0 {
+  margin: 0 !important;
+}
+
 .ml-1 {
   margin-left: 4px;
 }
@@ -219,6 +250,9 @@
 }
 .ml-13 {
   margin-left: 72px;
+}
+.ml-24 {
+  margin-left: 112px;
 }
 
 .mr-1 {
@@ -278,6 +312,12 @@
 .mt-9 {
   margin-top: 36px;
 }
+.mt-11 {
+  margin-top: 44px;
+}
+.mt-12 {
+  margin-top: 48px;
+}
 .mb-1 {
   margin-bottom: 4px;
 }
@@ -320,6 +360,12 @@
 }
 
 /* PADDING */
+.p-0 {
+  padding: 0 !important;
+}
+.pl-0 {
+  padding-left: 0 !important;
+}
 .pl-1 {
   padding-left: 4px;
 }
@@ -347,6 +393,13 @@
 .pl-9 {
   padding-left: 36px;
 }
+.pl-13 {
+  padding-left: 52px;
+}
+.pl-23 {
+  padding-left: 92px;
+}
+
 .pr-1 {
   padding-right: 4px;
 }
@@ -375,6 +428,12 @@
 .pr-9 {
   padding-right: 36px;
 }
+.pr-13 {
+  padding-right: 52px;
+}
+.pr-23 {
+  padding-right: 92px;
+}
 .pt-1 {
   padding-top: 4px;
 }
@@ -402,6 +461,16 @@
 .pt-9 {
   padding-top: 36px;
 }
+.pt-10 {
+  padding-top: 40px;
+}
+.pt-12 {
+  padding-top: 48px;
+}
+.pt-42 {
+  padding-top: 168px;
+}
+
 .pb-1 {
   padding-bottom: 4px;
 }
@@ -429,6 +498,10 @@
 .pb-9 {
   padding-bottom: 36px;
 }
+.pb-10 {
+  padding-bottom: 40px;
+}
+
 /* BORDER */
 .border-thin {
   border-width: 0.5px;
@@ -449,6 +522,18 @@
 }
 
 /* Common styles end */
+
+section {
+  height: 100%;
+  padding: 48px 52px;
+  page-break-after: always;
+}
+
+.cover-page {
+  background-image: url("../assets/cover-page-background.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
 
 /* CARD */
 .card {
@@ -478,15 +563,22 @@
 }
 table {
   width: 100%;
+  border-collapse: collapse;
 }
 table.fixed {
   table-layout: fixed;
 }
-th,
 td {
   flex-shrink: 0;
-  padding: 12px 0px;
-  border-bottom: 0.5px solid rgba(230, 231, 237, 0.8);
+  padding: 8px 12px;
+  border-bottom: 0.5px solid rgba(25, 28, 46, 0.2);
+}
+th {
+  color: #7e83a5;
+  flex-shrink: 0;
+  background: #f5f5f9;
+  font-weight: 400;
+  padding: 4px 12px;
 }
 
 div {
@@ -494,4 +586,17 @@ div {
 }
 .card__body {
   margin-top: 12px;
+}
+
+.key-value {
+  font-family: "Inter", sans-serif;
+  margin-top: 12px;
+  padding: 0 12px;
+}
+
+/* CHIP DESIGN */
+.chip {
+  padding: 4px 10px;
+  border-radius: 2px;
+  border: 1px solid #ebebeb;
 }
