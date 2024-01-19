@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="daxa",
     python_requires=">=3.7",
-    version="0.1.1",
+    version="0.1.2",
     url="https://github.com/daxa-ai/daxa-analyzer-rc1",
     license="Other/Proprietary License",
     description="Daxa OpenSource",
@@ -12,6 +12,8 @@ setup(
     author="Daxa OpenSource Authors",
     author_email="info@daxa.ai",
     packages=find_packages(exclude=["tests*"]),
+    package_data={'analyzer': ['reports/templates/*', 'reports/assets/*']},
+    include_package_data=True,
     install_requires=[
         "fastapi==0.109.0",
         "uvicorn==0.25.0",
