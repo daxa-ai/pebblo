@@ -1,9 +1,11 @@
 # Import HTML to PDF generator function
 
 from reports.html_to_pdf_generator.report_generator import convertHtmlToPdf;
+import os
 
 class Reports:
     # Generate report - JSON data, output file name, template file name
     @staticmethod
     def generate_report(data, outputPath='./report.pdf', templateName='reportTemplate.html'):
-        convertHtmlToPdf(data, outputPath, templateName)
+        searchPath = os.path.join(os.path.dirname(__file__), 'templates/')
+        convertHtmlToPdf(data, outputPath, templateName = templateName, searchPath=searchPath)
