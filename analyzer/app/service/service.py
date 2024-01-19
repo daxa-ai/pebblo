@@ -53,6 +53,7 @@ class AppDiscover:
             ai_apps_model = AiApp(
                 metadata=metadata,
                 name=application_name,
+                description=self.data.get("description"),
                 owner=owner,
                 pluginVersion=self.data.get("plugin_version"),
                 instanceDetails=instance_details_model,

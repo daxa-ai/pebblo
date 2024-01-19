@@ -63,6 +63,7 @@ class InstanceDetails(BaseModel):
 class AiApp(BaseModel):
     metadata: Metadata
     name: str
+    description: str
     owner: str
     pluginVersion: Optional[str]
     instanceDetails: Optional[InstanceDetails]
@@ -72,6 +73,8 @@ class AiApp(BaseModel):
 
 class Summary(BaseModel):
     findings: int
+    findings_entities: int
+    findings_topics: int
     totalFiles: int
     filesWithRestrictedData: int
     dataSources: int
@@ -87,16 +90,14 @@ class TopFindings(BaseModel):
 class Snippets(BaseModel):
     snippet: str
     sourcePath: str
-    findings: int
-    findingType: str
 
 
 class DataSource(BaseModel):
     name: str
     sourcePath: str
     sourceType: str
-    summary: Optional[Summary]
-    findings: Optional[List]
+    findingsSummary: list
+    findingsDetails: Optional[list]
     # snippets: Optional[List[Snippets]]
 
 
