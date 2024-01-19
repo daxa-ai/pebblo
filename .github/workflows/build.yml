@@ -23,9 +23,8 @@ jobs:
         cd analyzer
         python -m pip install --upgrade pip 
         pip install -r requirements.txt
-        # pip install build
-        # python -m build --wheel
-        python setup.py sdist bdist_wheel
+        pip install build
+        python -m build --wheel
         ls -la 
         ls -la dist/
     - name: Store the distribution packages
