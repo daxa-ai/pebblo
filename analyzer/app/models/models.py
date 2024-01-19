@@ -63,7 +63,7 @@ class InstanceDetails(BaseModel):
 class AiApp(BaseModel):
     metadata: Metadata
     name: str
-    description: str
+    description: Optional[str]
     owner: str
     pluginVersion: Optional[str]
     instanceDetails: Optional[InstanceDetails]
@@ -103,7 +103,7 @@ class DataSource(BaseModel):
 
 class ReportModel(BaseModel):
     name: str
-    description: str
+    description: Optional[str]
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary]
     topFindings: Optional[List[TopFindings]]
