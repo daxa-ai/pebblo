@@ -36,7 +36,7 @@ jobs:
     needs: build
     environment:
       name: qa
-      url: https://test.pypi.org/p/daxa-analyzer-rc1
+      url: https://test.pypi.org/p/daxa-analyzer-rc1-qa
     permissions:
       id-token: write
     steps:
