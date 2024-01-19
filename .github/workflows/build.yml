@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: qa
+      name: testpypi
       url: https://test.pypi.org/p/daxaanalyzer
     permissions:
       id-token: write
