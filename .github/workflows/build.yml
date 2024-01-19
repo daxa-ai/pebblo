@@ -20,9 +20,6 @@ jobs:
         python-version: "3.10.x"
     - name: Install pypa/build
       run: |
-        cd analyzer
-        python -m pip install --upgrade pip 
-        pip install -r requirements.txt
         pip install build
         python -m build --wheel
         ls -la 
@@ -31,7 +28,7 @@ jobs:
       uses: actions/upload-artifact@v4.2.0
       with:
         name: python-package-distributions
-        path: analyzer/dist/
+        path: dist/
 
   release-on-pypi:
     runs-on: ubuntu-latest
@@ -46,12 +43,12 @@ jobs:
         uses: actions/download-artifact@v4.1.1
         with:
           name: python-package-distributions
-          path: analyzer/dist/
+          path: dist/
 
       - name: Build and Upload to Test PyPI
         run: |
           python -m pip install twine
-          twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ analyzer/dist/*
+          twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TEST_TOKEN }}
