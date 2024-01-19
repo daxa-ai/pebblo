@@ -1,7 +1,3 @@
-"""
-Copyright (c) 2024 Daxa, Inc. All rights reserved.
-"""
-
 import os
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification

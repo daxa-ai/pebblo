@@ -1,7 +1,3 @@
-"""
-Copyright (c) 2024 Daxa, Inc. All rights reserved.
-"""
-
 topic_display_names = {
     "NORMAL_TEXT": "Normal Advice",
     "MEDICAL_ADVICE": "Medical Advice",
