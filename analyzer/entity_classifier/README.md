@@ -27,8 +27,8 @@ from analyzer.entity_classifier.entity_classifier import EntityClassifier
 
 text = <Input Data>
 entity_classifier_obj = EntityClassifier(text)
-restricted_entity_groups, total_entity_count = entity_classifier_obj.presidio_entity_classifier()
-print(f"Entity Group: {restricted_entity_groups}")
+entity_groups, total_entity_count = entity_classifier_obj.presidio_entity_classifier()
+print(f"Entity Group: {entity_groups}")
 print(f"Entity Count: {total_entity_count}")
 ```
 Secret Entity Classifier

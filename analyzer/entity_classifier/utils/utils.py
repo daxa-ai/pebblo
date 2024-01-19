@@ -7,16 +7,16 @@ from analyzer.entity_classifier.utils.config import SecretEntities, ConfidenceSc
 from analyzer.entity_classifier.utils.regex_pattern import regex_secrets_patterns
 
 
-def get_restricted_entities(entities_enum, response):
-    restricted_entity_groups = dict()
+def get_entities(entities_enum, response):
+    entity_groups = dict()
     total_count = 0
     for entity in response:
         if entity.entity_type in entities_enum.__members__:
             mapped_entity = entities_enum[entity.entity_type].value
-            restricted_entity_groups[mapped_entity] = restricted_entity_groups.get(mapped_entity, 0) + 1
+            entity_groups[mapped_entity] = entity_groups.get(mapped_entity, 0) + 1
             total_count += 1
 
-    return restricted_entity_groups, total_count
+    return entity_groups, total_count
 
 
 def add_custom_regex_analyzer_registry():
