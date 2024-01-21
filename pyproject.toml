@@ -9,7 +9,7 @@ repository = "https://github.com/daxa-ai/daxa-analyzer-rc1"
 packages = [{include = "analyzer"}, {include = "bin"}]
 
 [tool.poetry.dependencies]
-python = ">=3.10"
+python = ">=3.10,<4.0"
 fastapi = "0.109.0"
 uvicorn = "0.25.0"
 pydantic = "1.10.0a1"
