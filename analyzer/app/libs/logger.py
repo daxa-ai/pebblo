@@ -7,7 +7,7 @@ import os
 
 def get_logger():
     """Get object of logger"""
-    logger_obj = logging.getLogger("Daxa App Logger")
+    logger_obj = logging.getLogger("Pebblo Logger")
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     console_handle = logging.StreamHandler()
     console_handle.setFormatter(formatter)

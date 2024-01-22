@@ -22,7 +22,7 @@ version = "0.1.3"  # Required
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
 # https://packaging.python.org/specifications/core-metadata/#summary
-description = "Daxa Opensource analyzer"  # Optional
+description = "Pebblo Gen-AI Data Analyzer"  # Optional
 
 # This is an optional longer description of your project that represents
 # the body of text which users will see when they visit PyPI.
@@ -57,14 +57,14 @@ keywords = ["langchain", "ai", "rag"]  # Optional
 # authored the project, and a valid email address corresponding to the name
 # listed.
 authors = [
-  { name = "Daxa OpenSource Authors", email = "info@daxa.ai" } # Optional
+  { name = "Pebblo Authors", email = "pebblo@daxa.ai" } # Optional
 ]
 
 # This should be your name or the names of the organization who currently
 # maintains the project, and a valid email address corresponding to the name
 # listed.
 maintainers = [
-  { name = "Daxa Inc", email = "info@daxa.ai" } # Optional
+  { name = "Pebblo Maintainer", email = "pebblo@daxa.ai" } # Optional
 ]
 
 # Classifiers help users find your project by categorizing it.
@@ -140,15 +140,15 @@ test = ["coverage"]
 # maintainers, and where to support the project financially. The key is
 # what's used to render the link text on PyPI.
 [project.urls]  # Optional
-"Homepage" = "https://github.com/daxa-ai/daxa-analyzer-rc1"
-"Bug Reports" = "https://github.com/daxa-ai/daxa-analyzer-rc1/issues"
+"Homepage" = "https://github.com/daxa-ai/pebblo"
+"Bug Reports" = "https://github.com/daxa-ai/pebblo/issues"
 "Funding" = "https://donate.pypi.org"
-"Source" = "https://github.com/daxa-ai/daxa-analyzer-rc1/"
+"Source" = "https://github.com/daxa-ai/pebblo/"
 
 # The following would provide a command line executable called `sample`
 # which executes the function `main` from this package when invoked.
 [project.scripts]  # Optional
-pebblo = "analyzer.bin.daxa:main"
+pebblo = "analyzer.bin.pebblo:main"
 
 # This is configuration specific to the `setuptools` build backend.
 # If you are using a different build backend, you will need to change this.
