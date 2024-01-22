@@ -1,6 +1,6 @@
 # Import HTML to PDF generator function
 
-from analyzer.reports.html_to_pdf_generator.report_generator import convertHtmlToPdf;
+from pebblo.reports.html_to_pdf_generator.report_generator import convertHtmlToPdf;
 import os
 
 class Reports:

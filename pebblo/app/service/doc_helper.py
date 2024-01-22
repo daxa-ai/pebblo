@@ -3,10 +3,10 @@
 """
 
 from datetime import datetime
-from analyzer.app.libs.logger import logger
-from analyzer.app.models.models import Metadata, AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource
-from analyzer.entity_classifier.entity_classifier import EntityClassifier
-from analyzer.topic_classifier.topic_classifier import TopicClassifier
+from pebblo.app.libs.logger import logger
+from pebblo.app.models.models import Metadata, AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource
+from pebblo.entity_classifier.entity_classifier import EntityClassifier
+from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 # Init topic classifier
 topic_classifier_obj = TopicClassifier()

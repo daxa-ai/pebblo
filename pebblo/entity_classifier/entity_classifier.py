@@ -1,10 +1,10 @@
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 
-from analyzer.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities
-from analyzer.entity_classifier.utils.utils import get_entities, add_custom_regex_analyzer_registry
+from pebblo.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities
+from pebblo.entity_classifier.utils.utils import get_entities, add_custom_regex_analyzer_registry
 
-from analyzer.entity_classifier.libs.logger import logger
+from pebblo.entity_classifier.libs.logger import logger
 
 
 class EntityClassifier:

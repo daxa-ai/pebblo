@@ -1,10 +1,10 @@
 from datetime import datetime
-from analyzer.reports.reports import Reports
-from analyzer.app.enums.enums import CacheDir
-from analyzer.app.utils.utils import write_json_to_file, read_json_file, get_full_path
-from analyzer.app.libs.logger import logger
-from analyzer.app.models.models import LoaderMetadata, Metadata, AiApp, InstanceDetails
-from analyzer.app.service.doc_helper import DocHelper
+from pebblo.reports.reports import Reports
+from pebblo.app.enums.enums import CacheDir
+from pebblo.app.utils.utils import write_json_to_file, read_json_file, get_full_path
+from pebblo.app.libs.logger import logger
+from pebblo.app.models.models import LoaderMetadata, Metadata, AiApp, InstanceDetails
+from pebblo.app.service.doc_helper import DocHelper
 
 
 class AppDiscover:
