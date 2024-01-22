@@ -28,7 +28,8 @@ class TopicClassifier:
     def __init__(self):
         _tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
         _model = AutoModelForSequenceClassification.from_pretrained(CLASSIFIER_PATH)
-        self.classifier = pipeline("text-classification", model=_model, tokenizer=_tokenizer, return_all_scores=True)
+        self.classifier = pipeline("text-classification", model=_model, tokenizer=_tokenizer,
+                                   truncation=True, max_length=512, return_all_scores=True)
 
     def predict(self, input_text):
         """
@@ -37,6 +38,7 @@ class TopicClassifier:
         try:
             topic_model_response = self.classifier(input_text)
             topics, total_count = self._get_topics(topic_model_response)
+            logger.debug(f"Topics: {topics}")
             return topics, total_count
         except Exception as e:
             logger.error(f"Error in topic_classifier. Exception: {e}")
@@ -44,7 +46,7 @@ class TopicClassifier:
 
     @staticmethod
     def _get_topics(topic_model_response):
-        logger.debug(topic_model_response)
+        logger.debug(f"Topics model response: {topic_model_response}")
         topic_model_response = topic_model_response[0]
         topics = dict()
         for topic in topic_model_response:
