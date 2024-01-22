@@ -30,6 +30,8 @@ class AiDataModel(BaseModel):
 class AiDocs(BaseModel):
     metadata: Metadata
     doc: str
+    size: int
+    owner: str
     sourcePath: str
     loaderSourcePath: str
     lastModified: Optional[datetime]
@@ -72,8 +74,8 @@ class AiApp(BaseModel):
 
 class Summary(BaseModel):
     findings: int
-    findings_entities: int
-    findings_topics: int
+    findingsEntities: int
+    findingsTopics: int
     totalFiles: int
     filesWithRestrictedData: int
     dataSources: int
@@ -83,12 +85,18 @@ class Summary(BaseModel):
 
 class TopFindings(BaseModel):
     fileName: str
-    count: int
+    owner: str
+    size: int
+    findingsEntities: int
+    findingsTopics: int
+    findings: int
 
 
 class Snippets(BaseModel):
     snippet: str
     sourcePath: str
+    owner: str
+    size: int
 
 
 class DataSource(BaseModel):

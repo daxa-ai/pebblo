@@ -19,6 +19,7 @@ class DocHelper:
         self.app_details = app_details
         self.data = data
         self.load_id = load_id
+        self.loader_mapper = {}
 
     def _get_classifier_response(self, doc):
         doc_info = AiDataModel(data=doc.get("doc", None),
@@ -43,18 +44,22 @@ class DocHelper:
 
     def _get_finding_details(self, doc, data_source_findings, entity_type, file_count):
         source_path = doc.get("sourcePath")
-        snippet = Snippets(snippet=doc["doc"], sourcePath=source_path)
+        snippet = Snippets(snippet=doc["doc"],
+                           sourcePath=source_path,
+                           owner=doc.get("owner", " "),
+                           size=doc.get("size", 0))
         for label_name, value in doc[entity_type].items():
             if label_name in data_source_findings.keys():
                 data_source_findings[label_name]["labelName"] = label_name
                 data_source_findings[label_name]["snippetCount"] += 1
-                data_source_findings[label_name]["count"] += value
+                data_source_findings[label_name]["findings"] += value
                 data_source_findings[label_name]["findingsType"] = entity_type
                 data_source_findings[label_name]["snippets"].append(snippet.dict())
-                unique_source_paths = set(snippet["sourcePath"] for snippet in data_source_findings[label_name]["snippets"])
+                unique_source_paths = set(snippet["sourcePath"]
+                                          for snippet in data_source_findings[label_name]["snippets"])
                 data_source_findings[label_name]["fileCount"] = len(unique_source_paths)
             else:
-                dict_obj = {f"labelName": label_name, "count": value, "findingsType": entity_type, "snippetCount": 1,
+                dict_obj = {f"labelName": label_name, "findings": value, "findingsType": entity_type, "snippetCount": 1,
                             "fileCount": file_count}
                 data_source_findings[label_name] = dict_obj
                 data_source_findings[label_name]["snippets"] = [snippet.dict()]
@@ -74,18 +79,27 @@ class DocHelper:
         findings = doc["entityCount"] + doc["topicCount"]
         source_path = doc.get("sourcePath")
         if source_path in loader_source_snippets.keys():
-            loader_source_snippets[source_path] = loader_source_snippets[source_path] + findings
+            loader_source_snippets[source_path]["findings_entities"] = (
+                    loader_source_snippets[source_path].get("findings_entities", 0) + doc["entityCount"])
+            loader_source_snippets[source_path]["findings_topics"] = (
+                    loader_source_snippets[source_path].get("findings_topics", 0) + doc["topicCount"])
+            loader_source_snippets[source_path]["findings"] += findings
             total_findings += findings
             findings_entities += doc["entityCount"]
             findings_topics += doc["topicCount"]
             snippet_count += 1
         else:
-            loader_source_snippets[source_path] = findings
             total_findings += findings
+            loader_source_snippets[source_path] = {"findings_entities": doc["entityCount"],
+                                                   "findings_topics": doc["topicCount"],
+                                                   "findings": total_findings}
             findings_entities += doc["entityCount"]
             findings_topics += doc["topicCount"]
             snippet_count += 1
             file_count += 1
+            if source_path in self.loader_mapper.keys():
+                loader_source_snippets[source_path]["owner"] = self.loader_mapper[source_path]["owner"]
+                loader_source_snippets[source_path]["size"] = self.loader_mapper[source_path]["size"]
 
         if len(doc["topics"]) > 0:
             self._get_finding_details(doc, data_source_findings, "topics", file_count)
@@ -111,16 +125,16 @@ class DocHelper:
             data_source_findings = [{key: value[key] for key in value if key != value[key]} for value in
                                     report_metadata_init["data_source_findings"].values()]
             data_source_findings_summary = []
-            for findings in data_source_findings:
-                label_name = findings.get("labelName", "")
-                count = findings.get("count", 0)
-                findings_type = findings.get("findingsType")
-                snippet_count = findings.get("snippetCount", 0)
-                file_count = findings.get("fileCount", 0)
+            for ds_findings in data_source_findings:
+                label_name = ds_findings.get("labelName", "")
+                findings = ds_findings.get("findings", 0)
+                findings_type = ds_findings.get("findingsType")
+                snippet_count = ds_findings.get("snippetCount", 0)
+                file_count = ds_findings.get("fileCount", 0)
 
                 data_source_findings_summary.append({
                     "labelName": label_name,
-                    "findings": count,
+                    "findings": findings,
                     "findingsType": findings_type,
                     "snippetCount": snippet_count,
                     "fileCount": file_count
@@ -136,45 +150,60 @@ class DocHelper:
         logger.debug("In Function: _generate_final_report")
         loader_source_snippets = report_metadata_init["loader_source_snippets"]
         file_count_restricted_data = 0
-        for file_list in self.app_details["loader_source_files"]:
-            for file_dict in file_list:
-                file_count_restricted_data += file_dict.get("count", 0)
+        for file_dict in self.app_details["loader_source_files"]:
+            if "findings" in file_dict.keys():
+                if file_dict["findings"] > 0:
+                    file_count_restricted_data += 1
+
         report_summary = Summary(
             findings=report_metadata_init["total_findings"],
-            findings_entities=report_metadata_init["findings_entities"],
-            findings_topics=report_metadata_init["findings_topics"],
+            findingsEntities=report_metadata_init["findings_entities"],
+            findingsTopics=report_metadata_init["findings_topics"],
             totalFiles=report_metadata_init["file_count"],
             filesWithRestrictedData=file_count_restricted_data,
             dataSources=report_metadata_init["data_source_count"],
             owner=self.app_details["owner"]
         )
 
-        # Filter 5 Findings
-        top_5_findings = sorted(loader_source_snippets.items(), key=lambda d: d[1], reverse=True)[:5]
-        top_5_finding_objects = [{"fileName": filename, "count": count} for filename, count in top_5_findings]
+        # Get top N findings, currently 5
+        top_n_findings = sorted(loader_source_snippets.items(), key=lambda x: x[1]['findings'], reverse=True)[:5]
+
+        top_n_finding_objects = [
+            {
+                "fileName": key,
+                "owner": "-" if value.get("owner", "-") is None else value.get("owner", "-"),
+                "size": 0 if value.get("size", 0) is None else value.get("size", 0),
+                "findingsEntities": value['findings_entities'],
+                "findingsTopics": value['findings_topics'],
+                "findings": value['findings']
+            }
+            for key, value in top_n_findings
+        ]
 
         # Generating DataSource
         data_source_obj_list = self._get_data_source_details(report_metadata_init)
-
         report_dict = ReportModel(
             name=self.app_details["name"],
             description=self.app_details.get("description", " "),
             instanceDetails=self.app_details["instanceDetails"],
             framework=self.app_details["framework"],
             reportSummary=report_summary,
-            topFindings=top_5_finding_objects,
+            topFindings=top_n_finding_objects,
             lastModified=datetime.now(),
             dataSources=data_source_obj_list
         )
-
         return report_dict.dict()
 
     def process_docs_and_generate_report(self):
+        loader_details = self.data.get("loader_details", {})
+        # should be list of loader obj
+        self.loader_mapper[loader_details.get("source_path")] = {"owner": loader_details.get("owner"),
+                                                                 "size":loader_details.get("size"),
+                                                                 "type": loader_details.get("source_type")}
         input_doc_list = self.data.get('docs', [])
         logger.debug("In Function: _get_doc_details_and_generate_report")
         metadata_obj = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
         last_used = datetime.now()
-        loader_details = self.data.get("loader_details", {})
         docs = self.app_details.get("docs", [])
         report_metadata_init = {"total_findings": 0, "findings_entities": 0, "findings_topics": 0,
                                 "data_source_count": 1,
@@ -188,6 +217,8 @@ class DocHelper:
                 doc_model = AiDocs(appId=self.load_id,
                                    metadata=metadata_obj,
                                    doc=doc.get('doc'),
+                                   size=doc.get('size', 0),
+                                   owner=doc.get('owner', '-'),
                                    sourcePath=doc.get('source_path'),
                                    loaderSourcePath=loader_details.get("source_path"),
                                    lastModified=last_used,
@@ -201,8 +232,17 @@ class DocHelper:
         # Updating app_details doc list and loader source files
         loader_source_snippets = report_metadata_init["loader_source_snippets"]
         self.app_details["docs"] = docs
-        loader_source_files.append(
-            [{"name": f"{key}", "count": loader_source_snippets[key]} for key in loader_source_snippets])
+
+        new_loader_source_files = [
+            {
+                "name": key,
+                "findings_entities": value['findings_entities'],
+                "findings_topics": value['findings_topics'],
+                "findings": value['findings']
+            }
+            for key, value in loader_source_snippets.items()
+        ]
+        loader_source_files.extend(new_loader_source_files)
         self.app_details["loader_source_files"] = loader_source_files
 
         # Generate Final Report
