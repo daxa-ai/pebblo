@@ -312,7 +312,7 @@
       <div class="bg-white pt-10 pb-10 pl-13 pr-13">
         <div>
           <div class="surface-10 font-14 inter medium">
-            Top Files With Most Findings
+            Top 5 Files With Most Findings
           </div>
           <div class="mt-3 inter">
             <table class="fixed">
@@ -322,7 +322,6 @@
                   <th></th>
                   <th class="medium text-end">Findings - Topics</th>
                   <th class="medium text-end">Findings - Entities</th>
-                  <th class="medium">Owner</th>
                 </tr>
               </thead>
               <tbody class="surface-10 font-13">
@@ -331,7 +330,6 @@
                   <td colspan="2">{{ item.fileName|default('-') }}</td>
                   <td class="text-end">{{ item.count|default('-') }}</td>
                   <td class="text-end">-</td>
-                  <td>-</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -363,9 +361,6 @@
                 </tr>
               </tbody>
             </table>
-          </div>
-          <div class="mt-3 surface-10-opacity font-11 inter">
-            Find more reports on: {{ default('-') }}
           </div>
         </div>
         <div class="mt-12">
@@ -436,7 +431,17 @@
                       </div>
                     </div>
                   </td>
-                  <td></td>
+                  <td class="border-none font-13 pl-0">
+                    <div class="card__body--details flex">
+                      <div class="divider bg-surface-70"></div>
+                      <div class="flex flex-col ml-2">
+                        <div class="surface-40 font-12">Language Version</div>
+                        <div class="surface-10 mt-1">
+                          {{ data.instanceDetails.languageVersion }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
                 <tr>
                   <td class="border-none font-13 pl-0" colspan="3">
@@ -516,6 +521,10 @@
           <div class="key-value">
             <div class="surface-50 font-12">Retrieved From</div>
             <div class="surface-10 font-13 mt-2">{{ snippet.sourcePath }}</div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12">Finding</div>
+            <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
           </div>
           <div
             class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
