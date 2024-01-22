@@ -20,7 +20,8 @@ jobs:
         python-version: "3.10.x"
     - name: Install pypa/build
       run: |
-        python -m build 
+        pip install build
+        python -m build --wheel
         ls -la 
         ls -la dist/
     - name: Store the distribution packages
