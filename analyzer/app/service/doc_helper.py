@@ -1,5 +1,4 @@
 """
-    Copyright (c) 2024 Daxa. All rights reserved.
     Doc helper class for loader doc related task
 """
 

@@ -1,5 +1,3 @@
-# Copyright (c) 2024 Daxa. All rights reserved.
-
 from datetime import datetime
 from analyzer.reports.reports import Reports
 from analyzer.app.enums.enums import CacheDir

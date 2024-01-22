@@ -1,4 +1,3 @@
-# Copyright (c) 2024 Daxa. All rights reserved.
 from analyzer.app.api.api import App
 
 # Create an instance of APp with a specific prefix

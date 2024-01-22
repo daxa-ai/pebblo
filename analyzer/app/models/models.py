@@ -1,4 +1,3 @@
-# Copyright (c) 2024 Daxa. All rights reserved.
 from pydantic import BaseModel, Field
 from typing import Optional, List, Union
 from datetime import datetime

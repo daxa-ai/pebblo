@@ -1,6 +1,4 @@
 """
-Copyright (c) 2024 Daxa. All rights reserved.
-
 These are all enums related to Inspector.
 """
 from enum import Enum
