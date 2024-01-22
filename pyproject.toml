@@ -148,7 +148,7 @@ test = ["coverage"]
 # The following would provide a command line executable called `sample`
 # which executes the function `main` from this package when invoked.
 [project.scripts]  # Optional
-pebblo = "analyzer.bin.pebblo:main"
+pebblo = "pebblo.bin.pebblo:main"
 
 # This is configuration specific to the `setuptools` build backend.
 # If you are using a different build backend, you will need to change this.
@@ -156,7 +156,7 @@ pebblo = "analyzer.bin.pebblo:main"
 # If there are data files included in your packages that need to be
 # installed, specify them here.
 
-package-data = {"analyzer" = ['reports/templates/*', 'reports/assets/*']}
+package-data = {"pebblo" = ['reports/templates/*', 'reports/assets/*']}
 
 [tool.setuptools.packages.find]
 exclude=["tests*"]
