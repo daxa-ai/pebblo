@@ -1,4 +1,3 @@
-# Copyright (c) 2024 Daxa. All rights reserved.
 from fastapi import APIRouter
 from analyzer.app.service.service import AppDiscover, AppLoaderDoc
 

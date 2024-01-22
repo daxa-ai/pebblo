@@ -1,6 +1,4 @@
 """
-Copyright (c) 2024 Daxa. All rights reserved.
-
 Module to handle logging functionality
 """
 import logging

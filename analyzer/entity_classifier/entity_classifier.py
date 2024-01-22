@@ -1,6 +1,3 @@
-"""
-Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
-"""
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 

@@ -1,5 +1,3 @@
-# Copyright (c) 2024 Daxa. All rights reserved.
-
 import uvicorn
 from fastapi import FastAPI
 from routers.routers import router_instance
