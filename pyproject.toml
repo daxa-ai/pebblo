@@ -21,6 +21,10 @@ jinja2 = "2.11.3"
 weasyprint = "60.2"
 
 
+[tool.poetry.scripts]
+pebblo = 'bin.daxa:main'
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
