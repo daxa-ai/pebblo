@@ -38,7 +38,7 @@ class TopicClassifier:
         try:
             topic_model_response = self.classifier(input_text)
             topics, total_count = self._get_topics(topic_model_response)
-            logger.info(f"Topics: {topics}")
+            logger.debug(f"Topics: {topics}")
             return topics, total_count
         except Exception as e:
             logger.error(f"Error in topic_classifier. Exception: {e}")
@@ -46,7 +46,7 @@ class TopicClassifier:
 
     @staticmethod
     def _get_topics(topic_model_response):
-        logger.info(f"Topics: {topic_model_response}")
+        logger.debug(f"Topics model response: {topic_model_response}")
         topic_model_response = topic_model_response[0]
         topics = dict()
         for topic in topic_model_response:
