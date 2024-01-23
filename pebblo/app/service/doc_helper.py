@@ -50,14 +50,14 @@ class DocHelper:
                            size=doc.get("size", 0))
         for label_name, value in doc[entity_type].items():
             if label_name in data_source_findings.keys():
-                data_source_findings[label_name]["labelName"] = label_name
+                # data_source_findings[label_name]["labelName"] = label_name
                 data_source_findings[label_name]["snippetCount"] += 1
                 data_source_findings[label_name]["findings"] += value
-                data_source_findings[label_name]["findingsType"] = entity_type
+                # data_source_findings[label_name]["findingsType"] = entity_type
                 data_source_findings[label_name]["snippets"].append(snippet.dict())
-                unique_source_paths = set(snippet["sourcePath"]
-                                          for snippet in data_source_findings[label_name]["snippets"])
-                data_source_findings[label_name]["fileCount"] = len(unique_source_paths)
+                # unique_source_paths = set(snippet["sourcePath"]
+                #                           for snippet in data_source_findings[label_name]["snippets"])
+                # data_source_findings[label_name]["fileCount"] = file_count
             else:
                 dict_obj = {f"labelName": label_name, "findings": value, "findingsType": entity_type, "snippetCount": 1,
                             "fileCount": file_count}
@@ -92,7 +92,7 @@ class DocHelper:
             total_findings += findings
             loader_source_snippets[source_path] = {"findings_entities": doc["entityCount"],
                                                    "findings_topics": doc["topicCount"],
-                                                   "findings": total_findings}
+                                                   "findings": findings}
             findings_entities += doc["entityCount"]
             findings_topics += doc["topicCount"]
             snippet_count += 1
