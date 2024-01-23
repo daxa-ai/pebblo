@@ -105,6 +105,7 @@ class AppLoaderDoc:
             loader_name = loader_details.get('loader', None)
             source_type = loader_details.get('source_type', None)
             source_path = loader_details.get('source_path', None)
+            source_size = loader_details.get('source_size', 0)
 
             # Checking for same loader details in app details
             if loader_name and source_type:
@@ -115,6 +116,7 @@ class AppLoaderDoc:
                     if loader and loader.get('name', "") == loader_name:
                         loader['sourcePath'] = source_path
                         loader['sourceType'] = source_type
+                        loader['sourceSize'] = source_size
                         loader['lastModified'] = datetime.now()
                         loader_exist = True
 
@@ -124,6 +126,7 @@ class AppLoaderDoc:
                     new_loader_data = LoaderMetadata(name=loader_name,
                                                      sourcePath=source_path,
                                                      sourceType=source_type,
+                                                     sourceSize=source_size,
                                                      lastModified=datetime.now())
                     loader_list.append(new_loader_data.dict())
                     app_details["loaders"] = loader_list

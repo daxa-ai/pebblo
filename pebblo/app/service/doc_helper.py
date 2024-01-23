@@ -46,14 +46,12 @@ class DocHelper:
         source_path = doc.get("sourcePath")
         snippet = Snippets(snippet=doc["doc"],
                            sourcePath=source_path,
-                           owner=doc.get("owner", " "),
-                           size=doc.get("size", 0))
+                           fileOwner=doc.get("fileOwner", " "),
+                           sourceSize=doc.get("sourceSize", 0))
         for label_name, value in doc[entity_type].items():
             if label_name in data_source_findings.keys():
-                # data_source_findings[label_name]["labelName"] = label_name
                 data_source_findings[label_name]["snippetCount"] += 1
                 data_source_findings[label_name]["findings"] += value
-                # data_source_findings[label_name]["findingsType"] = entity_type
                 data_source_findings[label_name]["snippets"].append(snippet.dict())
                 unique_source_paths = set(snippet["sourcePath"]
                                           for snippet in data_source_findings[label_name]["snippets"])
@@ -98,8 +96,8 @@ class DocHelper:
             snippet_count += 1
             file_count += 1
             if source_path in self.loader_mapper.keys():
-                loader_source_snippets[source_path]["owner"] = self.loader_mapper[source_path]["owner"]
-                loader_source_snippets[source_path]["size"] = self.loader_mapper[source_path]["size"]
+                loader_source_snippets[source_path]["fileOwner"] = self.loader_mapper[source_path]["fileOwner"]
+                loader_source_snippets[source_path]["sourceSize"] = self.loader_mapper[source_path]["sourceSize"]
 
         if len(doc["topics"]) > 0:
             self._get_finding_details(doc, data_source_findings, "topics", file_count)
@@ -122,6 +120,7 @@ class DocHelper:
             name = loader.get("name")
             source_path = loader.get("sourcePath")
             source_type = loader.get("sourceType")
+            source_size = loader.get("sourceSize")
             data_source_findings = [{key: value[key] for key in value if key != value[key]} for value in
                                     report_metadata_init["data_source_findings"].values()]
             data_source_findings_summary = []
@@ -139,7 +138,10 @@ class DocHelper:
                     "snippetCount": snippet_count,
                     "fileCount": file_count
                 })
-            data_source_obj = DataSource(name=name, sourcePath=source_path, sourceType=source_type,
+            data_source_obj = DataSource(name=name,
+                                         sourcePath=source_path,
+                                         sourceType=source_type,
+                                         sourceSize=source_size,
                                          findingsSummary=data_source_findings_summary,
                                          findingsDetails=data_source_findings,
                                          snippets=report_metadata_init["data_source_snippets"])
@@ -171,8 +173,8 @@ class DocHelper:
         top_n_finding_objects = [
             {
                 "fileName": key,
-                "owner": "-" if value.get("owner", "-") is None else value.get("owner", "-"),
-                "size": 0 if value.get("size", 0) is None else value.get("size", 0),
+                "fileOwner": "-" if value.get("fileOwner", "-") is None else value.get("fileOwner", "-"),
+                "sourceSize": 0 if value.get("sourceSize", 0) is None else value.get("sourceSize", 0),
                 "findingsEntities": value['findings_entities'],
                 "findingsTopics": value['findings_topics'],
                 "findings": value['findings']
@@ -197,8 +199,8 @@ class DocHelper:
     def process_docs_and_generate_report(self):
         loader_details = self.data.get("loader_details", {})
         # should be list of loader obj
-        self.loader_mapper[loader_details.get("source_path")] = {"owner": loader_details.get("owner"),
-                                                                 "size":loader_details.get("size"),
+        self.loader_mapper[loader_details.get("source_path")] = {"fileOwner": self.data.get("file_owner"),
+                                                                 "sourceSize": loader_details.get("source_size"),
                                                                  "type": loader_details.get("source_type")}
         input_doc_list = self.data.get('docs', [])
         logger.debug("In Function: _get_doc_details_and_generate_report")
@@ -217,8 +219,8 @@ class DocHelper:
                 doc_model = AiDocs(appId=self.load_id,
                                    metadata=metadata_obj,
                                    doc=doc.get('doc'),
-                                   size=doc.get('size', 0),
-                                   owner=doc.get('owner', '-'),
+                                   sourceSize=doc.get('source_size', 0),
+                                   fileOwner=doc.get('file_owner', '-'),
                                    sourcePath=doc.get('source_path'),
                                    loaderSourcePath=loader_details.get("source_path"),
                                    lastModified=last_used,
