@@ -1,4 +1,4 @@
-from analyzer.app.api.api import App
+from pebblo.app.api.api import App
 
 # Create an instance of APp with a specific prefix
 router_instance = App(prefix="/v1")

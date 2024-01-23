@@ -23,7 +23,7 @@ And following Secret Entities:
 ## How to use
 Entity Classifier
 ```
-from analyzer.entity_classifier.entity_classifier import EntityClassifier
+from pebblo.entity_classifier.entity_classifier import EntityClassifier
 
 text = <Input Data>
 entity_classifier_obj = EntityClassifier(text)
@@ -33,7 +33,7 @@ print(f"Entity Count: {total_entity_count}")
 ```
 Secret Entity Classifier
 ```
-from analyzer.entity_classifier.entity_classifier import EntityClassifier
+from pebblo.entity_classifier.entity_classifier import EntityClassifier
 
 text = <Input Data>
 entity_classifier_obj = EntityClassifier(text)

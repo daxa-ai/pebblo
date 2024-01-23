@@ -18,7 +18,7 @@ jobs:
         uses: actions/download-artifact@v4.1.1
         with:
           name: python-package-distributions
-          path: analyzer/dist/
+          path: pebblo/dist/
       - name: Publish Daxa Distribution to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:

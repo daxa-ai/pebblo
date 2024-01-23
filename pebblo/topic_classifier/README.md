@@ -28,7 +28,7 @@ Currently, we are supporting following Topics:
 ## How to use
 
 ```
-from analyzer.topic_classifier.topic_classifier import TopicClassifier
+from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 text =  "Your sample text here."
 topic_classifier_obj = TopicClassifier()

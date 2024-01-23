@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from analyzer.app.service.service import AppDiscover, AppLoaderDoc
+from pebblo.app.service.service import AppDiscover, AppLoaderDoc
 
 
 class App:

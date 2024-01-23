@@ -3,9 +3,9 @@ import os
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import pipeline
 
-from analyzer.topic_classifier.config import TOPIC_CONFIDENCE_SCORE, TOKENIZER_PATH, CLASSIFIER_PATH
-from analyzer.topic_classifier.enums.constants import topic_display_names
-from analyzer.topic_classifier.libs.logger import logger
+from pebblo.topic_classifier.config import TOPIC_CONFIDENCE_SCORE, TOKENIZER_PATH, CLASSIFIER_PATH
+from pebblo.topic_classifier.enums.constants import topic_display_names
+from pebblo.topic_classifier.libs.logger import logger
 
 # Use os.environ.get() to retrieve the value of the environment variable
 huggingface_token = os.environ.get("HF_TOKEN")
