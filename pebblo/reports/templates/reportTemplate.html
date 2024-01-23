@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet" />
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./index.css" />
     <title>Pebblo Report</title>
   </head>
@@ -16,10 +17,10 @@
       <div class="surface-60 inter font-48 font-thin">Data Report</div>
       <div class="mt-9">
         <div class="surface-60 inter font-48 font-thin">
-          {{data.framework.name|capitalize}}
+          {{data.name|capitalize}}
         </div>
         <div class="purple-10 inter font-28 mt-2">
-          Langchain {{data.framework.version}}
+          {{data.framework.name|capitalize}} {{data.framework.version}}
         </div>
       </div>
       <div class="mt-11">
@@ -328,8 +329,12 @@
                 {% for item in data.topFindings %}
                 <tr>
                   <td colspan="2">{{ item.fileName|default('-') }}</td>
-                  <td class="text-end">{{ item.count|default('-') }}</td>
-                  <td class="text-end">-</td>
+                  <td class="text-end">
+                    {{ item.findingsTopics|default('-') }}
+                  </td>
+                  <td class="text-end">
+                    {{ item.findingsEntities|default('-') }}
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -510,7 +515,8 @@
           <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
             <div class="surface-10 font-13">{{ item.labelName }}</div>
             <div class="sub-heading ml-2 surface-50 font-12">
-              Showing {{ item.count }} Snippets out of {{ item.snippetCount }}
+              Showing {{ item.snippetCount }} Snippets out of {{
+              item.snippetCount }}
             </div>
           </div>
           {% for snippet in item.snippets %}
@@ -527,7 +533,8 @@
             <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
           </div>
           <div
-            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
+            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"
+          ></div>
           {% endfor %}
         </div>
         {% endfor %}
