@@ -15,6 +15,7 @@ class LoaderMetadata(BaseModel):
     name: str
     sourcePath: str
     sourceType: str
+    sourceSize: int
     sourceFiles: Optional[list] = []
     lastModified: Optional[datetime] = datetime.now()
 
@@ -30,8 +31,8 @@ class AiDataModel(BaseModel):
 class AiDocs(BaseModel):
     metadata: Metadata
     doc: str
-    size: int
-    owner: str
+    sourceSize: int
+    fileOwner: str
     sourcePath: str
     loaderSourcePath: str
     lastModified: Optional[datetime]
@@ -85,8 +86,8 @@ class Summary(BaseModel):
 
 class TopFindings(BaseModel):
     fileName: str
-    owner: str
-    size: int
+    fileOwner: str
+    sourceSize: int
     findingsEntities: int
     findingsTopics: int
     findings: int
@@ -95,14 +96,15 @@ class TopFindings(BaseModel):
 class Snippets(BaseModel):
     snippet: str
     sourcePath: str
-    owner: str
-    size: int
+    fileOwner: str
+    sourceSize: int
 
 
 class DataSource(BaseModel):
     name: str
     sourcePath: str
     sourceType: str
+    sourceSize: int
     findingsSummary: list
     findingsDetails: Optional[list]
     # snippets: Optional[List[Snippets]]
