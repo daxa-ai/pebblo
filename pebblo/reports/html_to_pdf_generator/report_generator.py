@@ -5,8 +5,7 @@ from decimal import Decimal
 import os
 
 # Converts date string to object and returns formatted string for date (D M Y, H:M)
-def dateFormatter(date_string):
-    date_obj = datetime.datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S.%f')
+def dateFormatter(date_obj):
     return date_obj.strftime('%d %B %Y , %H:%M')
 
 # Returns file size in KB, MB, GB as applicable
