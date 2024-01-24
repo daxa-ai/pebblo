@@ -12,12 +12,9 @@ huggingface_token = os.environ.get("HF_TOKEN")
 
 # Check if the environment variable exists
 if huggingface_token is not None:
-    logger.debug(f"HF_TOKEN is: {huggingface_token}")
     from huggingface_hub import login
 
     login(token=huggingface_token)
-else:
-    logger.warning("HF_TOKEN is not set.")
 
 
 class TopicClassifier:
