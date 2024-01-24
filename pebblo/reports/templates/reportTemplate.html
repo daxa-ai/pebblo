@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet" />
+      rel="stylesheet"
+    />
     <title>Pebblo Report</title>
   </head>
   <body>
@@ -44,7 +45,7 @@
           <div class="surface-10 font-14">Report Summary</div>
           <div class="surface-10-opacity font-12 ml-2">
             Current Load By {{ data.reportSummary.owner }}, {{
-            data.reportSummary.createdAt }}
+            dateFormatter(data.reportSummary.createdAt) }}
           </div>
         </div>
         <div class="flex inter">
@@ -188,7 +189,7 @@
                       <div class="flex flex-col ml-2">
                         <div class="surface-40 font-12">Created At</div>
                         <div class="surface-10 mt-1">
-                          {{ data.instanceDetails.createdAt }}
+                          {{ dateFormatter(data.instanceDetails.createdAt) }}
                         </div>
                       </div>
                     </div>
@@ -290,7 +291,8 @@
             <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
           </div> -->
           <div
-            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
+            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"
+          ></div>
           {% endfor %}
         </div>
         {% endfor %}
