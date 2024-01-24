@@ -29,7 +29,6 @@ class AiDataModel(BaseModel):
 
 
 class AiDocs(BaseModel):
-    metadata: Metadata
     doc: str
     sourceSize: int
     fileOwner: str
@@ -97,7 +96,6 @@ class Snippets(BaseModel):
     snippet: str
     sourcePath: str
     fileOwner: str
-    sourceSize: int
 
 
 class DataSource(BaseModel):
@@ -105,6 +103,8 @@ class DataSource(BaseModel):
     sourcePath: str
     sourceType: str
     sourceSize: int
+    totalSnippetCount: int
+    displayedSnippetCount: int
     findingsSummary: list
     findingsDetails: Optional[list]
     # snippets: Optional[List[Snippets]]

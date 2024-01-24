@@ -10,3 +10,8 @@ class CacheDir(Enum):
     report_file_name = "report.json"
     pdf_report_file_name = "pebblo_report.pdf"
     home_dir = ".pebblo"
+
+
+class ReportConstants(Enum):
+    snippets_limit = 100
+    top_findings_limit = 5
