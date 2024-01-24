@@ -98,7 +98,7 @@
                   <td class="text-end">
                     {{ item.findingsEntities|default('-') }}
                   </td>
-                  <td>{{ item.owner|default('-') }}</td>
+                  <td>{{ item.fileOwner|default('-') }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -235,7 +235,7 @@
         <div class="surface-10-opacity inter font-12 flex">
           <div>Source: {{ datastores.sourcePath }}</div>
           <div class="divider bg-surface-10-opacity ml-2"></div>
-          <div class="ml-2">Size: -</div>
+          <div class="ml-2">Size: {{ getFileSize(datastores.sourceSize) }}</div>
         </div>
       </div>
 
