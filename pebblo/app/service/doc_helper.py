@@ -232,7 +232,7 @@ class DocHelper:
                 doc_info: AiDataModel = self._get_classifier_response(doc)
                 doc_model = AiDocs(appId=self.load_id,
                                    doc=doc.get('doc'),
-                                   sourceSize=doc.get('source_size', 0),
+                                   sourceSize=doc.get('source_path_size', 0),
                                    fileOwner=doc.get('file_owner', '-'),
                                    sourcePath=doc.get('source_path'),
                                    loaderSourcePath=loader_details.get("source_path"),
