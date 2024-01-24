@@ -33,7 +33,7 @@ jobs:
         name: pebblo-package-distributions
         path: dist/
 
-  release-on-test-pypi:
+  release-on-pypi:
     runs-on: ubuntu-latest
     needs: build
     steps:
