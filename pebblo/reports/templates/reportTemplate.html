@@ -7,15 +7,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
     <title>Pebblo Report</title>
   </head>
   <body>
     <section class="cover-page pl-23 pr-23 pt-42">
       <div class="surface-60 inter font-48 font-thin">Data Report</div>
       <div class="mt-9">
-        <div class="surface-60 inter font-48 font-thin">
+        <div class="surface-60 inter font-48 font-thin break-word">
           {{data.name|capitalize}}
         </div>
         <div class="purple-10 inter font-28 mt-2">
@@ -32,20 +31,21 @@
       </div>
     </section>
     <section class="p-0">
-      <div class="bg-white pl-13 pr-13 pt-8 pb-8">
-        <div class="medium flex inter items-center">
-          <div class="surface-10 font-13">Description:</div>
-          <div class="normal surface-10-opacity font-12 ml-1">
-            {{data.description|default('-')}}
-          </div>
+      <div class="bg-white pl-13 pr-13 pb-8">
+        <div class="medium inter items-center w-100">
+          <span class="surface-10 font-13 inline">
+            Description:
+            <span class="normal surface-10-opacity font-12 ml-1">
+              {{data.description|default('-')}}
+            </span>
+          </span>
         </div>
       </div>
       <div class="bg-main pt-12 pb-10 pl-13 pr-13">
         <div class="inter flex items-center">
           <div class="surface-10 font-14">Report Summary</div>
           <div class="surface-10-opacity font-12 ml-2">
-            Current Load By {{ data.reportSummary.owner }}, {{
-            dateFormatter(data.reportSummary.createdAt) }}
+            Current Load By {{ data.reportSummary.owner }}, -
           </div>
         </div>
         <div class="flex inter">
@@ -188,9 +188,7 @@
                       <div class="divider bg-surface-70"></div>
                       <div class="flex flex-col ml-2">
                         <div class="surface-40 font-12">Created At</div>
-                        <div class="surface-10 mt-1">
-                          {{ dateFormatter(data.instanceDetails.createdAt) }}
-                        </div>
+                        <div class="surface-10 mt-1">-</div>
                       </div>
                     </div>
                   </td>
@@ -212,8 +210,8 @@
                       <div class="divider bg-surface-70"></div>
                       <div class="flex flex-col ml-2">
                         <div class="surface-40 font-12">Path</div>
-                        <div class="surface-10 mt-1 break-word">
-                          {{ data.instanceDetails.path }}
+                        <div class="surface-10 mt-1">
+                          {{ data.instanceDetails.path }} &nbsp;
                         </div>
                       </div>
                     </div>
@@ -229,7 +227,7 @@
       <div>
         <div class="surface-10 inter font-14 medium flex">
           <div>Data Source 1:</div>
-          <img class="ml-1" src="../assets/aws_s3.png" alt="S3 logo" />
+          <img class="ml-1" src="../assets/csv-icon.svg" alt="CSV logo" />
           <div class="ml-1">{{ datastores.name }}</div>
         </div>
         <div class="surface-10-opacity inter font-12 flex">
@@ -292,8 +290,7 @@
             <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
           </div> -->
           <div
-            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"
-          ></div>
+            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
           {% endfor %}
         </div>
         {% endfor %}

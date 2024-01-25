@@ -1,8 +1,14 @@
 @page {
   size: Letter;
   margin: 0mm;
-  padding: 0mm;
+  padding: 58px 0mm;
   border: 0mm;
+}
+@page: first {
+  size: Letter;
+  margin: 0mm;
+  border: 0mm;
+  padding: 0mm;
 }
 html,
 body {
@@ -366,6 +372,12 @@ body {
 .p-0 {
   padding: 0 !important;
 }
+.pt-0 {
+  padding-top: 0 !important;
+}
+.pb-0 {
+  padding-bottom: 0 !important;
+}
 .pl-0 {
   padding-left: 0 !important;
 }
@@ -528,7 +540,7 @@ body {
 
 section {
   height: 100%;
-  padding: 48px 52px;
+  padding: 0px 52px;
   page-break-after: always;
 }
 
