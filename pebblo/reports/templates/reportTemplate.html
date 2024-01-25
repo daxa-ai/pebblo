@@ -264,9 +264,10 @@
       <div>
         <div class="inter flex items-center">
           <div class="font-14 surface-10">Snippets</div>
-          <!--<div class="font-12 surface-10-opacity ml-2">
-            Showing {{ findingDetails.length }} out of 
-          </div>-->
+          <div class="font-12 surface-10-opacity ml-2">
+            Showing {{ datastores.displayedSnippetCount }} out of {{
+            datastores.totalSnippetCount }}
+          </div>
         </div>
         {% for item in findingDetails %}
         <div class="mt-4">
