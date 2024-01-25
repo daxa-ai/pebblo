@@ -119,7 +119,6 @@ body {
   width: 1px;
   margin: 2px 0px;
   flex-shrink: 0;
-  height: 100%;
 }
 .divider-horizontal {
   width: 100%;
