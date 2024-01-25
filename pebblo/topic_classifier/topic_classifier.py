@@ -3,7 +3,8 @@ import os
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import pipeline
 
-from pebblo.topic_classifier.config import TOPIC_CONFIDENCE_SCORE, TOKENIZER_PATH, CLASSIFIER_PATH
+from pebblo.topic_classifier.config import TOPIC_CONFIDENCE_SCORE, TOKENIZER_PATH, \
+    CLASSIFIER_PATH, MODEL_REVISION
 from pebblo.topic_classifier.enums.constants import topic_display_names
 from pebblo.topic_classifier.libs.logger import logger
 
@@ -23,8 +24,8 @@ class TopicClassifier:
     """
 
     def __init__(self):
-        _tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
-        _model = AutoModelForSequenceClassification.from_pretrained(CLASSIFIER_PATH)
+        _tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH, revision=MODEL_REVISION)
+        _model = AutoModelForSequenceClassification.from_pretrained(CLASSIFIER_PATH, revision=MODEL_REVISION)
         self.classifier = pipeline("text-classification", model=_model, tokenizer=_tokenizer,
                                    truncation=True, max_length=512, return_all_scores=True)
 
@@ -59,5 +60,3 @@ class TopicClassifier:
             most_possible_advice = max(topics, key=topics.get)
             final_topic = {most_possible_advice: 1}
         return final_topic, len(final_topic.keys())
-
-
