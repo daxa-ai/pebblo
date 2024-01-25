@@ -232,12 +232,14 @@
       <div>
         <div class="surface-10 inter font-14 medium flex">
           <div>Data Source 1:</div>
-          <img class="ml-1" src="../assets/csv-icon.svg" alt="CSV logo" />
+          <!-- <img class="ml-1" src="../assets/csv-icon.svg" alt="CSV logo" /> -->
           <div class="ml-1">{{ datastores.name }}</div>
         </div>
         <div class="surface-10-opacity inter font-12 flex">
-          <div>Source: {{ datastores.sourcePath }}</div>
-          <div class="divider bg-surface-10-opacity ml-2"></div>
+          <div class="max-w-70 break-word">
+            Source: {{ datastores.sourcePath }}
+          </div>
+          <div class="divider bg-surface-70 ml-2"></div>
           <div class="ml-2">Size: {{ getFileSize(datastores.sourceSize) }}</div>
         </div>
       </div>
