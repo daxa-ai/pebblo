@@ -39,7 +39,6 @@ class AiDocs(BaseModel):
     entities: dict
     topicCount: int
     topics: dict
-    policyViolations: Optional[List[dict]] = []
 
 
 class FrameworkInfo(BaseModel):
