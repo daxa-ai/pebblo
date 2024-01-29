@@ -34,6 +34,27 @@ class AppLoaderDoc:
         # Writing file content to given file path
         write_json_to_file(file_content, file_path)
 
+    def _write_pdf_report(self, final_report):
+        """
+            Calling pdf report generator to write report in pdf format
+        """
+        logger.debug("Generating report in pdf format")
+        report_obj = Reports()
+
+        # Writing pdf report to current load id directory
+        load_id = self.data['load_id']
+        current_load_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
+                                         f"/{load_id}/{CacheDir.pdf_report_file_name.value}")
+        full_file_path = get_full_path(current_load_report_file_path)
+        report_obj.generate_report(final_report, full_file_path)
+
+        # Writing pdf report file specific to application name, inside app directory
+        current_app_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
+                                        f"/{CacheDir.pdf_report_file_name.value}")
+        full_file_path = get_full_path(current_app_report_file_path)
+        report_obj.generate_report(final_report, full_file_path)
+        logger.debug(f"PDF report generated, please check path : {full_file_path}")
+
     def _upsert_loader_details(self, app_details):
         """
             Update loader details in the application if they already exist;
@@ -117,27 +138,13 @@ class AppLoaderDoc:
             loading_end = self.data['loading_end']
             if loading_end:
                 logger.debug("Loading finished, generating report")
+
+                # writing report file to its load_id directory
                 json_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
                                          f"/{load_id}/{CacheDir.report_file_name.value}")
                 self._write_file_content_to_path(final_report, json_report_file_path)
-
-                # PDF Report path
-                logger.debug("Generating report in pdf format")
-                report_obj = Reports()
-
-                # Writing pdf report to current load id directory
-                load_id = self.data['load_id']
-                current_load_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
-                                                 f"/{load_id}/{CacheDir.pdf_report_file_name.value}")
-                full_file_path = get_full_path(current_load_report_file_path)
-                report_obj.generate_report(final_report, full_file_path)
-
-                # Writing pdf report file specific to application name, inside app directory
-                current_app_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
-                                                f"/{CacheDir.pdf_report_file_name.value}")
-                full_file_path = get_full_path(current_app_report_file_path)
-                report_obj.generate_report(final_report, full_file_path)
-                logger.info(f"PDF report generated at : {full_file_path}")
+                # Writing report in pdf format
+                self._write_pdf_report(final_report)
 
             logger.info("Loader Doc request Request processed successfully.")
             return {"message": "Loader Doc API Request processed successfully"}
