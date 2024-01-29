@@ -26,4 +26,4 @@ pip install pebblo
 pebblo
 ```
 
-Pebblo daemon now listens to localhost:8000 to accept Gen-AI application document snippets for inspection and reporting.
+Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
