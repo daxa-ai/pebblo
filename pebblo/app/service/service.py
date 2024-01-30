@@ -148,11 +148,22 @@ class AppLoaderDoc:
                 # writing json report as well for now
                 write_json_to_file(final_report, report_file_path)
 
-                # PDF Report path
-                pdf_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.pdf_report_file_name.value}"
-                full_file_path = get_full_path(pdf_report_file_path)
+                logger.debug("Generating report in pdf format")
                 report_obj = Reports()
+
+                # Writing pdf report to current load id directory
+                load_id = self.data['load_id']
+                current_load_report_file_path = (f"{CacheDir.home_dir.value}/{app_name}"
+                                                 f"/{load_id}/{CacheDir.pdf_report_file_name.value}")
+                full_file_path = get_full_path(current_load_report_file_path)
                 report_obj.generate_report(final_report, full_file_path)
+
+                # Writing pdf report file specific to application name, inside app directory
+                current_app_report_file_path = (f"{CacheDir.home_dir.value}/{app_name}"
+                                                f"/{CacheDir.pdf_report_file_name.value}")
+                full_file_path = get_full_path(current_app_report_file_path)
+                report_obj.generate_report(final_report, full_file_path)
+                logger.debug(f"PDF report generated, please check path : {full_file_path}")
 
             # return {"Loader Doc API processed successfully."}
             # TODO: Remove below line after testing.
