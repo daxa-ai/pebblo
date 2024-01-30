@@ -33,11 +33,6 @@ jobs:
   release-on-test-pypi:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: testpypi
-      url: https://test.pypi.org/p/daxa
-    permissions:
-      id-token: write
     steps:
       - name: Download all the dists
         uses: actions/download-artifact@v4.1.1
