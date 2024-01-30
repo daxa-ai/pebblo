@@ -2,11 +2,16 @@ from weasyprint import HTML, CSS
 import jinja2
 import datetime
 from decimal import Decimal
+from dateutil import tz
 import os
 
 # Converts date string to object and returns formatted string for date (D M Y, H:M)
-def dateFormatter(date_obj):
-    return date_obj.strftime('%d %B %Y , %H:%M')
+def dateFormatter(utc_date):
+    from_zone = tz.gettz('UTC')
+    to_zone = tz.tzlocal()
+    utc_date = utc_date.replace(tzinfo=from_zone)
+    local_date = utc_date.astimezone(to_zone)
+    return local_date.strftime('%d %B %Y , %H:%M')
 
 # Returns file size in KB, MB, GB as applicable
 def getFileSize(size):
