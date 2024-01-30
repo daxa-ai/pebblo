@@ -120,7 +120,7 @@ class AppLoaderDoc:
             if not app_details:
                 # TODO: Handle the case where discover call did not happen, but loader doc is being called.
                 logger.error("Could not read metadata file. Exiting.")
-                return
+                return {"Message": "Could not read metadata file. Exiting"}
 
             # Add/Update Loader Details with input loader details
             self._upsert_loader_details(app_details)

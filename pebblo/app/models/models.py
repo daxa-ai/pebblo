@@ -76,7 +76,7 @@ class Summary(BaseModel):
     findingsEntities: int
     findingsTopics: int
     totalFiles: int
-    filesWithRestrictedData: int
+    filesWithFindings: int
     dataSources: int
     owner: str
     createdAt: datetime = datetime.now()
@@ -109,11 +109,20 @@ class DataSource(BaseModel):
     # snippets: Optional[List[Snippets]]
 
 
+class LoaderHistory(BaseModel):
+    loadId: int
+    reportName: str
+    findings: int
+    filesWithFindings: int
+    generatedOn: datetime
+
+
 class ReportModel(BaseModel):
     name: str
     description: Optional[str]
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary]
+    loaderHistory: Optional[List[LoaderHistory]]
     topFindings: Optional[List[TopFindings]]
     instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]

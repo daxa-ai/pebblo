@@ -3,10 +3,11 @@
 """
 from datetime import datetime
 from pebblo.app.libs.logger import logger
-from pebblo.app.models.models import AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource
+from pebblo.app.models.models import AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource, LoaderHistory
+from pebblo.app.utils.utils import read_json_file
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
-from pebblo.app.enums.enums import ReportConstants
+from pebblo.app.enums.enums import ReportConstants, CacheDir
 
 # Init topic classifier
 topic_classifier_obj = TopicClassifier()
@@ -19,6 +20,15 @@ class LoaderHelper:
         self.app_details = app_details
         self.data = data
         self.load_id = load_id
+
+    @staticmethod
+    def _read_file(file_path):
+        """
+            Retrieve the content of the specified file.
+        """
+        logger.debug(f"Reading content from file: {file_path}")
+        file_content = read_json_file(file_path)
+        return file_content
 
     # Initialization
     @staticmethod
@@ -280,11 +290,46 @@ class LoaderHelper:
             findingsEntities=raw_data["findings_entities"],
             findingsTopics=raw_data["findings_topics"],
             totalFiles=raw_data["file_count"],
-            filesWithRestrictedData=files_with_findings_count,
+            filesWithFindings=files_with_findings_count,
             dataSources=raw_data["data_source_count"],
             owner=self.app_details["owner"]
         )
         return report_summary
+
+    def _get_loader_history(self):
+        """
+            Retrieve previous runs details and create loader history and return
+        """
+        logger.debug("Fetching previous execution details and creating loader history")
+        loader_history = list()
+
+        # Reading metadata file & get load details
+        app_name = self.data.get("name")
+        current_load_id = self.load_id
+        app_metadata_file_path = f"{CacheDir.home_dir.value}/{app_name}/{CacheDir.metadata_file_path.value}"
+        app_metadata = self._read_file(app_metadata_file_path)
+        if not app_metadata:
+            # No app metadata is present
+            return loader_history
+        load_ids = app_metadata.get("load_ids")
+
+        # Retrieving load id report file
+        for load_id in load_ids:
+            if load_id == current_load_id:
+                continue
+            load_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
+            report = self._read_file(load_report_file_path)
+            report_summary = report.get("reportSummary")
+
+            # create loader history object
+            loader_history_model_obj = LoaderHistory(loadId=load_id,
+                                                     reportName=load_report_file_path,
+                                                     findings=report_summary["findings"],
+                                                     filesWithFindings=report_summary["filesWithFindings"],
+                                                     generatedOn=report_summary["createdAt"]
+                                                     )
+            loader_history.append(loader_history_model_obj)
+        return loader_history
 
     def _get_doc_report_metadata(self, doc, raw_data):
         """
@@ -352,12 +397,16 @@ class LoaderHelper:
         # Generating DataSource
         data_source_obj_list = self._get_data_source_details(raw_data)
 
+        # Retrieve LoaderHistory From previous executions
+        loader_history = self._get_loader_history()
+
         report_dict = ReportModel(
             name=self.app_details["name"],
             description=self.app_details.get("description", "-"),
             instanceDetails=self.app_details["instanceDetails"],
             framework=self.app_details["framework"],
             reportSummary=report_summary,
+            loaderHistory=loader_history,
             topFindings=top_n_findings,
             lastModified=datetime.now(),
             dataSources=data_source_obj_list
