@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from langchain.chains import RetrievalQA
-from langchain_community.document_loaders import DaxaSafeLoader
+from pebblo_langchain.langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain.document_loaders.csv_loader import CSVLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
@@ -16,7 +16,7 @@ from langchain.vectorstores.utils import filter_complex_metadata
 logging.basicConfig(level=10)
 class OpenAIGenieCsv:
     def __init__(self, file_path: str):
-        self.loader = DaxaSafeLoader(
+        self.loader = PebbloSafeLoader(
             CSVLoader(file_path), "csv_app_1", "rahul"
             )
         self.documents = self.loader.load()

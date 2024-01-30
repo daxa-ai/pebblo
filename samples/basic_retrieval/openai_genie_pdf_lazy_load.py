@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.document_loaders import DaxaSafeLoader
+from pebblo_langchain.langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
 from langchain.schema import Document
@@ -17,7 +17,7 @@ logging.basicConfig(level=10)
 
 class OpenAIGenieDir:
     def __init__(self, file_path: str):
-        self.loader = DaxaSafeLoader(PyPDFLoader(file_path),"Pypdf_app_1", "rahul", "some_App_Description")
+        self.loader = PebbloSafeLoader(PyPDFLoader(file_path),"Pypdf_app_1", "rahul", "some_App_Description")
         self.documents = []
         for x in self.loader.lazy_load():
             self.documents.extend(x)

@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import S3FileLoader
-from langchain_community.document_loaders import DaxaSafeLoader
+from pebblo_langchain.langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
 from langchain.schema import Document
@@ -17,7 +17,7 @@ logging.basicConfig(level=20)
 class OpenAIGenieS3:
     def __init__(self, bucket: str, key: str):
         self.app_name = "rahul_s3_file_app_2"
-        self.loader = DaxaSafeLoader(
+        self.loader = PebbloSafeLoader(
             S3FileLoader(bucket, key),
             self.app_name, "rahul", "some_App_Description"
         )

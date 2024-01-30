@@ -3,7 +3,7 @@ load_dotenv()
 
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import S3DirectoryLoader
-from langchain_community.document_loaders import DaxaSafeLoader
+from pebblo_langchain.langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
 from langchain.schema import Document
@@ -17,7 +17,7 @@ logging.basicConfig(level=20)
 
 class OpenAIGenieS3Dir:
     def __init__(self, bucket: str):
-        self.loader = DaxaSafeLoader(S3DirectoryLoader(bucket), "s3_dir_loader_App1", "rahul", "some_App_Description")
+        self.loader = PebbloSafeLoader(S3DirectoryLoader(bucket), "s3_dir_loader_App1", "rahul", "some_App_Description")
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
         self.vectordb = self.embeddings(self.filtered_docs)
