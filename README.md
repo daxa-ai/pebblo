@@ -1,5 +1,8 @@
-# Pebblo
+<p align="center">
+  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages/assets/img/pebblo-logo.png?raw=true" />
+</p>
 
+---
 [![GitHub](https://img.shields.io/badge/GitHub-pebblo-blue?logo=github)](https://github.com/daxa-ai/pebblo)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/Documentation-pebblo-blue?logo=read-the-docs)](https://daxa-ai.github.io/pebblo-docs/)
@@ -10,12 +13,10 @@
 
 [![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)](https://discord.gg/Qp5ZunuE)
 [![Twitter Follow](https://img.shields.io/twitter/follow/daxa_ai)](https://twitter.com/daxa_ai)
+---
 
-<p align="center">
-  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages/assets/img/pebblo-logo.png?raw=true" />
-</p>
 
-Pebblo enables developers to safely load data and promote their Gen AI app to deployment without worrying about the organization’s compliance and security requirements. The project identifies semantic topics and entities found in the loaded data and summarizes them on the UI or a PDF report.
+**Pebblo** enables developers to safely load data and promote their Gen AI app to deployment without worrying about the organization’s compliance and security requirements. The project identifies semantic topics and entities found in the loaded data and summarizes them on the UI or a PDF report.
 
 Pebblo has two components.
 
