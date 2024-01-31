@@ -11,6 +11,10 @@
 [![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)](https://discord.gg/Qp5ZunuE)
 [![Twitter Follow](https://img.shields.io/twitter/follow/daxa_ai)](https://twitter.com/daxa_ai)
 
+<p align="center">
+  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages/assets/img/pebblo-logo.png?raw=true" />
+</p>
+
 Pebblo enables developers to safely load data and promote their Gen AI app to deployment without worrying about the organization’s compliance and security requirements. The project identifies semantic topics and entities found in the loaded data and summarizes them on the UI or a PDF report.
 
 Pebblo has two components.
@@ -52,7 +56,47 @@ Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data 
 
 ## Pebblo Safe DataLoader for Langchain
 
-`Pebblo Safe DataLoader` currently supports Langchain framework. See [this document](https://daxa-ai.github.io/pebblo-docs/rag.html) for code samples and more details.
+`Pebblo Safe DataLoader` currently supports Langchain framework.
+
+### Installation
+
+Install `pebblo-langchain` package in the Python environment where the RAG application is running. Add it as one of the dependencies in `pyproject.toml` or any other methods used for dependency management.
+
+```bash
+pip install pebblo-langchain
+```
+
+### Enable Pebblo in Langchain
+
+Add `PebbloSafeLoader` wrapper to the existing Langchain document loader(s) used in the RAG application. `PebbloSafeLoader` is interface compatible with Langchain `BaseLoader`. The application can continue to use `load()` and `lazy_load()` methods as it would on an Langchain document loader.
+
+Here is the snippet of Lanchain RAG application using `CSVLoader` before enabling `PebbloSafeLoader`.
+
+```python
+    from langchain.document_loaders.csv_loader import CSVLoader
+
+    loader = CSVLoader(file_path)
+    documents = loader.load()
+    vectordb = Chroma.from_documents(documents, OpenAIEmbeddings())
+```
+
+The Pebblo SafeLoader can be enabled with few lines of code change to the above snippet.
+
+```python
+    from langchain.document_loaders.csv_loader import CSVLoader
+    from pebblo_langchain.langchain_community.document_loaders.pebblo import PebbloSafeLoader
+
+    loader = PebbloSafeLoader(
+                CSVLoader(file_path),
+                name="acme-corp-rag-1", # App name (Mandatory)
+                owner="Joe Smith", # Owner (Optional)
+                description="Support productivity RAG application", # Description (Optional)
+    )
+    documents = loader.load()
+    vectordb = Chroma.from_documents(documents, OpenAIEmbeddings())
+```
+
+See [here](https://github.com/srics/pebblo/tree/main/samples) for samples with Pebblo enabled RAG applications and [this](https://daxa-ai.github.io/pebblo-docs/rag.html) document for more details.
 
 # Contribution
 
