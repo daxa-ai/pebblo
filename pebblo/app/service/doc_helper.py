@@ -319,16 +319,17 @@ class LoaderHelper:
                 continue
             load_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
             report = self._read_file(load_report_file_path)
-            report_summary = report.get("reportSummary")
+            if report:
+                report_summary = report.get("reportSummary")
 
-            # create loader history object
-            loader_history_model_obj = LoaderHistory(loadId=load_id,
-                                                     reportName=load_report_file_path,
-                                                     findings=report_summary["findings"],
-                                                     filesWithFindings=report_summary["filesWithFindings"],
-                                                     generatedOn=report_summary["createdAt"]
-                                                     )
-            loader_history.append(loader_history_model_obj)
+                # create loader history object
+                loader_history_model_obj = LoaderHistory(loadId=load_id,
+                                                         reportName=load_report_file_path,
+                                                         findings=report_summary["findings"],
+                                                         filesWithFindings=report_summary["filesWithFindings"],
+                                                         generatedOn=report_summary["createdAt"]
+                                                         )
+                loader_history.append(loader_history_model_obj)
         return loader_history
 
     def _get_doc_report_metadata(self, doc, raw_data):

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Union
 from datetime import datetime
+from uuid import UUID
 
 
 class Metadata(BaseModel):
@@ -110,7 +111,7 @@ class DataSource(BaseModel):
 
 
 class LoaderHistory(BaseModel):
-    loadId: int
+    loadId: UUID
     reportName: str
     findings: int
     filesWithFindings: int
