@@ -1,0 +1,7 @@
+.[dev]
+
+# Package                                        Components
+
+httpx==0.26.0
+pytest==8.0.0
+pytest-mock==3.12.0
