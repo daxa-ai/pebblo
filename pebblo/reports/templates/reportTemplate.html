@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet" />
+      rel="stylesheet"
+    />
     <title>Pebblo Report</title>
   </head>
   <body>
@@ -279,7 +280,7 @@
           <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
             <div class="surface-10 font-13">{{ item.labelName }}</div>
             <div class="sub-heading ml-2 surface-50 font-12">
-              Showing {{ item.snippetCount }} Snippets out of {{
+              Showing {{ item.snippets|length }} Snippets out of {{
               item.snippetCount }}
             </div>
           </div>
@@ -297,7 +298,8 @@
             <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
           </div> -->
           <div
-            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"></div>
+            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"
+          ></div>
           {% endfor %}
         </div>
         {% endfor %}
