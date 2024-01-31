@@ -61,6 +61,7 @@ class AppDiscover:
             logger.debug(f"Final Output For Discovery Call: {ai_apps_model.dict()}")
             file_path = f"{CacheDir.home_dir.value}/{application_name}/{self.load_id}/{CacheDir.metadata_file_path.value}"
             write_json_to_file(ai_apps_model.dict(), file_path)
+            logger.info("App Discover Request Processed Successfully")
             # return {"Request Processed Successfully"}
             # TODO: remove below line after testing.
             return ai_apps_model.dict()
@@ -163,8 +164,9 @@ class AppLoaderDoc:
                                                 f"/{CacheDir.pdf_report_file_name.value}")
                 full_file_path = get_full_path(current_app_report_file_path)
                 report_obj.generate_report(final_report, full_file_path)
-                logger.debug(f"PDF report generated, please check path : {full_file_path}")
+                logger.info(f"PDF report generated at : {full_file_path}")
 
+            logger.info("Loader Doc request processed successfully.")
             # return {"Loader Doc API processed successfully."}
             # TODO: Remove below line after testing.
             return {"Loader Doc Response": app_details.get('docs', [])}
