@@ -314,7 +314,11 @@ class LoaderHelper:
         load_ids = app_metadata.get("load_ids")
 
         # Retrieving load id report file
-        for load_id in load_ids:
+        # LoaderHistory will be considered up to the specified loader history limit.
+        top_n_latest_loader_id = load_ids[-ReportConstants.loader_history_limit.value-1:]
+        top_n_latest_loader_id.reverse()
+
+        for load_id in top_n_latest_loader_id:
             if load_id == current_load_id:
                 continue
             load_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
@@ -323,8 +327,9 @@ class LoaderHelper:
                 report_summary = report.get("reportSummary")
 
                 # create loader history object
+                report_name = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.pdf_report_file_name.value}"
                 loader_history_model_obj = LoaderHistory(loadId=load_id,
-                                                         reportName=load_report_file_path,
+                                                         reportName=report_name,
                                                          findings=report_summary["findings"],
                                                          filesWithFindings=report_summary["filesWithFindings"],
                                                          generatedOn=report_summary["createdAt"]
