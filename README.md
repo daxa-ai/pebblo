@@ -84,7 +84,7 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
 
     loader = PebbloSafeLoader(
                 CSVLoader(file_path),
-                name="RAG app 1", # App name (Mandatory)
+                name="acme-corp-rag-1", # App name (Mandatory)
                 owner="Joe Smith", # Owner (Optional)
                 description="Support productivity RAG application", # Description (Optional)
     )

@@ -1,0 +1,10 @@
+langchain>=0.1.2
+langchain-community
+langchain-openai
+pebblo-langchain
+chromadb==0.4.7
+python-dotenv==1.0.0
+tiktoken
+requests==2.31.0
+Markdown==3.5
+unstructured[all-docs]
