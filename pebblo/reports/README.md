@@ -54,7 +54,7 @@ appData = {
   }
 }
 
-# Provide JSON data, output file name and template name (from /templates directory) to the generate report function
+# Provide JSON data, output file name, template name (from /templates directory) and reportLibrary (xhtml2pdf or weasyprint) to the generate report # function.
 # Below are the default values for outputPath and templateName:
-  Reports.generate_report(data, outputPath='./report.pdf', templateName='reportTemplate.html')
+  Reports.generate_report(data, outputPath='./report.pdf', templateName='reportTemplate.html', reportLibrary='xhtml2pdf')
 ```
