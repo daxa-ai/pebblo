@@ -23,7 +23,7 @@ install: build
 ################################################
 
 # Define a variable for the test file path.
-TEST_FILE ?= pebblo/tests/
+TEST_FILE ?= tests/
 
 test:
 	pytest $(TEST_FILE)
