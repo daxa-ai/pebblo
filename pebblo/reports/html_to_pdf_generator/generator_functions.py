@@ -3,13 +3,11 @@ from xhtml2pdf import pisa
 import os
 
 def weasyprint_pdf_converter(sourceHtml, outputPath, searchPath):
-    print('weasyprint')
     base_url = os.path.dirname(os.path.realpath(__file__))
     htmldoc = HTML(string=sourceHtml, base_url=base_url)
     return htmldoc.write_pdf(target=outputPath, stylesheets=[CSS(searchPath + '/index.css')])
 
 def xhtml2pdf_pdf_converter(sourceHtml, outputPath, searchPath):
-    print('xhtml2pdf')
     resultFile = open(outputPath, "w+b")
     pisaStatus = pisa.CreatePDF(src=sourceHtml,           
         dest=resultFile)

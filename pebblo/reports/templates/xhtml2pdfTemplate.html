@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <title>Pebblo Report</title>
     <style>
       @page {
@@ -513,18 +509,8 @@
         page-break-after: always;
       }
 
-      .cover-page {
-        background-image: url("../assets/cover-page-background.png");
-        background-repeat: no-repeat;
-        background-size: contain;
-      }
-
       /* CARD */
       .card {
-        display: flex;
-        flex-direction: column;
-        /*background: white;*/
-        justify-content: space-around;
         border-radius: 2px;
       }
       .card__title {
@@ -597,10 +583,10 @@
     </style>
   </head>
   <body>
-    <section class="cover-page pl-23 pr-23 pt-42">
-      <div class="surface-60 inter font-48 font-thin">Data Report</div>
-      <div class="mt-9">
-        <div class="surface-60 inter font-48 font-thin break-word">
+    <section class="pl-23 pr-23 pt-42 align-cell-center">
+      <div class="surface-10 inter font-48 font-thin">Data Report</div>
+      <div class="mt-2">
+        <div class="surface-10 inter font-48 font-thin break-word">
           {{data.name}}
         </div>
         <div class="purple-10 inter font-28 mt-2">
@@ -862,7 +848,7 @@
             <div class="surface-10 font-13 medium">
               {{ item.labelName }} :
               <span class="sub-heading surface-50 font-12"
-                >Showing {{ item.snippets|length }} Snippets out of {{
+                >Showing {{ item.snippets|length }} snippets out of {{
                 item.snippetCount }}</span
               >
             </div>
