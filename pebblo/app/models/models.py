@@ -110,7 +110,7 @@ class DataSource(BaseModel):
     # snippets: Optional[List[Snippets]]
 
 
-class LoaderHistory(BaseModel):
+class LoadHistory(BaseModel):
     loadId: UUID
     reportName: str
     findings: int
@@ -123,7 +123,7 @@ class ReportModel(BaseModel):
     description: Optional[str]
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary]
-    loaderHistory: Optional[List[LoaderHistory]]
+    loadHistory: Optional[List[LoadHistory]]
     topFindings: Optional[List[TopFindings]]
     instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]

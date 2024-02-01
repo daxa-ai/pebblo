@@ -16,24 +16,6 @@ class AppLoaderDoc:
         self.data = data
         self.app_name = self.data.get("name")
 
-    @staticmethod
-    def _read_file(file_path):
-        """
-            Retrieve the content of the specified file.
-        """
-        logger.debug(f"Reading content from file: {file_path}")
-        file_content = read_json_file(file_path)
-        return file_content
-
-    @staticmethod
-    def _write_file_content_to_path(file_content, file_path):
-        """
-                Write content to the specified file path
-        """
-        logger.debug(f"Writing content to file path: {file_path}")
-        # Writing file content to given file path
-        write_json_to_file(file_content, file_path)
-
     def _write_pdf_report(self, final_report):
         """
             Calling pdf report generator to write report in pdf format
@@ -108,7 +90,7 @@ class AppLoaderDoc:
 
             # Read metadata file & get current load details
             app_metadata_file_path = f"{CacheDir.home_dir.value}/{self.app_name}/{CacheDir.metadata_file_path.value}"
-            app_metadata = self._read_file(app_metadata_file_path)
+            app_metadata = read_json_file(app_metadata_file_path)
             if not app_metadata:
                 return {"Message": "App details not present, Please execute discovery api first"}
 
@@ -116,7 +98,7 @@ class AppLoaderDoc:
             load_id = self.data['load_id']
             app_load_metadata_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
                                            f"/{load_id}/{CacheDir.metadata_file_path.value}")
-            app_details = self._read_file(app_load_metadata_file_path)
+            app_details = read_json_file(app_load_metadata_file_path)
             if not app_details:
                 # TODO: Handle the case where discover call did not happen, but loader doc is being called.
                 logger.error("Could not read metadata file. Exiting.")
@@ -132,7 +114,7 @@ class AppLoaderDoc:
             logger.debug(f"Final Report with doc details: {final_report}")
 
             # Write current state to the file, Updating app details
-            self._write_file_content_to_path(app_details, app_load_metadata_file_path)
+            write_json_to_file(app_details, app_load_metadata_file_path)
 
             # check whether report generation is necessary
             loading_end = self.data['loading_end']
@@ -142,7 +124,8 @@ class AppLoaderDoc:
                 # writing report file to its load_id directory
                 json_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
                                          f"/{load_id}/{CacheDir.report_file_name.value}")
-                self._write_file_content_to_path(final_report, json_report_file_path)
+                write_json_to_file(final_report, json_report_file_path)
+
                 # Writing report in pdf format
                 self._write_pdf_report(final_report)
 

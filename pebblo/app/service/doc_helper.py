@@ -3,7 +3,7 @@
 """
 from datetime import datetime
 from pebblo.app.libs.logger import logger
-from pebblo.app.models.models import AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource, LoaderHistory
+from pebblo.app.models.models import AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource, LoadHistory
 from pebblo.app.utils.utils import read_json_file
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
@@ -20,15 +20,6 @@ class LoaderHelper:
         self.app_details = app_details
         self.data = data
         self.load_id = load_id
-
-    @staticmethod
-    def _read_file(file_path):
-        """
-            Retrieve the content of the specified file.
-        """
-        logger.debug(f"Reading content from file: {file_path}")
-        file_content = read_json_file(file_path)
-        return file_content
 
     # Initialization
     @staticmethod
@@ -296,46 +287,46 @@ class LoaderHelper:
         )
         return report_summary
 
-    def _get_loader_history(self):
+    def _get_load_history(self):
         """
-            Retrieve previous runs details and create loader history and return
+            Retrieve previous runs details and create load history and return
         """
         logger.debug("Fetching previous execution details and creating loader history")
-        loader_history = list()
+        load_history = list()
 
         # Reading metadata file & get load details
         app_name = self.data.get("name")
         current_load_id = self.load_id
         app_metadata_file_path = f"{CacheDir.home_dir.value}/{app_name}/{CacheDir.metadata_file_path.value}"
-        app_metadata = self._read_file(app_metadata_file_path)
+        app_metadata = read_json_file(app_metadata_file_path)
         if not app_metadata:
             # No app metadata is present
-            return loader_history
+            return load_history
         load_ids = app_metadata.get("load_ids")
 
         # Retrieving load id report file
-        # LoaderHistory will be considered up to the specified loader history limit.
-        top_n_latest_loader_id = load_ids[-ReportConstants.loader_history_limit.value-1:]
+        # LoadHistory will be considered up to the specified load history limit.
+        top_n_latest_loader_id = load_ids[-ReportConstants.loader_history_limit.value - 1:]
         top_n_latest_loader_id.reverse()
 
         for load_id in top_n_latest_loader_id:
             if load_id == current_load_id:
                 continue
             load_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
-            report = self._read_file(load_report_file_path)
+            report = read_json_file(load_report_file_path)
             if report:
                 report_summary = report.get("reportSummary")
 
                 # create loader history object
                 report_name = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.pdf_report_file_name.value}"
-                loader_history_model_obj = LoaderHistory(loadId=load_id,
-                                                         reportName=report_name,
-                                                         findings=report_summary["findings"],
-                                                         filesWithFindings=report_summary["filesWithFindings"],
-                                                         generatedOn=report_summary["createdAt"]
-                                                         )
-                loader_history.append(loader_history_model_obj)
-        return loader_history
+                load_history_model_obj = LoadHistory(loadId=load_id,
+                                                     reportName=report_name,
+                                                     findings=report_summary["findings"],
+                                                     filesWithFindings=report_summary["filesWithFindings"],
+                                                     generatedOn=report_summary["createdAt"]
+                                                     )
+                load_history.append(load_history_model_obj)
+        return load_history
 
     def _get_doc_report_metadata(self, doc, raw_data):
         """
@@ -403,8 +394,8 @@ class LoaderHelper:
         # Generating DataSource
         data_source_obj_list = self._get_data_source_details(raw_data)
 
-        # Retrieve LoaderHistory From previous executions
-        loader_history = self._get_loader_history()
+        # Retrieve LoadHistory From previous executions
+        load_history = self._get_load_history()
 
         report_dict = ReportModel(
             name=self.app_details["name"],
@@ -412,7 +403,7 @@ class LoaderHelper:
             instanceDetails=self.app_details["instanceDetails"],
             framework=self.app_details["framework"],
             reportSummary=report_summary,
-            loaderHistory=loader_history,
+            loadHistory=load_history,
             topFindings=top_n_findings,
             lastModified=datetime.now(),
             dataSources=data_source_obj_list
