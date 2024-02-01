@@ -1,68 +1,6 @@
 const MEDIA_URL = document.currentScript.getAttribute("staticURL");
 const APP_DATA = JSON.parse(document.currentScript.getAttribute("appData"));
 let tabValue = 0;
-const TABS_ARR_FOR_APPLICATIONS = [
-  {
-    label: "Applications With Findings",
-    critical: 2,
-    outOf: 4,
-    value: 0,
-    isCritical: true,
-  },
-  {
-    label: "Findings",
-    critical: 72,
-    outOf: 0,
-    value: 1,
-    isCritical: true,
-  },
-  {
-    label: "Files With Findings",
-    critical: 8,
-    outOf: 24,
-    value: 2,
-    isCritical: true,
-  },
-  {
-    label: "Data Source",
-    critical: 4,
-    outOf: 0,
-    value: 3,
-    isCritical: false,
-  },
-];
-
-const TABS_ARR_FOR_APPLICATION_DETAILS = [
-  {
-    label: "Findings",
-    critical: 72,
-    outOf: 0,
-    value: 0,
-    isCritical: true,
-  },
-  {
-    label: "Files With Findings",
-    critical: 8,
-    outOf: 24,
-    value: 1,
-    isCritical: true,
-  },
-  {
-    label: "Data Source",
-    critical: 4,
-    outOf: 0,
-    value: 2,
-    isCritical: false,
-  },
-  {
-    label: "Snippets",
-    critical: 254,
-    outOf: 0,
-    value: 3,
-    isCritical: false,
-  },
-];
-
 const TABLE_DATA_FOR_APPLICATIONS = [
   {
     label: "Application",
@@ -237,7 +175,116 @@ const APP_DETAILS_FINDINGS_TABLE = [
     align: "start",
   },
 ];
-let TAB_PANEL_BODY;
+
+const TABS_ARR_FOR_APPLICATIONS = [
+  {
+    label: "Applications With Findings",
+    critical: 2,
+    outOf: 4,
+    value: 0,
+    isCritical: true,
+    tabPanel: ApplicationsList("Applications", TABLE_DATA_FOR_APPLICATIONS),
+  },
+  {
+    label: "Findings",
+    critical: 72,
+    outOf: 0,
+    value: 1,
+    isCritical: true,
+    tabPanel: ApplicationsList("Findings", TABLE_DATA_FOR_FINDINGS),
+  },
+  {
+    label: "Files With Findings",
+    critical: 8,
+    outOf: 24,
+    value: 2,
+    isCritical: true,
+    tabPanel: ApplicationsList(
+      "Files With Findings",
+      TABLE_DATA_FOR_FILES_WITH_FINDINGS
+    ),
+  },
+  {
+    label: "Data Source",
+    critical: 4,
+    outOf: 0,
+    value: 3,
+    isCritical: false,
+    tabPanel: ApplicationsList("Data Source", TABLE_DATA_FOR_DATA_SOURCE),
+  },
+];
+
+const TABS_ARR_FOR_APPLICATION_DETAILS = [
+  {
+    label: "Findings",
+    critical: 72,
+    outOf: 0,
+    value: 0,
+    isCritical: true,
+    tabPanel: Application_Details_List_Section(
+      "Findings",
+      APP_DETAILS_FINDINGS_TABLE
+    ),
+  },
+  {
+    label: "Files With Findings",
+    critical: 8,
+    outOf: 24,
+    value: 1,
+    isCritical: true,
+    tabPanel: Application_Details_List_Section(
+      "Files With Findngs",
+      APP_DETAILS_FINDINGS_TABLE
+    ),
+  },
+  {
+    label: "Data Source",
+    critical: 4,
+    outOf: 0,
+    value: 2,
+    isCritical: false,
+    tabPanel: Application_Details_List_Section(
+      "Data Source",
+      APP_DETAILS_FINDINGS_TABLE
+    ),
+  },
+  {
+    label: "Snippets",
+    critical: 254,
+    outOf: 0,
+    value: 3,
+    isCritical: false,
+    tabPanel: SnippetDetails(APP_DATA?.dataSources[0]?.findingsDetails),
+  },
+];
+
+const APP_DETAILS = [
+  {
+    label: "IP",
+    value: "49.248.66.146",
+  },
+  {
+    label: "Runtime",
+    value: "Local",
+  },
+  {
+    label: "Language",
+    value: "Python 3.10.12",
+  },
+  {
+    label: "Host",
+    value: "OPLPT012.local",
+  },
+  {
+    label: "Created At",
+    value: "2024-01-18 10:57:29",
+  },
+  {
+    label: "Path",
+    value:
+      "/Users/shreyasdamle/work/cloud_defense/daxa-analyzer-rc1/samples/basic_retrieval",
+  },
+];
 
 document.getElementById("root").innerHTML = `${App()}`;
 
@@ -248,29 +295,8 @@ function App() {
   let isDetailPage = window.location.pathname === "/";
   if (isDetailPage) {
     UI = Overview;
-    TAB_PANEL_BODY = [
-      ApplicationsList("Applications", TABLE_DATA_FOR_APPLICATIONS),
-      ApplicationsList("Findings", TABLE_DATA_FOR_FINDINGS),
-      ApplicationsList(
-        "Files With Findings",
-        TABLE_DATA_FOR_FILES_WITH_FINDINGS
-      ),
-      ApplicationsList("Data Source", TABLE_DATA_FOR_DATA_SOURCE),
-    ];
   } else {
     UI = AppDetailsPage;
-    TAB_PANEL_BODY = [
-      Application_Details_List_Section("Findings", APP_DETAILS_FINDINGS_TABLE),
-      Application_Details_List_Section(
-        "Files With Findngs",
-        APP_DETAILS_FINDINGS_TABLE
-      ),
-      Application_Details_List_Section(
-        "Data Source",
-        APP_DETAILS_FINDINGS_TABLE
-      ),
-      SnippetDetails(APP_DATA?.dataSources[0]?.findingsDetails),
-    ];
   }
   return `
      <div class="app">
@@ -319,7 +345,7 @@ function Card(children) {
 
 function Overview() {
   return `
-     <div class="flex gap-5 flex-col h-full">
+     <div class="flex gap-5 flex-col h-full overflow-auto">
       <div class="surface-10 inter font-14 medium">Overview</div>
        ${Tabs(
          TABS_ARR_FOR_APPLICATIONS,
@@ -337,8 +363,8 @@ function Tabs(tabsArr, children) {
   let allTabs = "";
   tabsArr?.map((tab) => (allTabs += Tab(tab)));
   document.addEventListener("DOMContentLoaded", function () {
-    const tabElements = document.querySelectorAll(".tab");
-    tabElements.forEach((element) => {
+    const tabElements = document.getElementsByClassName("tab");
+    Array.from(tabElements).forEach((element) => {
       element?.addEventListener("click", function (e) {
         tabValue = Number(e.target.dataset.value);
         document.getElementById("tab-selected").style.left = `${
@@ -349,7 +375,7 @@ function Tabs(tabsArr, children) {
         }px`;
         const tabPanel = document.getElementById("tab-panel");
         tabPanel.innerHTML = "";
-        tabPanel.innerHTML = TAB_PANEL_BODY[tabValue];
+        tabPanel.innerHTML = tabsArr[tabValue]?.tabPanel;
       });
     });
   });
@@ -497,6 +523,45 @@ function Button({ variant = "text", btnText, startIcon, endIcon, href }) {
 
 // </BUTTON_COMPONENT>
 
+{
+  /* <ACCORDION_COMPONENT> */
+}
+
+function AccordionSummary(children, id) {
+  document.addEventListener("DOMContentLoaded", function () {
+    const accordion = document.getElementsByClassName("accordion-summary");
+    Array.from(accordion)?.forEach((acc) => {
+      acc.addEventListener("click", function (e) {
+        this.classList.toggle("active");
+        let panel = document.getElementById(
+          `panel-${Number(e.target.parentElement.dataset.value)}`
+        );
+        if (panel.style.display === "flex") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "flex";
+        }
+      });
+    });
+  });
+  return ` 
+     <button title="Accordion-summary" type="button" class="accordion-summary flex gap-1 items-center" data-value="${id}">
+      <div>${children}</div>
+      <img id="arrow-icon" src="${MEDIA_URL}/static/arrow.png" alt="Arrow icon"/>
+     </button>
+  `;
+}
+
+function AccordionDetails(children, id) {
+  return `
+     <div title="Accordion-details" id="${id}" class="accordion-details">
+         ${children}
+     </div>
+  `;
+}
+
+// </ACCORDION_COMPONENT>
+
 // <APPLICATION_LIST_COMPONENT> ----------->
 
 function ApplicationsList(title, tableData) {
@@ -540,7 +605,7 @@ function AppDetailsPage() {
            <div class="font-12 flex gap-3">
              <div class="font-thin">Last Updated 10 Jan 2024</div>
              <div class="divider"></div>
-             <div class="medium">Instance Details</div>
+             ${AccordionSummary("Instance Details", 1)}
            </div>
          </div>
       </div>
@@ -558,6 +623,14 @@ function AppDetailsPage() {
         })}
       </div>
     </div>
+    ${AccordionDetails(
+      `<div class="grid grid-cols-4 row-gap-3">
+         ${APP_DETAILS?.map((item) => KeyValue(item.label, item.value)).join(
+           ""
+         )}
+      </div>`,
+      "panel-1"
+    )}
     <div class="divider-horizontal"></div>
     <div class="flex flex-col gap-4 h-full">
       <div class="flex gap-2 surface-10 inter items-center">
