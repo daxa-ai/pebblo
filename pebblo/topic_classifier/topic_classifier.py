@@ -1,5 +1,6 @@
 import os
 
+from huggingface_hub import login
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import pipeline
 
@@ -8,15 +9,6 @@ from pebblo.topic_classifier.config import TOPIC_CONFIDENCE_SCORE, TOKENIZER_PAT
 from pebblo.topic_classifier.enums.constants import topic_display_names
 from pebblo.topic_classifier.libs.logger import logger
 
-# Use os.environ.get() to retrieve the value of the environment variable
-huggingface_token = os.environ.get("HF_TOKEN")
-
-# Check if the environment variable exists
-if huggingface_token is not None:
-    from huggingface_hub import login
-
-    login(token=huggingface_token)
-
 
 class TopicClassifier:
     """
@@ -24,6 +16,14 @@ class TopicClassifier:
     """
 
     def __init__(self):
+        # Use os.environ.get() to retrieve the value of the environment variable
+        huggingface_token = os.environ.get("HF_TOKEN")
+
+        # Check if the environment variable exists
+        if huggingface_token is not None:
+            login(token=huggingface_token)
+
+        # Load the model and tokenizer from the specified paths and revision
         _tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH, revision=MODEL_REVISION)
         _model = AutoModelForSequenceClassification.from_pretrained(CLASSIFIER_PATH, revision=MODEL_REVISION)
         self.classifier = pipeline("text-classification", model=_model, tokenizer=_tokenizer,
