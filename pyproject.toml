@@ -124,7 +124,7 @@ dependencies = [
 # projects.
 [project.optional-dependencies] # Optional
 dev = ["check-manifest"]
-test = ["coverage", "httpx==0.26.0", "pytest==8.0.0", "pytest-mock==3.12.0", "ruff"]
+test = ["ruff"]
 
 # List URLs that are relevant to your project
 #
