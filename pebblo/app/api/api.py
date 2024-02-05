@@ -1,6 +1,19 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pebblo.app.service.service import AppDiscover, AppLoaderDoc
+from pebblo.app.config.config import load_config, Config
+from functools import lru_cache
+from typing import Annotated
 
+creds_details = load_config(None)
+
+
+@lru_cache
+def get_settings():
+    return Config()
+
+
+def info_func(settings: Config = Depends(get_settings)):
+    return {settings}
 
 class App:
     """
