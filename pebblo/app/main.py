@@ -5,6 +5,7 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 from pathlib import Path
 from service.local_ui_service import AppLocalUI
+import json
 
 
 app = FastAPI()
@@ -18,11 +19,13 @@ app.mount(
 
 @app.get("/", response_class=HTMLResponse)
 async def hello(request: Request):
-   return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.getData()})   
+   return templates.TemplateResponse("index.html", {"request": request, "data": json.dumps(AppLocalUI.getData())})   
 
 @app.get("/appDetails", response_class=HTMLResponse)
 async def hello(request: Request, id:str):
-   return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.getData()})     
+   appList = AppLocalUI.getData().get('appList')
+   filteredData = [obj for obj in appList if(obj['id'] == id)]
+   return templates.TemplateResponse("index.html", {"request": request, "data":json.dumps(AppLocalUI.getData())})     
     
 
 

@@ -38,7 +38,8 @@ data = {
         "platform": "macOS-14.3-arm64-arm-64bit",
         "os": "Darwin",
         "osVersion": "Darwin Kernel Version 23.3.0: Wed Dec 20 21:33:31 PST 2023; root:xnu-10002.81.5~7/RELEASE_ARM64_T8112",
-        "createdAt": "2024-01-24 19:49:21.065505"
+        "createdAt": "2024-01-24 19:49:21.065505",
+        "id":"1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed"
     },
     "dataSources": [
         {
@@ -168,11 +169,37 @@ data = {
             ]
         }
     ],
-    "lastModified": "2024-01-24 19:49:51.285922"
+    "lastModified": "2024-01-24 19:49:51.285922",
+    "appList":[
+        {
+            "instanceDetails": {},
+            "application":"AcmeMort_App",
+            "topics":"24",
+            "entities":"12",
+            "owner":"Alex M",
+            "id":"1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed"
+        },
+        {
+            "instanceDetails": {},
+            "application":"Healthcare_App",
+            "topics":"24",
+            "entities":"12",
+            "owner":"Jane Cooper",
+            "id":"1b9d6bcd-4b2d-9b5d-ab8dfbbd4bed"
+        },
+        {
+            "instanceDetails": {},
+            "application":"Hrproductivity_App",
+            "topics":"00",
+            "entities":"00",
+            "owner":"Guy Hawkins",
+            "id":"1b9d6bcd-bbfd-9b5d-ab8dfbbd4bed"
+        }
+    ]
 }
 
 
 
 class AppLocalUI:
     def getData():
-        return json.dumps(data)
+        return data

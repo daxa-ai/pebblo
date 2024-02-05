@@ -1,29 +1,47 @@
 const MEDIA_URL = document.currentScript.getAttribute("staticURL");
 const APP_DATA = JSON.parse(document.currentScript.getAttribute("appData"));
 let tabValue = 0;
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+const getFormattedDate = (date) => {
+  const newDate = new Date(date);
+  return `${newDate.getDate()} ${
+    MONTHS[newDate.getMonth()]
+  } ${newDate.getFullYear()}`;
+};
+
 const TABLE_DATA_FOR_APPLICATIONS = [
   {
     label: "Application",
     field: "application",
-    application: APP_DATA?.name,
     align: "start",
   },
   {
     label: "Findings - Topics",
     field: "topics",
-    topics: APP_DATA?.reportSummary.findingsTopics,
     align: "end",
   },
   {
     label: "Findings - Entities",
     field: "entities",
-    entities: APP_DATA?.reportSummary.findingsEntities,
     align: "end",
   },
   {
     label: "Owner",
     field: "owner",
-    owner: APP_DATA?.reportSummary.owner,
     align: "start",
   },
   {
@@ -183,7 +201,11 @@ const TABS_ARR_FOR_APPLICATIONS = [
     outOf: 4,
     value: 0,
     isCritical: true,
-    tabPanel: ApplicationsList("Applications", TABLE_DATA_FOR_APPLICATIONS),
+    tabPanel: ApplicationsList(
+      "Applications",
+      TABLE_DATA_FOR_APPLICATIONS,
+      APP_DATA?.appList
+    ),
   },
   {
     label: "Findings",
@@ -191,7 +213,7 @@ const TABS_ARR_FOR_APPLICATIONS = [
     outOf: 0,
     value: 1,
     isCritical: true,
-    tabPanel: ApplicationsList("Findings", TABLE_DATA_FOR_FINDINGS),
+    tabPanel: ApplicationsList("Findings", TABLE_DATA_FOR_FINDINGS, []),
   },
   {
     label: "Files With Findings",
@@ -201,7 +223,8 @@ const TABS_ARR_FOR_APPLICATIONS = [
     isCritical: true,
     tabPanel: ApplicationsList(
       "Files With Findings",
-      TABLE_DATA_FOR_FILES_WITH_FINDINGS
+      TABLE_DATA_FOR_FILES_WITH_FINDINGS,
+      []
     ),
   },
   {
@@ -210,7 +233,7 @@ const TABS_ARR_FOR_APPLICATIONS = [
     outOf: 0,
     value: 3,
     isCritical: false,
-    tabPanel: ApplicationsList("Data Source", TABLE_DATA_FOR_DATA_SOURCE),
+    tabPanel: ApplicationsList("Data Source", TABLE_DATA_FOR_DATA_SOURCE, []),
   },
 ];
 
@@ -223,7 +246,8 @@ const TABS_ARR_FOR_APPLICATION_DETAILS = [
     isCritical: true,
     tabPanel: Application_Details_List_Section(
       "Findings",
-      APP_DETAILS_FINDINGS_TABLE
+      APP_DETAILS_FINDINGS_TABLE,
+      []
     ),
   },
   {
@@ -234,7 +258,8 @@ const TABS_ARR_FOR_APPLICATION_DETAILS = [
     isCritical: true,
     tabPanel: Application_Details_List_Section(
       "Files With Findngs",
-      APP_DETAILS_FINDINGS_TABLE
+      APP_DETAILS_FINDINGS_TABLE,
+      []
     ),
   },
   {
@@ -245,7 +270,8 @@ const TABS_ARR_FOR_APPLICATION_DETAILS = [
     isCritical: false,
     tabPanel: Application_Details_List_Section(
       "Data Source",
-      APP_DETAILS_FINDINGS_TABLE
+      APP_DETAILS_FINDINGS_TABLE,
+      []
     ),
   },
   {
@@ -261,23 +287,23 @@ const TABS_ARR_FOR_APPLICATION_DETAILS = [
 const APP_DETAILS = [
   {
     label: "IP",
-    value: "49.248.66.146",
+    value: APP_DATA?.instanceDetails?.ip,
   },
   {
     label: "Runtime",
-    value: "Local",
+    value: APP_DATA?.instanceDetails?.runtime,
   },
   {
     label: "Language",
-    value: "Python 3.10.12",
+    value: APP_DATA?.instanceDetails?.language,
   },
   {
     label: "Host",
-    value: "OPLPT012.local",
+    value: APP_DATA?.instanceDetails?.host,
   },
   {
     label: "Created At",
-    value: "2024-01-18 10:57:29",
+    value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt),
   },
   {
     label: "Path",
@@ -323,9 +349,9 @@ function App() {
 // <HEADER_COMPONENT> ----------->
 
 function Header() {
-  return ` <div id="header" class="relative pt-4 pb-4 pl-6 pr-6 bg-white">
+  return ` <div id="header" class="relative pt-4 pb-4 pl-6 pr-6">
               <img class="cursor-pointer" src="${MEDIA_URL}/static/pebblo-icon.png" alt="Pebblo Icon" />
-              <div class="mask absolute top-0 bg-grey-70 h-59 w-full left-0 -z-1"></div>
+              <div class="mask absolute top-0 h-59 w-full left-0 -z-1"></div>
            </div>`;
 }
 
@@ -349,7 +375,11 @@ function Overview() {
       <div class="surface-10 inter font-14 medium">Overview</div>
        ${Tabs(
          TABS_ARR_FOR_APPLICATIONS,
-         ApplicationsList("Applications", TABLE_DATA_FOR_APPLICATIONS)
+         ApplicationsList(
+           "Applications",
+           TABLE_DATA_FOR_APPLICATIONS,
+           APP_DATA?.appList
+         )
        )}
      </div>
     `;
@@ -419,10 +449,10 @@ function Tab(item) {
 
 // <TABLE_COMPONENT> ----------->
 
-function Table(tableData, link) {
+function Table(tableCol, tableData, link) {
   return `<table cellspacing="0" cellpadding="0">
-  ${Thead(tableData)}
-  ${Tbody(tableData, link)}
+  ${Thead(tableCol)}
+  ${Tbody(tableCol, tableData, link)}
   </table>`;
 }
 
@@ -442,22 +472,28 @@ function Thead(tableData) {
   `;
 }
 
-function Tbody(tableData, link) {
+function Tbody(tableCol, tableData, link) {
+  console.log(tableData);
   return `
     <tbody>
-     <tr class="table-row">
-     ${tableData
-       ?.map((item) =>
-         Td(
-           item?.render ? item?.render(item) : item[item?.field],
-           item?.align,
-           item?.field !== "actions" && link
-             ? `${link}/?id=${tableData?.id}`
-             : ""
-         )
-       )
-       .join("")}
-     </tr>
+    ${tableData
+      ?.map(
+        (item) =>
+          `<tr class="table-row">
+         ${tableCol
+           ?.map((col) =>
+             Td(
+               col?.render ? col?.render(item) : item[col?.field],
+               col?.align,
+               col?.field !== "actions" && link
+                 ? `${link}/?id=${APP_DATA?.instanceDetails?.id}`
+                 : ""
+             )
+           )
+           .join("")}
+           </tr>`
+      )
+      .join("")}
     </tbody>
   `;
 }
@@ -523,9 +559,7 @@ function Button({ variant = "text", btnText, startIcon, endIcon, href }) {
 
 // </BUTTON_COMPONENT>
 
-{
-  /* <ACCORDION_COMPONENT> */
-}
+//  <ACCORDION_COMPONENT>
 
 function AccordionSummary(children, id) {
   document.addEventListener("DOMContentLoaded", function () {
@@ -534,7 +568,10 @@ function AccordionSummary(children, id) {
       acc.addEventListener("click", function (e) {
         this.classList.toggle("active");
         let panel = document.getElementById(
-          `panel-${Number(e.target.parentElement.dataset.value)}`
+          `panel-${
+            Number(e.target.parentElement.dataset.value) ||
+            Number(e.target.dataset.value)
+          }`
         );
         if (panel.style.display === "flex") {
           panel.style.display = "none";
@@ -554,7 +591,7 @@ function AccordionSummary(children, id) {
 
 function AccordionDetails(children, id) {
   return `
-     <div title="Accordion-details" id="${id}" class="accordion-details">
+     <div title="Accordion-details" id="${id}" class="none accordion-details">
          ${children}
      </div>
   `;
@@ -564,15 +601,42 @@ function AccordionDetails(children, id) {
 
 // <APPLICATION_LIST_COMPONENT> ----------->
 
-function ApplicationsList(title, tableData) {
+function ApplicationsList(title, tableCol, tableData) {
   const navigateToDetailsPage = "/appDetails";
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("searchField")?.addEventListener("change", (e) => {
+      let filteredData = tableData?.filter((item) =>
+        item?.application?.includes(e.target.value)
+      );
+      document.getElementsByTagName("tbody")[0].innerHTML = filteredData?.length
+        ? `
+      <tr class="table-row">
+      ${filteredData
+        ?.map((item) =>
+          Td(
+            item?.render ? item?.render(item) : item[item?.field],
+            item?.align,
+            item?.field !== "actions" && navigateToDetailsPage
+              ? `${navigateToDetailsPage}/?id=${APP_DATA?.instanceDetails?.id}`
+              : ""
+          )
+        )
+        .join("")}
+      </tr>
+      `
+        : ` <tr class="table-row">
+             <td class="pt-3 pb-3 pl-3 pr-3 text-center" colspan="4">No Data Found</td>
+          </tr>`;
+    });
+  });
+
   return `
   <div class="application-container flex flex-col gap-4">
   <div class="flex justify-between">
     <div class="inter surface-10 font-16 medium">${title}</div>
     <div class="flex">
       <div class="search">
-        <input type="text" />
+        <input id="searchField" type="text" />
         <img
           src="${MEDIA_URL}/static/search-icon.png"
           alt="Search Icon" />
@@ -584,7 +648,7 @@ function ApplicationsList(title, tableData) {
       })}
     </div>
   </div>
-  ${Table(tableData, navigateToDetailsPage)}
+  ${Table(tableCol, tableData, navigateToDetailsPage)}
 </div>
   `;
 }
@@ -603,7 +667,9 @@ function AppDetailsPage() {
          <div class="flex flex-col gap-1 inter surface-10">
            <div class="font-24">${APP_DATA?.name}</div>
            <div class="font-12 flex gap-3">
-             <div class="font-thin">Last Updated 10 Jan 2024</div>
+             <div class="font-thin">Last Updated ${getFormattedDate(
+               APP_DATA?.lastModified
+             )}</div>
              <div class="divider"></div>
              ${AccordionSummary("Instance Details", 1)}
            </div>
@@ -624,10 +690,14 @@ function AppDetailsPage() {
       </div>
     </div>
     ${AccordionDetails(
-      `<div class="grid grid-cols-4 row-gap-3">
-         ${APP_DETAILS?.map((item) => KeyValue(item.label, item.value)).join(
-           ""
-         )}
+      `<div class="grid grid-cols-4 row-gap-3 col-gap-3 w-full">
+         ${APP_DETAILS?.map((item) =>
+           KeyValue(
+             item.label,
+             item.value,
+             item?.label === "Path" ? "col-4" : ""
+           )
+         ).join("")}
       </div>`,
       "panel-1"
     )}
@@ -637,18 +707,22 @@ function AppDetailsPage() {
          <div class="font-16">Report Summary</div>
          <div class="font-12">Current Load By ${
            APP_DATA?.reportSummary?.owner
-         }, 10 Jan 2024 </div>
+         }, ${getFormattedDate(APP_DATA?.lastModified)} </div>
       </div>
       ${Tabs(
         TABS_ARR_FOR_APPLICATION_DETAILS,
-        Application_Details_List_Section("Findings", APP_DETAILS_FINDINGS_TABLE)
+        Application_Details_List_Section(
+          "Findings",
+          APP_DETAILS_FINDINGS_TABLE,
+          []
+        )
       )}
     </div>
  </div>
   `;
 }
 
-function Application_Details_List_Section(title, tableData) {
+function Application_Details_List_Section(title, tableCol, tableData) {
   return `
   <div class="application-container flex flex-col gap-4">
     <div class="flex justify-between">
@@ -660,7 +734,7 @@ function Application_Details_List_Section(title, tableData) {
             alt="Search Icon" />
         </div>
     </div>
-    ${Table(tableData)}
+    ${Table(tableCol, tableData)}
   </div>
   `;
 }
@@ -700,9 +774,9 @@ function SnippetDetails(snippetDetails) {
   `;
 }
 
-function KeyValue(key, value) {
+function KeyValue(key, value, className = "") {
   return `
-    <div class="flex flex-col gap-2 inter">
+    <div class="flex flex-col gap-2 inter ${className}">
        <div class="surface-60 font-12">${key}</div>
        <div class="surface-10 font-13">${value}</div>
     </div>
