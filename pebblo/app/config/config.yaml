@@ -1,6 +1,6 @@
 daemon:
-  port: 2300
-  host: '0.0.0.0'
+  port: 8000
+  host: 'localhost'
 logging:
   level: info
 reports:

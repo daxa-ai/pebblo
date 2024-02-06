@@ -4,7 +4,7 @@ from pebblo.app.config.config import load_config, Config
 from functools import lru_cache
 from typing import Annotated
 
-creds_details = load_config(None)
+
 
 
 @lru_cache

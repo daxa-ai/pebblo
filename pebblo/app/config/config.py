@@ -33,33 +33,28 @@ class Config(BaseSettings):
 
 def load_config(path) -> Config:
     if not path:
-        con_file = DEFAULT_SERVICE_CONFIG
-        try:
-            with open(con_file, "r") as output:
-                cred_json = yaml.safe_load(output)
-                print(cred_json, Config)
-                parsed_config = Config.parse_obj(cred_json)
-                return parsed_config.dict()
-
-        except IOError as err:
-            print(f"no credentials file found at {con_file}")
+        conf_obj = Config(
+            daemon=PortConfig(
+                host='0.0.0.0',
+                port=3700
+            ),
+            reports=ReportConfig(
+                format='pdf',
+                outputDir='/home/Kunal/pebblo'
+            ),
+            logging=LoggingConfig(
+                level='info'
+            )
+        )
+        return conf_obj.dict()
     else:
         con_file = path
-
         try:
             with open(con_file, "r") as output:
                 cred_json = yaml.safe_load(output)
                 print(cred_json, Config)
                 parsed_config = Config.parse_obj(cred_json)
                 config_dict = parsed_config.dict()
+                return config_dict
         except IOError as err:
             print(f"no credentials file found at {con_file}")
-
-        if config_dict:
-            try:
-                with open(DEFAULT_SERVICE_CONFIG, "w") as output:
-                    yaml.dump(config_dict, output)
-                    print(config_dict)
-                    return config_dict
-            except IOError as err:
-                print(f"no credentials file found at {con_file}")
