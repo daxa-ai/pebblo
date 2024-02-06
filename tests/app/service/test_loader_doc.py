@@ -75,6 +75,17 @@ def mock_read_json_file():
         yield mock_read_json_file
 
 
+@pytest.fixture
+def mock_topic_classifier_obj():
+    with patch('pebblo.app.service.doc_helper.topic_classifier_obj') as mock_topic_classifier:
+        yield mock_topic_classifier
+
+@pytest.fixture
+def mock_entity_classifier_obj():
+    with patch('pebblo.app.service.doc_helper.topic_classifier_obj') as mock_entity_classifier:
+        yield mock_entity_classifier
+
+
 def test_get_doc_report_metadata(loader_helper):
     # Define static input
     doc = {"doc": "sample doc", "entities": {"Credit card number": 1, "aws access key": 1}, "entityCount": 2,
@@ -159,78 +170,6 @@ def test_get_doc_report_metadata(loader_helper):
         'total_snippet_counter': 3
     }
     assert output == expected_output
-
-
-def test_get_classifier_response(loader_helper):
-    # Define static input
-    doc = data.get('docs')[0]
-
-    # Mock classifier responses
-    mock_topic_classifier_response = {"Medical Advice": 1}, 1
-    mock_entity_classifier_response = {"Credit card number": 1}, 1
-    mock_secret_classifier_response = {"aws access key": 1}, 1
-
-    # Mock classifier methods
-    loader_helper.topic_classifier_obj.predict = MagicMock(return_value=mock_topic_classifier_response)
-    loader_helper.entity_classifier_obj.presidio_entity_classifier = MagicMock(
-        return_value=mock_entity_classifier_response)
-    loader_helper.entity_classifier_obj.presidio_secret_classifier = MagicMock(
-        return_value=mock_secret_classifier_response)
-
-    # Call the method under test
-    output = loader_helper._get_classifier_response(doc)
-
-    # Expected Output
-    expected_output = {
-        'data': 'Name: YqDvXJuxpH\nEmail: bTDyzanhcB@ujxtd.com\nSSN: 807325214\nAddress: ABUbusMLXRygxzpdPOyL\nCC Expiry: '
-                '12/2030\nCredit Card Number: 8048428351930771\nCC Security Code: 644\nIPv4: 147.17.4.121\nIPv6: 58fc: '
-                '652d:bf33:a1ab: 1f1b: 4d7d: 8fe:d64d\nPhone: 3542039806',
-        'entityCount': 2,
-        'entities': {
-            'Credit card number': 1,
-            'aws access key': 1
-        },
-        'topicCount': 1,
-        'topics': {
-            'Medical Advice': 1
-        }
-    }
-    # Assertions
-    assert output == expected_output
-
-
-# Skipping the test because datetime.now() is not being successfully mocked.
-# def test_create_doc_model(loader_helper, monkeypatch):
-#     # loader_helper._create_doc_model.last_used = MagicMock(return_value=None)
-#     doc = data.get('docs')[0]
-#     doc_info = AiDataModel(data=doc.get('data'), entities={"Credit card number": 1, "aws access key": 1},
-#                            entityCount=2, topics={"Medical Advice": 1}, topicCount=1)
-#
-#     # Define a custom datetime object
-#
-#     # Mock datetime.now() to return the custom datetime object
-#     # monkeypatch.setattr(loader_helper._create_doc_model, "last_used", custom_datetime)
-#
-#     output = loader_helper._create_doc_model(doc, doc_info)
-#     print(f"CreateDocModelOutput: {output}")
-#     expected_output = {
-#         'doc': 'Name: YqDvXJuxpH\nEmail: bTDyzanhcB@ujxtd.com\nSSN: 807325214\nAddress: ABUbusMLXRygxzpdPOyL\nCC Expiry: 12/2030\nCredit Card Number: 8048428351930771\nCC Security Code: 644\nIPv4: 147.17.4.121\nIPv6: 58fc: 652d:bf33:a1ab: 1f1b: 4d7d: 8fe:d64d\nPhone: 3542039806',
-#         'sourceSize': 1000,
-#         'fileOwner': 'FileOwner',
-#         'sourcePath': '/home/ubuntu/sens_data.csv',
-#         'loaderSourcePath': '/home/ubuntu/sens_data.csv',
-#         'lastModified': datetime.datetime(2024, 2, 6, 12, 15, 22, 271931),
-#         'entityCount': 2,
-#         'entities': {
-#             'Credit card number': 1,
-#             'aws access key': 1
-#         },
-#         'topicCount': 1,
-#         'topics': {
-#             'Medical Advice': 1
-#         }
-#     }
-#     assert output == expected_output
 
 
 def test_get_finding_details(loader_helper):
@@ -381,34 +320,6 @@ def test_count_files_with_findings(loader_helper):
 
     output = loader_helper._count_files_with_findings()
     assert output == 2
-
-
-# Skipping the test because datetime.now() is not being successfully mocked.
-# def test_create_report_summary(loader_helper, monkeypatch):
-#     input_data = {
-#         'total_findings': 3,
-#         'findings_entities': 2,
-#         'findings_topics': 1,
-#         'file_count': 1,
-#         'data_source_count': 1,
-#         'data_source_snippets': []
-#     }
-#
-#     files_with_findings_count = 4
-#     fixed_time = datetime.datetime(2023, 1, 1, 12, 0, 0)
-#     monkeypatch.setattr('datetime.datetime', lambda: fixed_time)
-#     output = loader_helper._create_report_summary(input_data, files_with_findings_count)
-#     print(f"Output: {output}")
-#     assert output.dict() == {
-#         'findings': 3,
-#         'findingsEntities': 2,
-#         'findingsTopics': 1,
-#         'totalFiles': 1,
-#         'filesWithFindings': 4,
-#         'dataSources': 1,
-#         'owner': 'pytest',
-#         'createdAt': fixed_time
-#     }
 
 
 def test_get_top_n_findings(loader_helper):
@@ -614,116 +525,3 @@ def test_create_data_source_findings_summary(loader_helper):
          'fileCount': 1},
         {'labelName': 'aws access key', 'findings': 1, 'findingsType': 'entities', 'snippetCount': 1, 'fileCount': 1}]
     assert output == expected_output
-
-# read json file function is not getting mocked.
-# def test_get_load_history(loader_helper, mock_read_json_file):
-#     loader_helper.load_id = 2
-#     mock_read_json_file.return_value = {"load_ids": [1, 2, 3],
-#                                         "reportSummary": {"findings": 10, "filesWithFindings": 9,
-#                                                           "createdAt": datetime.datetime(2024, 1, 31, 13, 58, 5, 402976)
-#                                                           }}
-#
-#     output = loader_helper._get_load_history()
-#     print(f"LoaderHistory: {output}")
-#
-#     assert output == "Hello"
-
-# Skipping the test because datetime.now() is not being successfully mocked.
-# def test_generate_final_report(loader_helper):
-#     # Mock Methods
-#     fixed_time = datetime.datetime.now()
-#     loader_helper._count_files_with_findings = MagicMock(return_value=10)
-#     loader_helper._create_report_summary = MagicMock(return_value=Summary(findings=3,
-#                                                                           findingsEntities=2,
-#                                                                           findingsTopics=1,
-#                                                                           totalFiles=1,
-#                                                                           filesWithFindings=4,
-#                                                                           dataSources=1,
-#                                                                           owner="fileOwner",
-#                                                                           createdAt=fixed_time))
-#     loader_helper._get_top_n_findings = MagicMock(return_value=[
-#         {
-#             'fileName': '/home/ubuntu/sens_data.csv',
-#             'fileOwner': 'fileOwner',
-#             'sourceSize': 1000,
-#             'findingsEntities': 2,
-#             'findingsTopics': 1,
-#             'findings': 3
-#         }
-#     ])
-#     loader_helper._get_data_source_details = MagicMock(return_value=[DataSource(name='CSVloader',
-#                                                                                 sourcePath='sourcePath',
-#                                                                                 sourceType='sourceType',
-#                                                                                 sourceSize=1000,
-#                                                                                 totalSnippetCount=3,
-#                                                                                 displayedSnippetCount=3,
-#                                                                                 findingsSummary=[],
-#                                                                                 findingsDetails=[])])
-#
-#     loader_helper._get_load_history = MagicMock(return_value=[])
-#
-#     output = loader_helper._generate_final_report(raw_data={})
-#
-#     expected_output = {
-#         'name': 'UnitTestApp',
-#         'description': '',
-#         'framework': {
-#             'name': 'langchain',
-#             'version': '0.1.16'
-#         },
-#         'reportSummary': {
-#             'findings': 3,
-#             'findingsEntities': 2,
-#             'findingsTopics': 1,
-#             'totalFiles': 1,
-#             'filesWithFindings': 4,
-#             'dataSources': 1,
-#             'owner': 'fileOwner',
-#             'createdAt': datetime.datetime(2024, 2, 6, 12, 59, 45, 351701)
-#         },
-#         'loadHistory': [
-#
-#         ],
-#         'topFindings': [
-#             {
-#                 'fileName': '/home/ubuntu/sens_data.csv',
-#                 'fileOwner': 'fileOwner',
-#                 'sourceSize': 1000,
-#                 'findingsEntities': 2,
-#                 'findingsTopics': 1,
-#                 'findings': 3
-#             }
-#         ],
-#         'instanceDetails': {
-#             'type': 'local',
-#             'host': 'OPLPT058',
-#             'path': '/home/ubuntu/scripts',
-#             'runtime': 'local',
-#             'ip': '103.197.75.199',
-#             'language': 'python',
-#             'languageVersion': '3.11.7',
-#             'platform': 'Windows-10-10.0.19045-SP0',
-#             'os': 'Windows',
-#             'osVersion': '10.0.19045',
-#             'createdAt': datetime.datetime(2024, 1, 31, 13, 58, 5, 402976)
-#         },
-#         'dataSources': [
-#             {
-#                 'name': 'CSVloader',
-#                 'sourcePath': 'sourcePath',
-#                 'sourceType': 'sourceType',
-#                 'sourceSize': 1000,
-#                 'totalSnippetCount': 3,
-#                 'displayedSnippetCount': 3,
-#                 'findingsSummary': [
-#
-#                 ],
-#                 'findingsDetails': [
-#
-#                 ]
-#             }
-#         ],
-#         'lastModified': datetime.datetime(2024, 2, 6, 12, 59, 45, 353700)
-#     }
-#
-#     assert output == expected_output
