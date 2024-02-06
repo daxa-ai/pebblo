@@ -202,4 +202,4 @@ data = {
 
 class AppLocalUI:
     def getData():
-        return data
+        return json.dumps(data)

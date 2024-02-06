@@ -13,10 +13,10 @@
   </head>
   <body>
     <div id="root"></div>
+    <script
+      type="module"
+      staticURL="{{ url_for('static', path='') }}"
+      src="{{ url_for('static', path='index.js') }}"
+      appData="{{data}}"></script>
   </body>
-  <script
-    defer
-    src="{{ url_for('static', path='/index.js') }}"
-    staticURL="{{ url_for('static', path='') }}"
-    appData="{{data}}"></script>
 </html>

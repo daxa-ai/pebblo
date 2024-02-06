@@ -17,15 +17,17 @@ app.mount(
     name="static",
 )
 
+
+
 @app.get("/", response_class=HTMLResponse)
 async def hello(request: Request):
-   return templates.TemplateResponse("index.html", {"request": request, "data": json.dumps(AppLocalUI.getData())})   
+   return templates.TemplateResponse("index.html", {"request": request, "data": AppLocalUI.getData()})   
 
 @app.get("/appDetails", response_class=HTMLResponse)
 async def hello(request: Request, id:str):
-   appList = AppLocalUI.getData().get('appList')
-   filteredData = [obj for obj in appList if(obj['id'] == id)]
-   return templates.TemplateResponse("index.html", {"request": request, "data":json.dumps(AppLocalUI.getData())})     
+   # appList = AppLocalUI.getData().get('appList')
+   # filteredData = [obj for obj in appList if(obj['id'] == id)]
+   return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.getData()})     
     
 
 
