@@ -12,7 +12,6 @@ from pebblo.app.enums.enums import ReportConstants
 # Init topic classifier
 topic_classifier_obj = TopicClassifier()
 # Init topic classifier
-entity_classifier_obj = EntityClassifier()
 
 
 class DocHelper:
@@ -21,6 +20,7 @@ class DocHelper:
         self.data = data
         self.load_id = load_id
         self.loader_mapper = {}
+        self.entity_classifier_obj = EntityClassifier()
 
     def _get_classifier_response(self, doc):
         doc_info = AiDataModel(data=doc.get("doc", None),
@@ -29,8 +29,8 @@ class DocHelper:
         try:
             if doc_info.data:
                 topics, topic_count = topic_classifier_obj.predict(doc_info.data)
-                entities, entity_count = entity_classifier_obj.presidio_entity_classifier(doc_info.data)
-                secrets, secret_count = entity_classifier_obj.presidio_secret_classifier(doc_info.data)
+                entities, entity_count = self.entity_classifier_obj.presidio_entity_classifier(doc_info.data)
+                secrets, secret_count = self.entity_classifier_obj.presidio_secret_classifier(doc_info.data)
                 entities.update(secrets)
                 entity_count += secret_count
                 doc_info.topics = topics
