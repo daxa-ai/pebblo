@@ -3,6 +3,8 @@ from pebblo.app.enums.enums import CacheDir
 from pebblo.app.utils.utils import write_json_to_file, read_json_file
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import Metadata, AiApp, InstanceDetails
+from pydantic import ValidationError
+from fastapi import HTTPException
 
 
 class AppDiscover:
@@ -117,9 +119,11 @@ class AppDiscover:
                          f"/{CacheDir.metadata_file_path.value}")
             self._write_file_content_to_path(ai_apps.dict(), file_path)
 
-            logger.debug(f"AiApp discovery request completed successfully: {ai_apps.dict()}")
-            return ai_apps.dict()
+            logger.debug(f"AiApp discovery request completed successfully")
+            return {"message": "App Discover Request Processed Successfully"}
+        except ValidationError as ex:
+            logger.error(f"Error in process_request. Error:{ex}")
+            raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
-            response = f"Error in ai_app process_request. Error:{ex}"
-            logger.error(response)
-            return response
+            logger.error(f"Error in process_request. Error:{ex}")
+            raise HTTPException(status_code=500, detail="Internal Server Error")
