@@ -55,10 +55,11 @@ def load_config(path) -> Config:
         except IOError as err:
             print(f"no credentials file found at {con_file}")
 
-        try:
-            with open(DEFAULT_SERVICE_CONFIG, "w") as output:
-                yaml.dump(config_dict, output)
-                print(config_dict)
-                return config_dict
-        except IOError as err:
-            print(f"no credentials file found at {con_file}")
+        if config_dict:
+            try:
+                with open(DEFAULT_SERVICE_CONFIG, "w") as output:
+                    yaml.dump(config_dict, output)
+                    print(config_dict)
+                    return config_dict
+            except IOError as err:
+                print(f"no credentials file found at {con_file}")
