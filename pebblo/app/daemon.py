@@ -10,9 +10,7 @@ import sys
 
 from pebblo.app.config.service import Service
 
-
-def get_config_file_path():
-    pass
+config_details = {}
 
 
 def start():
@@ -24,24 +22,15 @@ def start():
     # CLI input details
     cli_input = sys.argv[1:]
     cli_str = ' '.join(cli_input)
-    config_details = {}
+    global config_details
 
     # For loading config file details
     if '--help --config' in cli_str:
         path = cli_input[-1]
-        print(f'----Path {path}-----')
         config_details = load_config(path)
-        print(config_details)
     else:
         config_details = load_config(None)
 
-    print('Statrting Service')
+    # Starting Uvicorn Service Using config details
     svc = Service(config_details)
     svc.start()
-    # Initialise app instance
-    # app = FastAPI()
-    # # Register the router instance with the main app
-    # app.include_router(router_instance.router)
-    #
-    # # running local server
-    # uvicorn.run(app, host="localhost", port=8000, log_level="info")

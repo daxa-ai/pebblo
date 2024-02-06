@@ -11,20 +11,24 @@ DEFAULT_SERVICE_CONFIG = './config_default.yaml'
 dir_path = pathlib.Path().absolute()
 
 
+# Port BaseModel
 class PortConfig(BaseSettings):
-    host: str = Field(default='0.0.0.0')
+    host: str = Field(default='localhost')
     port: int = Field(default=37000)
 
 
+# Report BaseModel
 class ReportConfig(BaseSettings):
     format: str = Field(default='pdf')
     outputDir: str = Field(dir_path)
 
 
+# Logging BaseModel
 class LoggingConfig(BaseSettings):
     level: str = Field(default='info')
 
 
+# ConfigFile BaseModel
 class Config(BaseSettings):
     daemon:  PortConfig
     reports: ReportConfig
@@ -32,7 +36,9 @@ class Config(BaseSettings):
 
 
 def load_config(path) -> Config:
+    # If Path does not exist in command, set default config value
     if not path:
+        # Setting Default config details
         conf_obj = Config(
             daemon=PortConfig(
                 host='0.0.0.0',
@@ -40,13 +46,15 @@ def load_config(path) -> Config:
             ),
             reports=ReportConfig(
                 format='pdf',
-                outputDir='/home/Kunal/pebblo'
+                outputDir='./config.py'
             ),
             logging=LoggingConfig(
                 level='info'
             )
         )
         return conf_obj.dict()
+
+    # If Path exist, set config value
     else:
         con_file = path
         try:

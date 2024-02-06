@@ -5,4 +5,4 @@ logging:
   level: info
 reports:
   format: pdf
-  outputDir: /Users/kunal/.pebblo
+  outputDir: /home/pebblo
