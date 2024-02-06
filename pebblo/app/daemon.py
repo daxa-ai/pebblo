@@ -29,7 +29,9 @@ def start():
     # For loading config file details
     if '--help --config' in cli_str:
         path = cli_input[-1]
+        print(f'----Path {path}-----')
         config_details = load_config(path)
+        print(config_details)
     else:
         config_details = load_config(None)
 
