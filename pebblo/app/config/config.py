@@ -7,6 +7,7 @@ from pydantic import BaseSettings, Field
 import pathlib
 from contextvars import ContextVar
 
+# Default config value
 DEFAULT_SERVICE_CONFIG = './config_default.yaml'
 dir_path = pathlib.Path().absolute()
 
