@@ -4,14 +4,13 @@ from pydantic import BaseSettings, Field
 import pathlib
 
 # Default config value
-DEFAULT_SERVICE_CONFIG = './config_default.yaml'
 dir_path = pathlib.Path().absolute()
 
 
 # Port BaseModel
 class PortConfig(BaseSettings):
     host: str = Field(default='localhost')
-    port: int = Field(default=37000)
+    port: int = Field(default=8000)
 
 
 # Report BaseModel
@@ -37,12 +36,12 @@ def load_config(path) -> Config:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
             daemon=PortConfig(
-                host='0.0.0.0',
-                port=3700
+                host='localhost',
+                port=8000
             ),
             reports=ReportConfig(
                 format='pdf',
-                outputDir='./config.py'
+                outputDir='/home/pebblo/pebblo/app/config'
             ),
             logging=LoggingConfig(
                 level='info'
@@ -64,7 +63,7 @@ def load_config(path) -> Config:
                     return config_dict
             except IOError as err:
                 print(f"no credentials file found at {con_file}")
-                conf_obj.dict()
+                return conf_obj.dict()
 
     except Exception as err:
         print(f'Error while loading config details, err: {err}')

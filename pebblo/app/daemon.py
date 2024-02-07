@@ -16,12 +16,13 @@ def start():
     _ = EntityClassifier
 
     # CLI input details
-    cli_input = sys.argv[1:]
+    cli_input = list(sys.argv)
+    print(cli_input)
     cli_str = ' '.join(cli_input)
     global config_details
 
     # For loading config file details
-    if '--help --config' in cli_str:
+    if '--config' in cli_str:
         path = cli_input[-1]
         config_details = load_config(path)
     else:

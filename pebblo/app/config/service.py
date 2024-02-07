@@ -17,14 +17,6 @@ class Service:
         self.host = self.config_details.get('daemon', {}).get('host', '0.0.0.0')
         self.log_level = self.config_details.get('logging', {}).get('level', 'info')
 
-        # main external app/port
-        # self.app.add_middleware(
-        #     CORSMiddleware,
-        #     allow_origins=self.origin,
-        #     allow_credentials=True,
-        #     allow_methods=["*"],
-        #     allow_headers=["*"],
-        # )
     async def create_main_api_server(self):
         # Add config Details to Uvicorn
         config = uvicorn.Config(app=self.app, host=self.host, port=self.port, log_level=self.log_level)
