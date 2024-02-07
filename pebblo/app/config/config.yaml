@@ -3,6 +3,3 @@ daemon:
   host: 'localhost'
 logging:
   level: info
-reports:
-  format: pdf
-  outputDir:  ~/.pebblo

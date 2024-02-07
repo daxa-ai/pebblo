@@ -13,12 +13,6 @@ class PortConfig(BaseSettings):
     port: int = Field(default=8000)
 
 
-# Report BaseModel
-class ReportConfig(BaseSettings):
-    format: str = Field(default='pdf')
-    outputDir: str = Field(dir_path)
-
-
 # Logging BaseModel
 class LoggingConfig(BaseSettings):
     level: str = Field(default='info')
@@ -27,7 +21,6 @@ class LoggingConfig(BaseSettings):
 # ConfigFile BaseModel
 class Config(BaseSettings):
     daemon:  PortConfig
-    reports: ReportConfig
     logging: LoggingConfig
 
 
@@ -38,10 +31,6 @@ def load_config(path) -> Config:
             daemon=PortConfig(
                 host='localhost',
                 port=8000
-            ),
-            reports=ReportConfig(
-                format='pdf',
-                outputDir='~/.pebblo'
             ),
             logging=LoggingConfig(
                 level='info'
