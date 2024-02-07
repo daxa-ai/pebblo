@@ -35,21 +35,21 @@ class Config(BaseSettings):
 def load_config(path) -> Config:
     try:
         # If Path does not exist in command, set default config value
+        conf_obj = Config(
+            daemon=PortConfig(
+                host='0.0.0.0',
+                port=3700
+            ),
+            reports=ReportConfig(
+                format='pdf',
+                outputDir='./config.py'
+            ),
+            logging=LoggingConfig(
+                level='info'
+            )
+        )
         if not path:
             # Setting Default config details
-            conf_obj = Config(
-                daemon=PortConfig(
-                    host='0.0.0.0',
-                    port=3700
-                ),
-                reports=ReportConfig(
-                    format='pdf',
-                    outputDir='./config.py'
-                ),
-                logging=LoggingConfig(
-                    level='info'
-                )
-            )
             return conf_obj.dict()
 
         # If Path exist, set config value
@@ -64,6 +64,7 @@ def load_config(path) -> Config:
                     return config_dict
             except IOError as err:
                 print(f"no credentials file found at {con_file}")
+                conf_obj.dict()
 
     except Exception as err:
         print(f'Error while loading config details, err: {err}')
