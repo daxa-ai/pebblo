@@ -137,3 +137,23 @@ def test_predict_on_exception(topic_classifier):
 
     assert topics == {}
     assert total_count == 0
+
+
+@patch('pebblo.topic_classifier.topic_classifier.TOPIC_MIN_TEXT_LENGTH', 16)
+def test_predict_min_len_not_met(topic_classifier, mock_topic_display_names):
+    # Test if topics are returned when the input text doesn't meet the minimum length requirement
+    input_text = "Can I use urea?"  # Length is 15 characters(i.e. below minimum length of 16 characters)
+    mock_response = [
+        [{"label": "HARMFUL_ADVICE", "score": 0.8}, {"label": "MEDICAL_ADVICE", "score": 0.2}]
+    ]
+
+    # Setting the return value of the classifier's predict method
+    topic_classifier.classifier = MagicMock()
+    topic_classifier.classifier.return_value = mock_response
+    topics, total_count = topic_classifier.predict(input_text)
+
+    # Assertions
+    assert topics == {}
+    assert total_count == 0
+    # assert classifier not called
+    topic_classifier.classifier.assert_not_called()
