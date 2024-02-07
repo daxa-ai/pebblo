@@ -1,6 +1,7 @@
 """
     Doc helper class for loader doc related task
 """
+import ast
 from datetime import datetime
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource, LoadHistory
@@ -11,6 +12,8 @@ from pebblo.app.enums.enums import ReportConstants, CacheDir
 
 # Init topic classifier
 topic_classifier_obj = TopicClassifier()
+
+
 # Init topic classifier
 entity_classifier_obj = EntityClassifier()
 
@@ -22,11 +25,13 @@ class LoaderHelper:
         self.load_id = load_id
 
     # Initialization
-    @staticmethod
-    def _initialize_raw_data():
+    def _initialize_raw_data(self):
         """
             Initializing raw data and return as dict object
         """
+        if "report_metadata" in self.app_details.keys():
+            return self.app_details['report_metadata']
+
         raw_data = {"total_findings": 0, "findings_entities": 0, "findings_topics": 0,
                     "data_source_count": 1, "data_source_snippets": list(),
                     "loader_source_snippets": {}, "file_count": 0,
@@ -47,7 +52,7 @@ class LoaderHelper:
             raw_data.get("findings_topics"),
             raw_data.get("snippet_count"),
             raw_data.get("file_count"),
-            raw_data.get("data_source_findings"),
+            raw_data.get("data_source_findings")
         )
 
     @staticmethod
@@ -150,15 +155,15 @@ class LoaderHelper:
         logger.debug("Updating app details")
         self.app_details["docs"] = ai_app_docs
         loader_source_snippets = raw_data["loader_source_snippets"]
-
         # Updating app_details doc list and loader source files
         loader_details = self.app_details.get("loaders", {})
-        loader_source_files = []
         for loader in loader_details:
-            loader_source_files.extend(loader.get("sourceFiles", []))
+            for source_file in loader.get("sourceFiles", []):
+                name = source_file["name"]
+                if name not in loader_source_snippets:
+                    loader_source_snippets[name] = source_file
 
-            new_loader_source_files = [
-                {
+            new_source_file = [{
                     "name": key,
                     "findings_entities": value['findings_entities'],
                     "findings_topics": value['findings_topics'],
@@ -166,9 +171,9 @@ class LoaderHelper:
                 }
                 for key, value in loader_source_snippets.items()
             ]
-            loader_source_files.extend(new_loader_source_files)
-            loader["sourceFiles"] = loader_source_files
-        self.app_details["loaders"] = loader_details
+
+            loader["sourceFiles"] = new_source_file
+        self.app_details["report_metadata"] = raw_data
 
     @staticmethod
     def _get_finding_details(doc, data_source_findings, entity_type, file_count, raw_data):
@@ -184,9 +189,17 @@ class LoaderHelper:
             if label_name in data_source_findings.keys():
                 data_source_findings[label_name]["snippetCount"] += 1
                 data_source_findings[label_name]["findings"] += value
-                data_source_findings[label_name]["unique_snippets"].add(source_path)
-                data_source_findings[label_name]["fileCount"] = len(data_source_findings[label_name]["unique_snippets"])
                 raw_data["total_snippet_counter"] += 1
+
+                unique_snippets_set = data_source_findings[label_name]["unique_snippets"]
+                if isinstance(unique_snippets_set, str):
+                    # When we write data_source_findings[label_name]['unique_snippets'] to metadata file,
+                    # it gets stored as str. We would need it as set again for further processing.
+                    # This is why we are using as.literal_eval() here.
+                    unique_snippets_set = ast.literal_eval(data_source_findings[label_name]['unique_snippets'])
+                unique_snippets_set.add(source_path)
+                data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
+                data_source_findings[label_name]["unique_snippets"] = unique_snippets_set
 
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list
@@ -336,7 +349,6 @@ class LoaderHelper:
         # Initialize variables
         (loader_source_snippets, total_findings, findings_entities, findings_topics,
          snippet_count, file_count, data_source_findings) = self._fetch_variables(raw_data)
-
         # getting snippet details only if snippet has findings entities or topics.
         findings = doc["entityCount"] + doc["topicCount"]
         source_path = doc.get("sourcePath")
