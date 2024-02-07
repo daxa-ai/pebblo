@@ -57,7 +57,6 @@ def load_config(path) -> Config:
             try:
                 with open(con_file, "r") as output:
                     cred_json = yaml.safe_load(output)
-                    print(cred_json, Config)
                     parsed_config = Config.parse_obj(cred_json)
                     config_dict = parsed_config.dict()
                     return config_dict
