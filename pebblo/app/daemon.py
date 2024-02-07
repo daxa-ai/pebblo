@@ -17,14 +17,16 @@ def start():
 
     # CLI input details
     cli_input = list(sys.argv)
-    print(cli_input)
     cli_str = ' '.join(cli_input)
     global config_details
 
     # For loading config file details
     if '--config' in cli_str:
         path = cli_input[-1]
-        config_details = load_config(path)
+        if path != '--config':
+            config_details = load_config(path)
+        else:
+            print('Please enter valid config path')
     else:
         config_details = load_config(None)
 

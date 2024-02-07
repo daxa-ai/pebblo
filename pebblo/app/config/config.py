@@ -41,7 +41,7 @@ def load_config(path) -> Config:
             ),
             reports=ReportConfig(
                 format='pdf',
-                outputDir='/home/pebblo/pebblo/app/config'
+                outputDir='~./pebblo'
             ),
             logging=LoggingConfig(
                 level='info'
