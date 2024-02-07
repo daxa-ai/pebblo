@@ -1,11 +1,8 @@
-from fastapi import APIRouter, FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 
 import uvicorn
 import asyncio
 from pebblo.app.routers.routers import router_instance
-from pebblo.app.config.config import Config, PortConfig, ReportConfig, LoggingConfig
-from pebblo.app.config.config import load_config
 
 
 class Service:

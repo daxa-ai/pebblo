@@ -1,11 +1,7 @@
-from yaml.loader import SafeLoader
-import argparse
 import yaml
-import os
-from typing import List, Optional, Tuple, Dict
+
 from pydantic import BaseSettings, Field
 import pathlib
-from contextvars import ContextVar
 
 # Default config value
 DEFAULT_SERVICE_CONFIG = './config_default.yaml'

@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 from pebblo.app.service.service import AppDiscover, AppLoaderDoc
-from pebblo.app.config.config import load_config, Config
 
 
 class App:

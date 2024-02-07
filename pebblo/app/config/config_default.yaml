@@ -1,8 +1,0 @@
-daemon:
-  port: 3000
-  host: '0.0.0.0'
-logging:
-  level: info
-reports:
-  format: pdf
-  outputDir: /Users/kunal/.pebblo

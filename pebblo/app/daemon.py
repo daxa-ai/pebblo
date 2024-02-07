@@ -1,7 +1,3 @@
-import uvicorn
-from fastapi import FastAPI
-from pebblo.app.routers.routers import router_instance
-
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 
