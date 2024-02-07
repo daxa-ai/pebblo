@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from pebblo.app.service.service import AppDiscover, AppLoaderDoc
 
 
