@@ -121,6 +121,9 @@ dependencies = [
 # syntax, for example:
 #
 #   $ pip install sampleproject[dev]
+#   For zsh users, use following syntax:
+#   $ pip install -e 'sampleproject[dev]'
+# or $ pip install -e '.[dev]'
 #
 # Similar to `dependencies` above, these must be valid existing
 # projects.
