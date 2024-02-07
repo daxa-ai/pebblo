@@ -25,9 +25,7 @@ def start():
     parser = argparse.ArgumentParser(description="Pebblo  CLI")
     parser.add_argument('--config', type=str, help="Config file path")
     args = parser.parse_args()
-    print(args)
     path = args.config
-    print(path)
     config_details = load_config(path)
 
     # Starting Uvicorn Service Using config details
