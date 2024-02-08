@@ -1,33 +1,51 @@
-from pebblo.topic_classifier.topic_classifier import TopicClassifier
-from pebblo.entity_classifier.entity_classifier import EntityClassifier
+from contextlib import redirect_stderr, redirect_stdout
+import os
+import uvicorn
+from fastapi import FastAPI
+from io import StringIO
+from tqdm import tqdm
 
-from pebblo.app.config.config import load_config
-import sys
-import argparse
+p_bar = tqdm(range(10))
+p_bar.desc = "Downloading models if needed"
 
-from pebblo.app.config.service import Service
+with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
+    from pebblo.app.routers.routers import router_instance
+    from pebblo.topic_classifier.topic_classifier import TopicClassifier
+    from pebblo.entity_classifier.entity_classifier import EntityClassifier
 
-config_details = {}
-
-
+p_bar.update(2)
+print()
 def start():
+    p_bar.desc="Initializing Topic Classifier."
+    p_bar.update(1)
+    print()
     # Init TopicClassifier(This step downloads the models and put in cache)
-    _ = TopicClassifier()
+    with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
+        _ = TopicClassifier()
+    p_bar.desc = "Topic Classifier Initiated."
+    p_bar.update(1)
+    print()
+    p_bar.desc = "Initializing Entity Classifier."
+    p_bar.update(1)
+    print()
     # Init EntityClassifier(This step downloads all necessary training models)
-    _ = EntityClassifier
-
-    # CLI input details
-    cli_input = list(sys.argv)
-    cli_str = ' '.join(cli_input)
-    global config_details
-
-    # For loading config file details
-    parser = argparse.ArgumentParser(description="Pebblo  CLI")
-    parser.add_argument('--config', type=str, help="Config file path")
-    args = parser.parse_args()
-    path = args.config
-    config_details = load_config(path)
-
-    # Starting Uvicorn Service Using config details
-    svc = Service(config_details)
-    svc.start()
+    with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
+        _ = EntityClassifier
+    p_bar.desc = "Entity Classifier Initiated..."
+    p_bar.update(1)
+    print()
+    p_bar.desc = "Starting Pebblo server."
+    # Initialise app instance
+    app = FastAPI()
+    p_bar.update(1)
+    print()
+    # Register the router instance with the main app
+    app.include_router(router_instance.router)
+    p_bar.update(2)
+    print()
+    p_bar.desc = "Pebblo server started."
+    p_bar.close()
+    print()
+    # running local server
+    uvicorn.run(app, host="localhost", port=8000, log_level="info")
+    print("Pebblo server stopped.")
