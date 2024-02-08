@@ -35,7 +35,7 @@ def entity_classifier():
 # DocHelper
 @pytest.fixture(scope="module")
 def doc_helper():
-    with patch('pebblo.app.service.service.DocHelper') as doc_helper:
+    with patch('pebblo.app.service.service.LoaderHelper') as doc_helper:
         yield doc_helper
 
 
@@ -54,7 +54,7 @@ def mock_read_json_file():
 
 @pytest.fixture
 def mock_write_json_to_file():
-    with patch('pebblo.app.service.service.write_json_to_file') as mock_write_json_to_file:
+    with patch('pebblo.app.service.discovery_service.AppDiscover._write_file_content_to_path') as mock_write_json_to_file:
         yield mock_write_json_to_file
 
 
