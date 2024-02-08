@@ -17,7 +17,7 @@ name = "pebblo"  # Required
 #
 # For a discussion on single-sourcing the version, see
 # https://packaging.python.org/guides/single-sourcing-package-version/
-version = "0.1.9"  # Required
+version = "0.1.10"  # Required
 
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
@@ -121,6 +121,9 @@ dependencies = [
 # syntax, for example:
 #
 #   $ pip install sampleproject[dev]
+#   For zsh users, use following syntax:
+#   $ pip install -e 'sampleproject[dev]'
+# or $ pip install -e '.[dev]'
 #
 # Similar to `dependencies` above, these must be valid existing
 # projects.
