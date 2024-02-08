@@ -4,6 +4,17 @@ Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 from enum import Enum
 
 
+secret_entities_context_mapping = {
+    "Github Token": ["github", "github_token"],
+    "Slack Token": ["slack", "slack token", "slack_token"],
+    "AWS Access Key": ["aws_access_key", "aws_key", "access", "id", "api"],
+    "AWS Secret Key": ["aws_secret_key", "secret"],
+    "Azure Key ID": ["azure_key", "azure_key_id", "azure_id", "key"],
+    "Azure Client Secret": ["azure_client_secret", "client", "secret"],
+    "Google API Key": ["google_api_key", "google_key", "google"],
+}
+
+
 class Entities(Enum):
     # PII
     US_SSN = "US SSN"
@@ -30,3 +41,10 @@ class SecretEntities(Enum):
 
 class ConfidenceScore(Enum):
     Entity = "0.80"
+    EntityMinScore = "0.01"
+    ContextSimilarityScore = "0.85"
+
+
+class ContextWordScopeCount(Enum):
+    PrefixCount = 2  # how many words before the entity to match context
+    SuffixCount = 0  # how many words after the entity to match context

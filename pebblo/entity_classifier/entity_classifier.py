@@ -1,7 +1,8 @@
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
+from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 
-from pebblo.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities
+from pebblo.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities, ContextWordScopeCount
 from pebblo.entity_classifier.utils.utils import get_entities, add_custom_regex_analyzer_registry
 
 from pebblo.entity_classifier.libs.logger import logger
@@ -75,10 +76,16 @@ class EntityClassifier:
             logger.debug(f"Data Input: {input_text}")
 
             # Adding custom analyzer
-            custom_recognizer = add_custom_regex_analyzer_registry()
-            if custom_recognizer:
-                for recognizer in custom_recognizer:
-                    self.analyzer.registry.add_recognizer(recognizer)
+            custom_registry = add_custom_regex_analyzer_registry()
+            self.analyzer = AnalyzerEngine(
+                registry=custom_registry,
+                context_aware_enhancer=LemmaContextAwareEnhancer(
+                    context_similarity_factor=float(ConfidenceScore.ContextSimilarityScore.value),
+                    min_score_with_context_similarity=float(ConfidenceScore.Entity.value),
+                    context_prefix_count=int(ContextWordScopeCount.PrefixCount.value),
+                    context_suffix_count=int(ContextWordScopeCount.SuffixCount.value)
+                )
+            )
 
             analyzer_results = self.analyze_response(input_text)
             response = self.anomyze_response(analyzer_results, input_text)
