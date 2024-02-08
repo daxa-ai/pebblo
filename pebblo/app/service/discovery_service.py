@@ -53,7 +53,8 @@ class AppDiscover:
             type=runtime_dict.get("type"),
             platform=runtime_dict.get("platform"),
             os=runtime_dict.get("os"),
-            osVersion=runtime_dict.get("os_version")
+            osVersion=runtime_dict.get("os_version"),
+            createdAt=datetime.now()
         )
         logger.debug(f"AI_APPS [{self.application_name}]: Instance Details: {instance_details_model.dict()}")
         return instance_details_model

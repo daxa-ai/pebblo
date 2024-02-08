@@ -293,7 +293,8 @@ class LoaderHelper:
             totalFiles=raw_data["file_count"],
             filesWithFindings=files_with_findings_count,
             dataSources=raw_data["data_source_count"],
-            owner=self.app_details["owner"]
+            owner=self.app_details["owner"],
+            createdAt=datetime.now()
         )
         return report_summary
 
@@ -414,7 +415,6 @@ class LoaderHelper:
             reportSummary=report_summary,
             loadHistory=load_history,
             topFindings=top_n_findings,
-            lastModified=datetime.now(),
             dataSources=data_source_obj_list
         )
         return report_dict.dict()
