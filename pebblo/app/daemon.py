@@ -1,13 +1,9 @@
+import uvicorn
+from fastapi import FastAPI
+from pebblo.app.routers.routers import router_instance
+
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
-
-from pebblo.app.config.config import load_config
-import sys
-import argparse
-
-from pebblo.app.config.service import Service
-
-config_details = {}
 
 
 def start():
@@ -16,18 +12,11 @@ def start():
     # Init EntityClassifier(This step downloads all necessary training models)
     _ = EntityClassifier
 
-    # CLI input details
-    cli_input = list(sys.argv)
-    cli_str = ' '.join(cli_input)
-    global config_details
+    # Initialise app instance
+    app = FastAPI()
 
-    # For loading config file details
-    parser = argparse.ArgumentParser(description="Pebblo  CLI")
-    parser.add_argument('--config', type=str, help="Config file path")
-    args = parser.parse_args()
-    path = args.config
-    config_details = load_config(path)
+    # Register the router instance with the main app
+    app.include_router(router_instance.router)
 
-    # Starting Uvicorn Service Using config details
-    svc = Service(config_details)
-    svc.start()
+    # running local server
+    uvicorn.run(app, host="localhost", port=8000, log_level="info")
