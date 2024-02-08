@@ -80,6 +80,7 @@ def mock_topic_classifier_obj():
     with patch('pebblo.app.service.doc_helper.topic_classifier_obj') as mock_topic_classifier:
         yield mock_topic_classifier
 
+
 @pytest.fixture
 def mock_entity_classifier_obj():
     with patch('pebblo.app.service.doc_helper.topic_classifier_obj') as mock_entity_classifier:
@@ -305,7 +306,18 @@ def test_update_app_details(loader_helper):
         ],
         'docs': [
 
-        ]
+        ],
+        'report_metadata': {
+            'loader_source_snippets': {
+                '/home/ubuntu/sens_data.csv': {
+                    'findings_entities': 2,
+                    'findings_topics': 1,
+                    'findings': 3,
+                    'fileOwner': 'fileOwner',
+                    'sourceSize': 1000
+                }
+            }
+        }
     }
 
     assert expected_output == loader_helper.app_details
