@@ -1,13 +1,16 @@
+import logging
 from datetime import datetime
+
 from pebblo.reports.reports import Reports
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.utils.utils import write_json_to_file, read_json_file, get_full_path
-from pebblo.app.libs.logger import logger
+# from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import LoaderMetadata, Metadata, AiApp, InstanceDetails
 from pebblo.app.service.doc_helper import DocHelper
 from pydantic import ValidationError
 from fastapi import HTTPException
 
+logger = logging.getLogger("uvicorn.error")
 
 class AppDiscover:
     def __init__(self, data: dict):
