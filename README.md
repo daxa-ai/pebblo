@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages/assets/img/pebblo-logo.png?raw=true" />
+  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages_v2/static/img/pebblo-logo-name.png?raw=true" />
 </p>
 
 ---
 [![GitHub](https://img.shields.io/badge/GitHub-pebblo-blue?logo=github)](https://github.com/daxa-ai/pebblo)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![Documentation](https://img.shields.io/badge/Documentation-pebblo-blue?logo=read-the-docs)](https://daxa-ai.github.io/pebblo-docs/)
+[![Documentation](https://img.shields.io/badge/Documentation-pebblo-blue?logo=read-the-docs)](https://daxa-ai.github.io/pebblo/)
 
 [![PyPI](https://img.shields.io/pypi/v/pebblo?logo=pypi)](https://pypi.org/project/pebblo/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/pebblo)
@@ -97,7 +97,7 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
     vectordb = Chroma.from_documents(documents, OpenAIEmbeddings())
 ```
 
-See [here](https://github.com/srics/pebblo/tree/main/samples) for samples with Pebblo enabled RAG applications and [this](https://daxa-ai.github.io/pebblo-docs/rag.html) document for more details.
+See [here](https://github.com/srics/pebblo/tree/main/samples) for samples with Pebblo enabled RAG applications and [this](https://daxa-ai.github.io/pebblo/rag) document for more details.
 
 # Contribution
 
