@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Union
 from datetime import datetime
+from uuid import UUID
 
 
 class Metadata(BaseModel):
@@ -39,7 +40,6 @@ class AiDocs(BaseModel):
     entities: dict
     topicCount: int
     topics: dict
-    policyViolations: Optional[List[dict]] = []
 
 
 class FrameworkInfo(BaseModel):
@@ -77,7 +77,7 @@ class Summary(BaseModel):
     findingsEntities: int
     findingsTopics: int
     totalFiles: int
-    filesWithRestrictedData: int
+    filesWithFindings: int
     dataSources: int
     owner: str
     createdAt: datetime = datetime.now()
@@ -110,11 +110,20 @@ class DataSource(BaseModel):
     # snippets: Optional[List[Snippets]]
 
 
+class LoadHistory(BaseModel):
+    loadId: UUID
+    reportName: str
+    findings: int
+    filesWithFindings: int
+    generatedOn: datetime
+
+
 class ReportModel(BaseModel):
     name: str
     description: Optional[str]
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary]
+    loadHistory: Optional[List[LoadHistory]]
     topFindings: Optional[List[TopFindings]]
     instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]
