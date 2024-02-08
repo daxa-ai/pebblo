@@ -698,21 +698,29 @@
               <thead class="font-12">
                 <tr>
                   <th class="th-colored medium">Report Name</th>
-
+                  <!--<th class="th-colored medium"></th>-->
                   <th class="th-colored medium text-end w-120">Findings</th>
-                  <th class="th-colored medium text-end w-120">
+                  <th class="th-colored medium text-end">
                     Files With Findings
                   </th>
-                  <th class="th-colored medium w-120">Generated On</th>
+                  <th class="th-colored medium w-300">Generated On</th>
                 </tr>
               </thead>
-              <tbody class="surface-10 font-13">
+              <tbody class="surface-10 normal font-13">
+                {% for item in data.loadHistory %}
                 <tr>
-                  <td class="text-end align-cell-center">-</td>
-                  <td class="text-end w-120 align-cell-center">-</td>
-                  <td class="text-end w-120 align-cell-center">-</td>
-                  <td class="text-end w-120 align-cell-center">-</td>
+                  <td class="break-all">{{ item.reportName }}</td>
+                  <td class="text-end w-120 align-cell-center">
+                    {{ item.findings }}
+                  </td>
+                  <td class="text-end w-120 align-cell-center">
+                    {{ item.filesWithFindings }}
+                  </td>
+                  <td class="text-end align-cell-center w-300">
+                    {{ dateFormatter(item.generatedOn) }}
+                  </td>
                 </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
