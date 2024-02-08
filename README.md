@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages_v2/static/img/pebblo-logo-name.png?raw=true" />
+  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages/static/img/pebblo-logo-name.png?raw=true" />
 </p>
 
 ---
