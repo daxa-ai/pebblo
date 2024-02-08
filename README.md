@@ -55,14 +55,6 @@ pebblo
 
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
 
-#### Pebblo Optional Flags
-
-- `--config <file>`: Specifies a custom configuration file in yaml format.
-
-```bash
-pebblo --config config.yaml
-````
-
 ## Pebblo Safe DataLoader for Langchain
 
 `Pebblo Safe DataLoader` currently supports Langchain framework.
