@@ -67,6 +67,6 @@ to open a pull request against the main Pebblo repo.
 
 ## Communication
 
-Please join Discord server [https://discord.gg/Qp5ZunuE](https://discord.gg/Qp5ZunuE) to reach out to the Pebblo maintainers, contributors and users.
+Please join Discord server [https://discord.gg/wyAfaYXwwv](https://discord.gg/wyAfaYXwwv) to reach out to the Pebblo maintainers, contributors and users.
 
 ![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)
