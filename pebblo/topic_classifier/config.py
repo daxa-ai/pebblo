@@ -1,6 +1,9 @@
 # Confidence score
 TOPIC_CONFIDENCE_SCORE = 0.60
 
+# Minimum length of input text in characters
+TOPIC_MIN_TEXT_LENGTH = 16
+
 # Model paths
 TOKENIZER_PATH = 'daxa-ai/pebblo-classifier'
 CLASSIFIER_PATH = 'daxa-ai/pebblo-classifier'

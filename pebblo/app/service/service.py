@@ -5,6 +5,8 @@ from pebblo.app.utils.utils import write_json_to_file, read_json_file, get_full_
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import LoaderMetadata, Metadata, AiApp, InstanceDetails
 from pebblo.app.service.doc_helper import DocHelper
+from pydantic import ValidationError
+from fastapi import HTTPException
 
 
 class AppDiscover:
@@ -61,13 +63,14 @@ class AppDiscover:
             logger.debug(f"Final Output For Discovery Call: {ai_apps_model.dict()}")
             file_path = f"{CacheDir.home_dir.value}/{application_name}/{self.load_id}/{CacheDir.metadata_file_path.value}"
             write_json_to_file(ai_apps_model.dict(), file_path)
-            # return {"Request Processed Successfully"}
-            # TODO: remove below line after testing.
-            return ai_apps_model.dict()
+            logger.info("App Discover Request Processed Successfully")
+            return {"message": "App Discover Request Processed Successfully"}
+        except ValidationError as ex:
+            logger.error(f"Error in process_request. Error:{ex}")
+            raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
-            response = f"Error in process_request. Error:{ex}"
-            logger.error(response)
-            return response
+            logger.error(f"Error in process_request. Error:{ex}")
+            raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 class AppLoaderDoc:
@@ -163,12 +166,13 @@ class AppLoaderDoc:
                                                 f"/{CacheDir.pdf_report_file_name.value}")
                 full_file_path = get_full_path(current_app_report_file_path)
                 report_obj.generate_report(final_report, full_file_path)
-                logger.debug(f"PDF report generated, please check path : {full_file_path}")
+                logger.info(f"PDF report generated at : {full_file_path}")
 
-            # return {"Loader Doc API processed successfully."}
-            # TODO: Remove below line after testing.
-            return {"Loader Doc Response": app_details.get('docs', [])}
-
+            logger.info("Loader Doc request Request processed successfully.")
+            return {"message": "Loader Doc API Request processed successfully"}
+        except ValidationError as ex:
+            logger.error(f"AI_LOADER_DOC Failed. Error:{ex}")
+            raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:
-            print(f"AI_LOADER_DOC Failed: Error in process_request. Error:{ex}")
-            return {"message": f"Error: {ex}"}
+            logger.error(f"AI_LOADER_DOC Failed. Error:{ex}")
+            raise HTTPException(status_code=500, detail="Internal Server Error")

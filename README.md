@@ -11,7 +11,7 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/pebblo)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pebblo?logo=python&logoColor=gold)
 
-[![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)](https://discord.gg/Qp5ZunuE)
+[![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)](https://discord.gg/wyAfaYXwwv)
 [![Twitter Follow](https://img.shields.io/twitter/follow/daxa_ai)](https://twitter.com/daxa_ai)
 ---
 
@@ -54,6 +54,14 @@ pebblo
 ```
 
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
+
+#### Pebblo Optional Flags
+
+- `--config <file>`: Specifies a custom configuration file in yaml format.
+
+```bash
+pebblo --config config.yaml
+````
 
 ## Pebblo Safe DataLoader for Langchain
 

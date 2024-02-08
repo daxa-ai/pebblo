@@ -39,14 +39,14 @@ class EntityClassifier:
         entities = {}
         total_count = 0
         try:
-            logger.info("Presidio Entity Classifier Started.")
-            logger.info(f"Data Input: {input_text}")
+            logger.debug("Presidio Entity Classifier Started.")
+            logger.debug(f"Data Input: {input_text}")
             analyzer_results = self.analyze_response(input_text)
             response = self.anomyze_response(analyzer_results, input_text)
-            logger.info(f"Presidio Entity Classifier Response: {response}")
+            logger.debug(f"Presidio Entity Classifier Response: {response}")
             entities, total_count = get_entities(Entities, response)
-            logger.info(f"Presidio Entity Classifier Finished {entities}")
-            logger.info(f"Entity Total count. {total_count}")
+            logger.debug(f"Presidio Entity Classifier Finished {entities}")
+            logger.debug(f"Entity Total count. {total_count}")
             return entities, total_count
         except Exception as e:
             logger.error(f"Presidio Entity Classifier Failed, Exception: {e}")
@@ -71,8 +71,8 @@ class EntityClassifier:
         secret_entities = {}
         total_count = 0
         try:
-            logger.info("Presidio Secret Entity Classifier Started.")
-            logger.info(f"Data Input: {input_text}")
+            logger.debug("Presidio Secret Entity Classifier Started.")
+            logger.debug(f"Data Input: {input_text}")
 
             # Adding custom analyzer
             custom_recognizer = add_custom_regex_analyzer_registry()
@@ -82,10 +82,10 @@ class EntityClassifier:
 
             analyzer_results = self.analyze_response(input_text)
             response = self.anomyze_response(analyzer_results, input_text)
-            logger.info(f"Presidio Secret Entity Classifier Response: {response}")
+            logger.debug(f"Presidio Secret Entity Classifier Response: {response}")
             secret_entities, total_count = get_entities(SecretEntities, response)
-            logger.info(f"Presidio Secret Entity Classifier Finished {secret_entities}")
-            logger.info(f"Secret Entity Total count. {total_count}")
+            logger.debug(f"Presidio Secret Entity Classifier Finished {secret_entities}")
+            logger.debug(f"Secret Entity Total count. {total_count}")
             return secret_entities, total_count
         except Exception as e:
             logger.error(f"Presidio Secret Entity Classifier Failed, Exception: {e}")
