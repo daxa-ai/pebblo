@@ -7,7 +7,7 @@ import os
 class Reports:
     # Generate report - JSON data, output file name, template file name
     @staticmethod
-    def generate_report(data, outputPath='./report.pdf', format = 'pdf', renderer = ReportLibraries.XHTML2PDF):
+    def generate_report(data, outputPath='./report.pdf', format = 'pdf', renderer = ReportLibraries.WEASYPRINT):
         if format == 'pdf':
             searchPath = os.path.join(os.path.dirname(__file__), 'templates/')
             convertHtmlToPdf(data, outputPath, templateName = template_renderer_mapping[renderer], searchPath = searchPath, renderer = renderer)
