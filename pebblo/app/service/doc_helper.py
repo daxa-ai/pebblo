@@ -173,7 +173,7 @@ class LoaderHelper:
         self.app_details["report_metadata"] = raw_data
 
     @staticmethod
-    def _get_finding_details(doc, data_source_findings, entity_type, file_count, raw_data):
+    def _get_finding_details(doc, data_source_findings, entity_type, raw_data):
         """
             Retrieve finding details from data source
         """
@@ -210,7 +210,7 @@ class LoaderHelper:
                     "findings": value,
                     "findingsType": entity_type,
                     "snippetCount": 1,
-                    "fileCount": file_count
+                    "fileCount": 1
                 }
                 data_source_findings[label_name] = dict_obj
                 data_source_findings[label_name]["unique_snippets"] = set()
@@ -377,9 +377,9 @@ class LoaderHelper:
             loader_source_snippets[source_path]["sourceSize"] = doc['sourceSize']
 
         if len(doc["topics"]) > 0:
-            self._get_finding_details(doc, data_source_findings, "topics", file_count, raw_data)
+            self._get_finding_details(doc, data_source_findings, "topics", raw_data)
         if len(doc["entities"]) > 0:
-            self._get_finding_details(doc, data_source_findings, "entities", file_count, raw_data)
+            self._get_finding_details(doc, data_source_findings, "entities", raw_data)
 
         # Replace report_metadata
         self._update_raw_data(raw_data, loader_source_snippets, total_findings, findings_entities, findings_topics,

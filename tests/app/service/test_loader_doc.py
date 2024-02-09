@@ -178,11 +178,10 @@ def test_get_finding_details(loader_helper):
     doc = {"doc": "Sample Doc", "sourcePath": "/home/ubuntu/sens_data.csv", "fileOwner": "fileOwner",
            "entities": {"Credit card number": 1, "aws access key": 1}, "entityCount": 2, "topicCount": 1,
            "topics": {"Medical Advice": 1}}
-    raw_data = {"snippet_counter": 2, "total_snippet_counter": 2}
+    raw_data_input = {"snippet_counter": 2, "total_snippet_counter": 2}
     data_source_findings = {}
-    file_count = 0
-    loader_helper._get_finding_details(doc, data_source_findings, "entities", file_count, raw_data)
-    loader_helper._get_finding_details(doc, data_source_findings, "topics", file_count, raw_data)
+    loader_helper._get_finding_details(doc, data_source_findings, "entities", raw_data_input)
+    loader_helper._get_finding_details(doc, data_source_findings, "topics", raw_data_input)
 
     expected_raw_data = {'snippet_counter': 5, 'total_snippet_counter': 5}
     expected_data_source_findings = {
@@ -191,7 +190,7 @@ def test_get_finding_details(loader_helper):
             'findings': 1,
             'findingsType': 'entities',
             'snippetCount': 1,
-            'fileCount': 0,
+            'fileCount': 1,
             'unique_snippets': {
                 '/home/ubuntu/sens_data.csv'
             },
@@ -208,7 +207,7 @@ def test_get_finding_details(loader_helper):
             'findings': 1,
             'findingsType': 'entities',
             'snippetCount': 1,
-            'fileCount': 0,
+            'fileCount': 1,
             'unique_snippets': {
                 '/home/ubuntu/sens_data.csv'
             },
@@ -225,7 +224,7 @@ def test_get_finding_details(loader_helper):
             'findings': 1,
             'findingsType': 'topics',
             'snippetCount': 1,
-            'fileCount': 0,
+            'fileCount': 1,
             'unique_snippets': {
                 '/home/ubuntu/sens_data.csv'
             },
@@ -239,7 +238,7 @@ def test_get_finding_details(loader_helper):
         }
     }
 
-    assert raw_data == expected_raw_data
+    assert raw_data_input == expected_raw_data
     assert data_source_findings == expected_data_source_findings
 
 
