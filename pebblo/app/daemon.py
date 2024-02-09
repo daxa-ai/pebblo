@@ -5,7 +5,7 @@ from io import StringIO
 from tqdm import tqdm
 
 p_bar = tqdm(range(10))
-p_bar.write("Downloading models if needed...")
+p_bar.write("Downloading models...")
 with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
     from pebblo.app.routers.routers import router_instance
     from pebblo.topic_classifier.topic_classifier import TopicClassifier
@@ -39,7 +39,7 @@ def start():
     # Register the router instance with the main app
     app.include_router(router_instance.router)
     p_bar.update(1)
-    p_bar.write("Pebblo server Running. Hi!")
+    p_bar.write("Pebblo server Running...")
     p_bar.close()
 
     # running local server
