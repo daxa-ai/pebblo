@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'docs/gh_pages_v2/**'
+      - 'docs/gh_pages/**'
       
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
