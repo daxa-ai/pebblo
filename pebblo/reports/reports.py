@@ -10,4 +10,5 @@ class Reports:
     def generate_report(data, outputPath='./report.pdf', format = 'pdf', renderer = ReportLibraries.WEASYPRINT):
         if format == 'pdf':
             searchPath = os.path.join(os.path.dirname(__file__), 'templates/')
-            convertHtmlToPdf(data, outputPath, templateName = template_renderer_mapping[renderer], searchPath = searchPath, renderer = renderer)
+            templateName = template_renderer_mapping[renderer]
+            convertHtmlToPdf(data, outputPath, templateName = templateName, searchPath = searchPath, renderer = renderer)
