@@ -20,6 +20,11 @@ jobs:
         python-version: "3.11.x"
     - name: Install pypa/build
       run: |
+        COMMIT_TAG=$(git rev-parse --short HEAD)
+        PROJECT_FILE_PATH=pyproject.toml
+        VERSION_FILE=$(grep -m 1 "version =" $PROJECT_FILE_PATH | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
+        VERSION="$VERSION_FILE-$COMMIT_TAG"
+        awk -v new_version="$VERSION" '/^version = "/ {gsub(/"[^"]+"/, "\"" new_version "\"")} 1' "$PROJECT_FILE_PATH" > tmpfile && mv tmpfile "$PROJECT_FILE_PATH"
         pip install build
         python -m build --wheel
         ls -la 
