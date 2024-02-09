@@ -11,7 +11,6 @@ from pebblo.app.enums.enums import ReportConstants
 
 # Init topic classifier
 topic_classifier_obj = TopicClassifier()
-# Init topic classifier
 
 
 class DocHelper:
