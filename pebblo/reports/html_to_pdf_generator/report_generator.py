@@ -21,11 +21,11 @@ def getFileSize(size):
 
 
 # Convert HTML Template to PDF by embedding JSON data
-def convertHtmlToPdf(data, outputPath, templateName, searchPath, reportLibrary):
+def convertHtmlToPdf(data, outputPath, templateName, searchPath, renderer):
     templateLoader = jinja2.FileSystemLoader(searchpath=searchPath)
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template(templateName)
     sourceHtml = template.render(data=data, date=datetime.datetime.now(), datastores=data["dataSources"][0], findingDetails=data["dataSources"][0]["findingsDetails"], dateFormatter=dateFormatter, getFileSize=getFileSize)
-    pdfConverter = library_function_mapping[reportLibrary]
+    pdfConverter = library_function_mapping[renderer]
     pdfConverter(sourceHtml, outputPath, searchPath)
     #return xhtml2pdf_pdf_converter(sourceHtml, outputPath)
