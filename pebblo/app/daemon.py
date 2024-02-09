@@ -1,6 +1,4 @@
 from pebblo.app.config.config import load_config
-import sys
-import os
 import argparse
 
 
@@ -22,7 +20,7 @@ def start():
     # Init TopicClassifier(This step downloads the models and put in cache)
     _ = TopicClassifier()
     # Init EntityClassifier(This step downloads all necessary training models)
-    _ = EntityClassifier
+    _ = EntityClassifier()
 
     # Starting Uvicorn Service Using config details
     from pebblo.app.config.service import Service
