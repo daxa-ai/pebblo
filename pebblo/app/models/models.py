@@ -5,8 +5,8 @@ from uuid import UUID
 
 
 class Metadata(BaseModel):
-    createdAt: datetime = datetime.now()
-    modifiedAt: datetime = datetime.now()
+    createdAt: datetime
+    modifiedAt: datetime
 
     class Config:
         arbitrary_types_allowed = True
@@ -18,7 +18,7 @@ class LoaderMetadata(BaseModel):
     sourceType: str
     sourceSize: int
     sourceFiles: Optional[list] = []
-    lastModified: Optional[datetime] = datetime.now()
+    lastModified: Optional[datetime]
 
 
 class AiDataModel(BaseModel):
@@ -58,7 +58,7 @@ class InstanceDetails(BaseModel):
     platform: Optional[str]
     os: Optional[str]
     osVersion: Optional[str]
-    createdAt: datetime = datetime.now()
+    createdAt: datetime
 
 
 class AiApp(BaseModel):
@@ -80,7 +80,7 @@ class Summary(BaseModel):
     filesWithFindings: int
     dataSources: int
     owner: str
-    createdAt: datetime = datetime.now()
+    createdAt: datetime
 
 
 class TopFindings(BaseModel):
@@ -127,4 +127,3 @@ class ReportModel(BaseModel):
     topFindings: Optional[List[TopFindings]]
     instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]
-    lastModified: datetime
