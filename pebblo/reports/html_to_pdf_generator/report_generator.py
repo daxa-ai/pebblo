@@ -28,4 +28,3 @@ def convertHtmlToPdf(data, outputPath, templateName, searchPath, renderer):
     sourceHtml = template.render(data=data, date=datetime.datetime.now(), datastores=data["dataSources"][0], findingDetails=data["dataSources"][0]["findingsDetails"], dateFormatter=dateFormatter, getFileSize=getFileSize)
     pdfConverter = library_function_mapping[renderer]
     pdfConverter(sourceHtml, outputPath, searchPath)
-    #return xhtml2pdf_pdf_converter(sourceHtml, outputPath)

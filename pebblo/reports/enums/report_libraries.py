@@ -1,6 +1,6 @@
 from pebblo.reports.html_to_pdf_generator.generator_functions import weasyprint_pdf_converter, xhtml2pdf_pdf_converter
 
-
+# Defines the PDF renderer libraries
 class ReportLibraries:
     XHTML2PDF = "xhtml2pdf"
     WEASYPRINT = "weasyprint"
