@@ -1,52 +1,47 @@
-const APP_DATA = JSON.parse(document.scripts[0].getAttribute("appData"));
+import { APP_DATA } from "../constants/constant.js";
 
 function Table(tableCol, tableData, link) {
-  return `<table cellspacing="0" cellpadding="0">
+  return /*html*/ `<table cellspacing="0" cellpadding="0">
     ${Thead(tableCol)}
     ${Tbody(tableCol, tableData, link)}
     </table>`;
 }
 
-function Thead(tableData) {
-  return `
-      <thead>${tableData
-        ?.map((item) => {
-          const className =
-            item?.align === "start"
-              ? "text-start"
-              : item?.align === "center"
-              ? "text-center"
-              : "text-end";
-          return `<th class="${className}">${item.label}</th>`;
-        })
-        .join("")}</thead>
+function Thead(tableCol) {
+  return /*html*/ `
+      <thead>${tableCol?.myMap((item) => {
+        const className =
+          item?.align === "start"
+            ? "text-start"
+            : item?.align === "center"
+            ? "text-center"
+            : "text-end";
+        return `<th class="${className}">${item.label}</th>`;
+      })}</thead>
     `;
 }
 
 function Tbody(tableCol, tableData, link) {
-  return `
+  return /*html*/ `
       <tbody>
       ${
         tableData?.length
-          ? tableData
-              ?.map(
-                (item) =>
-                  `<tr class="table-row">
-           ${tableCol
-             ?.map((col) =>
-               Td(
-                 col?.render ? col?.render(item) : item[col?.field],
-                 col?.align,
-                 col?.field !== "actions" && link
-                   ? `${link}/?id=${APP_DATA?.instanceDetails?.id}`
-                   : ""
-               )
+          ? tableData?.myMap(
+              (item) => /*html*/ `<tr class="table-row">
+           ${tableCol?.myMap((col) =>
+             Td(
+               col?.render ? col?.render(item) : item[col?.field],
+               col?.align,
+               col?.field !== "actions" && link
+                 ? `${link}/?id=${APP_DATA?.instanceDetails?.id}`
+                 : ""
              )
-             .join("")}
+           )}
              </tr>`
-              )
-              .join("")
-          : `<td class="pt-3 pb-3 pl-3 pr-3 text-center" colspan="5">No Data Found</td>`
+            )
+          : /*html*/ `<td class="pt-3 pb-3 pl-3 pr-3 text-center" colspan="${
+              tableCol?.length + 1
+            }">No Data Found</td>`
       }
       </tbody>
     `;
@@ -61,14 +56,14 @@ function Td(children, align, link) {
       : "text-end";
 
   if (link) {
-    return `
+    return /*html*/ `
       <td class="${className} pt-3 pb-3 pl-3 pr-3">
       ${children || "-"}
           <a href="${link}" id="link"><a/>
       </td>
    `;
   }
-  return `
+  return /*html*/ `
        <td class="${className} pt-3 pb-3 pl-3 pr-3">
        ${children || "-"}
        </td>

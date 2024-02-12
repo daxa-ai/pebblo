@@ -1,5 +1,5 @@
 export function Card(children) {
-  return `
+  return /*html*/ `
       <div class="card overflow-hidden">${children}</div>
       `;
 }

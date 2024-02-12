@@ -1,47 +1,53 @@
-function Tabs(tabsArr, children) {
+import { addZero } from "../util.js";
+
+function Tabs(tabsArr, tabPanel) {
   let allTabs = "";
   let tabValue = 0;
+  let tabPanelEl;
+  let tabPanelComponent;
 
-  tabsArr?.map((tab) => (allTabs += Tab(tab)));
+  tabsArr?.myMap((tab) => (allTabs += Tab(tab)));
   document.addEventListener("DOMContentLoaded", function () {
-    const tabPanel = document.getElementById("tab-panel");
+    tabPanelEl = document.getElementById("tab-panel");
+    tabPanelComponent = tabPanel[tabValue]?.component;
+
+    tabPanelEl.innerHTML = tabPanelComponent(tabPanel[tabValue].value);
     const tabElements = document.getElementsByClassName("tab");
-    tabPanel.innerHTML = tabsArr[tabValue]?.tabPanel;
     Array.from(tabElements).forEach((element) => {
-      element?.addEventListener("click", function (e) {
-        tabValue = Number(e.target.dataset.value);
-        document.getElementById("tab-selected").style.left = `${
-          Number(e.target.dataset.value) * 224 +
-          (Number(e.target.dataset.value)
-            ? 24 * Number(e.target.dataset.value)
-            : 0)
-        }px`;
-        tabPanel.innerHTML = "";
-        tabPanel.innerHTML = tabsArr[tabValue]?.tabPanel;
-      });
+      element?.addEventListener("click", onClick);
     });
   });
 
-  return `
+  function onClick(e) {
+    tabValue = Number(e.target.dataset.value);
+    document.getElementById("tab-selected").style.left = `${
+      Number(e.target.dataset.value) * 224 +
+      (Number(e.target.dataset.value) ? 24 * Number(e.target.dataset.value) : 0)
+    }px`;
+    tabPanelEl.innerHTML = "";
+    tabPanelComponent = tabPanel[tabValue]?.component;
+    tabPanelEl.innerHTML = tabPanelComponent(tabPanel[tabValue].value);
+  }
+  return /*html*/ `
       <div class="flex flex-col">
         <div class="tabs sticky top-0 flex gap-6">
           ${allTabs}
           <div id="tab-selected"></div> 
         </div>
-        <div id="tab-panel" class="h-full">${children}</div>
+       ${TabPanel()}
       </div>
       `;
 }
 
 function Tab(item) {
-  return `
+  return /*html*/ `
           <div class="tab manrope" data-value=${item?.value}>
             <div class="inline ${
               item?.isCritical ? "critical" : "surface-10"
             } font-48 font-thin pointer-none">
-             ${item?.critical < 10 ? `0${item?.critical}` : item?.critical} ${
+             ${addZero(item?.critical)} ${
     item?.outOf
-      ? `<span class="surface-10 font-24 -ml-1">/${item?.outOf}</span>`
+      ? /*html*/ `<span class="surface-10 font-24 -ml-1">/${item?.outOf}</span>`
       : ""
   }
             </div>
@@ -51,6 +57,10 @@ function Tab(item) {
           </div>
          
       `;
+}
+
+export function TabPanel() {
+  return /*html*/ `<div id="tab-panel"></div>`;
 }
 
 export { Tabs, Tab };

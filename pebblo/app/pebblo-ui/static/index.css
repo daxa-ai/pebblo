@@ -863,7 +863,71 @@ button.accordion-summary {
   gap: 12px;
 }
 
-/* MICELLAEOUS CSS */
+/* MISCELLANEOUS CSS */
 .mask {
-  background: #526ff3;
+  background-image: url("./background-image.png");
+  background-size: cover;
+}
+
+/*   Open state of the dialog  */
+dialog[open] {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/*   Closed state of the dialog   */
+dialog {
+  opacity: 0;
+  transform: scaleY(0.5);
+  transition: transform 0.1s ease-out, overlay 0.1s ease-out allow-discrete;
+  margin: auto;
+  border: none;
+  border-radius: 4px;
+}
+
+/*   Before-open state  */
+/* Needs to be after the previous dialog[open] rule to take effect,
+    as the specificity is the same */
+@starting-style {
+  dialog[open] {
+    transform: scaleY(0.5);
+  }
+}
+
+dialog::backdrop {
+  background-color: rgb(0 0 0 / 0%);
+  transition: display 0.1s allow-discrete, overlay 0.1s allow-discrete;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* DIALOG SIZES */
+.dialog-full {
+  width: 100%;
+  height: 100%;
+}
+
+.dialog-md {
+  width: 100%;
+  max-width: 947px;
+}
+
+.dialog-sm {
+  width: 100%;
+  max-width: 600px;
+}
+
+/* ICON BUTTON */
+.icon-button {
+  border: none;
+  background: none;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+}
+
+.icon-button:hover {
+  background: rgba(0, 0, 0, 0.05);
 }

@@ -5,123 +5,18 @@ import {
   Button,
   KeyValue,
   Tabs,
-  Application_Details_List_Section,
-  SnippetDetails,
+  Dialog,
 } from "../components/index.js";
-
-const MEDIA_URL = document.scripts[0].getAttribute("staticURL");
-const APP_DATA = JSON.parse(document.scripts[0].getAttribute("appData"));
-
-const APP_DETAILS_FINDINGS_TABLE = [
-  {
-    label: "Finding type",
-    field: "type",
-    type: APP_DATA?.name,
-    align: "start",
-  },
-  {
-    label: "Finding",
-    field: "finding",
-    finding: APP_DATA?.reportSummary.findingsTopics,
-    align: "end",
-  },
-  {
-    label: "Source Files",
-    field: "sourceFiles",
-    sourceFiles: APP_DATA?.reportSummary.findingsEntities,
-    align: "end",
-  },
-  {
-    label: "Snippets",
-    field: "snippets",
-    snippets: APP_DATA?.reportSummary.owner,
-    align: "start",
-  },
-  {
-    label: "Data Source",
-    field: "dataSource",
-    dataSource: APP_DATA?.reportSummary.owner,
-    align: "start",
-  },
-];
-
-const TABS_ARR_FOR_APPLICATION_DETAILS = [
-  {
-    label: "Findings",
-    critical: 72,
-    outOf: 0,
-    value: 0,
-    isCritical: true,
-    tabPanel: Application_Details_List_Section(
-      "Findings",
-      APP_DETAILS_FINDINGS_TABLE,
-      []
-    ),
-  },
-  {
-    label: "Files With Findings",
-    critical: 8,
-    outOf: 24,
-    value: 1,
-    isCritical: true,
-    tabPanel: Application_Details_List_Section(
-      "Files With Findngs",
-      APP_DETAILS_FINDINGS_TABLE,
-      []
-    ),
-  },
-  {
-    label: "Data Source",
-    critical: 4,
-    outOf: 0,
-    value: 2,
-    isCritical: false,
-    tabPanel: Application_Details_List_Section(
-      "Data Source",
-      APP_DETAILS_FINDINGS_TABLE,
-      []
-    ),
-  },
-  {
-    label: "Snippets",
-    critical: 254,
-    outOf: 0,
-    value: 3,
-    isCritical: false,
-    tabPanel: SnippetDetails(APP_DATA?.dataSources[0]?.findingsDetails),
-  },
-];
-
-const APP_DETAILS = [
-  {
-    label: "IP",
-    value: APP_DATA?.instanceDetails?.ip,
-  },
-  {
-    label: "Runtime",
-    value: APP_DATA?.instanceDetails?.runtime,
-  },
-  {
-    label: "Language",
-    value: APP_DATA?.instanceDetails?.language,
-  },
-  {
-    label: "Host",
-    value: APP_DATA?.instanceDetails?.host,
-  },
-  {
-    label: "Created At",
-    value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt),
-  },
-  {
-    label: "Path",
-    value:
-      "/Users/shreyasdamle/work/cloud_defense/daxa-analyzer-rc1/samples/basic_retrieval",
-  },
-];
+import {
+  APP_DATA,
+  APP_DETAILS,
+  MEDIA_URL,
+  TABS_ARR_FOR_APPLICATION_DETAILS,
+  TAB_PANEL_ARR_FOR_APPLICATION_DETAILS,
+} from "../constants/constant.js";
 
 export function AppDetailsPage() {
-  return `
+  return /*html*/ `
     <div class="flex gap-6 flex-col h-full overflow-auto">
       <div class="flex justify-between">
         <div class="flex gap-3">
@@ -150,18 +45,19 @@ export function AppDetailsPage() {
             variant: "text",
             btnText: "Load History",
             startIcon: "/static/pending-icon.png",
+            id: "showDialogBtn",
           })}
         </div>
       </div>
       ${AccordionDetails(
-        `<div class="grid grid-cols-4 row-gap-3 col-gap-3 w-full">
-           ${APP_DETAILS?.map((item) =>
+        /*html*/ `<div class="grid grid-cols-4 row-gap-3 col-gap-3 w-full">
+           ${APP_DETAILS?.myMap((item) =>
              KeyValue(
                item.label,
                item.value,
                item?.label === "Path" ? "col-4" : ""
              )
-           ).join("")}
+           )}
         </div>`,
         "panel-1"
       )}
@@ -175,13 +71,10 @@ export function AppDetailsPage() {
         </div>
         ${Tabs(
           TABS_ARR_FOR_APPLICATION_DETAILS,
-          Application_Details_List_Section(
-            "Findings",
-            APP_DETAILS_FINDINGS_TABLE,
-            []
-          )
+          TAB_PANEL_ARR_FOR_APPLICATION_DETAILS
         )}
       </div>
+      ${Dialog({ title: "", maxWidth: "md", children: "" })}
    </div>
     `;
 }

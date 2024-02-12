@@ -12,9 +12,15 @@ const MONTHS = [
   "Nov",
   "Dec",
 ];
+
 export const getFormattedDate = (date) => {
   const newDate = new Date(date);
   return `${newDate.getDate()} ${
     MONTHS[newDate.getMonth()]
   } ${newDate.getFullYear()}`;
+};
+
+export const addZero = (number) => {
+  if (number < 10) return `0${number}`;
+  return number;
 };
