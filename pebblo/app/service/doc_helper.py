@@ -2,10 +2,11 @@
     Doc helper class for loader doc related task
 """
 import ast
+import os.path
 from datetime import datetime
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import AiDataModel, AiDocs, ReportModel, Snippets, Summary, DataSource, LoadHistory
-from pebblo.app.utils.utils import read_json_file
+from pebblo.app.utils.utils import read_json_file, get_full_path
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 from pebblo.app.enums.enums import ReportConstants, CacheDir
@@ -326,10 +327,13 @@ class LoaderHelper:
             load_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
             report = read_json_file(load_report_file_path)
             if report:
-                report_summary = report.get("reportSummary")
-
+                pdf_report_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.pdf_report_file_name.value}"
+                report_name = get_full_path(pdf_report_path)
+                if not os.path.exists(report_name):
+                    # Pdf file is not present, Skipping it
+                    continue
                 # create loader history object
-                report_name = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.pdf_report_file_name.value}"
+                report_summary = report.get("reportSummary")
                 load_history_model_obj = LoadHistory(loadId=load_id,
                                                      reportName=report_name,
                                                      findings=report_summary["findings"],

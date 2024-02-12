@@ -35,7 +35,7 @@ class AppLoaderDoc:
                                         f"/{CacheDir.pdf_report_file_name.value}")
         full_file_path = get_full_path(current_app_report_file_path)
         report_obj.generate_report(final_report, full_file_path)
-        logger.debug(f"PDF report generated, please check path : {full_file_path}")
+        logger.info(f"PDF report generated, please check path : {full_file_path}")
 
     def _upsert_loader_details(self, app_details):
         """
