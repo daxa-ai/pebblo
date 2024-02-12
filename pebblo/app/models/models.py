@@ -1,11 +1,12 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Union
 from datetime import datetime
+from uuid import UUID
 
 
 class Metadata(BaseModel):
-    createdAt: datetime = datetime.now()
-    modifiedAt: datetime = datetime.now()
+    createdAt: datetime
+    modifiedAt: datetime
 
     class Config:
         arbitrary_types_allowed = True
@@ -17,7 +18,7 @@ class LoaderMetadata(BaseModel):
     sourceType: str
     sourceSize: int
     sourceFiles: Optional[list] = []
-    lastModified: Optional[datetime] = datetime.now()
+    lastModified: Optional[datetime]
 
 
 class AiDataModel(BaseModel):
@@ -39,7 +40,6 @@ class AiDocs(BaseModel):
     entities: dict
     topicCount: int
     topics: dict
-    policyViolations: Optional[List[dict]] = []
 
 
 class FrameworkInfo(BaseModel):
@@ -58,7 +58,7 @@ class InstanceDetails(BaseModel):
     platform: Optional[str]
     os: Optional[str]
     osVersion: Optional[str]
-    createdAt: datetime = datetime.now()
+    createdAt: datetime
 
 
 class AiApp(BaseModel):
@@ -77,10 +77,10 @@ class Summary(BaseModel):
     findingsEntities: int
     findingsTopics: int
     totalFiles: int
-    filesWithRestrictedData: int
+    filesWithFindings: int
     dataSources: int
     owner: str
-    createdAt: datetime = datetime.now()
+    createdAt: datetime
 
 
 class TopFindings(BaseModel):
@@ -110,12 +110,20 @@ class DataSource(BaseModel):
     # snippets: Optional[List[Snippets]]
 
 
+class LoadHistory(BaseModel):
+    loadId: UUID
+    reportName: str
+    findings: int
+    filesWithFindings: int
+    generatedOn: datetime
+
+
 class ReportModel(BaseModel):
     name: str
     description: Optional[str]
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary]
+    loadHistory: Optional[List[LoadHistory]]
     topFindings: Optional[List[TopFindings]]
     instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]
-    lastModified: datetime

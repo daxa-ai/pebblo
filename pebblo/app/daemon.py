@@ -10,7 +10,7 @@ def start():
     # Init TopicClassifier(This step downloads the models and put in cache)
     _ = TopicClassifier()
     # Init EntityClassifier(This step downloads all necessary training models)
-    _ = EntityClassifier
+    _ = EntityClassifier()
 
     # Initialise app instance
     app = FastAPI()
