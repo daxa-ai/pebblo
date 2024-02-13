@@ -1,6 +1,6 @@
 # Report Generator
 
-Report Generator contains the following operations:
+## Report Generator contains the following operations:
 
 1. HTML to PDF generator
 
@@ -54,7 +54,15 @@ appData = {
   }
 }
 
-# Provide JSON data, output file name and template name (from /templates directory) to the generate report function
+```
+
+# Provide JSON data, output file name, format (of output file) and renderer (xhtml2pdf or weasyprint) to the generate report function.
+
 # Below are the default values for outputPath and templateName:
-  Reports.generate_report(data, outputPath='./report.pdf', templateName='reportTemplate.html')
+
+```
+
+Reports.generate_report(data, outputPath='./report.pdf', format = 'pdf', renderer='xhtml2pdf')
+
+
 ```

@@ -35,7 +35,7 @@ class TopicClassifier:
         """
         try:
             # Check if the input text meets the minimum length requirement
-            if len(input_text) < TOPIC_MIN_TEXT_LENGTH:
+            if len(input_text) <= TOPIC_MIN_TEXT_LENGTH:
                 logger.debug(f"Text length is below {TOPIC_MIN_TEXT_LENGTH} characters. "
                              f"Classification not performed. Input text: {input_text}")
                 return {}, 0

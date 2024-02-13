@@ -1,8 +1,11 @@
+from contextlib import redirect_stderr, redirect_stdout
 from fastapi import FastAPI
-
+from io import StringIO
 import uvicorn
 import asyncio
-from pebblo.app.routers.routers import router_instance
+
+with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
+    from pebblo.app.routers.routers import router_instance
 
 
 class Service:
