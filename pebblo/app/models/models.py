@@ -123,7 +123,7 @@ class ReportModel(BaseModel):
     description: Optional[str]
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary]
-    loadHistory: Optional[List[LoadHistory]]
+    loadHistory: Optional[dict]
     topFindings: Optional[List[TopFindings]]
     instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]
