@@ -13,6 +13,13 @@ with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
 p_bar.update(3)
 
 def start():
+    """Entry point for pebblo-server."""
+    classifier_init()
+    server_start()
+    p_bar.write("Pebblo server Stopped. BYE!")
+
+def classifier_init():
+    """Initialize topic and entity classifier."""
     p_bar.write("Topic Classifier Initializing.")
     p_bar.update(1)
 
@@ -31,6 +38,8 @@ def start():
     p_bar.write("Entity Classifier Initialized...")
     p_bar.update(1)
 
+def server_start():
+    """Start server."""
     p_bar.write("Pebblo server Starting.")
     # Initialise app instance
     app = FastAPI()
@@ -44,4 +53,3 @@ def start():
 
     # running local server
     uvicorn.run(app, host="localhost", port=8000, log_level="info")
-    p_bar.write("Pebblo server Stopped. BYE!")
