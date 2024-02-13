@@ -102,7 +102,7 @@ class AppLoaderDoc:
             if not app_details:
                 # TODO: Handle the case where discover call did not happen, but loader doc is being called.
                 logger.error("Could not read metadata file. Exiting.")
-                return {"Message": "Could not read metadata file. Exiting"}
+                return {"Message": f"Could not read metadata file at {app_load_metadata_file_path}. Exiting"}
 
             # Add/Update Loader Details with input loader details
             self._upsert_loader_details(app_details)
@@ -129,7 +129,7 @@ class AppLoaderDoc:
                 # Writing report in pdf format
                 self._write_pdf_report(final_report)
 
-            logger.info("Loader Doc request Request processed successfully.")
+            logger.debug("Loader Doc request Request processed successfully.")
             return {"message": "Loader Doc API Request processed successfully"}
         except ValidationError as ex:
             logger.error(f"AI_LOADER_DOC Failed. Error:{ex}")
