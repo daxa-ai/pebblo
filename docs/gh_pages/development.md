@@ -59,7 +59,6 @@ pebblo
 
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application document snippets for inspection and reporting.
 
-
 ## Creating a pull request
 
 See [these instructions](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
