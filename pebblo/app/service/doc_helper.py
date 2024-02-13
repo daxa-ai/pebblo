@@ -71,7 +71,6 @@ class DocHelper:
                 data_source_findings[label_name]["unique_snippets"].add(source_path)
 
     def _get_doc_report_metadata(self, doc, raw_data):
-        logger.debug("In Function: _get_doc_report_metadata")
         # Initialize variables
         loader_source_snippets = raw_data["loader_source_snippets"]
         total_findings = raw_data["total_findings"]
@@ -163,7 +162,6 @@ class DocHelper:
         return data_source_obj_list
 
     def _generate_final_report(self, raw_data):
-        logger.debug("In Function: _generate_final_report")
         loader_source_snippets = raw_data["loader_source_snippets"]
         file_count_restricted_data = 0
         for file_dict in self.app_details["loader_source_files"]:
@@ -216,7 +214,6 @@ class DocHelper:
                                                                  "sourceSize": loader_details.get("source_size"),
                                                                  "type": loader_details.get("source_type")}
         input_doc_list = self.data.get('docs', [])
-        logger.debug("In Function: _get_doc_details_and_generate_report")
         last_used = datetime.now()
         docs = self.app_details.get("docs", [])
         raw_data = {"total_findings": 0, "findings_entities": 0, "findings_topics": 0,

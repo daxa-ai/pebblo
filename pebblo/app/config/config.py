@@ -59,6 +59,7 @@ def load_config(path) -> Config:
                     cred_json = yaml.safe_load(output)
                     parsed_config = Config.parse_obj(cred_json)
                     config_dict = parsed_config.dict()
+                    print(f"Config values : {config_dict}")
                     return config_dict
             except IOError as err:
                 print(f"no credentials file found at {con_file}")
