@@ -164,7 +164,7 @@ class AppLoaderDoc:
                 current_load_report_file_path = (f"{CacheDir.home_dir.value}/{app_name}"
                                                  f"/{load_id}/{CacheDir.report_file_name.value}")
                 full_file_path = get_full_path(current_load_report_file_path)
-                report_obj.generate_report(data=final_report, outputDir=full_file_path, format=report_format,
+                report_obj.generate_report(data=final_report, outputPath=full_file_path, format=report_format,
                                            renderer=renderer)
 
                 # Writing pdf report file specific to application name, inside app directory
@@ -172,7 +172,7 @@ class AppLoaderDoc:
                                                 f"/{CacheDir.report_file_name.value}")
                 full_file_path = get_full_path(current_app_report_file_path)
 
-                report_obj.generate_report(data=final_report, outputDir=full_file_path, format=report_format,
+                report_obj.generate_report(data=final_report, outputPath=full_file_path, format=report_format,
                                            renderer=renderer)
                 logger.info(f"PDF report generated at : {full_file_path}")
 
