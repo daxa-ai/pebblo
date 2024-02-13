@@ -102,7 +102,7 @@ class AppLoaderDoc:
             app_details = read_json_file(app_load_metadata_file_path)
             if not app_details:
                 # TODO: Handle the case where discover call did not happen, but loader doc is being called.
-                logger.error("Could not read metadata file. Exiting.")
+                logger.error(f"Could not read metadata file at {app_load_metadata_file_path}. Exiting.")
                 return {"Message": f"Could not read metadata file at {app_load_metadata_file_path}. Exiting"}
 
             # Add/Update Loader Details with input loader details
