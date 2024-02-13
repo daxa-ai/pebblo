@@ -4,5 +4,6 @@ daemon:
 logging:
   level: info
 reports:
-  format: pdf
+  format: html
+  renderer: weasyprinthtml
   outputDir:  ~/.pebblo
