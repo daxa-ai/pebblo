@@ -91,8 +91,12 @@ class AppDiscover:
             # Writing app metadata to metadata file
             app_metadata = {"name": self.application_name, "load_ids": [self.load_id]}
         else:
-            # Metadata file is already present, Appending the current metadata details
-            app_metadata.get("load_ids").append(self.load_id)
+            if "load_ids" in app_metadata.keys():
+                # Metadata file is already present, Appending the current metadata details
+                app_metadata.get("load_ids").append(self.load_id)
+            else:
+                # metadata file is present, but load_ids is not, This is to support backward compatibility
+                app_metadata["load_ids"] = [self.load_id]
 
         # Writing metadata file
         self._write_file_content_to_path(app_metadata, app_metadata_file_path)
