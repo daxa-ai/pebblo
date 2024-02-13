@@ -1,0 +1,8 @@
+daemon:
+  port: 8000
+  host: localhost
+logging:
+  level: info
+reports:
+  format: pdf
+  outputDir:  ~/.pebblo
