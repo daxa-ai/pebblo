@@ -319,7 +319,7 @@ class LoaderHelper:
         # LoadHistory will be considered up to the specified load history limit.
         # if no of reports are greater than specified limit than, we provide the dir path for all reports
         load_history["history"] = list()
-        load_history["moreReportsPath"] = ""
+        load_history["moreReportsPath"] = "-"
         report_counts = len(load_ids)
         top_n_latest_loader_id = load_ids[-ReportConstants.loader_history_limit.value - 1:]
         top_n_latest_loader_id.reverse()
