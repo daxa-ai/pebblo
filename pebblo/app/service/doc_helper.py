@@ -304,8 +304,7 @@ class LoaderHelper:
             Retrieve previous runs details and create load history and return
         """
         logger.debug("Fetching previous execution details and creating loader history")
-        load_history = list()
-
+        load_history = dict()
         # Reading metadata file & get load details
         app_name = self.data.get("name")
         current_load_id = self.load_id
@@ -314,10 +313,14 @@ class LoaderHelper:
         if not app_metadata:
             # No app metadata is present
             return load_history
-        load_ids = app_metadata.get("load_ids")
+        load_ids = app_metadata.get("load_ids", [])
 
         # Retrieving load id report file
         # LoadHistory will be considered up to the specified load history limit.
+        # if no of reports are greater than specified limit than, we provide the dir path for all reports
+        load_history["history"] = list()
+        load_history["moreReportsPath"] = ""
+        report_counts = len(load_ids)
         top_n_latest_loader_id = load_ids[-ReportConstants.loader_history_limit.value - 1:]
         top_n_latest_loader_id.reverse()
 
@@ -340,7 +343,12 @@ class LoaderHelper:
                                                      filesWithFindings=report_summary["filesWithFindings"],
                                                      generatedOn=report_summary["createdAt"]
                                                      )
-                load_history.append(load_history_model_obj)
+                load_history["history"].append(load_history_model_obj.dict())
+        if (len(load_history["history"]) == ReportConstants.loader_history_limit.value
+                and report_counts > ReportConstants.loader_history_limit.value+1):
+            more_reports = f"{CacheDir.home_dir.value}/{app_name}/"
+            more_report_full_path = get_full_path(more_reports)
+            load_history["moreReportsPath"] = more_report_full_path
         return load_history
 
     def _get_doc_report_metadata(self, doc, raw_data):
