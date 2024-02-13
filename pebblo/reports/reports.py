@@ -17,4 +17,4 @@ class Reports:
             except Exception as e:
                 logger.error(f"Renderer {renderer} not supported. Please use supported renderers: {ReportLibraries.WEASYPRINT} or {ReportLibraries.XHTML2PDF}, {e}")
         else:
-            logger.error("Output file format not supported")
+            logger.error(f"Output file format {format} not supported")
