@@ -2,6 +2,8 @@
 These are all enums related to Inspector.
 """
 from enum import Enum
+import os
+from pebblo.app.daemon import config_details
 
 
 class CacheDir(Enum):
@@ -9,7 +11,7 @@ class CacheDir(Enum):
     metadata_file_path = f"{metadata_folder}/metadata.json"
     report_file_name = "report.json"
     pdf_report_file_name = "pebblo_report.pdf"
-    home_dir = ".pebblo"
+    home_dir = config_details.get('reports', {}).get('outputDir', '~/.pebblo')
 
 
 class ReportConstants(Enum):
