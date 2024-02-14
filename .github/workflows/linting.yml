@@ -7,13 +7,14 @@ on:
       - "pebblo/**/*.py"
       - "tests/**/*.py"
       - "samples/**/*.py"
-env:
-  PYTHON_VERSION: "3.11"
 
 jobs:
 
   pylint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version: [3.9, 3.10, 3.11, 3.12]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,7 +23,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python_version }}
 
       - name: Install dependencies needed for tests
         run: pip install -r tests/test_requirements.txt
