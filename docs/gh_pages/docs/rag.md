@@ -22,7 +22,7 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
 
 ```python
     from langchain.document_loaders.csv_loader import CSVLoader
-    from pebblo_langchain.langchain_community.document_loaders.pebblo import PebbloSafeLoader
+    from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
     loader = PebbloSafeLoader(
                 CSVLoader(file_path),
