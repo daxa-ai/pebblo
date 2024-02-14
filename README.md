@@ -52,6 +52,7 @@ pip install pebblo
 ```bash
 pebblo
 ```
+see [troubleshooting](docs/gh_pages/docs/troubleshooting.md) guide for troubleshooting info.
 
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
 
