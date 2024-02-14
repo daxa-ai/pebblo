@@ -1,6 +1,6 @@
-# Troubleshooting Pebblo
+# Troubleshooting Guide
 
-## Issued found in conda virtual env.
+## A. Issues found while running pebblo server, in conda virtual env.
 ### 1. OSError: cannot load library 'pango-1.0-0'
   Install pango package in conda env
 
