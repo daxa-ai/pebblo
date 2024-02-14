@@ -6,4 +6,4 @@ logging:
 reports:
   format: pdf
   renderer: weasyprint
-  outputDir:  ~/.pebblo
+  outputDir: ~/.pebblo

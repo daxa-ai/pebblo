@@ -1,7 +1,6 @@
-langchain>=0.1.2
+langchain>=0.1.7
 langchain-community
 langchain-openai
-pebblo-langchain
 chromadb==0.4.7
 python-dotenv==1.0.0
 tiktoken
