@@ -1,11 +1,11 @@
 import yaml
+from tqdm import tqdm
 
 from pydantic import BaseSettings, Field
 import pathlib
 
 # Default config value
 dir_path = pathlib.Path().absolute()
-
 
 # Port BaseModel
 class PortConfig(BaseSettings):
@@ -30,8 +30,14 @@ class Config(BaseSettings):
     reports: ReportConfig
     logging: LoggingConfig
 
+def print_config_output(config_output, p_bar=None):
+    if isinstance(p_bar, tqdm):
+        p_bar.write(config_output)
+    else:
+        print(config_output)
 
-def load_config(path) -> Config:
+
+def load_config(path, p_bar=None) -> Config:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
@@ -49,6 +55,9 @@ def load_config(path) -> Config:
         )
         if not path:
             # Setting Default config details
+            config_details = f"Config values : {conf_obj.dict()}"
+            print_config_output(config_details, p_bar)
+
             return conf_obj.dict()
 
         # If Path exist, set config value
@@ -59,7 +68,9 @@ def load_config(path) -> Config:
                     cred_json = yaml.safe_load(output)
                     parsed_config = Config.parse_obj(cred_json)
                     config_dict = parsed_config.dict()
-                    print(f"Config values : {config_dict}")
+                    config_details = f"Config values : {config_dict}"
+                    print_config_output(config_details, p_bar)
+
                     return config_dict
             except IOError as err:
                 print(f"no credentials file found at {con_file}")

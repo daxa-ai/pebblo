@@ -20,7 +20,7 @@ def start():
     parser.add_argument('--config', type=str, help="Config file path")
     args = parser.parse_args()
     path = args.config
-    config_details = load_config(path)
+    config_details = load_config(path, p_bar)
     classifier_init()
     server_start(config_details)
     print("Pebblo server Stopped. BYE!")
