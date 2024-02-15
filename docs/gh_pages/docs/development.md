@@ -6,7 +6,7 @@ The following instructions are **tested on Mac OSX and Linux (Debian).**
 
 ### Prerequisites
 
-Install the following prerequistes. This is needed for PDF report generation.
+Install the following prerequisites. This is needed for PDF report generation.
 
 #### Mac OSX
 
