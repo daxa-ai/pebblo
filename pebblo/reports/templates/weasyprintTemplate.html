@@ -95,7 +95,9 @@
               <tbody class="surface-10 font-13">
                 {% for item in data.topFindings %}
                 <tr>
-                  <td colspan="2">{{ item.fileName|default('-') }}</td>
+                  <td colspan="2" class="break-word">
+                    {{ item.fileName|default('-') }}
+                  </td>
                   <td class="text-end">
                     {{ item.findingsTopics|default('-') }}
                   </td>
@@ -113,7 +115,7 @@
           <div class="inter flex items-center">
             <div class="surface-10 font-14 medium">Load History</div>
             <div class="surface-10-opacity ml-2 font-12">
-              Last {{data.loadHistory.history|length}} Reports
+              Last {{loadHistoryItemsToDisplay|length}} Reports
             </div>
           </div>
           <div class="mt-3 inter">
@@ -128,9 +130,9 @@
                 </tr>
               </thead>
               <tbody class="surface-10 font-13">
-                {% for item in data.loadHistory.history %}
+                {% for item in loadHistoryItemsToDisplay %}
                 <tr>
-                  <td colspan="2">{{ item.reportName }}</td>
+                  <td colspan="2" class="break-word">{{ item.reportName }}</td>
                   <td class="text-end">{{ item.findings }}</td>
                   <td class="text-end">{{ item.filesWithFindings }}</td>
                   <td>{{ dateFormatter(item.generatedOn) }}</td>
@@ -140,9 +142,11 @@
             </table>
           </div>
         </div>
+        {% if data.loadHistory.history|length > 4 %}
         <div class="mt-2 inter surface-10-opacity font-11">
           Find more reports on: {{ data.loadHistory.moreReportsPath }}
         </div>
+        {% endif %}
 
         <div class="mt-12">
           <div class="surface-10 font-14 inter medium">Instance Details</div>
