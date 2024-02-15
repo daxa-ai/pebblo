@@ -711,7 +711,7 @@ body {
 .tab:hover {
   background: #f4f9fc;
 }
-#tab-selected {
+#tab_selected {
   position: absolute;
   content: "";
   border-top-right-radius: 4px;
@@ -725,7 +725,7 @@ body {
   transition: all 0.3s;
   z-index: -1;
 }
-#tab-panel {
+#tab_panel {
   padding: 24px;
   border-radius: 4px;
   border: 1px solid rgba(216, 217, 227, 0.5);
@@ -849,11 +849,12 @@ button.accordion-summary {
   font-size: 12px;
   font-weight: 500;
 }
-#arrow-icon {
+#arrow_icon {
   transition: 0.3s;
-}
-.active #arrow-icon {
   rotate: 180deg;
+}
+.active #arrow_icon {
+  rotate: 0deg;
 }
 
 .accordion-details {
@@ -911,7 +912,7 @@ dialog::backdrop {
 
 .dialog-md {
   width: 100%;
-  max-width: 947px;
+  max-width: calc(100vw - 35%);
 }
 
 .dialog-sm {
@@ -930,4 +931,8 @@ dialog::backdrop {
 
 .icon-button:hover {
   background: rgba(0, 0, 0, 0.05);
+}
+
+.load-history-table {
+  border: 1px solid#D8D9E380;
 }

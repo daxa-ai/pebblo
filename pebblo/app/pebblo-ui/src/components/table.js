@@ -1,22 +1,21 @@
 import { APP_DATA } from "../constants/constant.js";
+import { get_Text_Orientation } from "../util.js";
+import { ACTIONS } from "../constants/enums.js";
 
-function Table(tableCol, tableData, link) {
-  return /*html*/ `<table cellspacing="0" cellpadding="0">
+function Table(props) {
+  const { tableCol, tableData, link } = props;
+  return /*html*/ `
+  <table cellspacing="0" cellpadding="0">
     ${Thead(tableCol)}
     ${Tbody(tableCol, tableData, link)}
-    </table>`;
+   </table>`;
 }
 
 function Thead(tableCol) {
   return /*html*/ `
       <thead>${tableCol?.myMap((item) => {
-        const className =
-          item?.align === "start"
-            ? "text-start"
-            : item?.align === "center"
-            ? "text-center"
-            : "text-end";
-        return `<th class="${className}">${item.label}</th>`;
+        const TEXT__ALIGN = get_Text_Orientation(item?.align);
+        return `<th class="${TEXT__ALIGN}">${item.label}</th>`;
       })}</thead>
     `;
 }
@@ -30,11 +29,13 @@ function Tbody(tableCol, tableData, link) {
               (item) => /*html*/ `<tr class="table-row">
            ${tableCol?.myMap((col) =>
              Td(
-               col?.render ? col?.render(item) : item[col?.field],
+               col?.actions
+                 ? col?.actions
+                 : col?.render
+                 ? col?.render(item)
+                 : item[col?.field],
                col?.align,
-               col?.field !== "actions" && link
-                 ? `${link}/?id=${APP_DATA?.instanceDetails?.id}`
-                 : ""
+               col?.field !== ACTIONS && link ? `${link}/?id=${item?.id}` : ""
              )
            )}
              </tr>`
@@ -48,23 +49,17 @@ function Tbody(tableCol, tableData, link) {
 }
 
 function Td(children, align, link) {
-  const className =
-    align === "start"
-      ? "text-start"
-      : align === "center"
-      ? "text-center"
-      : "text-end";
-
+  const TEXT__ALIGN = get_Text_Orientation(align);
   if (link) {
     return /*html*/ `
-      <td class="${className} pt-3 pb-3 pl-3 pr-3">
+      <td class="${TEXT__ALIGN} pt-3 pb-3 pl-3 pr-3">
       ${children || "-"}
-          <a href="${link}" id="link"><a/>
+          <a href="${link}" id="link"></a>
       </td>
    `;
   }
   return /*html*/ `
-       <td class="${className} pt-3 pb-3 pl-3 pr-3">
+       <td class="${TEXT__ALIGN} pt-3 pb-3 pl-3 pr-3">
        ${children || "-"}
        </td>
     `;

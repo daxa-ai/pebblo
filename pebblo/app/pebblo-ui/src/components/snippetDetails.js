@@ -1,3 +1,4 @@
+import { MEDIA_URL } from "../constants/constant.js";
 import { KeyValue } from "./index.js";
 
 export function SnippetDetails(props) {
@@ -30,8 +31,11 @@ export function SnippetDetails(props) {
               ${item?.snippets?.myMap(
                 (snipp) => `
                    <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
-                    ${KeyValue("Snippets", snipp?.snippet)}
-                    ${KeyValue("Retrieved From", snipp?.sourcePath)}
+                    ${KeyValue({ key: "Snippets", value: snipp?.snippet })}
+                    ${KeyValue({
+                      key: "Retrieved From",
+                      value: snipp?.sourcePath,
+                    })}
                    <div class="divider-horizontal"></div>
                   </div>
                 `

@@ -1,5 +1,4 @@
-import { TabPanel } from "../components/Tab.js";
-import { ApplicationsList, Tabs } from "../components/index.js";
+import { Tabs } from "../components/index.js";
 import {
   TABS_ARR_FOR_APPLICATIONS,
   TAB_PANEL_ARR_FOR_APPLICATIONS,
