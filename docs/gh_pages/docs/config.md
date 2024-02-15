@@ -2,7 +2,7 @@
 
 ### Introduction
 
-This configuration file specifies settings for various components of the Pebblo application.
+This configuration file specifies settings for various components of the Pebblo.
 
 ### Configuration Details
 
