@@ -35,7 +35,7 @@ const sidebars: SidebarsConfig = {
      {
       type: "doc",
       id: "troubleshooting", // document ID
-      label: "Troubleshooting guide", // sidebar label
+      label: "Troubleshooting Guide", // sidebar label
     },
   ],
 };
