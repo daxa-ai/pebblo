@@ -21,7 +21,7 @@ This configuration file specifies settings for various components of the Pebblo.
 - `renderer`: Specifies the rendering engine for generating reports.
 - `outputDir`: Defines the directory where generated reports will be saved.
 
-### Configuration Example
+### Default Configuration
 
 ```yaml
 daemon:
