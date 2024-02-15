@@ -19,7 +19,7 @@ def start():
     args = parser.parse_args()
     path = args.config
     p_bar = tqdm(range(10))
-    config_details = load_config(path, p_bar)
+    config_details = load_config(path)
     classifier_init(p_bar)
     server_start(config_details, p_bar)
     print("Pebblo server Stopped. BYE!")

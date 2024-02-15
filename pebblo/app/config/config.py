@@ -30,7 +30,7 @@ class Config(BaseSettings):
     reports: ReportConfig
     logging: LoggingConfig
 
-def load_config(path, p_bar=None) -> Config:
+def load_config(path) -> Config:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
