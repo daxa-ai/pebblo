@@ -121,8 +121,7 @@ class LoaderHelper:
         loader_details = self.app_details.get("loaders", {})
         for loader in loader_details:
             for file_dict in loader["sourceFiles"]:
-                if "findings" in file_dict.keys():
-                    if file_dict["findings"] > 0:
+                if "findings" in file_dict.keys() and file_dict["findings"] > 0:
                         files_with_findings_count += 1
         return files_with_findings_count
 
@@ -161,7 +160,7 @@ class LoaderHelper:
                 if name not in loader_source_snippets:
                     loader_source_snippets[name] = source_file
 
-            new_source_file = [{
+            new_source_files = [{
                     "name": key,
                     "findings_entities": value['findings_entities'],
                     "findings_topics": value['findings_topics'],
@@ -170,7 +169,7 @@ class LoaderHelper:
                 for key, value in loader_source_snippets.items()
             ]
 
-            loader["sourceFiles"] = new_source_file
+            loader["sourceFiles"] = new_source_files
         self.app_details["report_metadata"] = raw_data
 
     @staticmethod
@@ -207,7 +206,7 @@ class LoaderHelper:
             else:
                 # The source path is encountered for the first time, so we are initializing its object.
                 dict_obj = {
-                    f"labelName": label_name,
+                    "labelName": label_name,
                     "findings": value,
                     "findingsType": entity_type,
                     "snippetCount": 1,
@@ -319,7 +318,7 @@ class LoaderHelper:
         # LoadHistory will be considered up to the specified load history limit.
         # if no of reports are greater than specified limit than, we provide the dir path for all reports
         load_history["history"] = list()
-        load_history["moreReportsPath"] = ""
+        load_history["moreReportsPath"] = "-"
         report_counts = len(load_ids)
         top_n_latest_loader_id = load_ids[-ReportConstants.loader_history_limit.value - 1:]
         top_n_latest_loader_id.reverse()

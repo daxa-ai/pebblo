@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from starlette.testclient import TestClient
 
 from pebblo.app.routers.routers import router_instance
+from pebblo.app import daemon
 
 app = FastAPI()
 app.include_router(router_instance.router)
@@ -15,20 +16,20 @@ client = TestClient(app)
 
 @pytest.fixture(scope="module")
 def mocked_objects():
-    with patch('pebblo.app.daemon.TopicClassifier') as topic_classifier, \
-            patch('pebblo.app.daemon.EntityClassifier') as entity_classifier:
+    with (patch.object(daemon, 'start', 'TopicClassifier') as topic_classifier,
+          patch.object(daemon, 'start', 'EntityClassifier') as entity_classifier):
         yield topic_classifier, entity_classifier
 
 
 @pytest.fixture(scope="module")
 def topic_classifier():
-    with patch('pebblo.app.daemon.TopicClassifier') as topic_classifier:
+    with patch.object(daemon, 'start', 'TopicClassifier') as topic_classifier:
         yield topic_classifier
 
 
 @pytest.fixture(scope="module")
 def entity_classifier():
-    with patch('pebblo.app.daemon.EntityClassifier') as entity_classifier:
+    with patch.object(daemon, 'start', 'EntityClassifier') as entity_classifier:
         yield entity_classifier
 
 

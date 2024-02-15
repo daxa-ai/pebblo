@@ -1,6 +1,6 @@
 # Pebblo Safe DataLoader for Langchain
 
-This document describes how to augment your existing Langchain DocumentLoader with Pebblo Safe DataLoader to get deep data visibility on the types of Topics and Entities ingested into the Gen-AI Langchain application. For details on `Pebblo Daemon` see this [pebblo daemon](/pebblo-docs/daemon.html) document.
+This document describes how to augment your existing Langchain DocumentLoader with Pebblo Safe DataLoader to get deep data visibility on the types of Topics and Entities ingested into the Gen-AI Langchain application. For details on `Pebblo Daemon` see this [pebblo daemon](daemon.md) document.
 
 Pebblo Safeloader enables safe data ingestion for Langchain document loader<sup>1</sup>. This is done by wrapping the document loader call with `Pebblo Safe DataLoader`.
 
@@ -9,7 +9,6 @@ Pebblo Safeloader enables safe data ingestion for Langchain document loader<sup>
 Assume a Langchain RAG application snippet using `CSVLoader` to read a CSV document for inference.
 
 Here is the snippet of Lanchain RAG application using `CSVLoader`.
-
 
 ```python
     from langchain.document_loaders.csv_loader import CSVLoader
@@ -23,7 +22,7 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
 
 ```python
     from langchain.document_loaders.csv_loader import CSVLoader
-    from pebblo_langchain.langchain_community.document_loaders.pebblo import PebbloSafeLoader
+    from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
     loader = PebbloSafeLoader(
                 CSVLoader(file_path),
@@ -35,7 +34,7 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
     vectordb = Chroma.from_documents(documents, OpenAIEmbeddings())
 ```
 
-A data report with all the findings, both Topics and Entities, will be generated and available for inspection in the `Pebblo Daemon`. See this [pebblo daemon](/pebblo-docs/daemon.html) for further details.
+A data report with all the findings, both Topics and Entities, will be generated and available for inspection in the `Pebblo Daemon`. See this [pebblo daemon](daemon.md) for further details.
 
 ## Supported Document Loaders
 

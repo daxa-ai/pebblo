@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from fastapi import HTTPException
@@ -101,7 +102,7 @@ class AppLoaderDoc:
             app_details = read_json_file(app_load_metadata_file_path)
             if not app_details:
                 # TODO: Handle the case where discover call did not happen, but loader doc is being called.
-                logger.error("Could not read metadata file. Exiting.")
+                logger.error(f"Could not read metadata file at {app_load_metadata_file_path}. Exiting.")
                 return {"Message": f"Could not read metadata file at {app_load_metadata_file_path}. Exiting"}
 
             # Add/Update Loader Details with input loader details
@@ -137,4 +138,3 @@ class AppLoaderDoc:
         except Exception as ex:
             logger.error(f"AI_LOADER_DOC Failed. Error:{ex}")
             raise HTTPException(status_code=500, detail="Internal Server Error")
-        
