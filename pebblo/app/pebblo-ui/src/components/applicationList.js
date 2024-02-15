@@ -20,7 +20,7 @@ export function ApplicationsList(props) {
     if (tableCol?.find((col) => col?.field === ACTIONS)) {
       const download_icon = document.getElementById("download_icon");
       download_icon.addEventListener(CLICK, function () {
-        GET_FILE("http://127.0.0.1:8000/getReport?id='123'");
+        GET_FILE("http://127.0.0.1:8000/getReport?id=pebblo_report_xhtml2pdf");
       });
     }
   });

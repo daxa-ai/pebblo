@@ -32,7 +32,7 @@ async def hello(request: Request, id:str):
 @app.get("/getReport", response_class=HTMLResponse)
 async def hello(request: Request, id:str):
    # file_path = os.path.dirname(os.path.dirname(__file__))+'/reports/'+ id +'.pdf'
-   file_path = os.path.dirname(os.path.dirname(__file__))+'/reports/pebblo_report_xhtml2pdf.pdf'
+   file_path = os.path.dirname(os.path.dirname(__file__))+'/reports/'+id+'.pdf'
 
    # To view the file in the browser, use "inline" for the media_type
    headers = {

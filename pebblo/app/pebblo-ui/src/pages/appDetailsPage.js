@@ -17,7 +17,8 @@ import {
   TABS_ARR_FOR_APPLICATION_DETAILS,
   TAB_PANEL_ARR_FOR_APPLICATION_DETAILS,
 } from "../constants/constant.js";
-import { PATH } from "../constants/enums.js";
+import { CLICK, LOAD, PATH } from "../constants/enums.js";
+import { GET_FILE } from "../services/get.js";
 
 const DialogBody = () => {
   return /*html*/ `
@@ -31,6 +32,13 @@ const DialogBody = () => {
 };
 
 export function AppDetailsPage() {
+  window.addEventListener(LOAD, function () {
+    const download_icon = document.getElementById("download_report_btn");
+    download_icon.addEventListener(CLICK, function () {
+      GET_FILE("http://127.0.0.1:8000/getReport?id=pebblo_report_xhtml2pdf");
+    });
+  });
+
   return /*html*/ `
     <div class="flex gap-6 flex-col h-full overflow-auto">
       <div class="flex justify-between">
@@ -54,7 +62,7 @@ export function AppDetailsPage() {
             variant: "text",
             btnText: "Download Report",
             startIcon: "/static/download-icon.png",
-            id: "download_report_dialog_btn",
+            id: "download_report_btn",
           })}
           <div class="divider mt-2 mb-2"></div>
           ${Button({
@@ -90,16 +98,9 @@ export function AppDetailsPage() {
           TAB_PANEL_ARR_FOR_APPLICATION_DETAILS
         )}
       </div>
-      ${Dialog({
-        title: "Load History",
-        maxWidth: "md",
-        btnId: "download_report_dialog_btn",
-        dialogId: "download_report_dialog",
-        dialogBody: DialogBody(),
-      })}
 
       ${Dialog({
-        title: "No History",
+        title: "Load History",
         maxWidth: "md",
         dialogBody: DialogBody(),
         dialogId: "load_history_dialog",
