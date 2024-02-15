@@ -23,7 +23,7 @@ This configuration file specifies settings for various components of the Pebblo.
 
 ### Configuration Example
 
-```commandline
+```yaml
 daemon:
   port: 8000
   host: localhost
