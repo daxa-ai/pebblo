@@ -1,5 +1,5 @@
 import json
-from os import makedirs, path
+from os import makedirs, path, getcwd
 from json import JSONEncoder, dump
 from pebblo.app.libs.logger import logger
 
@@ -41,6 +41,21 @@ def read_json_file(file_path):
 
 
 def get_full_path(file_path):
-    home_dir = path.expanduser("~")
-    full_file_path = path.join(home_dir, file_path)
-    return full_file_path
+    try:
+        # path starting with '~'
+        if file_path.startswith("~"):
+            full_file_path = path.expanduser(file_path)
+            return full_file_path
+        # handle path starting with '.'
+        elif file_path.startswith("."):
+            base_dir = getcwd()
+            full_file_path = path.join(base_dir, file_path)
+            return full_file_path
+        # handle absolute path
+        elif file_path.startswith("/"):
+            return file_path
+        # error case
+        else:
+            logger.error(f"Could not find {file_path} location.")
+    except Exception as e:
+        logger.error(f"Failed to figure out path for input : {file_path}. Exception: {e}")

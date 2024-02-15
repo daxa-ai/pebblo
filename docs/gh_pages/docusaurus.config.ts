@@ -30,7 +30,7 @@ const config: Config = {
           routeBasePath: "/",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/daxa-ai/pebblo",
+          editUrl: "https://github.com/daxa-ai/pebblo/tree/main/docs/gh_pages/",
         },
         blog: false,
         theme: {

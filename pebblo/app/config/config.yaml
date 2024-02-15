@@ -5,4 +5,4 @@ logging:
   level: info
 reports:
   format: pdf
-  outputDir:  ~/.pebblo
+  outputDir: ~/.pebblo

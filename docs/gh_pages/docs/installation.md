@@ -27,3 +27,5 @@ pebblo
 ```
 
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
+
+see [troubeshooting](troubleshooting.md) if you face any issues.
