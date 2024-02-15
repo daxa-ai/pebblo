@@ -17,22 +17,20 @@ on:
     paths:
       - "pebblo/**/*.py"
       - "pebblo/**/*.txt"
-env:
-  PYTHON_VERSION: "3.11"
 
 jobs:
+  
   RunUnitTests:
+    strategy:
+      matrix:
+        python_version: [3.9, 3.10, 3.11, 3.12]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version:  ${{ matrix.python_version }}
       - name: Install the dependencies needed for tests
         run: pip install -r tests/test_requirements.txt
       - name: Run Unit Tests
         run: make test
-
-
-
-
