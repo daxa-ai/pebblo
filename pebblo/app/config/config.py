@@ -15,6 +15,7 @@ class PortConfig(BaseSettings):
 # Report BaseModel
 class ReportConfig(BaseSettings):
     format: str = Field(default='pdf')
+    renderer: str = Field(default='weasyprint')
     outputDir: str = Field(dir_path)
 
 
@@ -39,6 +40,7 @@ def load_config(path, p_bar=None) -> Config:
             ),
             reports=ReportConfig(
                 format='pdf',
+                renderer='weasyprint',
                 outputDir='~/.pebblo'
             ),
             logging=LoggingConfig(
