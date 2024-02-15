@@ -9,7 +9,7 @@ This configuration file specifies settings for various components of the Pebblo.
 #### Daemon
 
 - `port`: Specifies the port number on which the Pebblo daemon listens for incoming connections.
-- `host`: Specifies the host address on which the Pebblo daemon is running.
+- `host`: Specifies the host address on which the Pebblo daemon to run.
 
 ### Logging
 
