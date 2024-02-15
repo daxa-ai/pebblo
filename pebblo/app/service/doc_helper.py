@@ -23,6 +23,13 @@ class LoaderHelper:
         self.loader_mapper = {}
         self.entity_classifier_obj = EntityClassifier()
 
+    @staticmethod
+    def _get_current_datetime():
+            """
+                Return current datetime
+            """
+            return datetime.now()
+
     # Initialization
     def _initialize_raw_data(self):
         """
@@ -76,7 +83,7 @@ class LoaderHelper:
             Create doc model and return its object
         """
         loader_details = self.data.get("loader_details", {})
-        last_used = datetime.now()
+        last_used = self._get_current_datetime()
         doc_model = AiDocs(appId=self.load_id,
                            doc=doc.get('doc'),
                            sourceSize=doc.get('source_path_size', 0),
@@ -294,7 +301,7 @@ class LoaderHelper:
             filesWithFindings=files_with_findings_count,
             dataSources=raw_data["data_source_count"],
             owner=self.app_details["owner"],
-            createdAt=datetime.now()
+            createdAt=self._get_current_datetime()
         )
         return report_summary
 
