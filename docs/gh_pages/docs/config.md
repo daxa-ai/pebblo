@@ -17,7 +17,7 @@ This configuration file specifies settings for various components of the Pebblo.
 
 ### Reports
 
-- `format`: Specifies the format of generated reports. Available options include 'pdf', 'html', etc.
+- `format`: Specifies the format of generated reports. Available options include 'pdf'.
 - `renderer`: Specifies the rendering engine for generating reports.
 - `outputDir`: Defines the directory where generated reports will be saved.
 
@@ -39,4 +39,4 @@ reports:
 ### Validation
 
 - The Pebblo application validates the configuration file upon startup.
-- If the configuration file contains errors or invalid values, Pebblo will log appropriate error messages and may use default values for parameters.
+- If the configuration file contains errors or invalid values, Pebblo will use default values for parameters.
