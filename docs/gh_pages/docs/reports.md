@@ -1,6 +1,6 @@
 # Pebblo Data Reports
 
-Pebblo Data Reports provides an in-depth visibilty into the document ingested into Gen-AI RAG application during every load.
+Pebblo Data Reports provides an in-depth visibility into the document ingested into Gen-AI RAG application during every load.
 
 This document describes the information produced in the Data Report.
 
@@ -26,7 +26,7 @@ This section provide a quick glance of where the RAG application is physically r
 
 # Data Source Findings Table
 
-This table provides a summary of all the different Topics and Entities found across all the files that got ingested usind `Pebblo SafeLoader` enabled Document Loaders.
+This table provides a summary of all the different Topics and Entities found across all the files that got ingested using `Pebblo SafeLoader` enabled Document Loaders.
 
 # Snippets
 

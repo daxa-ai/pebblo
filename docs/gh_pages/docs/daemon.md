@@ -2,7 +2,7 @@
 
 `Pebblo Daemon` is a REST API application that exposes API endpoints for Pebblo Safe DataLoader to connect. This component provides deep data visibility on the types of Topics and Entities ingested into the Gen-AI application. It uses the snippets received from the `Pebblo Safe DataLoader` to run through both a Topic Classifier and Entity Classifier to produce the insights and reporting. For more details on how to Pebblo enable your Langchain application see this [Pebblo Safe DataLoader for Langchain](rag.md) document.
 
-By default `Pebblo Daemon` runs at `localhost:8000`. The `Pebblo Safe DataLoader` by default connects to this hostname and port. If the daemon is running in a different port or a different hostname, the `Pebblo Safe DataLoader` env variable `PEBBLI_CLASSIFIER_URL` need to set to the correct URL.
+By default `Pebblo Daemon` runs at `localhost:8000`. The `Pebblo Safe DataLoader` by default connects to this hostname and port. If the daemon is running in a different port or a different hostname, the `Pebblo Safe DataLoader` env variable `PEBBLO_CLASSIFIER_URL` need to set to the correct URL.
 
 ## Report Generation
 

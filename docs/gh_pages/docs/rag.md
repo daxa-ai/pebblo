@@ -56,4 +56,4 @@ The following Langchain DocumentLoaders are currently supported.
 1. PyPDFDirectoryLoader
 1. PyPDFLoader
 
-> Note <sup>1</sup>: _Most other Langchain document loaders that implement load() and lazy_load() methods should work. The above list indicates the ones that are explicity tested. If you have successfully tested a particular DocumentLoader other than this list above, please consider raising an PR._
+> Note <sup>1</sup>: _Most other Langchain document loaders that implement load() and lazy_load() methods should work. The above list indicates the ones that are explicitly tested. If you have successfully tested a particular DocumentLoader other than this list above, please consider raising an PR._
