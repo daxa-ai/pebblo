@@ -13,7 +13,12 @@ class DatetimeEncoder(JSONEncoder):
 
 
 def write_json_to_file(data, file_path):
+    """
+        Write content to the specified file path
+    """
     try:
+        # Writing file content to given file path
+        logger.debug(f"Writing content to file path: {file_path}")
         full_file_path = get_full_path(file_path)
         # Create parent directories if needed
         dir_path = path.dirname(full_file_path)
@@ -26,6 +31,10 @@ def write_json_to_file(data, file_path):
 
 
 def read_json_file(file_path):
+    """
+        Retrieve the content of the specified file.
+    """
+    logger.debug(f"Reading content from file: {file_path}")
     full_file_path = ""
     try:
         full_file_path = get_full_path(file_path)

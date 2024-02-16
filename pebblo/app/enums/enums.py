@@ -19,3 +19,4 @@ class CacheDir(Enum):
 class ReportConstants(Enum):
     snippets_limit = 100
     top_findings_limit = 5
+    loader_history_limit = 5
