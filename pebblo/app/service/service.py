@@ -89,6 +89,9 @@ class AppLoaderDoc:
             logger.debug("Loader doc request processing started")
             logger.debug(f"Loader Doc, Application Name: {self.app_name}, Input Data: {self.data}")
 
+            report_format = CacheDir.format.value
+            renderer = CacheDir.renderer.value
+
             # Read metadata file & get current load details
             app_metadata_file_path = f"{CacheDir.home_dir.value}/{self.app_name}/{CacheDir.metadata_file_path.value}"
             app_metadata = read_json_file(app_metadata_file_path)

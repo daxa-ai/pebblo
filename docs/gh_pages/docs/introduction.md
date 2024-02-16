@@ -32,3 +32,4 @@ Pebblo has two components.
 - [Pebblo Daemon](daemon.md)
 - [Pebblo Safe DataLoader for Langchain](rag.md)
 - [Reports](reports.md)
+- [Troubleshooting](troubleshooting.md)

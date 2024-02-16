@@ -52,6 +52,7 @@ pip install pebblo
 ```bash
 pebblo
 ```
+see [troubleshooting](docs/gh_pages/docs/troubleshooting.md) guide for troubleshooting info.
 
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
 
@@ -63,19 +64,13 @@ Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data 
 pebblo --config config.yaml
 ````
 
-## Pebblo Safe DataLoader for Langchain
+## Pebblo Safe DataLoader
 
-`Pebblo Safe DataLoader` currently supports Langchain framework.
+### Langchain
 
-### Installation
+`Pebblo Safe DataLoader` is natively supported in Langchain framework. It is available in Langchain versions `>=0.1.7`
 
-Install `pebblo-langchain` package in the Python environment where the RAG application is running. Add it as one of the dependencies in `pyproject.toml` or any other methods used for dependency management.
-
-```bash
-pip install pebblo-langchain
-```
-
-### Enable Pebblo in Langchain
+#### Enable Pebblo in Langchain Application
 
 Add `PebbloSafeLoader` wrapper to the existing Langchain document loader(s) used in the RAG application. `PebbloSafeLoader` is interface compatible with Langchain `BaseLoader`. The application can continue to use `load()` and `lazy_load()` methods as it would on an Langchain document loader.
 
