@@ -326,10 +326,10 @@ class LoaderHelper:
         for load_id in top_n_latest_loader_id:
             if load_id == current_load_id:
                 continue
-            load_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
+            load_report_file_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_data_file_name.value}"
             report = read_json_file(load_report_file_path)
             if report:
-                pdf_report_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.pdf_report_file_name.value}"
+                pdf_report_path = f"{CacheDir.home_dir.value}/{app_name}/{load_id}/{CacheDir.report_file_name.value}"
                 report_name = get_full_path(pdf_report_path)
                 if not os.path.exists(report_name):
                     # Pdf file is not present, Skipping it

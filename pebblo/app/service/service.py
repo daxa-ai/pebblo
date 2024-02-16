@@ -23,19 +23,23 @@ class AppLoaderDoc:
         """
         logger.debug("Generating report in pdf format")
         report_obj = Reports()
+        report_format = CacheDir.format.value
+        renderer = CacheDir.renderer.value
 
         # Writing pdf report to current load id directory
         load_id = self.data['load_id']
         current_load_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
-                                         f"/{load_id}/{CacheDir.pdf_report_file_name.value}")
+                                         f"/{load_id}/{CacheDir.report_file_name.value}")
         full_file_path = get_full_path(current_load_report_file_path)
-        report_obj.generate_report(final_report, full_file_path)
+        report_obj.generate_report(data=final_report, outputPath=full_file_path, format=report_format,
+                                   renderer=renderer)
 
         # Writing pdf report file specific to application name, inside app directory
         current_app_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
-                                        f"/{CacheDir.pdf_report_file_name.value}")
+                                        f"/{CacheDir.report_file_name.value}")
         full_file_path = get_full_path(current_app_report_file_path)
-        report_obj.generate_report(final_report, full_file_path)
+        report_obj.generate_report(data=final_report, outputPath=full_file_path, format=report_format,
+                                   renderer=renderer)
         logger.info(f"PDF report generated, please check path : {full_file_path}")
 
     def _upsert_loader_details(self, app_details):
@@ -89,9 +93,6 @@ class AppLoaderDoc:
             logger.debug("Loader doc request processing started")
             logger.debug(f"Loader Doc, Application Name: {self.app_name}, Input Data: {self.data}")
 
-            report_format = CacheDir.format.value
-            renderer = CacheDir.renderer.value
-
             # Read metadata file & get current load details
             app_metadata_file_path = f"{CacheDir.home_dir.value}/{self.app_name}/{CacheDir.metadata_file_path.value}"
             app_metadata = read_json_file(app_metadata_file_path)
@@ -127,7 +128,7 @@ class AppLoaderDoc:
 
                 # writing report file to its load_id directory
                 json_report_file_path = (f"{CacheDir.home_dir.value}/{self.app_name}"
-                                         f"/{load_id}/{CacheDir.report_file_name.value}")
+                                         f"/{load_id}/{CacheDir.report_data_file_name.value}")
                 write_json_to_file(final_report, json_report_file_path)
 
                 # Writing report in pdf format
