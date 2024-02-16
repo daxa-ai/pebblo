@@ -1,8 +1,8 @@
 import datetime
 import pytest
 from unittest.mock import MagicMock, patch
-from pebblo.app.models.models import Summary, DataSource
-from pebblo.app.service.doc_helper import LoaderHelper, AiDataModel
+from pebblo.app.models.models import DataSource
+from pebblo.app.service.doc_helper import LoaderHelper
 
 data = {
     "name": "UnitTestApp",
