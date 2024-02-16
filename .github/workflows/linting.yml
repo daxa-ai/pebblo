@@ -29,7 +29,6 @@ jobs:
         run: pip install -r tests/test_requirements.txt
 
       - name: Pylint
-        if: steps.files.outputs.any_changed == 'true'
         run: |
           make lint
-          make format
+
