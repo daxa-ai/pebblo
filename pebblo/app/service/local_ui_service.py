@@ -41,21 +41,30 @@ def get_all_apps_list():
                 app_details['loadId'] = app_json.get('current_load_id')
 
         except IOError as err:
-            logger.error(f"No  file found at {app_path}")
+            logger.error(f"No  file found at {app_detail_path}")
         all_apps.append(app_details)
-
+        get_per_app_data(app_json.get('name'))
     data = {'applicationAtRisk': app_risk, 'findings': findings, 'filesWithFindings': files_findings,
             'dataSource': data_source, 'appList': all_apps}
-    print(f'----Data {data} -----')
 
     return json.dumps(data, indent=4)
 
 
-def get_per_app_data(app_dir, load_id):
-    app_path = f'{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}'
+def get_per_app_data(app_dir):
+    app_path = f'{CacheDir.home_dir.value}/{app_dir}/{CacheDir.metadata_file_path.value}'
+
     try:
         with open(app_path, "r") as output:
-            cred_json = json.load(output)
-            return cred_json
+            app_json = json.load(output)
+            load_id = app_json.get('current_load_id')
+
     except IOError as err:
-        logger.error(f"no credentials file found at {app_path}")
+        logger.error(f"No  file found at {app_path}")
+
+    app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}'
+    try:
+        with open(app_detail_path, "r") as output:
+            app_detail_json = json.load(output)
+            return json.dumps(app_detail_json, indent=4)
+    except IOError as err:
+        logger.error(f"No file found at {app_detail_path}")

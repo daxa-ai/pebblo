@@ -16,5 +16,5 @@ class App:
         return templates.TemplateResponse("index.html", {"request": request, "data": get_all_apps_list()})
 
     @staticmethod
-    def appDetails(request: Request, app_name: str, id: str):
+    def appDetails(request: Request, app_name: str):
         return templates.TemplateResponse("index.html", {"request": request, "data": get_per_app_data(app_name, id)})
