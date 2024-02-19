@@ -20,7 +20,7 @@ jobs:
           TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
           VERSION=$(echo $TAG | sed 's/v//')
           echo "Using Build Version $VERSION"
-          pip install -i https://test.pypi.org/simple/ pebblo==$VERSION --extra-index-url https://pypi.org/simple
+          pip install -i https://test.pypi.org/simple/ pebblo --extra-index-url https://pypi.org/simple
   build:
     name: build_distribution
     runs-on: ubuntu-latest
