@@ -1,8 +1,7 @@
-from weasyprint import HTML, CSS
 import jinja2
 import datetime
 from decimal import Decimal
-import os
+from pebblo.reports.enums.report_libraries import library_function_mapping
 
 # Converts date string to object and returns formatted string for date (D M Y, H:M)
 def dateFormatter(date_obj):
@@ -22,11 +21,10 @@ def getFileSize(size):
 
 
 # Convert HTML Template to PDF by embedding JSON data
-def convertHtmlToPdf(data, outputPath, templateName, searchPath):
+def convertHtmlToPdf(data, outputPath, templateName, searchPath, renderer):
     templateLoader = jinja2.FileSystemLoader(searchpath=searchPath)
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template(templateName)
-    sourceHtml = template.render(data=data, date=datetime.datetime.now(), datastores=data["dataSources"][0], findingDetails=data["dataSources"][0]["findingsDetails"], dateFormatter=dateFormatter, getFileSize=getFileSize)
-    base_url = os.path.dirname(os.path.realpath(__file__))
-    htmldoc = HTML(string=sourceHtml, base_url=base_url)
-    return htmldoc.write_pdf(target=outputPath, stylesheets=[CSS(searchPath + '/index.css')])
+    sourceHtml = template.render(data=data, date=datetime.datetime.now(), datastores=data["dataSources"][0], findingDetails=data["dataSources"][0]["findingsDetails"], loadHistoryItemsToDisplay=data["loadHistory"]["history"][:5] , dateFormatter=dateFormatter, getFileSize=getFileSize)
+    pdfConverter = library_function_mapping[renderer]
+    pdfConverter(sourceHtml, outputPath, searchPath)

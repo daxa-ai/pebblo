@@ -13,8 +13,8 @@ class App:
 
     @staticmethod
     def dashboard(request: Request):
-        return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.getData()})   
+        return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.get_all_apps_list()})
 
     @staticmethod
-    def appDetails(request: Request,id:str):
-        return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.getData()})     
+    def appDetails(request: Request, app_name: str, id: str):
+        return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.getData(app_name, id)})
