@@ -15,12 +15,11 @@ def get_all_apps_list():
                 print(cred_json)
                 app_details = dict()
                 app_details['name'] = cred_json.get('name')
-                app_details['loadIds'] = cred_json.get('loadIds')
+                app_details['loadIds'] = cred_json.get('current_load_id')
                 all_apps.append(app_details)
 
         except IOError as err:
             logger.error(f"no credentials file found at {app_path}")
-
     return all_apps
 
 
