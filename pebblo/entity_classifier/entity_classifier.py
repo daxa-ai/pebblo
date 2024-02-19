@@ -2,7 +2,7 @@ from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 
-from pebblo.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities, ContextWordScopeCount
+from pebblo.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities
 from pebblo.entity_classifier.utils.utils import get_entities, add_custom_regex_analyzer_registry
 
 from pebblo.entity_classifier.libs.logger import logger
@@ -81,9 +81,7 @@ class EntityClassifier:
                 registry=custom_registry,
                 context_aware_enhancer=LemmaContextAwareEnhancer(
                     context_similarity_factor=float(ConfidenceScore.ContextSimilarityScore.value),
-                    min_score_with_context_similarity=float(ConfidenceScore.Entity.value),
-                    context_prefix_count=int(ContextWordScopeCount.PrefixCount.value),
-                    context_suffix_count=int(ContextWordScopeCount.SuffixCount.value)
+                    min_score_with_context_similarity=float(ConfidenceScore.Entity.value)
                 )
             )
 
