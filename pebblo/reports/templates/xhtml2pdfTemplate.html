@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>Pebblo Report</title>
+    <style>
+      @page {
+        size: Letter;
+        margin: 0mm;
+        padding: 58px 0mm;
+        border: 0mm;
+      }
+      html,
+      body {
+        width: 100%;
+        margin: 0mm;
+        padding: 0mm;
+      }
+      /* Common styles start */
+      /* FONT FAMILY */
+      .inter {
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+      }
+      .manrope {
+        font-family: "Manrope", sans-serif;
+      }
+      /* WIDTH PROPERTY */
+      .w-fit {
+        width: fit-content;
+      }
+      .w-100 {
+        width: 100%;
+      }
+      .w-90 {
+        width: 90%;
+      }
+      .w-300 {
+        width: 300px;
+      }
+      .w-120 {
+        width: 120px;
+      }
+      .w-70 {
+        width: 70%;
+      }
+      .max-w-70 {
+        max-width: 70%;
+      }
+
+      /* HEIGHT */
+      .h-2 {
+        height: 8px !important;
+      }
+      /* DISPLAY PROPERTY */
+      .none {
+        display: none;
+      }
+      .inline {
+        display: inline;
+      }
+      .inline-block {
+        display: inline-block;
+      }
+      .contents {
+        display: contents;
+      }
+      .inline-flex {
+        display: inline-flex;
+      }
+
+      /* FONT WEIGHT PROPERTY */
+      .font-thin {
+        font-weight: 200;
+      }
+      .normal {
+        font-weight: 400;
+      }
+      .medium {
+        font-weight: 500;
+      }
+      .semi-bold {
+        font-weight: 600;
+      }
+      .bold {
+        font-weight: 700;
+      }
+      /* COLOR PALETTE */
+      .bg-main {
+        background: #f5f5f9;
+      }
+      .bg-white {
+        background: #fff;
+      }
+      .bg-surface-60 {
+        background: #b5b8ca;
+      }
+      .bg-surface-20 {
+        background: #3b3e52;
+      }
+      .bg-surface-10 {
+        background: #191c2e;
+      }
+      .bg-surface-10-opacity-20 {
+        background: #191c2e;
+        opacity: 0.2;
+      }
+      .bg-surface-10-opacity-50 {
+        background: #191c2e;
+        opacity: 0.5;
+      }
+      .bg-surface-70 {
+        background: #ced0dc;
+      }
+      .surface-40 {
+        color: #606686;
+      }
+      .purple-10 {
+        color: #8a79ab;
+      }
+      .surface-20 {
+        color: #3b3e52;
+      }
+      .surface-10-opacity {
+        color: #191c2e;
+        opacity: 0.5;
+      }
+      .surface-0 {
+        color: #191c2e;
+        opacity: 0.5;
+      }
+      .surface-10 {
+        color: #191c2e;
+      }
+      .surface-100 {
+        color: #eeeef2;
+      }
+      .surface-60 {
+        color: #b5b8ca;
+      }
+      .surface-50 {
+        color: #787d9e;
+      }
+      .surface-70 {
+        color: #ced0dc;
+      }
+      .heading {
+        color: #261b89;
+      }
+      .sub-heading {
+        color: #261b89;
+        opacity: 0.5;
+      }
+      .critical {
+        color: #f03844;
+      }
+      /* FONT SIZE PROPERTY */
+      .font-10 {
+        font-size: 10px;
+      }
+      .font-11 {
+        font-size: 11px;
+      }
+      .font-12 {
+        font-size: 12px;
+      }
+      .font-13 {
+        font-size: 13px;
+      }
+      .font-14 {
+        font-size: 14px;
+      }
+      .font-22 {
+        font-size: 22px;
+      }
+      .font-28 {
+        font-size: 28px;
+      }
+      .font-32 {
+        font-size: 32px;
+      }
+      .font-48 {
+        font-size: 48px;
+      }
+      .font-64 {
+        font-size: 64px;
+      }
+      /* MARGIN */
+      .m-0 {
+        margin: 0 !important;
+      }
+
+      .ml-1 {
+        margin-left: 4px;
+      }
+      .ml-2 {
+        margin-left: 8px;
+      }
+      .ml-3 {
+        margin-left: 12px;
+      }
+      .ml-4 {
+        margin-left: 16px;
+      }
+      .ml-5 {
+        margin-left: 20px;
+      }
+      .ml-6 {
+        margin-left: 24px;
+      }
+      .ml-7 {
+        margin-left: 28px;
+      }
+      .ml-8 {
+        margin-left: 32px;
+      }
+      .ml-9 {
+        margin-left: 36px;
+      }
+      .ml-13 {
+        margin-left: 72px;
+      }
+      .ml-24 {
+        margin-left: 112px;
+      }
+
+      .mr-1 {
+        margin-right: 4px;
+      }
+      .mr-2 {
+        margin-right: 8px;
+      }
+      .mr-3 {
+        margin-right: 12px;
+      }
+      .mr-4 {
+        margin-right: 16px;
+      }
+      .mr-5 {
+        margin-right: 20px;
+      }
+      .mr-6 {
+        margin-right: 24px;
+      }
+      .mr-7 {
+        margin-right: 28px;
+      }
+      .mr-8 {
+        margin-right: 32px;
+      }
+      .mr-9 {
+        margin-right: 36px;
+      }
+      .mt-0 {
+        margin-top: 0px;
+      }
+      .mt-1 {
+        margin-top: 4px;
+      }
+      .mt-2 {
+        margin-top: 8px;
+      }
+      .mt-3 {
+        margin-top: 12px;
+      }
+      .mt-4 {
+        margin-top: 16px;
+      }
+      .mt-5 {
+        margin-top: 20px;
+      }
+      .mt-6 {
+        margin-top: 24px;
+      }
+      .mt-7 {
+        margin-top: 28px;
+      }
+      .mt-8 {
+        margin-top: 32px;
+      }
+      .mt-9 {
+        margin-top: 36px;
+      }
+      .mt-11 {
+        margin-top: 44px;
+      }
+      .mt-12 {
+        margin-top: 48px;
+      }
+      .mb-1 {
+        margin-bottom: 4px;
+      }
+      .mb-2 {
+        margin-bottom: 8px;
+      }
+      .mb-3 {
+        margin-bottom: 12px;
+      }
+      .mb-4 {
+        margin-bottom: 16px;
+      }
+      .mb-5 {
+        margin-bottom: 20px;
+      }
+      .mb-6 {
+        margin-bottom: 24px;
+      }
+      .mb-7 {
+        margin-bottom: 28px;
+      }
+      .mb-8 {
+        margin-bottom: 32px;
+      }
+      .mb-9 {
+        margin-bottom: 36px;
+      }
+
+      .mt-auto {
+        margin-top: auto;
+      }
+      .mr-auto {
+        margin-right: auto;
+      }
+      .mb-auto {
+        margin-bottom: auto;
+      }
+      .ml-auto {
+        margin-left: auto;
+      }
+
+      /* PADDING */
+      .p-0 {
+        padding: 0 !important;
+      }
+      .pt-0 {
+        padding-top: 0 !important;
+      }
+      .pb-0 {
+        padding-bottom: 0 !important;
+      }
+      .pl-0 {
+        padding-left: 0 !important;
+      }
+      .pl-1 {
+        padding-left: 4px;
+      }
+      .pl-2 {
+        padding-left: 8px;
+      }
+      .pl-3 {
+        padding-left: 12px;
+      }
+      .pl-4 {
+        padding-left: 16px;
+      }
+      .pl-5 {
+        padding-left: 20px;
+      }
+      .pl-6 {
+        padding-left: 24px;
+      }
+      .pl-7 {
+        padding-left: 28px;
+      }
+      .pl-8 {
+        padding-left: 32px;
+      }
+      .pl-9 {
+        padding-left: 36px;
+      }
+      .pl-13 {
+        padding-left: 52px;
+      }
+      .pl-23 {
+        padding-left: 92px;
+      }
+
+      .pr-1 {
+        padding-right: 4px;
+      }
+      .pr-2 {
+        padding-right: 8px;
+      }
+      .pr-3 {
+        padding-right: 12px;
+      }
+      .pr-4 {
+        padding-right: 16px;
+      }
+      .pr-5 {
+        padding-right: 20px;
+      }
+      .pr-6 {
+        padding-right: 24px;
+      }
+      .pr-7 {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+      .pr-8 {
+        padding-right: 32px;
+      }
+      .pr-9 {
+        padding-right: 36px;
+      }
+      .pr-13 {
+        padding-right: 52px;
+      }
+      .pr-23 {
+        padding-right: 92px;
+      }
+      .pt-1 {
+        padding-top: 4px;
+      }
+      .pt-2 {
+        padding-top: 8px;
+      }
+      .pt-3 {
+        padding-top: 12px;
+      }
+      .pt-4 {
+        padding-top: 16px;
+      }
+      .pt-5 {
+        padding-top: 20px;
+      }
+      .pt-6 {
+        padding-top: 24px;
+      }
+      .pt-7 {
+        padding-top: 28px;
+      }
+      .pt-8 {
+        padding-top: 32px;
+      }
+      .pt-9 {
+        padding-top: 36px;
+      }
+      .pt-10 {
+        padding-top: 40px;
+      }
+      .pt-12 {
+        padding-top: 48px;
+      }
+      .pt-42 {
+        padding-top: 168px;
+      }
+
+      .pb-1 {
+        padding-bottom: 4px;
+      }
+      .pb-2 {
+        padding-bottom: 8px;
+      }
+      .pb-3 {
+        padding-bottom: 12px;
+      }
+      .pb-4 {
+        padding-bottom: 16px;
+      }
+      .pb-5 {
+        padding-bottom: 20px;
+      }
+      .pb-6 {
+        padding-bottom: 24px;
+      }
+      .pb-7 {
+        padding-bottom: 28px;
+      }
+      .pb-8 {
+        padding-bottom: 32px;
+      }
+      .pb-9 {
+        padding-bottom: 36px;
+      }
+      .pb-10 {
+        padding-bottom: 40px;
+      }
+
+      /* BORDER */
+      .border-thin {
+        border-width: 0.5px;
+      }
+      .border-none {
+        border: none !important;
+      }
+      .border-grey-10 {
+        border-color: rgba(230, 231, 237, 0.8);
+      }
+      /* BORDER RADIUS */
+      .rounded-sm {
+        border-radius: 2px;
+      }
+
+      .break-all {
+        -pdf-word-wrap: CJK;
+      }
+      .break-word {
+        overflow-wrap: break-word;
+      }
+
+      /* Common styles end */
+
+      section {
+        padding: 0px 52px;
+        page-break-after: always;
+      }
+
+      /* CARD */
+      .card {
+        border-radius: 2px;
+      }
+      .card__title {
+        display: flex;
+        align-items: center;
+      }
+
+      .header {
+        background: linear-gradient(269deg, #0f0f29 -1.47%, #2c265b 100%);
+      }
+      .bar__graph .graph {
+        width: 100%;
+        height: 10px;
+        background: #dfe0e6;
+      }
+      .filled {
+        background: #e9384480;
+        height: 100%;
+        width: 10%;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table.fixed {
+        table-layout: fixed;
+      }
+      td {
+        flex-shrink: 0;
+        padding: 8px 12px;
+      }
+      .td-border {
+        border-bottom: 0.5px solid rgba(25, 28, 46, 0.2);
+      }
+      th {
+        flex-shrink: 0;
+        font-weight: 400;
+        padding: 4px 12px;
+      }
+      .th-colored {
+        color: #7e83a5;
+        background: #f5f5f9;
+      }
+      .align-cell-center {
+        text-align: center;
+        vertical-align: center;
+      }
+      .align-cell-right {
+        text-align: right;
+        vertical-align: center;
+      }
+      div {
+        flex-shrink: 0;
+      }
+      .card__body {
+        margin-top: 12px;
+      }
+
+      .key-value {
+        margin-top: 12px;
+        padding: 0 12px;
+      }
+
+      /* CHIP DESIGN */
+      .chip {
+        padding: 4px 10px;
+        border-radius: 2px;
+        border: 1px solid #ebebeb;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="pl-23 pr-23 pt-42 align-cell-center">
+      <div class="surface-10 inter font-48 font-thin">Data Report</div>
+      <div class="mt-2">
+        <div class="break-all surface-10 inter font-32 font-thin break-word">
+          {{data.name}}
+        </div>
+        <div class="purple-10 inter font-28 mt-2">
+          {{data.framework.name|capitalize}} {{data.framework.version}}
+        </div>
+      </div>
+      <div class="mt-11">
+        <div class="purple-10 font-13 inter font-thin">
+          Application Owner: {{ data.reportSummary.owner }}
+        </div>
+        <div class="purple-10 font-13 inter font-thin mt-2">
+          Report Generated On {{ date.strftime('%B %d, %Y') }}
+        </div>
+      </div>
+    </section>
+    <pdf:nextpage />
+    <section class="p-0">
+      <div class="pl-8 pr-8">
+        {% if data.description %}
+        <div class="bg-white pb-8">
+          <div class="medium inter items-center w-100">
+            <span class="surface-10 font-13 inline">
+              Description:
+              <span class="normal surface-0 font-12 ml-1">
+                {{data.description|default('-')}}
+              </span>
+            </span>
+          </div>
+        </div>
+        {% endif %}
+        <div class="card bg-main">
+          <div class="inter items-center w-100 pt-8 pb-8">
+            <span class="medium surface-10 font-13">Report Summary</span>
+            <span class="surface-0 font-12 ml-2 normal">
+              Current Load By {{ data.reportSummary.owner }}, {{
+              dateFormatter(data.reportSummary.createdAt) }}</span
+            >
+          </div>
+          <div class="pr-8 pl-8">
+            <table class="bg-main mr-8 ml-8" border="0">
+              <tr>
+                <td>
+                  <div class="critical font-64 normal">
+                    {{ data.reportSummary.findings|default('0') }}
+                  </div>
+                  <div class="surface-10 font-13">Findings</div>
+                </td>
+                <td>
+                  <div class="font-64 critical text-start inline-flex">
+                    {{ data.reportSummary.filesWithRestrictedData|default('0')
+                    }}
+                    <span class="surface-10 font-32 normal pb-1 mt-auto"
+                      >/{{ data.reportSummary.totalFiles|default('0') }}</span
+                    >
+                  </div>
+                  <div class="surface-10 font-13">Files With Findings</div>
+                </td>
+                <td>
+                  <div class="surface-10 font-64 normal">
+                    {{ data.reportSummary.dataSources|default('0') }}
+                  </div>
+                  <div class="surface-10 font-13">Number of Data Source</div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="surface-10 font-14 inter medium">
+            Top Files With Most Findings
+          </div>
+          <div class="mt-3 inter">
+            <table class="fixed">
+              <thead class="font-12">
+                <tr>
+                  <th class="th-colored medium">File Name</th>
+                  <th class="th-colored medium text-end w-120">
+                    Findings - Topics
+                  </th>
+                  <th class="th-colored medium text-end w-120">
+                    Findings - Entities
+                  </th>
+                  <th class="th-colored medium w-120">Owner</th>
+                </tr>
+              </thead>
+              <tbody class="surface-10 normal font-13">
+                {% for item in data.topFindings %}
+                <tr>
+                  <td class="break-all">{{ item.fileName|default('-') }}</td>
+                  <td class="text-end w-120 align-cell-center">
+                    {{ item.findingsTopics|default('-') }}
+                  </td>
+                  <td class="text-end w-120 align-cell-center">
+                    {{ item.findingsEntities|default('-') }}
+                  </td>
+                  <td class="text-end w-120 align-cell-center">
+                    {{ item.fileOwner|default('-') }}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="surface-10 font-14 inter medium">Load History</div>
+          <div class="mt-3 inter">
+            <table class="fixed">
+              <thead class="font-12">
+                <tr>
+                  <th class="th-colored medium">Report Name</th>
+                  <!--<th class="th-colored medium"></th>-->
+                  <th class="th-colored medium text-end w-120">Findings</th>
+                  <th class="th-colored medium text-end">
+                    Files With Findings
+                  </th>
+                  <th class="th-colored medium w-300">Generated On</th>
+                </tr>
+              </thead>
+              <tbody class="surface-10 normal font-13">
+                <tr>
+                  <td class="break-all">-</td>
+                  <td class="text-end w-120 align-cell-center">-</td>
+                  <td class="text-end w-120 align-cell-center">-</td>
+                  <td class="text-end align-cell-center w-300">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="surface-10 font-14 inter medium">Instance Details</div>
+          <div class="ml-8 mt-3 inter">
+            <table class="fixed">
+              <colgroup>
+                <col width="33%" />
+                <col width="33%" />
+                <col width="33%" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td class="border-none font-13 pl-0">
+                    <div class="ml-2">
+                      <div class="surface-40 font-12 medium">IP</div>
+                      <div class="surface-10 normal">
+                        {{ data.instanceDetails.ip }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-none font-13 pl-0 pt-4 pb-4">
+                    <div class="ml-2">
+                      <div class="surface-40 font-12 medium">Runtime</div>
+                      <div class="surface-10 mt-1">
+                        {{ data.instanceDetails.runtime|capitalize }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-none font-13 pl-0 pt-4 pb-4">
+                    <div class="ml-2">
+                      <div class="surface-40 font-12 medium">Language</div>
+                      <div class="surface-10 mt-1">
+                        {{ data.instanceDetails.language|capitalize }} {{
+                        data.instanceDetails.languageVersion }}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border-none font-13 pl-0 pt-4 pb-4">
+                    <div class="ml-2">
+                      <div class="surface-40 font-12 medium">Created At</div>
+                      <div class="surface-10 mt-1">
+                        {{ dateFormatter(data.instanceDetails.createdAt) }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-none font-13 pl-0 pt-4 pb-4">
+                    <div class="ml-2">
+                      <div class="surface-40 font-12 medium">Host</div>
+                      <div class="surface-10 mt-1">
+                        {{ data.instanceDetails.host }}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border-none font-13 pl-0 pt-4 pb-4" colspan="3">
+                    <div class="ml-2">
+                      <div class="surface-40 font-12 medium">Path</div>
+                      <div class="surface-10 mt-1">
+                        {{ data.instanceDetails.path }} &nbsp;
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    <pdf:nextpage />
+    <section class="p-0">
+      <div class="pl-8 pr-8">
+        <div>
+          <div class="surface-10 inter font-14 medium">
+            <div>Data Source 1: {{ datastores.name }}</div>
+          </div>
+          <div class="surface-0 inter font-12">
+            <div class="max-w-70 break-word">
+              Source: {{ datastores.sourcePath }}
+            </div>
+            <div>Size: {{ getFileSize(datastores.sourceSize) }}</div>
+          </div>
+        </div>
+        <table class="mt-4 fixed">
+          <thead class="font-12 inter">
+            <tr>
+              <th class="th-colored medium text-end w-120">Finding Type</th>
+              <th class="th-colored medium text-end">Finding</th>
+              <th class="th-colored medium text-end w-120">Source Files</th>
+              <th class="th-colored medium text-end w-120">Snippets</th>
+            </tr>
+          </thead>
+          <tbody class="surface-10 font-13 inter">
+            {% for item in datastores.findingsSummary %}
+            <tr>
+              <td class="text-end w-120 align-cell-center">
+                {{ item.findingsType|capitalize }}
+              </td>
+              <td class="text-end align-cell-center">{{item.labelName}}</td>
+              <td class="text-end w-120 align-cell-right">
+                {{item.fileCount}}
+              </td>
+              <td class="text-end w-120 align-cell-right">
+                {{item.snippetCount}}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <pdf:nextpage />
+    <section>
+      <div class="ml-8 mr-8">
+        <div class="inter normal">
+          <div class="font-14 surface-10 medium">
+            Snippets :
+            <span class="font-12 surface-0 ml-2"
+              >Showing {{ datastores.displayedSnippetCount }} out of {{
+              datastores.totalSnippetCount }}</span
+            >
+          </div>
+        </div>
+        {% for item in findingDetails %}
+        <div class="mt-4 inter">
+          <div class="bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
+            <div class="surface-10 font-13 medium">
+              {{ item.labelName }} :
+              <span class="sub-heading surface-50 font-12"
+                >Showing {{ item.snippets|length }} snippets out of {{
+                item.snippetCount }}</span
+              >
+            </div>
+          </div>
+          {% for snippet in item.snippets %}
+          <div class="key-value inter">
+            <div class="surface-50 font-12 medium">Snippet</div>
+            <div class="surface-10 font-13 mt-2">{{ snippet.snippet }}</div>
+          </div>
+          <div class="key-value">
+            <div class="surface-50 font-12 medium">Retrieved From</div>
+            <div class="surface-10 font-13 mt-2 break-all normal">
+              {{ snippet.sourcePath }}
+            </div>
+          </div>
+          <!-- <div class="key-value">
+            <div class="surface-50 font-12">Finding</div>
+            <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
+          </div> -->
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+  </body>
+</html>

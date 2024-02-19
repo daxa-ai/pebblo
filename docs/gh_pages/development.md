@@ -6,7 +6,7 @@ The following instructions are **tested on Mac OSX and Linux (Debian).**
 
 ### Prerequisites
 
-Install the following prerequistes. This is needed for PDF report generation.
+Install the following prerequisites. This is needed for PDF report generation.
 
 #### Mac OSX
 
@@ -58,7 +58,6 @@ pebblo
 ```
 
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application document snippets for inspection and reporting.
-
 
 ## Creating a pull request
 

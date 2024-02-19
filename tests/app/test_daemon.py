@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from starlette.testclient import TestClient
 
 from pebblo.app.routers.routers import router_instance
+from pebblo.app import daemon
 
 app = FastAPI()
 app.include_router(router_instance.router)
@@ -15,27 +16,27 @@ client = TestClient(app)
 
 @pytest.fixture(scope="module")
 def mocked_objects():
-    with patch('pebblo.app.daemon.TopicClassifier') as topic_classifier, \
-            patch('pebblo.app.daemon.EntityClassifier') as entity_classifier:
+    with (patch.object(daemon, 'start', 'TopicClassifier') as topic_classifier,
+          patch.object(daemon, 'start', 'EntityClassifier') as entity_classifier):
         yield topic_classifier, entity_classifier
 
 
 @pytest.fixture(scope="module")
 def topic_classifier():
-    with patch('pebblo.app.daemon.TopicClassifier') as topic_classifier:
+    with patch.object(daemon, 'start', 'TopicClassifier') as topic_classifier:
         yield topic_classifier
 
 
 @pytest.fixture(scope="module")
 def entity_classifier():
-    with patch('pebblo.app.daemon.EntityClassifier') as entity_classifier:
+    with patch.object(daemon, 'start', 'EntityClassifier') as entity_classifier:
         yield entity_classifier
 
 
 # DocHelper
 @pytest.fixture(scope="module")
 def doc_helper():
-    with patch('pebblo.app.service.service.DocHelper') as doc_helper:
+    with patch('pebblo.app.service.service.LoaderHelper') as doc_helper:
         yield doc_helper
 
 
@@ -54,7 +55,7 @@ def mock_read_json_file():
 
 @pytest.fixture
 def mock_write_json_to_file():
-    with patch('pebblo.app.service.service.write_json_to_file') as mock_write_json_to_file:
+    with patch('pebblo.app.service.discovery_service.AppDiscover._write_file_content_to_path') as mock_write_json_to_file:
         yield mock_write_json_to_file
 
 
