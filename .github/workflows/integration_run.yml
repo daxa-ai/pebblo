@@ -1,0 +1,96 @@
+name: Run Pebblo Integration Tests
+
+on:
+  # schedule:
+  #   - cron: '30 2 * * *'
+  #   - cron: '30 14 * * *'
+    
+  workflow_dispatch:
+          
+env:
+  PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.11.x' }}
+  OPENAI_API_KEY_SECRET: ${{ secrets.OPENAI_API_KEY }}
+  
+jobs:
+  Setup_Pebblo_Run_Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          ref: 'main'
+          python-version: ${{ env.PYTHON_VERSION }}
+        
+      - name: Install Pebblo Packages
+        run: |
+            echo 'Please Wait!!! Starting Pebblo Package Installation...'
+            pip3 install pebblo --force-reinstall
+            pip3 install --upgrade pip
+            
+      - name: Start Pebblo Server
+        run: |
+            echo 'Cool!!! Running Pebblo server...'
+            sleep 10
+            pebblo > run_pebblo.txt 2>&1 &
+            sleep 60
+
+      - name: Verify Server Started
+        run: |
+          if grep -q "Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)" run_pebblo.txt; then
+            echo "Server started successfully."
+          else
+            echo "Unexpected issue detected at server."
+            exit 1 
+          fi
+            
+      - name: Install Pebblo-Langchain Packages
+        run: |
+            echo 'Please Wait!!! Starting Pebblo-Langchain Package Installation...'
+            pip3 install pebblo-langchain --force-reinstall
+        
+      - name: Install Required Sample App Dependencies
+        run: |
+            echo 'Starting dependency installation'
+            pip3 install --upgrade pip
+            pip3 install -r tests/integration/samples/requirements.txt --force-reinstall
+            
+      - name: Run RAG App Samples
+        run: | 
+            export OPENAI_API_KEY=$OPENAI_API_KEY_SECRET
+            echo 'Running pebblo_csvloader Samples'
+            cd tests/integration/samples/pebblo_csv_loader
+            python3 pebblo_csvloader.py 
+            cd ../../
+            sleep 300
+
+      - name: Check Pebblo App Run Logs
+        run: |
+          cat run_pebblo.txt
+
+      - name: Upload Pebblo App Run Logs as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Pebblo_Report
+          path: |
+            run_pebblo.txt
+
+      - name: Check logs for Pebblo Report 
+        run: |
+          if grep -q "Pebblo Logger - INFO - PDF report generated at : /home/runner/.pebblo/" run_pebblo.txt; then
+            echo "Report Generated Successfully."
+          else
+            echo "Unexpected issue detected at running sample app."
+            exit 1 
+          fi
+      - name: Copy Report Generated and Download PDF
+        run: |
+          path=$(grep "Pebblo Logger - INFO - PDF report generated at" run_pebblo.txt | sed 's/INFO: Output file path: //')
+          echo "Extracted Path: $path"
+          IFS=$'\n'
+          for path in $paths; do
+            echo "Extracted Path: $path"
+          done
+      
