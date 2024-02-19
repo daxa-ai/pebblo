@@ -2,6 +2,7 @@
 These are all enums related to Inspector.
 """
 from enum import Enum
+import os
 from pebblo.app.daemon import config_details
 
 
