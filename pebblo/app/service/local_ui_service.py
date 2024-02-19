@@ -1,13 +1,10 @@
 import json
 import os
-from pebblo.app.enums import CacheDir
+from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
 
 
 class AppLocalUI:
-    def getData():
-        return json.dumps(data)
-
     def get_all_apps_list(self):
         dir_path = os.listdir(CacheDir.home_dir.value)
         all_apps = []
