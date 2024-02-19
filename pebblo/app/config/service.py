@@ -29,7 +29,7 @@ class Service:
     async def create_main_api_server(self):
         self.app.mount(
             "/app/pebblo-ui",
-            StaticFiles(directory=Path(__file__).parent.parent.absolute() / "app/pebblo-ui"),
+            StaticFiles(directory=Path(__file__).parent.parent.absolute() / "pebblo-ui"),
             name="static",
         )
         # Add config Details to Uvicorn
