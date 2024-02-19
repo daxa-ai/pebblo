@@ -11,6 +11,8 @@ This configuration file specifies settings for various components of the Pebblo.
 - `port`: Specifies the port number on which the Pebblo daemon listens for incoming connections.
 - `host`: Specifies the host address on which the Pebblo daemon to run.
 
+Note: By default `Pebblo Daemon` runs at `localhost:8000`. When we changes values of `port` and/or `host` , the `Pebblo Safe DataLoader` env variable `PEBBLO_CLASSIFIER_URL` needs to set to the correct URL.
+
 ### Logging
 
 - `level`: Sets the logging level for the Pebblo application. Possible values are 'info', 'debug', 'error', 'warning', and 'critical'.
@@ -35,8 +37,3 @@ reports:
   outputDir: ~/.pebblo
 
 ```
-
-### Validation
-
-- The Pebblo application validates the configuration file upon startup.
-- If the configuration file contains errors or invalid values, Pebblo will use default values for parameters.
