@@ -12,7 +12,6 @@ def get_all_apps_list():
         try:
             with open(app_path, "r") as output:
                 cred_json = json.load(output)
-                print(cred_json)
                 app_details = dict()
                 app_details['name'] = cred_json.get('name')
                 app_details['loadIds'] = cred_json.get('current_load_id')
@@ -20,7 +19,7 @@ def get_all_apps_list():
 
         except IOError as err:
             logger.error(f"no credentials file found at {app_path}")
-    return all_apps
+    return json.dumps(all_apps, indent=4)
 
 
 def get_per_app_data(app_dir, load_id):
