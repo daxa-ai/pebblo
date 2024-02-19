@@ -77,6 +77,9 @@ body {
 .w-50 {
   width: 200px;
 }
+.w-90 {
+  width: 90%;
+}
 
 /* <----------- FONT FAMILY -----------> */
 .inter {
@@ -115,6 +118,9 @@ body {
 }
 .inline-flex {
   display: inline-flex;
+}
+.layout-fixed {
+  table-layout: fixed;
 }
 
 /* <----------- GAP -----------> */
@@ -197,6 +203,18 @@ body {
 }
 .text-end {
   text-align: end;
+}
+
+/* TEXT TRANSFORM  */
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* ELLIPSE TEXT  */
+.text-ellipsis {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* <----------- FLEX SHRINK -----------> */
@@ -781,6 +799,7 @@ button.text:hover {
 
 /* <---------- TABLE ----------> */
 table {
+  white-space: nowrap;
   width: 100%;
   font-family: "Inter", sans-serif;
 }
@@ -819,6 +838,11 @@ th {
 
 th {
   padding: 12px;
+}
+td.fit {
+  width: 0;
+  max-width: fit-content;
+  min-width: fit-content;
 }
 
 /* <---------- CURSOR ----------> */

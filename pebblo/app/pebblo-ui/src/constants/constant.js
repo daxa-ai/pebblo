@@ -23,27 +23,27 @@ export const MONTHS = [
 export const APP_DETAILS_FINDINGS_TABLE = [
   {
     label: "Finding type",
-    field: "findingType",
+    field: "findingsType",
     align: "start",
   },
   {
     label: "Finding",
-    field: "label",
+    field: "labelName",
     align: "start",
   },
   {
     label: "Source Files",
-    field: "sourceFiles",
+    field: "fileCount",
     align: "end",
   },
   {
     label: "Snippets",
-    field: "snippets",
+    field: "snippetCount",
     align: "end",
   },
   {
     label: "Data Source",
-    field: "dataSource",
+    field: "findings",
     align: "start",
   },
 ];
@@ -317,7 +317,8 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
     value: {
       title: "Findings",
       tableCol: APP_DETAILS_FINDINGS_TABLE,
-      tableData: APP_DATA?.findings,
+      tableData: APP_DATA?.dataSources[0]?.findingsSummary,
+      searchField: ["findingsType"],
     },
     component: ApplicationsList,
   },
@@ -349,7 +350,8 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
 export const LOAD_HISTORY_TABLE_COL = [
   {
     label: "Report Name",
-    field: "title",
+    field: "reportName",
+    type: "label",
   },
   {
     label: "Findings",
@@ -366,23 +368,4 @@ export const LOAD_HISTORY_TABLE_COL = [
   },
 ];
 
-export const LOAD_HISTORY_TABLE = [
-  {
-    title: "Data Report Name_13012024",
-    findings: 24,
-    filesWithFindings: 12,
-    generatedOn: "10/01/2024",
-  },
-  {
-    title: "Data Report Name_13012024",
-    findings: 24,
-    filesWithFindings: 12,
-    generatedOn: "10/01/2024",
-  },
-  {
-    title: "Data Report Name_13012024",
-    findings: 24,
-    filesWithFindings: 12,
-    generatedOn: "10/01/2024",
-  },
-];
+export const LOAD_HISTORY_TABLE = APP_DATA?.loadHistory?.history;

@@ -9,7 +9,7 @@ import { waitForElement } from "../util.js";
 import { Button, Table, Td } from "./index.js";
 
 export function ApplicationsList(props) {
-  const { title, tableCol, tableData, isDownloadReport } = props;
+  const { title, tableCol, tableData, isDownloadReport, searchField } = props;
 
   waitForElement("#search_field", 3000).then(function () {
     const inputEl = document.getElementById("search_field");
@@ -29,9 +29,15 @@ export function ApplicationsList(props) {
     let filteredData;
     if (evt.target.value) {
       filteredData = tableData?.filter((item) =>
-        item?.application
-          ?.toLocaleLowerCase()
-          ?.includes(evt.target.value.toLocaleLowerCase())
+        eval(
+          searchField
+            ?.map((sch) =>
+              item[sch]
+                ?.toLocaleLowerCase()
+                ?.includes(evt.target.value.toLocaleLowerCase())
+            )
+            .join(" || ")
+        )
       );
     } else {
       filteredData = tableData;
@@ -42,17 +48,19 @@ export function ApplicationsList(props) {
           (item) => /*html*/ `
             <tr class="table-row">
               ${tableCol?.myMap((col) =>
-                Td(
-                  col?.actions
+                Td({
+                  children: col?.actions
                     ? col?.actions
                     : col?.render
                     ? col?.render(item)
                     : item[col?.field],
-                  col?.align,
-                  col?.field !== ACTIONS && APP_DETAILS_ROUTE
-                    ? `${APP_DETAILS_ROUTE}/?id=${APP_DATA?.instanceDetails?.id}`
-                    : ""
-                )
+                  align: col?.align,
+                  link:
+                    col?.field !== ACTIONS && APP_DETAILS_ROUTE
+                      ? `${APP_DETAILS_ROUTE}/?id=${APP_DATA?.instanceDetails?.id}`
+                      : "",
+                  maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
+                })
               )}
             </tr>`
         )}

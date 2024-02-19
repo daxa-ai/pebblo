@@ -1,4 +1,3 @@
-import { APP_DATA } from "../constants/constant.js";
 import { get_Text_Orientation } from "../util.js";
 import { ACTIONS } from "../constants/enums.js";
 
@@ -28,15 +27,19 @@ function Tbody(tableCol, tableData, link) {
           ? tableData?.myMap(
               (item) => /*html*/ `<tr class="table-row">
            ${tableCol?.myMap((col) =>
-             Td(
-               col?.actions
+             Td({
+               children: col?.actions
                  ? col?.actions
                  : col?.render
                  ? col?.render(item)
                  : item[col?.field],
-               col?.align,
-               col?.field !== ACTIONS && link ? `${link}/?id=${item?.id}` : ""
-             )
+               align: col?.align,
+               link:
+                 col?.field !== ACTIONS && link
+                   ? `${link}/?id=${item?.id}`
+                   : "",
+               maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
+             })
            )}
              </tr>`
             )
@@ -48,18 +51,19 @@ function Tbody(tableCol, tableData, link) {
     `;
 }
 
-function Td(children, align, link) {
+function Td(props) {
+  const { children, align, link, maxWidth } = props;
   const TEXT__ALIGN = get_Text_Orientation(align);
   if (link) {
     return /*html*/ `
-      <td class="${TEXT__ALIGN} pt-3 pb-3 pl-3 pr-3">
+      <td title="${children}" class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${maxWidth}">
       ${children || "-"}
           <a href="${link}" id="link"></a>
       </td>
    `;
   }
   return /*html*/ `
-       <td class="${TEXT__ALIGN} pt-3 pb-3 pl-3 pr-3">
+       <td title="${children}" class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${maxWidth}">
        ${children || "-"}
        </td>
     `;
