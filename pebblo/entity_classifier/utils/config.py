@@ -40,11 +40,6 @@ class SecretEntities(Enum):
 
 
 class ConfidenceScore(Enum):
-    Entity = "0.80"
-    EntityMinScore = "0.01"
-    ContextSimilarityScore = "0.85"
-
-
-class ContextWordScopeCount(Enum):
-    PrefixCount = 2  # how many words before the entity to match context
-    SuffixCount = 0  # how many words after the entity to match context
+    Entity = "0.35"
+    EntityMinScore = "0.4"
+    ContextSimilarityScore = "0.3"

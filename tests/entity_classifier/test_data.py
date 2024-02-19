@@ -28,17 +28,41 @@ Google API key- KLzaSyB_tWrbmfWx8g2bzL7Vhq7znuTUn0JPKmY"
 """
 
 input_text3 = """
-Name,Email,SSN,Address,CC Expiry,Credit Card Number,CC Security Code,IPv4,IPv6,Phone
-xGelEeIfPW,jDhHvGhCQM@IlJqV.com,265923644,BLQvsSCvuqiMcZyMScwJ,11/2025,6267494999707042,423,7.178.156.177,9b37:ec97:c3d0:d7ab:cda8:539f:9cc1:67fa,2690137480
-wqimonZynA,prdFTeZPsB@aaPrs.com,414077406,IPPUnpNMyuAxwjMcgLkS,10/2028,5474109639252365,535,196.205.119.205,8f5d:7ad3:4dab:7963:6026:6157:d6bb:b99e,1448428824
-nAROxXuzlb,ZZNxqhHhMd@MrJdW.com,177111334,kyugIEyBDueGFuPvebGd,1/2023,8861233764275095,366,171.227.154.228,eb9f:8c0e:e00:50c4:1910:6021:1045:9a00,8089116621
-AnblXBVujt,ZqjKxssYQA@SGNGR.com,622753954,RQnNGVgaoIumSVtEraLU,4/2029,8172706280916787,300,51.81.227.131,75e6:e4d3:3a9a:2193:3af8:b045:20e5:b99c,1839696691
-JRLUktlUuD,DeYESDxPMQ@wpgUa.com,860623486,uooOKXiDAvvqTUCVHMaw,2/2024,1826756554774211,575,190.48.75.122,e239:8a4d:9975:bbd0:1c37:939c:77ce:2b4e,9126497698
-LfvFKIcyVk,UyVrlFSCgz@YemiV.com,145172076,WvOsyDSiUIbsymeGQLsh,9/2024,5447910696987140,070,196.212.243.12,eed3:6a23:e75e:3d46:1d26:e071:ff5d:c164,9213744078
-lLLtuvUAPY,MSgGFNpOej@HyHsx.com,286831410,QysBEzKpUtNOjYhbXaCa,1/2029,4166420336714723,100,93.249.42.199,b360:3297:e017:54be:c333:70ac:a439:4a80,6361026783
-HadYrvuWLZ,ZvivkFFsei@ECORT.com,832537928,ixAhPNhWNNoJkOUpsEuC,11/2024,4815129469580064,758,181.107.208.164,2614:ce8:f8a4:654a:3799:bb38:f208:ec40,1006084981
-This is medical critical situation. You should go and get proper treatment from expert doctor,,,,,,,,,
-This is harmful advice I am giving to you,,,,,,,,,
-Sachin's SSN is 222-85-4836,,,,,,,,,
-Sachin's American Express credit card number is 378282246310005,,,,
+Jonathan William Smith,  born 24 April 1973) is an Indian former international cricketer who captained the Indian national team.
+He is widely regarded as one of the greatest batsmen in the history of cricket.
+Hailed as the world's most prolific batsman of all time, he is the all-time highest run-scorer in both
+ODI and Test cricket with more than 18,000 runs and 15,000 runs, respectively.
+He also holds the record for receiving the most man-of-the-match awards in international cricket.
+Smith was a Member of Parliament, Rajya Sabha by nomination from 2012 to 2018.
+Smith took up cricket at the age of eleven, made his Test match debut on 15 November 1989 against Pakistan
+in Karachi at the age of sixteen, and went on to represent Mumbai domestically and India internationally for over
+24 years.[9] In 2002, halfway through his career, Wisden ranked him the second-greatest Test batsman of all time,
+behind Don Bradman, and the second-greatest ODI batsman of all time, behind Viv Richards.[10] The same year,
+Smith was a part of the team that was one of the joint-winners of the 2002 ICC Champions Trophy.
+Later in his career, Smith was part of the Indian team that won the 2011 Cricket World Cup,
+his first win in six World Cup appearances for India.[11] He had previously been named "Player of the Tournament"
+at the 2003 World Cup.
+Smith has received several awards from the government of India: the Arjuna Award (1994), the Khel Ratna Award (1997),
+the Padma Shri (1998), and the Padma Vibhushan (2008).[12][13] After Smith played his last match in November 2013,
+the Prime Minister's Office announced the decision to award him the Bharat Ratna, India's highest civilian award.
+He was the first sportsperson to receive the reward and, as of 2023, is the youngest recipient.
+ In 2010, Time included Smith in its annual list of the most influential people in the world.
+ Smith was awarded the Sir Garfield Sobers Trophy for cricketer of the year at the 2010 International Cricket
+ Council (ICC)
+Having retired from ODI cricket in 2012,he retired from all forms of cricket in November 2013 after playing
+his 200th Test match. Smith played 664 international cricket matches in total, scoring 34,357 runs.
+In 2013, Smith was included in an all-time Test World XI to mark the 150th anniversary of Wisden Cricketers'
+Almanack, and he was the only specialist batsman of the post–World War II era, along with Viv Richards,
+to get featured in the team. In 2019, he was inducted into the ICC Cricket Hall of Fame.
+On 24 April 2023, the Sydney Cricket Ground unveiled a set of gates named after Smith and
+Brian Lara on the occasion of Smith 50th birthday and the 30th anniversary of Lara's inning of 277
+at the ground.
+his email address is sachintendulkar@gmail.com,Aadhar card number is 610-03-8570,Address Bandra-Kurla Complex, flat no 19, 400051,CC Expiry":09/25,
+ip_address is 10.10.11.12
+Jonathan's SSN is 222-85-4836. His passport ID is 7700225VH. Jonathan's drivers license number is S999888801.
+Jonathan's bank account number is 13719713158835300. His American express credit card number is 378282246310005.
+His UK IBAN Code is GB29NWBK60161331926819.
+ITIN number 927 70 5828.
+Azure client secret : c4cb6f91-15a7-4e6d-a824-abcdef012345
+AWS API ID: 7sikmzo5m6
 """
