@@ -1,5 +1,6 @@
 import { get_Text_Orientation } from "../util.js";
 import { ACTIONS } from "../constants/enums.js";
+import { Tooltip } from "./tooltip.js";
 
 function Table(props) {
   const { tableCol, tableData, link } = props;
@@ -36,7 +37,7 @@ function Tbody(tableCol, tableData, link) {
                align: col?.align,
                link:
                  col?.field !== ACTIONS && link
-                   ? `${link}/?id=${item?.id}`
+                   ? `${link}/?id=${item?.loadId}`
                    : "",
                maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
              })
@@ -56,14 +57,14 @@ function Td(props) {
   const TEXT__ALIGN = get_Text_Orientation(align);
   if (link) {
     return /*html*/ `
-      <td title="${children}" class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${maxWidth}">
+      <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${maxWidth}">
       ${children || "-"}
           <a href="${link}" id="link"></a>
       </td>
    `;
   }
-  return /*html*/ `
-       <td title="${children}" class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${maxWidth}">
+  return `
+    <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${maxWidth}">
        ${children || "-"}
        </td>
     `;

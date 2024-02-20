@@ -11,18 +11,18 @@ import { Button, Table, Td } from "./index.js";
 export function ApplicationsList(props) {
   const { title, tableCol, tableData, isDownloadReport, searchField } = props;
 
-  waitForElement("#search_field", 3000).then(function () {
-    const inputEl = document.getElementById("search_field");
-    if (inputEl) inputEl.addEventListener(CHANGE, onChange);
-  });
-
   window.addEventListener(LOAD, function () {
     if (tableCol?.find((col) => col?.field === ACTIONS)) {
       const download_icon = document.getElementById("download_icon");
-      download_icon.addEventListener(CLICK, function () {
+      download_icon?.addEventListener(CLICK, function () {
         GET_FILE("http://127.0.0.1:8000/getReport?id=pebblo_report_xhtml2pdf");
       });
     }
+  });
+
+  waitForElement("#search_field", 1000).then(function () {
+    const inputEl = document.getElementById("search_field");
+    if (inputEl) inputEl?.addEventListener(CHANGE, onChange);
   });
 
   function onChange(evt) {

@@ -49,9 +49,8 @@ export function AppDetailsPage() {
            <div class="flex flex-col gap-1 inter surface-10">
              <div class="font-24">${APP_DATA?.name}</div>
              <div class="font-12 flex gap-3">
-               <div class="font-thin">Last Updated ${get_Formatted_Date(
-                 APP_DATA?.lastModified
-               )}</div>
+               <div class="font-thin">Last Updated 13 Feb 2024
+               </div>
                <div class="divider"></div>
                ${AccordionSummary({ children: "Instance Details", id: 1 })}
              </div>
@@ -90,8 +89,9 @@ export function AppDetailsPage() {
         <div class="flex gap-2 surface-10 inter items-center">
            <div class="font-16">Report Summary</div>
            <div class="font-12">Current Load By ${
-             APP_DATA?.owner
-           }, ${get_Formatted_Date(APP_DATA?.lastModified)} </div>
+             APP_DATA?.reportSummary.owner
+           }, ${get_Formatted_Date(APP_DATA?.reportSummary.createdAt)} </div>
+
         </div>
         ${Tabs(
           TABS_ARR_FOR_APPLICATION_DETAILS,

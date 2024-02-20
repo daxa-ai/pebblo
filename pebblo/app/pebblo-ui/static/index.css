@@ -756,6 +756,7 @@ body {
   border-bottom: 1px solid var(--surface-70);
   display: flex;
   padding: 6px 0px;
+  z-index: 99;
 }
 .search input {
   border: none;
@@ -959,4 +960,39 @@ dialog::backdrop {
 
 .load-history-table {
   border: 1px solid#D8D9E380;
+}
+
+/* TOOLTIP */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  right: 110%;
+}
+
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent black;
+}
+.tooltip:hover .tooltip-text {
+  visibility: visible;
 }

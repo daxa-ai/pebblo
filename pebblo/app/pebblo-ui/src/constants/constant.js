@@ -1,4 +1,5 @@
 import { ApplicationsList, SnippetDetails } from "../components/index.js";
+import { Tooltip } from "../components/tooltip.js";
 import { get_Formatted_Date } from "../util.js";
 
 export const MEDIA_URL = document.scripts[0].getAttribute("staticURL");
@@ -29,6 +30,7 @@ export const APP_DETAILS_FINDINGS_TABLE = [
   {
     label: "Finding",
     field: "labelName",
+    type: "label",
     align: "start",
   },
   {
@@ -76,10 +78,66 @@ export const APP_DETAILS = [
   },
 ];
 
+export const FILES_WITH_FINDINGS_TABLE = [
+  {
+    label: "File Name",
+    field: "fileName",
+    render: (item) => /*html*/ `
+    <div class="flex flex-col inter">
+       <div class="surface-10 font-13">${item.fileName || "-"}</div>
+       <div class="surface-10-opacity-50 font-12 flex">
+         <div>${item?.sourceSize || "-"} | ${item?.fileOwner || "-"}</div>
+       </div>
+    </div>
+ `,
+    align: "start",
+    type: "label",
+  },
+  {
+    label: "Findings-Topics",
+    field: "findingsTopics",
+    align: "end",
+  },
+  {
+    label: "Findings-Entities",
+    field: "findingsEntities",
+    align: "end",
+  },
+  {
+    label: "Data Source",
+    field: "findings",
+    align: "start",
+  },
+];
+
+export const DATA_SOURCE_TABLE = [
+  {
+    label: "Finding Type",
+    field: "findingsType",
+    align: "start",
+  },
+  {
+    label: "Finding",
+    field: "labelName",
+    align: "start",
+    type: "label",
+  },
+  {
+    label: "Source Files",
+    field: "fileCount",
+    align: "end",
+  },
+  {
+    label: "Snippets",
+    field: "snippetCount",
+    align: "end",
+  },
+];
+
 export const TABLE_DATA_FOR_APPLICATIONS = [
   {
     label: "Application",
-    field: "application",
+    field: "name",
     align: "start",
   },
   {
@@ -120,6 +178,7 @@ export const TABLE_DATA_FOR_FINDINGS = [
     label: "Finding",
     field: "label",
     align: "start",
+    type: "label",
   },
   {
     label: "Source Files",
@@ -156,6 +215,7 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     </div>
  `,
     align: "start",
+    type: "label",
   },
   {
     label: "Findings-Topics",
@@ -190,6 +250,7 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
       </div>
    `,
     align: "start",
+    type: "label",
   },
   {
     label: "Findings-Topics",
@@ -214,29 +275,26 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
 export const TABS_ARR_FOR_APPLICATIONS = [
   {
     label: "Applications With Findings",
-    critical: 2,
-    outOf: 4,
+    critical: APP_DATA?.applicationAtRisk,
+    outOf: APP_DATA?.appList?.length,
     value: 0,
     isCritical: true,
   },
   {
     label: "Findings",
-    critical: 72,
-    outOf: 0,
+    critical: APP_DATA?.findings,
     value: 1,
     isCritical: true,
   },
   {
     label: "Files With Findings",
-    critical: 8,
-    outOf: 24,
+    critical: APP_DATA?.filesWithFindings,
     value: 2,
     isCritical: true,
   },
   {
     label: "Data Source",
-    critical: 4,
-    outOf: 0,
+    critical: APP_DATA?.dataSource,
     value: 3,
     isCritical: false,
   },
@@ -249,6 +307,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       tableCol: TABLE_DATA_FOR_APPLICATIONS,
       tableData: APP_DATA?.appList,
       isDownloadReport: false,
+      searchField: ["name", "owner"],
     },
     component: ApplicationsList,
   },
@@ -256,7 +315,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
     value: {
       title: "Findings",
       tableCol: TABLE_DATA_FOR_FINDINGS,
-      tableData: APP_DATA?.allFindings,
+      tableData: [],
       isDownloadReport: false,
     },
     component: ApplicationsList,
@@ -265,7 +324,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
     value: {
       title: "Files With Findings",
       tableCol: TABLE_DATA_FOR_FILES_WITH_FINDINGS,
-      tableData: APP_DATA?.allFilesWithFindings,
+      tableData: [],
       isDownloadReport: false,
     },
     component: ApplicationsList,
@@ -284,29 +343,28 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
 export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
     label: "Findings",
-    critical: 72,
-    outOf: 0,
+    critical: APP_DATA?.reportSummary?.findings,
     value: 0,
     isCritical: true,
   },
   {
     label: "Files With Findings",
-    critical: 8,
-    outOf: 24,
+    critical: APP_DATA?.reportSummary?.filesWithFindings,
+    outOf: APP_DATA?.reportSummary?.totalFiles || 0,
     value: 1,
     isCritical: true,
   },
   {
     label: "Data Source",
-    critical: 4,
-    outOf: 0,
+    critical: APP_DATA?.reportSummary?.dataSources,
     value: 2,
     isCritical: false,
   },
   {
     label: "Snippets",
-    critical: 254,
-    outOf: 0,
+    critical: APP_DATA?.dataSources
+      ? APP_DATA?.dataSources[0]?.findingsDetails?.length
+      : 0,
     value: 3,
     isCritical: false,
   },
@@ -317,16 +375,19 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
     value: {
       title: "Findings",
       tableCol: APP_DETAILS_FINDINGS_TABLE,
-      tableData: APP_DATA?.dataSources[0]?.findingsSummary,
-      searchField: ["findingsType"],
+      tableData: APP_DATA?.dataSources
+        ? APP_DATA?.dataSources[0]?.findingsSummary
+        : [],
+      searchField: ["labelName", "findingsType"],
     },
     component: ApplicationsList,
   },
   {
     value: {
       title: "Files With Findngs",
-      tableCol: APP_DETAILS_FINDINGS_TABLE,
-      tableData: [],
+      tableCol: FILES_WITH_FINDINGS_TABLE,
+      tableData: APP_DATA?.topFindings,
+      searchField: ["fileOwner", "fileName"],
     },
     component: ApplicationsList,
   },
@@ -334,14 +395,20 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
     value: {
       title: "Data Source",
       tableCol: APP_DETAILS_FINDINGS_TABLE,
-      tableData: [],
+      tableData: APP_DATA?.dataSources
+        ? APP_DATA?.dataSources[0]?.findingsSummary
+        : [],
+      searchField: ["labelName", "findingsType"],
     },
     component: ApplicationsList,
   },
   {
     value: {
       title: "Snippets",
-      data: APP_DATA?.snippets,
+      data: APP_DATA?.dataSources
+        ? APP_DATA?.dataSources[0]?.findingsDetails
+        : [],
+      searchField: ["labelName", "findingsType"],
     },
     component: SnippetDetails,
   },
