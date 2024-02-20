@@ -1,11 +1,12 @@
 import "./polyfill.js";
 import { Button, Card, Header } from "./components/index.js";
 import { appRoutes } from "./routes.js";
+import { APP_DETAILS_ROUTE } from "./constants/constant.js";
 
 export function App() {
   const UI = appRoutes();
   const button =
-    window.location.pathname === "/appDetails"
+    window.location.pathname === APP_DETAILS_ROUTE
       ? Button({
           variant: "text",
           btnText: "Back",
