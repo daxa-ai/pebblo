@@ -14,11 +14,19 @@ Report Summary provides the following details:
 
 # Top Files with Most Findings
 
-This table indicates the top files that had the most findings. Typically these files are the most _affending_ ones that needs immediate attention and best ROI for data cleansing and remediation.
+This table indicates the top files that had the most findings. Typically, these files are the most _offending_ ones that needs immediate attention and best ROI for data cleansing and remediation.
 
 # Load History
 
 This table provides the history of findings and path to the reports for the previous loads of the same RAG application.
+
+Load History provides details about latest 5 loads of this app. It provides the following details:
+1. **Report Name**: The path to the report file.
+2. **Findings**: The number of findings identified in the report.
+3. **Files With Findings**: The number of files containing findings.
+4. **Generated On**: The timestamp, when the report was generated. Time would be in local time zone.
+5. **Find more reports on**: Path to the folder where you can find reports for all the loads. This field will be visible when there are more than 5 loads of an app.
+
 
 # Instance Details
 
