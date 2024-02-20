@@ -43,6 +43,8 @@ lint:
 	ruff --select I .
 	mkdir -p $(MYPY_CACHE) && mypy --install-types --non-interactive $(PYTHON_FILES) --cache-dir $(MYPY_CACHE)
 
+spell_check:
+	codespell --toml pyproject.toml
 ################################################
 # FORMAT
 ################################################
@@ -64,4 +66,4 @@ help:
 	@echo 'tests TEST_FILE=<test_file>  - run all tests in file'
 
 
-.PHONY: all clean build install test tests help lint
+.PHONY: all clean build install test tests help lint spell_check
