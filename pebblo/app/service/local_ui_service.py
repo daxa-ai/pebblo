@@ -24,13 +24,14 @@ def get_all_apps_list():
                 app_json = json.load(output)
                 app_details = dict()
                 app_details['name'] = app_json.get('name')
-                app_details['loadId'] = app_json.get('current_load_id')
+                app_details['loadId'] = app_json.get('load_ids')[0]
 
                 
         except IOError as err:
             logger.error(f"No  file found at {app_path}")
 
         app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{app_json.get("current_load_id")}/{CacheDir.report_data_file_name.value}'
+        print()
         app_detail_full_path = get_full_path(app_detail_path)
         try:
             with open(app_detail_full_path, "r") as output:
