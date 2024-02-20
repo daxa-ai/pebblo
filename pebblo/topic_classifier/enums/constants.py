@@ -6,19 +6,16 @@ topic_display_names = {
     "CONSULTING_AGREEMENT": "Consulting Agreement",
     "CUSTOMER_LIST_AGREEMENT": "Customer List",
     "DISTRIBUTION_PARTNER_AGREEMENT": "Distribution/Partner Agreement",
-    "ENTERPRISE_LICENSE_AGREEMENT": "Enterprise License Agreement",
+    "ENTERPRISE_AGREEMENT": "Enterprise Agreement",
+    "ENTERPRISE_LICENSE_AGREEMENT": "Enterprise Agreement",
     "EXECUTIVE_SEVERANCE_AGREEMENT": "Executive Severance Agreement",
     "FINANCIAL_REPORT_AGREEMENT": "Financial Report",
-    "INTERNAL_USE_ONLY_AGREEMENT": "Internal Use Only",
     "LOAN_AND_SECURITY_AGREEMENT": "Loan And Security Agreement",
     "MERGER_AGREEMENT": "Merger Agreement",
     "NDA_AGREEMENT": "NDA",
     "PATENT_APPLICATION_FILLINGS_AGREEMENT": "Patent Application Fillings",
     "PRICE_LIST_AGREEMENT": "Price List",
-    "SECRET_SAUCE_AGREEMENT": "Secret Sauce",
-    "SECURITY_BREACH_AGREEMENT": "Security Breach",
     "SETTLEMENT_AGREEMENT": "Settlement Agreement",
     "SEXUAL_HARRASSMENT_AGREEMENT": "Sexual Harassment",
-    "EMPLOYEE_AGREEMENT": "Employee Agreement",
-    "ENTERPRISE_AGREEMENT": "Enterprise Agreement"
+    "EMPLOYEE_AGREEMENT": "Employee Agreement"
 }

@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import pipeline
 
 from pebblo.topic_classifier.config import TOPIC_CONFIDENCE_SCORE, TOKENIZER_PATH, \
-    CLASSIFIER_PATH, MODEL_REVISION
+    CLASSIFIER_PATH, MODEL_REVISION, TOPIC_MIN_TEXT_LENGTH
 from pebblo.topic_classifier.enums.constants import topic_display_names
 from pebblo.topic_classifier.libs.logger import logger
 
@@ -34,6 +34,12 @@ class TopicClassifier:
         Perform topic classification on the input data.
         """
         try:
+            # Check if the input text meets the minimum length requirement
+            if len(input_text) <= TOPIC_MIN_TEXT_LENGTH:
+                logger.debug(f"Text length is below {TOPIC_MIN_TEXT_LENGTH} characters. "
+                             f"Classification not performed. Input text: {input_text}")
+                return {}, 0
+
             topic_model_response = self.classifier(input_text)
             topics, total_count = self._get_topics(topic_model_response)
             logger.debug(f"Topics: {topics}")

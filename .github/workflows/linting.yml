@@ -1,0 +1,34 @@
+# If you change this name also do it in linting.yml
+name: Linting
+
+on:
+  pull_request:
+    paths:
+      - "pebblo/**/*.py"
+      - "tests/**/*.py"
+      - "samples/**/*.py"
+
+jobs:
+
+  pylint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python_version }}
+
+      - name: Install dependencies needed for tests
+        run: pip install -r tests/test_requirements.txt
+
+      - name: Pylint
+        run: |
+          make lint
+

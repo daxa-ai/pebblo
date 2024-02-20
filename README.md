@@ -1,17 +1,17 @@
 <p align="center">
-  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages/assets/img/pebblo-logo.png?raw=true" />
+  <img src="https://github.com/daxa-ai/pebblo/blob/main/docs/gh_pages/static/img/pebblo-logo-name.png?raw=true" />
 </p>
 
 ---
 [![GitHub](https://img.shields.io/badge/GitHub-pebblo-blue?logo=github)](https://github.com/daxa-ai/pebblo)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![Documentation](https://img.shields.io/badge/Documentation-pebblo-blue?logo=read-the-docs)](https://daxa-ai.github.io/pebblo-docs/)
+[![Documentation](https://img.shields.io/badge/Documentation-pebblo-blue?logo=read-the-docs)](https://daxa-ai.github.io/pebblo/)
 
 [![PyPI](https://img.shields.io/pypi/v/pebblo?logo=pypi)](https://pypi.org/project/pebblo/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/pebblo)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pebblo?logo=python&logoColor=gold)
 
-[![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)](https://discord.gg/Qp5ZunuE)
+[![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)](https://discord.gg/wyAfaYXwwv)
 [![Twitter Follow](https://img.shields.io/twitter/follow/daxa_ai)](https://twitter.com/daxa_ai)
 ---
 
@@ -52,22 +52,25 @@ pip install pebblo
 ```bash
 pebblo
 ```
+see [troubleshooting](docs/gh_pages/docs/troubleshooting.md) guide for troubleshooting info.
 
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
 
-## Pebblo Safe DataLoader for Langchain
+#### Pebblo Optional Flags
 
-`Pebblo Safe DataLoader` currently supports Langchain framework.
-
-### Installation
-
-Install `pebblo-langchain` package in the Python environment where the RAG application is running. Add it as one of the dependencies in `pyproject.toml` or any other methods used for dependency management.
+- `--config <file>`: Specifies a custom configuration file in yaml format.
 
 ```bash
-pip install pebblo-langchain
-```
+pebblo --config config.yaml
+````
 
-### Enable Pebblo in Langchain
+## Pebblo Safe DataLoader
+
+### Langchain
+
+`Pebblo Safe DataLoader` is natively supported in Langchain framework. It is available in Langchain versions `>=0.1.7`
+
+#### Enable Pebblo in Langchain Application
 
 Add `PebbloSafeLoader` wrapper to the existing Langchain document loader(s) used in the RAG application. `PebbloSafeLoader` is interface compatible with Langchain `BaseLoader`. The application can continue to use `load()` and `lazy_load()` methods as it would on an Langchain document loader.
 
@@ -85,7 +88,7 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
 
 ```python
     from langchain.document_loaders.csv_loader import CSVLoader
-    from pebblo_langchain.langchain_community.document_loaders.pebblo import PebbloSafeLoader
+    from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
     loader = PebbloSafeLoader(
                 CSVLoader(file_path),
@@ -97,7 +100,7 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
     vectordb = Chroma.from_documents(documents, OpenAIEmbeddings())
 ```
 
-See [here](https://github.com/srics/pebblo/tree/main/samples) for samples with Pebblo enabled RAG applications and [this](https://daxa-ai.github.io/pebblo-docs/rag.html) document for more details.
+See [here](https://github.com/srics/pebblo/tree/main/samples) for samples with Pebblo enabled RAG applications and [this](https://daxa-ai.github.io/pebblo/rag) document for more details.
 
 # Contribution
 
