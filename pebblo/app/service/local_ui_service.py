@@ -5,7 +5,6 @@ from pebblo.app.libs.logger import logger
 from pebblo.app.utils.utils import get_full_path
 
 
-
 def get_all_apps_list():
     dir_full_path = get_full_path(CacheDir.home_dir.value)
     dir_path = os.listdir(dir_full_path)
@@ -25,12 +24,11 @@ def get_all_apps_list():
                 app_details = dict()
                 app_details['name'] = app_json.get('name')
                 app_details['loadId'] = app_json.get('load_ids')[-1]
-
                 
         except IOError as err:
             logger.error(f"No  file found at {app_path}")
 
-        app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{app_json.get("current_load_id")}/{CacheDir.report_data_file_name.value}'
+        app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{app_json.get("load_ids")[-1]}/{CacheDir.report_data_file_name.value}'
         print()
         app_detail_full_path = get_full_path(app_detail_path)
         try:
@@ -45,7 +43,7 @@ def get_all_apps_list():
                 data_source += report_summary.get('dataSources', 0)
                 if report_summary.get('findings', 0) > 0:
                     app_risk += 1
-                app_details['loadId'] = app_json.get('current_load_id')
+                app_details['loadId'] = app_json.get('load_ids')[-1]
 
         except IOError as err:
             logger.error(f"No  file found at {app_detail_path}")
@@ -63,7 +61,7 @@ def get_per_app_data(app_dir):
     try:
         with open(app_full_path, "r") as output:
             app_json = json.load(output)
-            load_id = app_json.get('current_load_id')
+            load_id = app_json.get('load_ids')[-1]
 
     except IOError as err:
         logger.error(f"No  file found at {app_path}")
