@@ -24,7 +24,7 @@ def get_all_apps_list():
                 app_json = json.load(output)
                 app_details = dict()
                 app_details['name'] = app_json.get('name')
-                app_details['loadId'] = app_json.get('load_ids')[0]
+                app_details['loadId'] = app_json.get('load_ids')[-1]
 
                 
         except IOError as err:
