@@ -124,7 +124,7 @@ class AppDiscover:
                          f"/{CacheDir.metadata_file_path.value}")
             self._write_file_content_to_path(ai_apps.dict(), file_path)
 
-            logger.debug(f"AiApp discovery request completed successfully")
+            logger.debug("AiApp discovery request completed successfully")
             return {"message": "App Discover Request Processed Successfully"}
         except ValidationError as ex:
             logger.error(f"Error in process_request. Error:{ex}")

@@ -21,7 +21,7 @@ class AcmeCorpRAG:
 
         # Load documents
 
-        print(f"Loading RAG documents ...")
+        print("Loading RAG documents ...")
         self.loader = CSVLoader(self.file_path)
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
@@ -29,9 +29,9 @@ class AcmeCorpRAG:
 
         # Load documents into VectorDB
 
-        print(f"Hydrating Vector DB ...")
+        print("Hydrating Vector DB ...")
         self.vectordb = self.embeddings(self.filtered_docs)
-        print(f"Finished hydrating Vector DB ...\n")
+        print("Finished hydrating Vector DB ...\n")
 
         # Prepare retriever QA chain
 
