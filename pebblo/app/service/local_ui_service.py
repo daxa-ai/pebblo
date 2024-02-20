@@ -6,8 +6,8 @@ from pebblo.app.utils.utils import get_full_path
 
 
 def get_all_apps_list():
-    dir_path = os.listdir(CacheDir.home_dir.value)
-    dir_full_path = get_full_path(dir_path)
+    dir_full_path = get_full_path(CacheDir.home_dir.value)
+    dir_path = os.listdir(dir_full_path)
     print(f'----Dir Full path {dir_full_path}----')
     all_apps = []
     app_risk = 0
@@ -16,7 +16,7 @@ def get_all_apps_list():
     data_source = 0
 
     app_details = dict()
-    for app_dir in dir_full_path:
+    for app_dir in dir_path:
         app_path = f'{CacheDir.home_dir.value}/{app_dir}/{CacheDir.metadata_file_path.value}'
         app_full_path = get_full_path(app_path)
         print(f'----App Full path {app_full_path}----')
