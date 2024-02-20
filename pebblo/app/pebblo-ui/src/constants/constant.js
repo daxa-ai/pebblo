@@ -158,13 +158,18 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
   {
     label: "",
     field: "actions",
-    actions: /*html*/ `
+    actions: (item) => /*html*/ `
         <div class="flex gap-4 justify-end">
-          <img id="download_icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
-          <div class="divider"></div>
-          <img id="load_history_icon" class="cursor-pointer" src="${MEDIA_URL}/static/pending-icon.png" alt="Download Icon" />
+          <img id="${item?.name}" class="download-icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
         </div>
       `,
+    //   actions: /*html*/ `
+    //   <div class="flex gap-4 justify-end">
+    //     <img id="download_icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
+    //     <div class="divider"></div>
+    //     <img id="load_history_icon" class="cursor-pointer" src="${MEDIA_URL}/static/pending-icon.png" alt="Download Icon" />
+    //   </div>
+    // `
   },
 ];
 
@@ -275,26 +280,26 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
 export const TABS_ARR_FOR_APPLICATIONS = [
   {
     label: "Applications With Findings",
-    critical: APP_DATA?.applicationAtRisk,
-    outOf: APP_DATA?.appList?.length,
+    critical: APP_DATA?.applicationAtRisk || 0,
+    outOf: APP_DATA?.appList?.length || 0,
     value: 0,
     isCritical: true,
   },
   {
     label: "Findings",
-    critical: APP_DATA?.findings,
+    critical: APP_DATA?.findings || 0,
     value: 1,
     isCritical: true,
   },
   {
     label: "Files With Findings",
-    critical: APP_DATA?.filesWithFindings,
+    critical: APP_DATA?.filesWithFindings || 0,
     value: 2,
     isCritical: true,
   },
   {
     label: "Data Source",
-    critical: APP_DATA?.dataSource,
+    critical: APP_DATA?.dataSource || 0,
     value: 3,
     isCritical: false,
   },
@@ -343,20 +348,20 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
 export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
     label: "Findings",
-    critical: APP_DATA?.reportSummary?.findings,
+    critical: APP_DATA?.reportSummary?.findings || 0,
     value: 0,
     isCritical: true,
   },
   {
     label: "Files With Findings",
-    critical: APP_DATA?.reportSummary?.filesWithFindings,
+    critical: APP_DATA?.reportSummary?.filesWithFindings || 0,
     outOf: APP_DATA?.reportSummary?.totalFiles || 0,
     value: 1,
     isCritical: true,
   },
   {
     label: "Data Source",
-    critical: APP_DATA?.reportSummary?.dataSources,
+    critical: APP_DATA?.reportSummary?.dataSources || 0,
     value: 2,
     isCritical: false,
   },

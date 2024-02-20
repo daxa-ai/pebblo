@@ -30,14 +30,14 @@ function Tbody(tableCol, tableData, link) {
            ${tableCol?.myMap((col) =>
              Td({
                children: col?.actions
-                 ? col?.actions
+                 ? col?.actions(item)
                  : col?.render
                  ? col?.render(item)
                  : item[col?.field],
                align: col?.align,
                link:
                  col?.field !== ACTIONS && link
-                   ? `${link}/?id=${item?.loadId}`
+                   ? `${link}/?app_name=${item?.name}`
                    : "",
                maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
              })
