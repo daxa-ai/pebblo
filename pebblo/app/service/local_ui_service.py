@@ -2,6 +2,7 @@ import json
 import os
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
+from pebblo.app.utils.utils import get_full_path
 
 
 def get_all_apps_list():
@@ -15,8 +16,9 @@ def get_all_apps_list():
     app_details = dict()
     for app_dir in dir_path:
         app_path = f'{CacheDir.home_dir.value}/{app_dir}/{CacheDir.metadata_file_path.value}'
+        app_full_path = get_full_path(app_path)
         try:
-            with open(app_path, "r") as output:
+            with open(app_full_path, "r") as output:
                 app_json = json.load(output)
                 app_details = dict()
                 app_details['name'] = app_json.get('name')
@@ -26,8 +28,9 @@ def get_all_apps_list():
             logger.error(f"No  file found at {app_path}")
 
         app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{app_json.get("current_load_id")}/{CacheDir.report_data_file_name.value}'
+        app_detail_full_path = get_full_path(app_detail_path)
         try:
-            with open(app_detail_path, "r") as output:
+            with open(app_detail_full_path, "r") as output:
                 app_detail_json = json.load(output)
                 report_summary = app_detail_json.get('reportSummary')
                 app_details['topics'] = report_summary.get('findingsTopics', 0)
@@ -52,9 +55,9 @@ def get_all_apps_list():
 
 def get_per_app_data(app_dir):
     app_path = f'{CacheDir.home_dir.value}/{app_dir}/{CacheDir.metadata_file_path.value}'
-
+    app_full_path = get_full_path(app_path)
     try:
-        with open(app_path, "r") as output:
+        with open(app_full_path, "r") as output:
             app_json = json.load(output)
             load_id = app_json.get('current_load_id')
 
@@ -62,8 +65,9 @@ def get_per_app_data(app_dir):
         logger.error(f"No  file found at {app_path}")
 
     app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}'
+    app_detail_full_path = get_full_path(app_detail_path)
     try:
-        with open(app_detail_path, "r") as output:
+        with open(app_detail_full_path, "r") as output:
             app_detail_json = json.load(output)
             return json.dumps(app_detail_json, indent=4)
     except IOError as err:
