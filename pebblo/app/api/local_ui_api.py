@@ -17,4 +17,4 @@ class App:
 
     @staticmethod
     def appDetails(request: Request, app_name: str):
-        return templates.TemplateResponse("index.html", {"request": request, "data": get_per_app_data(app_name, id)})
+        return templates.TemplateResponse("index.html", {"request": request, "data": get_per_app_data(app_name)})
