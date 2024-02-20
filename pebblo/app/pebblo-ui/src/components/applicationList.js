@@ -13,9 +13,11 @@ export function ApplicationsList(props) {
 
   window.addEventListener(LOAD, function () {
     if (tableCol?.find((col) => col?.field === ACTIONS)) {
-      const download_icon = document.getElementById("download_icon");
-      download_icon?.addEventListener(CLICK, function () {
-        GET_FILE("http://127.0.0.1:8000/getReport?id=pebblo_report_xhtml2pdf");
+      const download_icons = document.getElementsByClassName("download-icon");
+      Array.from(download_icons).forEach((icon) => {
+        icon?.addEventListener(CLICK, function () {
+          GET_FILE(`http://127.0.0.1:8000/getReport?app_name=${icon?.id}`);
+        });
       });
     }
   });

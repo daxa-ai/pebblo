@@ -35,7 +35,7 @@ export function AppDetailsPage() {
   window.addEventListener(LOAD, function () {
     const download_icon = document.getElementById("download_report_btn");
     download_icon.addEventListener(CLICK, function () {
-      GET_FILE("http://127.0.0.1:8000/getReport?id=pebblo_report_xhtml2pdf");
+      GET_FILE(`http://127.0.0.1:8000/getReport?app_name=${APP_DATA?.name}`);
     });
   });
 
