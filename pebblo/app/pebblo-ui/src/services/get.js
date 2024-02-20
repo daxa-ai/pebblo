@@ -1,5 +1,4 @@
 export const GET_FILE = (url) => {
-  console.log(url);
   const data = fetch(url, { responseType: "arraybuffer" })
     .then((res) => {
       return res.blob();
