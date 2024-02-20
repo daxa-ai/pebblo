@@ -160,7 +160,7 @@ pebblo = "pebblo.app.daemon:start"
 # If there are data files included in your packages that need to be
 # installed, specify them here.
 
-package-data = {"pebblo" = ['reports/templates/*', 'reports/assets/*','app/pebblo-ui/*' ,'app/pebblo-ui/static/*', 'app/pebblo-ui/src/*', 'app/pebblo-ui/src/components/*', 'app/pebblo-ui/src/pages/*'  ]}
+package-data = {"pebblo" = ['reports/templates/*', 'reports/assets/*','app/pebblo-ui/*' ,'app/pebblo-ui/static/*', 'app/pebblo-ui/src/*', 'app/pebblo-ui/src/components/*', 'app/pebblo-ui/src/pages/*', 'app/pebblo-ui/src/constants/*', 'app/pebblo-ui/src/services/*'  ]}
 include-package-data = false
 
 [tool.setuptools.packages.find]
