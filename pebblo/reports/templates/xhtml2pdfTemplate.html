@@ -157,6 +157,9 @@
       .critical {
         color: #f03844;
       }
+      .surface-purple {
+        color: #526ff3;
+      }
       /* FONT SIZE PROPERTY */
       .font-10 {
         font-size: 10px;
@@ -543,7 +546,7 @@
         padding: 8px 12px;
       }
       .td-border {
-        border-bottom: 0.5px solid rgba(25, 28, 46, 0.2);
+        border-bottom: 0.5px solid #d1d2d5;
       }
       th {
         flex-shrink: 0;
@@ -562,6 +565,10 @@
         text-align: right;
         vertical-align: center;
       }
+      .align-cell-left {
+        text-align: left;
+        vertical-align: center;
+      }
       div {
         flex-shrink: 0;
       }
@@ -574,6 +581,14 @@
         padding: 0 12px;
       }
 
+      .table-border th,
+      .table-border td {
+        border-color: #d1d2d5;
+        border-width: 0.5px;
+        border-style: solid;
+        border-collapse: collapse;
+      }
+
       /* CHIP DESIGN */
       .chip {
         padding: 4px 10px;
@@ -583,22 +598,26 @@
     </style>
   </head>
   <body>
-    <section class="pl-23 pr-23 pt-42 align-cell-center">
-      <div class="surface-10 inter font-48 font-thin">Data Report</div>
-      <div class="mt-2">
-        <div class="break-all surface-10 inter font-32 font-thin break-word">
-          {{data.name}}
+    <section class="pl-23 pr-23 pt-42 align-cell-left">
+      <div class="pl-8">
+        <div class="surface-10 inter font-48 font-thin">Data Report</div>
+        <div class="mt-2">
+          <div
+            class="break-all surface-purple inter font-32 font-thin break-word"
+          >
+            {{data.name}}
+          </div>
+          <div class="surface-10 inter font-28 mt-2">
+            {{data.framework.name|capitalize}} {{data.framework.version}}
+          </div>
         </div>
-        <div class="purple-10 inter font-28 mt-2">
-          {{data.framework.name|capitalize}} {{data.framework.version}}
-        </div>
-      </div>
-      <div class="mt-11">
-        <div class="purple-10 font-13 inter font-thin">
-          Application Owner: {{ data.reportSummary.owner }}
-        </div>
-        <div class="purple-10 font-13 inter font-thin mt-2">
-          Report Generated On {{ date.strftime('%B %d, %Y') }}
+        <div class="mt-11">
+          <div class="surface-10 font-13 inter font-thin">
+            Application Owner: {{ data.reportSummary.owner }}
+          </div>
+          <div class="surface-10 font-13 inter font-thin mt-2">
+            Report Generated On {{ date.strftime('%B %d, %Y') }}
+          </div>
         </div>
       </div>
     </section>
@@ -642,7 +661,7 @@
                       >/{{ data.reportSummary.totalFiles|default('0') }}</span
                     >
                   </div>
-                  <div class="surface-10 font-13">Files With Findings</div>
+                  <div class="surface-10 font-13">Documents With Findings</div>
                 </td>
                 <td>
                   <div class="surface-10 font-64 normal">
@@ -654,32 +673,34 @@
             </table>
           </div>
         </div>
-        <div class="mt-4">
+        <div class="mt-8">
           <div class="surface-10 font-14 inter medium">
-            Top Files With Most Findings
+            Top Documents With Most Findings
           </div>
           <div class="mt-3 inter">
-            <table class="fixed">
+            <table class="fixed table-border">
               <thead class="font-12">
                 <tr>
-                  <th class="th-colored medium">File Name</th>
-                  <th class="th-colored medium text-end w-120">
+                  <th class="th-colored normal align-cell-left">
+                    Document Name
+                  </th>
+                  <th class="th-colored normal text-end w-120 align-cell-right">
                     Findings - Topics
                   </th>
-                  <th class="th-colored medium text-end w-120">
+                  <th class="th-colored normal text-end w-120 align-cell-right">
                     Findings - Entities
                   </th>
-                  <th class="th-colored medium w-120">Owner</th>
+                  <th class="th-colored normal w-120 align-cell-left">Owner</th>
                 </tr>
               </thead>
               <tbody class="surface-10 normal font-13">
                 {% for item in data.topFindings %}
                 <tr>
                   <td class="break-all">{{ item.fileName|default('-') }}</td>
-                  <td class="text-end w-120 align-cell-center">
+                  <td class="text-end w-120 align-cell-right">
                     {{ item.findingsTopics|default('-') }}
                   </td>
-                  <td class="text-end w-120 align-cell-center">
+                  <td class="text-end w-120 align-cell-right">
                     {{ item.findingsEntities|default('-') }}
                   </td>
                   <td class="text-end w-120 align-cell-center">
@@ -691,94 +712,118 @@
             </table>
           </div>
         </div>
-        <div class="mt-4">
-          <div class="surface-10 font-14 inter medium">Load History</div>
-          <div class="mt-3 inter">
+        <div class="mt-8">
+          <span class="surface-10 font-14 inter medium">Load History</span>
+          <span class="surface-10-opacity ml-2 font-12">
+            (Last {{loadHistoryItemsToDisplay|length}} Reports)
+          </span>
+          {% if loadHistoryItemsToDisplay|length > 0 %}
+          <div class="mt-3 inter table-border">
             <table class="fixed">
               <thead class="font-12">
                 <tr>
-                  <th class="th-colored medium">Report Name</th>
+                  <th class="th-colored normal align-cell-left">Report Name</th>
                   <!--<th class="th-colored medium"></th>-->
-                  <th class="th-colored medium text-end w-120">Findings</th>
-                  <th class="th-colored medium text-end">
-                    Files With Findings
+                  <th class="th-colored normal text-end w-120 align-cell-right">
+                    Findings
                   </th>
-                  <th class="th-colored medium w-300">Generated On</th>
+                  <th class="th-colored normal text-end align-cell-right">
+                    Documents With Findings
+                  </th>
+                  <th class="th-colored normal w-300 align-cell-left">
+                    Generated On
+                  </th>
                 </tr>
               </thead>
               <tbody class="surface-10 normal font-13">
+                {% for item in loadHistoryItemsToDisplay %}
                 <tr>
-                  <td class="break-all">-</td>
-                  <td class="text-end w-120 align-cell-center">-</td>
-                  <td class="text-end w-120 align-cell-center">-</td>
-                  <td class="text-end align-cell-center w-300">-</td>
+                  <td class="break-all align-cell-left">
+                    {{ item.reportName }}
+                  </td>
+                  <td class="text-end w-120 align-cell-right">
+                    {{ item.findings }}
+                  </td>
+                  <td class="text-end w-120 align-cell-right">
+                    {{ item.filesWithFindings }}
+                  </td>
+                  <td class="text-end align-cell-left w-300">
+                    {{ dateFormatter(item.generatedOn) }}
+                  </td>
                 </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
+          {% if data.loadHistory.moreReportsPath != '-' %}
+          <div class="mt-2 inter surface-10-opacity font-11">
+            Find more reports on: {{ data.loadHistory.moreReportsPath }}
+          </div>
+          {% endif %} {% endif %}
         </div>
-        <div class="mt-4">
+        <div class="mt-8">
           <div class="surface-10 font-14 inter medium">Instance Details</div>
           <div class="ml-8 mt-3 inter">
-            <table class="fixed">
+            <table class="fixed table-border">
               <colgroup>
                 <col width="33%" />
                 <col width="33%" />
-                <col width="33%" />
               </colgroup>
-              <tbody>
+              <tbody class="surface-10 normal font-13">
                 <tr>
-                  <td class="border-none font-13 pl-0">
-                    <div class="ml-2">
-                      <div class="surface-40 font-12 medium">IP</div>
-                      <div class="surface-10 normal">
-                        {{ data.instanceDetails.ip }}
-                      </div>
-                    </div>
+                  <td style="width: 200px">
+                    <div class="surface-40 font-12 medium">IP</div>
                   </td>
-                  <td class="border-none font-13 pl-0 pt-4 pb-4">
-                    <div class="ml-2">
-                      <div class="surface-40 font-12 medium">Runtime</div>
-                      <div class="surface-10 mt-1">
-                        {{ data.instanceDetails.runtime|capitalize }}
-                      </div>
-                    </div>
-                  </td>
-                  <td class="border-none font-13 pl-0 pt-4 pb-4">
-                    <div class="ml-2">
-                      <div class="surface-40 font-12 medium">Language</div>
-                      <div class="surface-10 mt-1">
-                        {{ data.instanceDetails.language|capitalize }} {{
-                        data.instanceDetails.languageVersion }}
-                      </div>
+                  <td>
+                    <div class="surface-10 normal">
+                      {{ data.instanceDetails.ip }}
                     </div>
                   </td>
                 </tr>
                 <tr>
-                  <td class="border-none font-13 pl-0 pt-4 pb-4">
-                    <div class="ml-2">
-                      <div class="surface-40 font-12 medium">Created At</div>
-                      <div class="surface-10 mt-1">
-                        {{ dateFormatter(data.instanceDetails.createdAt) }}
-                      </div>
-                    </div>
-                  </td>
-                  <td class="border-none font-13 pl-0 pt-4 pb-4">
-                    <div class="ml-2">
-                      <div class="surface-40 font-12 medium">Host</div>
-                      <div class="surface-10 mt-1">
-                        {{ data.instanceDetails.host }}
-                      </div>
+                  <td><div class="surface-40 font-12 medium">Runtime</div></td>
+                  <td>
+                    <div class="surface-10 mt-1">
+                      {{ data.instanceDetails.runtime|capitalize }}
                     </div>
                   </td>
                 </tr>
                 <tr>
-                  <td class="border-none font-13 pl-0 pt-4 pb-4" colspan="3">
-                    <div class="ml-2">
-                      <div class="surface-40 font-12 medium">Path</div>
-                      <div class="surface-10 mt-1">
-                        {{ data.instanceDetails.path }} &nbsp;
-                      </div>
+                  <td><div class="surface-40 font-12 medium">Language</div></td>
+                  <td>
+                    <div class="surface-10 mt-1">
+                      {{ data.instanceDetails.language|capitalize }} {{
+                      data.instanceDetails.languageVersion }}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="surface-40 font-12 medium">Created At</div>
+                  </td>
+                  <td>
+                    <div class="surface-10 mt-1">
+                      {{ dateFormatter(data.instanceDetails.createdAt) }}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="surface-40 font-12 medium">Host</div>
+                  </td>
+                  <td>
+                    <div class="surface-10 mt-1">
+                      {{ data.instanceDetails.host }}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="surface-40 font-12 medium">Path</div>
+                  </td>
+                  <td>
+                    <div class="surface-10 mt-1">
+                      {{ data.instanceDetails.path }}
                     </div>
                   </td>
                 </tr>
@@ -802,22 +847,30 @@
             <div>Size: {{ getFileSize(datastores.sourceSize) }}</div>
           </div>
         </div>
-        <table class="mt-4 fixed">
+        <table class="mt-4 fixed table-border">
           <thead class="font-12 inter">
             <tr>
-              <th class="th-colored medium text-end w-120">Finding Type</th>
-              <th class="th-colored medium text-end">Finding</th>
-              <th class="th-colored medium text-end w-120">Source Files</th>
-              <th class="th-colored medium text-end w-120">Snippets</th>
+              <th class="th-colored normal text-end w-120 align-cell-left">
+                Finding Type
+              </th>
+              <th class="th-colored normal text-end align-cell-left">
+                Finding
+              </th>
+              <th class="th-colored normal text-end w-120 align-cell-right">
+                Source Documents
+              </th>
+              <th class="th-colored normal text-end w-120 align-cell-right">
+                Snippets
+              </th>
             </tr>
           </thead>
           <tbody class="surface-10 font-13 inter">
             {% for item in datastores.findingsSummary %}
             <tr>
-              <td class="text-end w-120 align-cell-center">
+              <td class="text-end w-120 align-cell-left">
                 {{ item.findingsType|capitalize }}
               </td>
-              <td class="text-end align-cell-center">{{item.labelName}}</td>
+              <td class="text-end align-cell-left">{{item.labelName}}</td>
               <td class="text-end w-120 align-cell-right">
                 {{item.fileCount}}
               </td>
@@ -835,23 +888,23 @@
       <div class="ml-8 mr-8">
         <div class="inter normal">
           <div class="font-14 surface-10 medium">
-            Snippets :
-            <span class="font-12 surface-0 ml-2"
-              >Showing {{ datastores.displayedSnippetCount }} out of {{
-              datastores.totalSnippetCount }}</span
+            Snippets
+            <span class="font-12 surface-50 pl-2 normal"
+              >(Showing {{ datastores.displayedSnippetCount }} out of {{
+              datastores.totalSnippetCount }})</span
             >
           </div>
         </div>
         {% for item in findingDetails %}
         <div class="mt-4 inter">
           <div class="bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
-            <div class="surface-10 font-13 medium">
-              {{ item.labelName }} :
-              <span class="sub-heading surface-50 font-12"
-                >Showing {{ item.snippets|length }} snippets out of {{
-                item.snippetCount }}</span
+            <span class="surface-10 font-13 medium">
+              {{ item.labelName }}
+              <span class="sub-heading surface-50 normal font-12"
+                >(Showing {{ item.snippets|length }} snippets out of {{
+                item.snippetCount }})</span
               >
-            </div>
+            </span>
           </div>
           {% for snippet in item.snippets %}
           <div class="key-value inter">
@@ -860,7 +913,9 @@
           </div>
           <div class="key-value">
             <div class="surface-50 font-12 medium">Retrieved From</div>
-            <div class="surface-10 font-13 mt-2 break-all normal">
+            <div
+              class="surface-10 font-13 mt-2 break-all normal td-border pb-2"
+            >
               {{ snippet.sourcePath }}
             </div>
           </div>
