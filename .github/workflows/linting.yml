@@ -31,4 +31,5 @@ jobs:
       - name: Pylint
         run: |
           make lint
+          make spell_check
 
