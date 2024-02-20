@@ -46,7 +46,7 @@ def get_all_apps_list():
                     all_apps.append(app_details)
                     get_per_app_data(app_json.get('name'))
         data = {'applicationAtRisk': app_risk, 'findings': findings, 'filesWithFindings': files_findings,
-                'dataSource': data_source, 'appList': all_apps}
+                'dataSource': data_source, 'appList': all_apps, 'dataSourceList': data_source_list}
         print(f'-----Data {data}------')
 
         return json.dumps(data, indent=4)
