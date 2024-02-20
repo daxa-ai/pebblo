@@ -37,6 +37,16 @@ const sidebars: SidebarsConfig = {
       id: "troubleshooting", // document ID
       label: "Troubleshooting Guide", // sidebar label
     },
+    {
+      type: "doc",
+      id: "entityclassifier", // document ID
+      label: "Pebblo Entity Classifier", // sidebar label
+    },
+    {
+      type: "doc",
+      id: "topicclassifier", // document ID
+      label: "Pebblo Topic Classifier", // sidebar label
+    },
   ],
 };
 
