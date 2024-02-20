@@ -9,6 +9,7 @@ def get_all_apps_list():
     try:
         dir_full_path = get_full_path(CacheDir.home_dir.value)
         dir_path = os.listdir(dir_full_path)
+        data_source_list = []
         all_apps = []
         app_risk = 0
         findings = 0
@@ -37,6 +38,7 @@ def get_all_apps_list():
                     findings += report_summary.get('findings', 0)
                     files_findings += report_summary.get('filesWithFindings', 0)
                     data_source += report_summary.get('dataSources', 0)
+                    data_source_list.extend(app_detail_json.get('dataSources'))
                     if report_summary.get('findings', 0) > 0:
                         app_risk += 1
                     app_details['loadId'] = app_json.get('load_ids')[-1]
@@ -45,6 +47,7 @@ def get_all_apps_list():
                     get_per_app_data(app_json.get('name'))
         data = {'applicationAtRisk': app_risk, 'findings': findings, 'filesWithFindings': files_findings,
                 'dataSource': data_source, 'appList': all_apps}
+        print(f'-----Data {data}------')
 
         return json.dumps(data, indent=4)
 
