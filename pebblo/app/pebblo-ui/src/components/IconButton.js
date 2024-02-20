@@ -1,11 +1,10 @@
-const IconButton = (props) => {
-  const { className, id, type, children } = props;
-
+export const IconButton = (props) => {
+  const { className, id, children } = props;
   return /*html*/ `
-      <button ${id ? `id="${id}"` : ""} class="icon-button">
+      <button ${id ? `id="${id}"` : ""} class="icon-button ${
+    className ? className : ""
+  }">
          ${children}
       </button>
     `;
 };
-
-export default IconButton;

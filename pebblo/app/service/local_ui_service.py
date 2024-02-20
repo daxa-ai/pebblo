@@ -5,6 +5,7 @@ from pebblo.app.libs.logger import logger
 from pebblo.app.utils.utils import get_full_path
 
 
+
 def get_all_apps_list():
     dir_full_path = get_full_path(CacheDir.home_dir.value)
     dir_path = os.listdir(dir_full_path)
@@ -25,6 +26,7 @@ def get_all_apps_list():
                 app_details['name'] = app_json.get('name')
                 app_details['loadId'] = app_json.get('current_load_id')
 
+                
         except IOError as err:
             logger.error(f"No  file found at {app_path}")
 
@@ -73,3 +75,4 @@ def get_per_app_data(app_dir):
             return json.dumps(app_detail_json, indent=4)
     except IOError as err:
         logger.error(f"No file found at {app_detail_path}")
+
