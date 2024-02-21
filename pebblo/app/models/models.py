@@ -127,3 +127,20 @@ class ReportModel(BaseModel):
     topFindings: Optional[List[TopFindings]]
     instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]
+
+
+class AppListDetails(BaseModel):
+    name: str
+    topics: int
+    entities: int
+    owner: Optional[str]
+    loadId: Optional[str]
+
+
+class AppModel(BaseModel):
+    applicationsAtRiskCount: int
+    findingsCount: int
+    documentsWithFindingsCount: int
+    dataSourceCount: int
+    appList: List[AppListDetails]
+    dataSources: list
