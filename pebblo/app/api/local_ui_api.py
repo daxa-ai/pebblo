@@ -14,9 +14,9 @@ class App:
     @staticmethod
     def dashboard(request: Request):
         app_data = AppData()
-        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_all_apps_list()})
+        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_all_apps_details()})
 
     @staticmethod
     def appDetails(request: Request, app_name: str):
         app_data = AppData()
-        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_per_app_data(app_name)})
+        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_app_details(app_name)})
