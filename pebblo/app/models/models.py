@@ -130,6 +130,7 @@ class ReportModel(BaseModel):
 
 
 class AppListDetails(BaseModel):
+    name: str
     topics: int
     entities: int
     owner: Optional[str]
