@@ -45,7 +45,7 @@ class AppData:
                             topics=report_summary.get('findingsTopics', 0),
                             entities=report_summary.get('findingsEntities', 0),
                             owner=report_summary.get('owner'),
-                            loadId=app_json.get('load_ids')[-1]
+                            loadId=latest_load_id
                         )
                         data_source_list.append(app_detail_json.get('dataSources'))
                         findings += report_summary.get('findings', 0)
