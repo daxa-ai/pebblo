@@ -5,7 +5,8 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 from pathlib import Path
 from service.local_ui_service import AppLocalUI
-import json
+import os
+from fastapi.responses import FileResponse
 
 
 app = FastAPI()
@@ -24,10 +25,25 @@ async def hello(request: Request):
    return templates.TemplateResponse("index.html", {"request": request, "data": AppLocalUI.getData()})   
 
 @app.get("/appDetails", response_class=HTMLResponse)
-async def hello(request: Request, id:str):
-   # appList = AppLocalUI.getData().get('appList')
-   # filteredData = [obj for obj in appList if(obj['id'] == id)]
-   return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.getData()})     
+async def hello(request: Request, app_name:str):
+   return templates.TemplateResponse("index.html", {"request": request, "data":AppLocalUI.getAppData()})     
+
+
+@app.get("/getReport", response_class=HTMLResponse)
+async def hello(request: Request, app_name:str):
+   # file_path = os.path.dirname(os.path.dirname(__file__))+'/reports/'+ id +'.pdf'
+   file_path = os.path.dirname(os.path.dirname(__file__))+'/reports/'+app_name+'.pdf'
+
+   # To view the file in the browser, use "inline" for the media_type
+   headers = {
+       'Access-Control-Expose-Headers': 'Content-Disposition'
+   }  
+
+   # Create a FileResponse object with the file path, media type and headers
+   response = FileResponse(file_path, filename="report.pdf", media_type="application/pdf", headers=headers)
+
+   # Return the FileResponse object
+   return response
     
 
 

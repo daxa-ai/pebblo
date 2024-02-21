@@ -1,14 +1,14 @@
-import { AccordionDetails, AccordionSummary } from "./Accordion.js";
-import { ApplicationsList } from "./ApplicationList.js";
-import { Button } from "./Button.js";
-import { Card } from "./Card.js";
-import { Header } from "./Header.js";
-import { KeyValue } from "./KeyValue.js";
-import { SnippetDetails } from "./SnippetDetails.js";
-import { Tabs, Tab } from "./Tab.js";
-import { Table, Tbody, Thead, Td } from "./Table.js";
+import { AccordionDetails, AccordionSummary } from "./accordion.js";
+import { ApplicationsList } from "./applicationList.js";
+import { Button } from "./button.js";
+import { Card } from "./card.js";
+import { Header } from "./header.js";
+import { KeyValue } from "./keyValue.js";
+import { IconButton } from "./IconButton.js";
+import { SnippetDetails } from "./snippetDetails.js";
+import { Tabs, Tab } from "./tab.js";
+import { Table, Tbody, Thead, Td } from "./table.js";
 import Dialog from "./Dialog.js";
-import IconButton from "./IconButton.js";
 
 export {
   AccordionDetails,
@@ -17,6 +17,7 @@ export {
   Button,
   Card,
   Header,
+  IconButton,
   KeyValue,
   SnippetDetails,
   Tabs,
@@ -26,5 +27,4 @@ export {
   Thead,
   Td,
   Dialog,
-  IconButton,
 };

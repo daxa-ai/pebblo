@@ -1,38 +1,51 @@
 import { ApplicationsList, SnippetDetails } from "../components/index.js";
-import { getFormattedDate } from "../util.js";
+import { Tooltip } from "../components/tooltip.js";
+import { get_Formatted_Date } from "../util.js";
 
 export const MEDIA_URL = document.scripts[0].getAttribute("staticURL");
 export const APP_DATA = JSON.parse(document.scripts[0].getAttribute("appData"));
+export const APP_DETAILS_ROUTE = "/appDetails";
+
+export const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 export const APP_DETAILS_FINDINGS_TABLE = [
   {
     label: "Finding type",
-    field: "type",
-    type: APP_DATA?.name,
+    field: "findingsType",
     align: "start",
   },
   {
     label: "Finding",
-    field: "finding",
-    finding: APP_DATA?.reportSummary.findingsTopics,
-    align: "end",
+    field: "labelName",
+    type: "label",
+    align: "start",
   },
   {
     label: "Source Files",
-    field: "sourceFiles",
-    sourceFiles: APP_DATA?.reportSummary.findingsEntities,
+    field: "fileCount",
     align: "end",
   },
   {
     label: "Snippets",
-    field: "snippets",
-    snippets: APP_DATA?.reportSummary.owner,
-    align: "start",
+    field: "snippetCount",
+    align: "end",
   },
   {
     label: "Data Source",
-    field: "dataSource",
-    dataSource: APP_DATA?.reportSummary.owner,
+    field: "findings",
     align: "start",
   },
 ];
@@ -56,7 +69,7 @@ export const APP_DETAILS = [
   },
   {
     label: "Created At",
-    value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt),
+    value: get_Formatted_Date(APP_DATA?.instanceDetails?.createdAt),
   },
   {
     label: "Path",
@@ -65,10 +78,66 @@ export const APP_DETAILS = [
   },
 ];
 
+export const FILES_WITH_FINDINGS_TABLE = [
+  {
+    label: "File Name",
+    field: "fileName",
+    render: (item) => /*html*/ `
+    <div class="flex flex-col inter">
+       <div class="surface-10 font-13">${item.fileName || "-"}</div>
+       <div class="surface-10-opacity-50 font-12 flex">
+         <div>${item?.sourceSize || "-"} | ${item?.fileOwner || "-"}</div>
+       </div>
+    </div>
+ `,
+    align: "start",
+    type: "label",
+  },
+  {
+    label: "Findings-Topics",
+    field: "findingsTopics",
+    align: "end",
+  },
+  {
+    label: "Findings-Entities",
+    field: "findingsEntities",
+    align: "end",
+  },
+  {
+    label: "Data Source",
+    field: "findings",
+    align: "start",
+  },
+];
+
+export const DATA_SOURCE_TABLE = [
+  {
+    label: "Finding Type",
+    field: "findingsType",
+    align: "start",
+  },
+  {
+    label: "Finding",
+    field: "labelName",
+    align: "start",
+    type: "label",
+  },
+  {
+    label: "Source Files",
+    field: "fileCount",
+    align: "end",
+  },
+  {
+    label: "Snippets",
+    field: "snippetCount",
+    align: "end",
+  },
+];
+
 export const TABLE_DATA_FOR_APPLICATIONS = [
   {
     label: "Application",
-    field: "application",
+    field: "name",
     align: "start",
   },
   {
@@ -89,51 +158,51 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
   {
     label: "",
     field: "actions",
-    actions: `
+    actions: (item) => /*html*/ `
         <div class="flex gap-4 justify-end">
-        <img class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
-        <div class="divider"></div>
-        <img class="cursor-pointer" src="${MEDIA_URL}/static/pending-icon.png" alt="Download Icon" />
+          <img id="${item?.name}" class="download-icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
         </div>
       `,
+    //   actions: /*html*/ `
+    //   <div class="flex gap-4 justify-end">
+    //     <img id="download_icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
+    //     <div class="divider"></div>
+    //     <img id="load_history_icon" class="cursor-pointer" src="${MEDIA_URL}/static/pending-icon.png" alt="Download Icon" />
+    //   </div>
+    // `
   },
 ];
 
 export const TABLE_DATA_FOR_FINDINGS = [
   {
     label: "Finding type",
-    field: "type",
-    type: APP_DATA?.name,
+    field: "findingType",
     align: "start",
   },
   {
     label: "Finding",
-    field: "finding",
-    finding: APP_DATA?.reportSummary.findingsTopics,
+    field: "label",
     align: "start",
+    type: "label",
   },
   {
     label: "Source Files",
     field: "sourceFiles",
-    sourceFiles: APP_DATA?.reportSummary.findingsEntities,
     align: "end",
   },
   {
     label: "Snippets",
     field: "snippets",
-    snippets: APP_DATA?.reportSummary.owner,
     align: "start",
   },
   {
     label: "Data Source",
     field: "dataSource",
-    dataSource: APP_DATA?.reportSummary.owner,
     align: "start",
   },
   {
     label: "Application",
     field: "application",
-    application: "",
     align: "start",
   },
 ];
@@ -142,31 +211,35 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
   {
     label: "File Name",
     field: "fileName",
-    fileName: "",
+    render: (item) => /*html*/ `
+    <div class="flex flex-col inter">
+       <div class="surface-10 font-13">${item.fileName || "-"}</div>
+       <div class="surface-10-opacity-50 font-12 flex">
+         <div>${item?.size || "-"} | ${item?.owner || "-"}</div>
+       </div>
+    </div>
+ `,
     align: "start",
+    type: "label",
   },
   {
     label: "Findings-Topics",
-    field: "findingsTopics",
-    findingsTopics: "",
+    field: "topics",
     align: "end",
   },
   {
     label: "Findings-Entities",
-    field: "findingsEntities",
-    findingsEntities: "",
+    field: "entities",
     align: "end",
   },
   {
     label: "Data Source",
-    field: "datasource",
-    datasource: "",
+    field: "dataSource",
     align: "start",
   },
   {
     label: "Application",
     field: "application",
-    application: "",
     align: "start",
   },
 ];
@@ -175,13 +248,14 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
   {
     label: "Data Source Name",
     field: "dataSourceName",
-    render: (item) => `
+    render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.dataSourceName || "-"}</div>
          <div class="surface-10-opacity-50 font-12">-</div>
       </div>
    `,
     align: "start",
+    type: "label",
   },
   {
     label: "Findings-Topics",
@@ -206,29 +280,26 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
 export const TABS_ARR_FOR_APPLICATIONS = [
   {
     label: "Applications With Findings",
-    critical: 2,
-    outOf: 4,
+    critical: APP_DATA?.applicationAtRisk || 0,
+    outOf: APP_DATA?.appList?.length || 0,
     value: 0,
     isCritical: true,
   },
   {
     label: "Findings",
-    critical: 72,
-    outOf: 0,
+    critical: APP_DATA?.findings || 0,
     value: 1,
     isCritical: true,
   },
   {
     label: "Files With Findings",
-    critical: 8,
-    outOf: 24,
+    critical: APP_DATA?.filesWithFindings || 0,
     value: 2,
     isCritical: true,
   },
   {
     label: "Data Source",
-    critical: 4,
-    outOf: 0,
+    critical: APP_DATA?.dataSource || 0,
     value: 3,
     isCritical: false,
   },
@@ -240,7 +311,8 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       title: "Applications",
       tableCol: TABLE_DATA_FOR_APPLICATIONS,
       tableData: APP_DATA?.appList,
-      isDownloadReport: true,
+      isDownloadReport: false,
+      searchField: ["name", "owner"],
     },
     component: ApplicationsList,
   },
@@ -249,7 +321,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       title: "Findings",
       tableCol: TABLE_DATA_FOR_FINDINGS,
       tableData: [],
-      isDownloadReport: true,
+      isDownloadReport: false,
     },
     component: ApplicationsList,
   },
@@ -258,7 +330,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       title: "Files With Findings",
       tableCol: TABLE_DATA_FOR_FILES_WITH_FINDINGS,
       tableData: [],
-      isDownloadReport: true,
+      isDownloadReport: false,
     },
     component: ApplicationsList,
   },
@@ -267,7 +339,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       title: "Data Source",
       tableCol: TABLE_DATA_FOR_DATA_SOURCE,
       tableData: [],
-      isDownloadReport: true,
+      isDownloadReport: false,
     },
     component: ApplicationsList,
   },
@@ -276,29 +348,28 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
 export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
     label: "Findings",
-    critical: 72,
-    outOf: 0,
+    critical: APP_DATA?.reportSummary?.findings || 0,
     value: 0,
     isCritical: true,
   },
   {
     label: "Files With Findings",
-    critical: 8,
-    outOf: 24,
+    critical: APP_DATA?.reportSummary?.filesWithFindings || 0,
+    outOf: APP_DATA?.reportSummary?.totalFiles || 0,
     value: 1,
     isCritical: true,
   },
   {
     label: "Data Source",
-    critical: 4,
-    outOf: 0,
+    critical: APP_DATA?.reportSummary?.dataSources || 0,
     value: 2,
     isCritical: false,
   },
   {
     label: "Snippets",
-    critical: 254,
-    outOf: 0,
+    critical: APP_DATA?.dataSources
+      ? APP_DATA?.dataSources[0]?.findingsDetails?.length
+      : 0,
     value: 3,
     isCritical: false,
   },
@@ -309,15 +380,19 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
     value: {
       title: "Findings",
       tableCol: APP_DETAILS_FINDINGS_TABLE,
-      tableData: [],
+      tableData: APP_DATA?.dataSources
+        ? APP_DATA?.dataSources[0]?.findingsSummary
+        : [],
+      searchField: ["labelName", "findingsType"],
     },
     component: ApplicationsList,
   },
   {
     value: {
       title: "Files With Findngs",
-      tableCol: APP_DETAILS_FINDINGS_TABLE,
-      tableData: [],
+      tableCol: FILES_WITH_FINDINGS_TABLE,
+      tableData: APP_DATA?.topFindings,
+      searchField: ["fileOwner", "fileName"],
     },
     component: ApplicationsList,
   },
@@ -325,15 +400,44 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
     value: {
       title: "Data Source",
       tableCol: APP_DETAILS_FINDINGS_TABLE,
-      tableData: [],
+      tableData: APP_DATA?.dataSources
+        ? APP_DATA?.dataSources[0]?.findingsSummary
+        : [],
+      searchField: ["labelName", "findingsType"],
     },
     component: ApplicationsList,
   },
   {
     value: {
       title: "Snippets",
-      data: APP_DATA?.dataSources[0]?.findingsDetails,
+      data: APP_DATA?.dataSources
+        ? APP_DATA?.dataSources[0]?.findingsDetails
+        : [],
+      searchField: ["labelName", "findingsType"],
     },
     component: SnippetDetails,
   },
 ];
+
+export const LOAD_HISTORY_TABLE_COL = [
+  {
+    label: "Report Name",
+    field: "reportName",
+    type: "label",
+  },
+  {
+    label: "Findings",
+    field: "findings",
+  },
+  {
+    label: "Files With Findings",
+    field: "filesWithFindings",
+    align: "end",
+  },
+  {
+    label: "Generated On",
+    field: "generatedOn",
+  },
+];
+
+export const LOAD_HISTORY_TABLE = APP_DATA?.loadHistory?.history;
