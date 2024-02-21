@@ -20,7 +20,7 @@ Pebblo enables developers to safely load data and promote their Gen AI app to de
 
 Pebblo has two components.
 
-1. Pebblo Daemon - a REST api application with topic-classifier, entity-classifier and reporting
+1. Pebblo Server - a REST api application with topic-classifier, entity-classifier and reporting
 1. Pebblo Safe DataLoader - a thin wrapper to Gen-AI framework's data loaders
 
 `Pebblo Safe DataLoader` currently support Langchain framework. Support for other frameworks like LlamaIndex, Haystack will be added in the upcoming releases.
@@ -29,7 +29,7 @@ Pebblo has two components.
 
 - [Installation](installation.md)
 - [Development Environment](development.md)
-- [Pebblo Daemon](daemon.md)
+- [Pebblo Server](daemon.md)
 - [Pebblo Safe DataLoader for Langchain](rag.md)
 - [Reports](reports.md)
 - [Troubleshooting](troubleshooting.md)
