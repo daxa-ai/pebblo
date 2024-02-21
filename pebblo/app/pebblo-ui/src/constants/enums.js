@@ -4,6 +4,7 @@ const PATH = "Path";
 const ACTIVE = "active";
 const CLICK = "click";
 const CHANGE = "change";
+const KEYUP = "keyup";
 const DOM_CONTENT_LOADED = "DOMContentLoaded";
 const LOAD = "load";
 const ACTIONS = "actions";
@@ -18,4 +19,5 @@ export {
   DOM_CONTENT_LOADED,
   LOAD,
   ACTIONS,
+  KEYUP,
 };

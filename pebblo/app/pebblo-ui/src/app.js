@@ -11,7 +11,7 @@ export function App() {
           variant: "text",
           btnText: "Back",
           startIcon: "/static/left-arrow.png",
-          href: "/",
+          href: "/dashboard",
           style: "color:white;",
         })
       : "";

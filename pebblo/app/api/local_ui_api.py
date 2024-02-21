@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from pebblo.app.service.local_ui_service import get_all_apps_list, get_per_app_data
+from fastapi.responses import FileResponse
+from pebblo.app.enums.enums import CacheDir
+from pebblo.app.utils.utils import get_full_path
 
 templates = Jinja2Templates(directory="pebblo/app/pebblo-ui")
 
@@ -18,3 +21,16 @@ class App:
     @staticmethod
     def appDetails(request: Request, app_name: str):
         return templates.TemplateResponse("index.html", {"request": request, "data": get_per_app_data(app_name)})
+    
+    @staticmethod
+    def getReport(request: Request, app_name: str):
+        # File path for app report 
+        file_path = f'{get_full_path(CacheDir.home_dir.value)}/{app_name}/pebblo_report.pdf'
+        # To view the file in the browser, use "inline" for the media_type
+        headers = {
+            'Access-Control-Expose-Headers': 'Content-Disposition'
+        }  
+        # Create a FileResponse object with the file path, media type and headers
+        response = FileResponse(file_path, filename="report.pdf", media_type="application/pdf", headers=headers)
+        # Return the FileResponse object
+        return response

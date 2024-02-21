@@ -1,5 +1,5 @@
 import { MEDIA_URL } from "../constants/constant.js";
-import { CHANGE } from "../constants/enums.js";
+import { KEYUP } from "../constants/enums.js";
 import { waitForElement } from "../util.js";
 import { KeyValue } from "./index.js";
 
@@ -8,7 +8,7 @@ export function SnippetDetails(props) {
 
   waitForElement("#snippet_search", 1000).then(function () {
     const inputEl = document.getElementById("snippet_search");
-    if (inputEl) inputEl?.addEventListener(CHANGE, onChange);
+    if (inputEl) inputEl?.addEventListener(KEYUP, onChange);
   });
 
   function onChange(evt) {

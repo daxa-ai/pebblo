@@ -47,3 +47,17 @@ export const waitForElement = (querySelector, timeout) => {
       }, timeout);
   });
 };
+
+export const CONCAT_ARRAYS = (array, key) => {
+  if (window.location.pathname === "/dashboard") {
+    let dummy = [];
+    let dataSourceName = "";
+    array?.forEach((item) => {
+      dataSourceName = item[0]?.name;
+      dummy = [...dummy, ...item[0][key]];
+    });
+
+    return dummy?.map((item) => ({ ...item, dataSource: dataSourceName }));
+  }
+  return [];
+};
