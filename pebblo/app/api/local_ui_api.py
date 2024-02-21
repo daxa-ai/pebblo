@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
-from pebblo.app.service.local_ui_service import get_all_apps_list, get_per_app_data
+from pebblo.app.service.local_ui_service import AppData
 
 templates = Jinja2Templates(directory="pebblo/app/pebblo-ui")
 
@@ -13,8 +13,10 @@ class App:
 
     @staticmethod
     def dashboard(request: Request):
-        return templates.TemplateResponse("index.html", {"request": request, "data": get_all_apps_list()})
+        app_data = AppData()
+        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_all_apps_details()})
 
     @staticmethod
     def appDetails(request: Request, app_name: str):
-        return templates.TemplateResponse("index.html", {"request": request, "data": get_per_app_data(app_name)})
+        app_data = AppData()
+        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_app_details(app_name)})
