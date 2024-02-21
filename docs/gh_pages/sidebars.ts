@@ -20,7 +20,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "doc",
       id: "daemon", // document ID
-      label: "Pebblo Daemon", // sidebar label
+      label: "Pebblo Server", // sidebar label
     },
     {
       type: "doc",
