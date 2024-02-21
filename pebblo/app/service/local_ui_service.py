@@ -27,7 +27,7 @@ class AppData:
             for app_dir in dir_path:
                 # Path to metadata.json
                 app_path = f'{CacheDir.home_dir.value}/{app_dir}/{CacheDir.metadata_file_path.value}'
-                logger.debug(f'-----metadata.json path {app_path} -----')
+                logger.debug(f'metadata.json path {app_path}')
                 app_details = dict()
                 app_json = read_json_file(app_path)
                 # Condition for handling loadId
@@ -36,7 +36,7 @@ class AppData:
                     latest_load_id = app_json.get("load_ids")[-1]
                     # Path to report.json
                     app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.report_data_file_name.value}'
-                    logger.debug(f'-----report.json path {app_detail_path} -----')
+                    logger.debug(f'report.json path {app_detail_path}')
                     app_detail_json = read_json_file(app_detail_path)
                     if app_detail_json:
                         report_summary = app_detail_json.get('reportSummary')
@@ -57,13 +57,14 @@ class AppData:
                         all_apps.append(app_details.dict())
                 else:
                     logger.debug('Error: Unable to fetch loadId details')
+                    logger.debug(f'App Json : {app_json}')
 
             # Validation
             data = AppModel(
-                totalApplicationsAtRiskCount=apps_at_risk,
-                totalFindingsCount=findings,
-                totalDocumentsWithFindingsCount=files_findings,
-                totalDataSourceCount=data_source,
+                applicationsAtRiskCount=apps_at_risk,
+                findingsCount=findings,
+                documentsWithFindingsCount=files_findings,
+                dataSourceCount=data_source,
                 appList=all_apps,
                 dataSources=data_source_list
             )
@@ -78,7 +79,7 @@ class AppData:
         try:
             # Path to metadata.json
             app_path = f'{CacheDir.home_dir.value}/{app_dir}/{CacheDir.metadata_file_path.value}'
-            logger.debug(f'-----metadata.json path {app_path} -----')
+            logger.debug(f'metadata.json path {app_path}')
             # Reading metadata.json
             app_json = read_json_file(app_path)
             # Condition for handling loadId
@@ -88,7 +89,7 @@ class AppData:
 
                 # Path to report.json
                 app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.report_data_file_name.value}'
-                logger.debug(f'-----metadata.json path {app_detail_path} -----')
+                logger.debug(f'metadata.json path {app_detail_path}')
 
                 # Reading report.json
                 app_detail_json = read_json_file(app_detail_path)
@@ -99,6 +100,7 @@ class AppData:
 
             else:
                 logger.debug('Error: Unable to fetch loadId details')
+                logger.debug(f'App Json : {app_json}')
 
         except Exception as ex:
             logger.error(f"Error in process_request. Error:{ex}")

@@ -138,9 +138,9 @@ class AppListDetails(BaseModel):
 
 
 class AppModel(BaseModel):
-    totalApplicationsAtRiskCount: int
-    totalFindingsCount: int
-    totalDocumentsWithFindingsCount: int
-    totalDataSourceCount: int
+    applicationsAtRiskCount: int
+    findingsCount: int
+    documentsWithFindingsCount: int
+    dataSourceCount: int
     appList: List[AppListDetails]
     dataSources: list
