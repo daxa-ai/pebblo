@@ -67,7 +67,7 @@ class AppData:
                 appList=all_apps,
                 dataSources=data_source_list
             )
-            print(f'---Data {data.dict()}-----')
+
             return json.dumps(data.dict(), indent=4)
 
         except Exception as ex:
