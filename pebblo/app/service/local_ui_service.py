@@ -24,8 +24,6 @@ class AppData:
                 app_details = dict()
                 app_json = read_json_file(app_path)
                 if app_json and app_json.get('load_ids') is not None and len(app_json.get('load_ids')) > 0:
-                    app_details['name'] = app_json.get('name')
-                    app_details['loadId'] = app_json.get('load_ids')[-1]
 
                     app_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{app_json.get("load_ids")[-1]}/{CacheDir.report_data_file_name.value}'
 
@@ -33,6 +31,7 @@ class AppData:
                     if app_detail_json:
                         report_summary = app_detail_json.get('reportSummary')
                         app_details = AppListDetails(
+                            name=app_json.get('name'),
                             topics=report_summary.get('findingsTopics', 0),
                             entities=report_summary.get('findingsEntities', 0),
                             owner=report_summary.get('owner'),
