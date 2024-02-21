@@ -1,5 +1,4 @@
 from contextlib import redirect_stderr, redirect_stdout
-import uvicorn
 
 from io import StringIO
 from tqdm import tqdm
