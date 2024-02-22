@@ -68,3 +68,20 @@ def get_full_path(file_path):
             logger.error(f"Could not find {file_path} location.")
     except Exception as e:
         logger.error(f"Failed to figure out path for input : {file_path}. Exception: {e}")
+
+
+def delete_snippets(data):
+    """
+    Delete 'snippet' key from 'snippets' dictionary in 'findingsDetails'
+    from the given data dictionary if they exist.
+
+    """
+    if data.get('findingsDetails') and len(data.get('findingsDetails')) > 0:
+        for details in data.get('findingsDetails'):
+            # Deleting snippet from dataSources
+            if details.get('snippets') and len(details.get('snippets')) > 0:
+                for snippet_detail in details.get('snippets'):
+                    if snippet_detail.get('snippet'):
+                        del snippet_detail['snippet']
+
+    return data
