@@ -16,18 +16,17 @@ class Service:
         self.app.include_router(router_instance.router)
         # Fetching Details from Config File
         self.config_details = config_details
-        self.port = self.config_details.get('daemon', {}).get('port', 8000)
-        self.host = self.config_details.get('daemon', {}).get('host', 'localhost')
-        self.log_level = self.config_details.get('logging', {}).get('level', 'info')
+        self.port = self.config_details.get("daemon", {}).get("port", 8000)
+        self.host = self.config_details.get("daemon", {}).get("host", "localhost")
+        self.log_level = self.config_details.get("logging", {}).get("level", "info")
 
     async def create_main_api_server(self):
         # Add config Details to Uvicorn
-        config = uvicorn.Config(app=self.app, host=self.host, port=self.port, log_level=self.log_level)
+        config = uvicorn.Config(
+            app=self.app, host=self.host, port=self.port, log_level=self.log_level
+        )
         server = uvicorn.Server(config)
         await server.serve()
 
     def start(self):
         asyncio.run(self.create_main_api_server())
-
-
-

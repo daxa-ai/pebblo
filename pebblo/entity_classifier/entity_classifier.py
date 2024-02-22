@@ -5,11 +5,11 @@ from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 from pebblo.entity_classifier.utils.config import (
     ConfidenceScore,
     Entities,
-    SecretEntities
+    SecretEntities,
 )
 from pebblo.entity_classifier.utils.utils import (
     get_entities,
-    add_custom_regex_analyzer_registry
+    add_custom_regex_analyzer_registry,
 )
 
 from pebblo.entity_classifier.libs.logger import logger
@@ -98,8 +98,8 @@ class EntityClassifier:
                     ),
                     min_score_with_context_similarity=float(
                         ConfidenceScore.Entity.value
-                    )
-                )
+                    ),
+                ),
             )
 
             analyzer_results = self.analyze_response(input_text)

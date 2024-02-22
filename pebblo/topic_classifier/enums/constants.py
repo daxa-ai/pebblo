@@ -17,5 +17,5 @@ topic_display_names = {
     "PRICE_LIST_AGREEMENT": "Price List",
     "SETTLEMENT_AGREEMENT": "Settlement Agreement",
     "SEXUAL_HARRASSMENT_AGREEMENT": "Sexual Harassment",
-    "EMPLOYEE_AGREEMENT": "Employee Agreement"
+    "EMPLOYEE_AGREEMENT": "Employee Agreement",
 }

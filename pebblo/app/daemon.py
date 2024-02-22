@@ -14,7 +14,7 @@ def start():
     global config_details
     # For loading config file details
     parser = argparse.ArgumentParser(description="Pebblo  CLI")
-    parser.add_argument('--config', type=str, help="config file path")
+    parser.add_argument("--config", type=str, help="config file path")
     args = parser.parse_args()
     path = args.config
     p_bar = tqdm(range(10))
@@ -22,6 +22,7 @@ def start():
     classifier_init(p_bar)
     server_start(config_details, p_bar)
     print("Pebblo server Stopped. BYE!")
+
 
 def classifier_init(p_bar):
     """Initialize topic and entity classifier."""
@@ -32,7 +33,7 @@ def classifier_init(p_bar):
     p_bar.update(3)
     p_bar.write("Initializing topic classifier ...")
     p_bar.update(1)
-   
+
     # Init TopicClassifier(This step downloads the models and put in cache)
     with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
         _ = TopicClassifier()
@@ -54,6 +55,7 @@ def server_start(config_details, p_bar):
     p_bar.write("Pebblo server starting ...")
     # Starting Uvicorn Service Using config details
     from pebblo.app.config.service import Service
+
     p_bar.update(1)
     svc = Service(config_details)
     p_bar.update(2)

@@ -14,7 +14,7 @@ class DatetimeEncoder(JSONEncoder):
 
 def write_json_to_file(data, file_path):
     """
-        Write content to the specified file path
+    Write content to the specified file path
     """
     try:
         # Writing file content to given file path
@@ -24,7 +24,9 @@ def write_json_to_file(data, file_path):
         dir_path = path.dirname(full_file_path)
         makedirs(dir_path, exist_ok=True)
         with open(full_file_path, "w") as metadata_file:
-            dump(data, metadata_file, indent=4, cls=DatetimeEncoder)  # Indent for readability
+            dump(
+                data, metadata_file, indent=4, cls=DatetimeEncoder
+            )  # Indent for readability
             logger.debug(f"JSON data written successfully to: {full_file_path}")
     except Exception as e:
         logger.error(f"Error writing JSON data to file: {e}")
@@ -32,20 +34,22 @@ def write_json_to_file(data, file_path):
 
 def read_json_file(file_path):
     """
-        Retrieve the content of the specified file.
+    Retrieve the content of the specified file.
     """
     logger.debug(f"Reading content from file: {file_path}")
     full_file_path = ""
     try:
         full_file_path = get_full_path(file_path)
-        with open(full_file_path, 'r') as file:
+        with open(full_file_path, "r") as file:
             data = json.load(file)
             return data
     except FileNotFoundError:
         logger.debug(f"Exception: File not found at path {full_file_path}")
         return False
     except json.JSONDecodeError:
-        logger.error(f"Error: Unable to decode JSON in the file at path {full_file_path}")
+        logger.error(
+            f"Error: Unable to decode JSON in the file at path {full_file_path}"
+        )
         return False
 
 
@@ -67,4 +71,6 @@ def get_full_path(file_path):
         else:
             logger.error(f"Could not find {file_path} location.")
     except Exception as e:
-        logger.error(f"Failed to figure out path for input : {file_path}. Exception: {e}")
+        logger.error(
+            f"Failed to figure out path for input : {file_path}. Exception: {e}"
+        )
