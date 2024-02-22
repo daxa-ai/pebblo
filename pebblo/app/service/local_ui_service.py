@@ -61,14 +61,14 @@ class AppData:
                                 # Adding appName in findingsSummary
                                 finding_data = update_findings_summary(data, app_name)
                                 # appending only required value for dashboard
-                                findings_list.append(finding_data)
+                                findings_list.extend(finding_data)
 
                         # Fetching DocumentWithFindings details from app metadata.json
                         app_metadata_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.metadata_file_path.value}'
                         app_metadata_json_details = read_json_file(app_metadata_detail_path)
                         # Fetching required data for DocumentWithFindings
                         documents_with_findings_data = get_document_with_findings_data(app_metadata_json_details)
-                        document_with_findings_list.append(documents_with_findings_data)
+                        document_with_findings_list.extend(documents_with_findings_data)
 
                         # Dashboard Counts
                         findings += report_summary.get('findings', 0)
@@ -93,6 +93,8 @@ class AppData:
                 documentsWithFindings=document_with_findings_list,
                 dataSource=data_source_list
             )
+
+            print(data.dict())
 
             return json.dumps(data.dict(), indent=4)
 

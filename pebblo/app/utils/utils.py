@@ -94,13 +94,11 @@ def update_findings_summary(data, app_name):
     """
     try:
         # Adding app name in findingsSummary
-        finding_data_list = []
         if data.get('findingsSummary') and len(data.get('findingsSummary')) > 0:
             for finding_data in data.get('findingsSummary'):
                 finding_data['appName'] = app_name
-            finding_data_list.append(data.get('findingsSummary'))
         logger.debug(f'Updated findingsSummary Data : {data}')
-        return finding_data_list
+        return data.get('findingsSummary')
 
     except Exception as e:
         logger.error(f"Error occurred while adding appName for data  : {data}. Exception: {e}")
@@ -156,7 +154,7 @@ def get_document_with_findings_data(data):
                             'findingsTopics': source_file_details.get('findings_topics', 0),  # Get findings topics
                             'lastModified': loader_data.get('lastModified')  # Get the last modified timestamp
                         }
-                        loader_data_list.append(document_with_findings_data)  # Append the document data to the list
+                        loader_data_list.extend(document_with_findings_data)  # Append the document data to the list
     except Exception as err:
         # Handle any exceptions and print the error message
         logger.error(f"Error occurred: {str(err)}")
