@@ -39,7 +39,8 @@ function Tbody(tableCol, tableData, link) {
                  col?.field !== ACTIONS && link
                    ? `${link}/?app_name=${item?.name}`
                    : "",
-               maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
+               isTooltip: col?.isTooltip,
+               tooltipTitle: col?.tooltipTitle ? col?.tooltipTitle(item) : "",
              })
            )}
              </tr>`
@@ -53,21 +54,34 @@ function Tbody(tableCol, tableData, link) {
 }
 
 function Td(props) {
-  const { children, align, link, maxWidth } = props;
+  const { children, align, link, isTooltip, tooltipTitle } = props;
   const TEXT__ALIGN = get_Text_Orientation(align);
+  let td;
   if (link) {
-    return /*html*/ `
-      <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${maxWidth}">
+    td = /*html*/ `
+      <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 fit">
       ${children || "-"}
           <a href="${link}" id="link"></a>
       </td>
    `;
-  }
-  return `
-    <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${maxWidth}">
+  } else {
+    td = /*html*/ `
+    <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 fit">
        ${children || "-"}
        </td>
     `;
+  }
+  if (isTooltip) {
+    return /*html*/ `
+    <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 text-ellipsis">
+       ${Tooltip({
+         children: children || "-",
+         title: tooltipTitle,
+       })}
+       </td>
+    `;
+  }
+  return td;
 }
 
 export { Table, Tbody, Thead, Td };

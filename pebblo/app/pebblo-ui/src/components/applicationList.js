@@ -1,9 +1,6 @@
-import {
-  APP_DETAILS_ROUTE,
-  MEDIA_URL,
-  APP_DATA,
-} from "../constants/constant.js";
-import { CHANGE, LOAD, ACTIONS, CLICK } from "../constants/enums.js";
+import { MEDIA_URL } from "../constants/constant.js";
+import { KEYUP, LOAD, ACTIONS, CLICK } from "../constants/enums.js";
+import { APP_DETAILS_ROUTE } from "../constants/routesConstant.js";
 import { GET_FILE } from "../services/get.js";
 import { waitForElement } from "../util.js";
 import { Button, Table, Td } from "./index.js";
@@ -24,7 +21,7 @@ export function ApplicationsList(props) {
 
   waitForElement("#search_field", 1000).then(function () {
     const inputEl = document.getElementById("search_field");
-    if (inputEl) inputEl?.addEventListener(CHANGE, onChange);
+    if (inputEl) inputEl?.addEventListener(KEYUP, onChange);
   });
 
   function onChange(evt) {
@@ -52,14 +49,14 @@ export function ApplicationsList(props) {
               ${tableCol?.myMap((col) =>
                 Td({
                   children: col?.actions
-                    ? col?.actions
+                    ? col?.actions(item)
                     : col?.render
                     ? col?.render(item)
                     : item[col?.field],
                   align: col?.align,
                   link:
                     col?.field !== ACTIONS && APP_DETAILS_ROUTE
-                      ? `${APP_DETAILS_ROUTE}/?id=${APP_DATA?.instanceDetails?.id}`
+                      ? `${APP_DETAILS_ROUTE}/?app_name=${item?.name}`
                       : "",
                   maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
                 })
@@ -77,7 +74,7 @@ export function ApplicationsList(props) {
       <div class="flex justify-between">
         <div class="inter surface-10 font-16 medium">${title}</div>
         <div class="flex">
-          <div class="search">
+          <div class="search" title="Search">
             <input type="text" id="search_field" name="search" />
             <img
               src="${MEDIA_URL}/static/search-icon.png"

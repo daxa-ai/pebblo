@@ -13,8 +13,7 @@ class Reports:
             searchPath = os.path.join(os.path.dirname(__file__), 'templates/')
             try:
                 templateName = template_renderer_mapping[renderer]
-                pdfName = './' + data.name + '.pdf'
-                convertHtmlToPdf(data, pdfName, templateName = templateName, searchPath = searchPath, renderer = renderer)
+                convertHtmlToPdf(data, outputPath, templateName = templateName, searchPath = searchPath, renderer = renderer)
             except Exception as e:
                 logger.error(f"Renderer {renderer} not supported. Please use supported renderers: {ReportLibraries.WEASYPRINT} or {ReportLibraries.XHTML2PDF}, {e}")
         else:

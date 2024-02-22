@@ -1,5 +1,4 @@
 from contextlib import redirect_stderr, redirect_stdout
-
 from fastapi import FastAPI
 from io import StringIO
 import uvicorn
