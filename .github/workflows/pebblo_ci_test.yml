@@ -1,0 +1,25 @@
+name: CIPebbloTest
+
+on:
+  pull_request:
+    paths:
+      - "pebblo/**/*.py"
+jobs:
+  PebbloCITest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python_version }}
+
+      - name: Build Pebblo
+        run: |
+          pip install build
+          python -m build --wheel
+          ls -la dist/
