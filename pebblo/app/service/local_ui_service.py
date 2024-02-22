@@ -62,6 +62,8 @@ class AppData:
                             finding_data = update_findings_summary(data, app_name)
                             # appending only required value for dashboard
                             findings_list.append(finding_data)
+                            print(f'---FIndind data {findings_list}-----')
+                    print(f'---Finffff{findings_list}')
                     # Fetching DocumentWithFindings details from app metadata.json
                     app_metadata_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.metadata_file_path.value}'
                     app_metadata_json_details = read_json_file(app_metadata_detail_path)
