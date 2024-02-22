@@ -98,6 +98,7 @@ def update_findings_summary(data, app_name):
         if data.get('findingsSummary') and len(data.get('findingsSummary')) > 0:
             for finding_data in data.get('findingsSummary'):
                 finding_data['appName'] = app_name
+            print(f'---Findings info {data.get('findingsSummary')}----')
             return finding_data_list.append(data.get('findingsSummary'))
         logger.debug(f'Updated findingsSummary Data : {data}')
 
