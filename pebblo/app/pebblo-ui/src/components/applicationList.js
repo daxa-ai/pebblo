@@ -13,7 +13,9 @@ export function ApplicationsList(props) {
       const download_icons = document.getElementsByClassName("download-icon");
       Array.from(download_icons).forEach((icon) => {
         icon?.addEventListener(CLICK, function () {
-          GET_FILE(`http://127.0.0.1:8000/getReport?app_name=${icon?.id}`);
+          GET_FILE(
+            `http://127.0.0.1:8000/pebblo/getReport?app_name=${icon?.id}`
+          );
         });
       });
     }

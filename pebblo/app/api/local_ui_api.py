@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
-from pebblo.app.service.local_ui_service import get_all_apps_list, get_per_app_data
+from pebblo.app.service.local_ui_service import AppData
 from fastapi.responses import FileResponse
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.utils.utils import get_full_path
@@ -11,21 +11,23 @@ class App:
     """
         Controller Class for all the api endpoints for local ui.
     """
-    def __init__(self):
-        self.router = APIRouter()
+    def __init__(self,prefix: str):
+        self.router = APIRouter(prefix=prefix)
 
     @staticmethod
     def dashboard(request: Request):
-        return templates.TemplateResponse("index.html", {"request": request, "data": get_all_apps_list()})
+        app_data = AppData()
+        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_all_apps_details()})
 
     @staticmethod
     def appDetails(request: Request, app_name: str):
-        return templates.TemplateResponse("index.html", {"request": request, "data": get_per_app_data(app_name)})
+        app_data = AppData()
+        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_app_details(app_name)})
     
     @staticmethod
     def getReport(request: Request, app_name: str):
         # File path for app report 
-        file_path = f'{get_full_path(CacheDir.home_dir.value)}/{app_name}/pebblo_report.pdf'
+        file_path = f'{get_full_path(CacheDir.home_dir.value)}/{app_name}/{CacheDir.report_file_name.value}'
         # To view the file in the browser, use "inline" for the media_type
         headers = {
             'Access-Control-Expose-Headers': 'Content-Disposition'
