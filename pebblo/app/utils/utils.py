@@ -135,28 +135,28 @@ def get_document_with_findings_data(data):
     """
     loader_data_list = []  # Initialize an empty list to store document data
     loader_info = data.get('loaders')  # Extract loader information from the data dictionary
-    try:
-        if loader_info:
-            # Iterate over each loader in the loader_info
-            for loader_data in loader_info:
-                source_files = loader_data.get('sourceFiles')  # Extract sourceFiles information
-                if source_files:
-                    # Iterate over each source file in the source_files
-                    for source_file_details in source_files:
-                        # Create a dictionary for each document with findings data
-                        document_with_findings_data = {
-                            'appName': data.get('name'),  # Get the app name from the data dictionary
-                            'owner': data.get('owner'),  # Get the owner information from the data dictionary
-                            'name': loader_data.get('name'),  # Get the loader name
-                            'sourceFilePath': source_file_details.get('name'),  # Get the source file path
-                            'findingsEntities': source_file_details.get('findings_entities', 0),
-                            # Get findings entities
-                            'findingsTopics': source_file_details.get('findings_topics', 0),  # Get findings topics
-                            'lastModified': loader_data.get('lastModified')  # Get the last modified timestamp
-                        }
-                        loader_data_list.append(document_with_findings_data)  # Append the document data to the list
-    except Exception as err:
-        # Handle any exceptions and print the error message
-        logger.error(f"Error occurred: {str(err)}")
+    #try:
+    if loader_info:
+        # Iterate over each loader in the loader_info
+        for loader_data in loader_info:
+            source_files = loader_data.get('sourceFiles')  # Extract sourceFiles information
+            if source_files:
+                # Iterate over each source file in the source_files
+                for source_file_details in source_files:
+                    # Create a dictionary for each document with findings data
+                    document_with_findings_data = {
+                        'appName': data.get('name'),  # Get the app name from the data dictionary
+                        'owner': data.get('owner'),  # Get the owner information from the data dictionary
+                        'name': loader_data.get('name'),  # Get the loader name
+                        'sourceFilePath': source_file_details.get('name'),  # Get the source file path
+                        'findingsEntities': source_file_details.get('findings_entities', 0),
+                        # Get findings entities
+                        'findingsTopics': source_file_details.get('findings_topics', 0),  # Get findings topics
+                        'lastModified': loader_data.get('lastModified')  # Get the last modified timestamp
+                    }
+                    loader_data_list.append(document_with_findings_data)  # Append the document data to the list
+    # except Exception as err:
+    #     # Handle any exceptions and print the error message
+    #     logger.error(f"Error occurred: {str(err)}")
 
     return loader_data_list  # Return the list of document data
