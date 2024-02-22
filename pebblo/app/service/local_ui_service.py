@@ -2,7 +2,7 @@ import json
 import os
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.utils.utils import get_full_path, read_json_file
+from pebblo.app.utils.utils import get_full_path, read_json_file, delete_snippets
 from pebblo.app.models.models import AppListDetails, AppModel
 
 
@@ -55,13 +55,7 @@ class AppData:
                                 # Deleting findingsSummary from dataSources
                                 if data.get('findingsSummary'):
                                     del data['findingsSummary']
-                                if data.get('findingsDetails') and len(data.get('findingsDetails')) > 0:
-                                    for details in data.get('findingsDetails'):
-                                        # Deleting snippet from dataSources
-                                        if details.get('snippets') and len(details.get('snippets')) > 0:
-                                            for snippet_detail in details.get('snippets'):
-                                                if snippet_detail.get('snippet'):
-                                                    del snippet_detail['snippet']
+                                delete_snippets(data)
                         # appending only required value for dashboard
                         data_source_list.append(data_source_details)
                         findings += report_summary.get('findings', 0)
