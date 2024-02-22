@@ -19,6 +19,7 @@ import {
 } from "../constants/constant.js";
 import { CLICK, LOAD, PATH } from "../constants/enums.js";
 import { GET_FILE } from "../services/get.js";
+import { GET_REPORT } from "../constants/routesConstant.js";
 
 const DialogBody = () => {
   return /*html*/ `
@@ -35,9 +36,7 @@ export function AppDetailsPage() {
   window.addEventListener(LOAD, function () {
     const download_icon = document.getElementById("download_report_btn");
     download_icon.addEventListener(CLICK, function () {
-      GET_FILE(
-        `http://127.0.0.1:8000/pebblo/getReport?app_name=${APP_DATA?.name}`
-      );
+      GET_FILE(`${GET_REPORT}?app_name=${APP_DATA?.name}`);
     });
   });
 
