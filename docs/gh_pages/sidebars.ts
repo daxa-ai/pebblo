@@ -29,6 +29,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "doc",
+      id: "config", // document ID
+      label: "Pebblo Configuration File", // sidebar label
+    },
+    {
+      type: "doc",
       id: "reports", // document ID
       label: "Reports", // sidebar label
     },
