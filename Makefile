@@ -51,6 +51,7 @@ spell_check:
 
 format:
 	ruff check . --fix
+	ruff format .
 
 ################################################
 # HELP
