@@ -143,4 +143,6 @@ class AppModel(BaseModel):
     documentsWithFindingsCount: int
     dataSourceCount: int
     appList: List[AppListDetails]
-    dataSources: list
+    findings: list
+    documentsWithFindings: list
+    dataSource: list
