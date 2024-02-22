@@ -31,6 +31,6 @@ Pebblo has two components.
 - [Development Environment](development.md)
 - [Pebblo Daemon](daemon.md)
 - [Pebblo Safe DataLoader for Langchain](rag.md)
-- [Pebblo Configuration File ](config.md)
+- [Pebblo Configuration File ](/pebblo/docs/gh_pages/docs/config.md)
 - [Reports](reports.md)
 - [Troubleshooting](troubleshooting.md)
