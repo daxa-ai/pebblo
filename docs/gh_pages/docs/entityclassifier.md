@@ -28,4 +28,4 @@ Below is the list of `entities` supported by Pebblo -
 User can get details of classified entities for their loader source files in Pebblo report.  
 Different sections of Pebblo report such as , `Top Files with Most Findings`, `Data Source Findings Table` and `Snippets`  helps to get overview of pebblo entity classifier output for user's Rag application.  
   
-For more details refer - [Reports](../reports.md)
+For more details refer - [Reports](reports.md)
