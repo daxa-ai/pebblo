@@ -51,13 +51,13 @@ pip3 install dist/pebblo-<version>-py3-none-any.whl
 
 Pebblo script will the install as `.venv/bin/pebblo`
 
-### Run Pebblo Daemon
+### Run Pebblo Server
 
 ```bash
 pebblo
 ```
 
-Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application document snippets for inspection and reporting.
+Pebblo server now listens to `localhost:8000` to accept Gen-AI application document snippets for inspection and reporting.
 
 ## Creating a pull request
 

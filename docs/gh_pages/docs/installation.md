@@ -14,19 +14,19 @@ brew install pango
 sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
 ```
 
-### Pebblo Daemon
+### Pebblo Server
 
 ```
 pip install pebblo
 ```
 
-# Run Pebblo daemon
+# Run Pebblo server
 
 ```
 pebblo
 ```
 
-Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
+Pebblo server now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
 
 see [troubeshooting](troubleshooting.md) if you face any issues.
 
