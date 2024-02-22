@@ -59,10 +59,9 @@ class AppData:
                             updated_data_source_dict = update_data_source(data, app_name)
                             data_source_list.append(updated_data_source_dict)
                             # Adding appName in findingsSummary
-                            update_findings_summary(data, app_name)
-
-                    # appending only required value for dashboard
-                    findings_list.append(data_source_details['findingsSummary'])
+                            finding_data = update_findings_summary(data, app_name)
+                            # appending only required value for dashboard
+                            findings_list.append(finding_data)
                     # Fetching DocumentWithFindings details from app metadata.json
                     app_metadata_detail_path = f'{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.metadata_file_path.value}'
                     app_metadata_json_details = read_json_file(app_metadata_detail_path)

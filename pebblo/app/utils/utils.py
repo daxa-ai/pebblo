@@ -94,11 +94,12 @@ def update_findings_summary(data, app_name):
     """
     try:
         # Adding app name in findingsSummary
+        finding_data_list = []
         if data.get('findingsSummary') and len(data.get('findingsSummary')) > 0:
             for finding_data in data.get('findingsSummary'):
                 finding_data['appName'] = app_name
+            return finding_data_list.append(data.get('findingsSummary'))
         logger.debug(f'Updated findingsSummary Data : {data}')
-        return data
 
     except Exception as e:
         logger.error(f"Error occurred while adding appName for data  : {data}. Exception: {e}")
