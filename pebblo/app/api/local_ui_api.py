@@ -4,7 +4,7 @@ from pebblo.app.service.local_ui_service import AppData
 from fastapi.responses import FileResponse
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.utils.utils import get_full_path
-
+ 
 templates = Jinja2Templates(directory="pebblo/app/pebblo-ui")
 
 class App:
@@ -17,12 +17,13 @@ class App:
     @staticmethod
     def dashboard(request: Request):
         app_data = AppData()
-        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_all_apps_details()})
+        proxy = CacheDir.report_file_name.value
+        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_all_apps_details(), "proxy": CacheDir.proxy.value})
 
     @staticmethod
     def appDetails(request: Request, app_name: str):
         app_data = AppData()
-        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_app_details(app_name)})
+        return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_app_details(app_name), "proxy": CacheDir.proxy.value})
     
     @staticmethod
     def getReport(request: Request, app_name: str):

@@ -1,4 +1,4 @@
-const PROXY = `http://127.0.0.1:${window.location.port}`;
+export const PROXY = document.scripts[0].getAttribute("proxy");
 const PREFIX = "/pebblo";
 
 export const DASHBOARD_ROUTE = PREFIX + "/";
