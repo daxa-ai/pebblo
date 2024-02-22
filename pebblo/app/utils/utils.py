@@ -147,7 +147,7 @@ def get_document_with_findings_data(data):
                         document_with_findings_data = {
                             'appName': data.get('name'),  # Get the app name from the data dictionary
                             'owner': data.get('owner'),  # Get the owner information from the data dictionary
-                            'name': loader_data.get('name'),  # Get the loader name
+                            'sourceName': loader_data.get('name'),  # Get the loader name
                             'sourceFilePath': source_file_details.get('name'),  # Get the source file path
                             'findingsEntities': source_file_details.get('findings_entities', 0),
                             # Get findings entities
