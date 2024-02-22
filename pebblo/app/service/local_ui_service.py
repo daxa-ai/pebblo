@@ -64,7 +64,6 @@ class AppData:
                                                     del snippet_detail['snippet']
                         # appending only required value for dashboard
                         data_source_list.append(data_source_details)
-                        print(f'-----{data_source_details}------')
                         findings += report_summary.get('findings', 0)
                         files_findings += report_summary.get('filesWithFindings', 0)
                         data_source += report_summary.get('dataSources', 0)
@@ -85,7 +84,7 @@ class AppData:
                 appList=all_apps,
                 dataSources=data_source_list
             )
-
+            print(f'----Data {data.dict()}-----')
             return json.dumps(data.dict(), indent=4)
 
         except Exception as ex:
