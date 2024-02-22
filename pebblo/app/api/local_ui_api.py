@@ -17,7 +17,6 @@ class App:
     @staticmethod
     def dashboard(request: Request):
         app_data = AppData()
-        proxy = CacheDir.report_file_name.value
         return templates.TemplateResponse("index.html", {"request": request, "data": app_data.get_all_apps_details(), "proxy": CacheDir.proxy.value})
 
     @staticmethod
