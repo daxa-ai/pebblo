@@ -154,9 +154,8 @@ def get_document_with_findings_data(data):
                             'findingsTopics': source_file_details.get('findings_topics', 0),  # Get findings topics
                             'lastModified': loader_data.get('lastModified')  # Get the last modified timestamp
                         }
-                        loader_data_list.extend(document_with_findings_data)  # Append the document data to the list
+                        loader_data_list.append(document_with_findings_data)  # Append the document data to the list
     except Exception as err:
         # Handle any exceptions and print the error message
         logger.error(f"Error occurred: {str(err)}")
-
     return loader_data_list  # Return the list of document data
