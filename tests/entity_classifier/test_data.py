@@ -66,3 +66,9 @@ ITIN number 927 70 5828.
 Azure client secret : c4cb6f91-15a7-4e6d-a824-abcdef012345
 AWS API ID: 7sikmzo5m6
 """
+
+negative_data = """
+Sachin's SSN is 222-85.
+His AWS Access Key is: AKIPT4PDORIRTV6PH.
+And Github Token is: ghpu657yiujgwfrtigu3ver238765tyuhygvtrder6t7gyvhbuy5e676578976tyghy76578uygfyfgcyturtdf
+"""

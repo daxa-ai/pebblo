@@ -2,8 +2,15 @@ from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 
-from pebblo.entity_classifier.utils.config import ConfidenceScore, Entities, SecretEntities
-from pebblo.entity_classifier.utils.utils import get_entities, add_custom_regex_analyzer_registry
+from pebblo.entity_classifier.utils.config import (
+    ConfidenceScore,
+    Entities,
+    SecretEntities
+)
+from pebblo.entity_classifier.utils.utils import (
+    get_entities,
+    add_custom_regex_analyzer_registry
+)
 
 from pebblo.entity_classifier.libs.logger import logger
 
@@ -14,12 +21,18 @@ class EntityClassifier:
         self.anonymizer = AnonymizerEngine()
 
     def analyze_response(self, input_text):
-        analyzer_results = self.analyzer.analyze(text=input_text, language='en')
-        analyzer_results = [result for result in analyzer_results if result.score >= float(ConfidenceScore.Entity.value)]
+        analyzer_results = self.analyzer.analyze(text=input_text, language="en")
+        analyzer_results = [
+            result
+            for result in analyzer_results
+            if result.score >= float(ConfidenceScore.Entity.value)
+        ]
         return analyzer_results
 
     def anomyze_response(self, analyzer_results, input_text):
-        anonymized_text = self.anonymizer.anonymize(text=input_text, analyzer_results=analyzer_results)
+        anonymized_text = self.anonymizer.anonymize(
+            text=input_text, analyzer_results=analyzer_results
+        )
         response = anonymized_text.items
         return response
 
@@ -80,8 +93,12 @@ class EntityClassifier:
             self.analyzer = AnalyzerEngine(
                 registry=custom_registry,
                 context_aware_enhancer=LemmaContextAwareEnhancer(
-                    context_similarity_factor=float(ConfidenceScore.ContextSimilarityScore.value),
-                    min_score_with_context_similarity=float(ConfidenceScore.Entity.value)
+                    context_similarity_factor=float(
+                        ConfidenceScore.ContextSimilarityScore.value
+                    ),
+                    min_score_with_context_similarity=float(
+                        ConfidenceScore.Entity.value
+                    )
                 )
             )
 
@@ -89,7 +106,9 @@ class EntityClassifier:
             response = self.anomyze_response(analyzer_results, input_text)
             logger.debug(f"Presidio Secret Entity Classifier Response: {response}")
             secret_entities, total_count = get_entities(SecretEntities, response)
-            logger.debug(f"Presidio Secret Entity Classifier Finished {secret_entities}")
+            logger.debug(
+                f"Presidio Secret Entity Classifier Finished {secret_entities}"
+            )
             logger.debug(f"Secret Entity Total count. {total_count}")
             return secret_entities, total_count
         except Exception as e:
