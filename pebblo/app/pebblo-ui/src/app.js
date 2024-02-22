@@ -1,7 +1,10 @@
 import "./polyfill.js";
 import { Button, Card, Header } from "./components/index.js";
 import { appRoutes } from "./routes.js";
-import { APP_DETAILS_ROUTE } from "./constants/constant.js";
+import {
+  APP_DETAILS_ROUTE,
+  DASHBOARD_ROUTE,
+} from "./constants/routesConstant.js";
 
 export function App() {
   const UI = appRoutes();
@@ -11,7 +14,7 @@ export function App() {
           variant: "text",
           btnText: "Back",
           startIcon: "/static/left-arrow.png",
-          href: "/",
+          href: DASHBOARD_ROUTE,
           style: "color:white;",
         })
       : "";

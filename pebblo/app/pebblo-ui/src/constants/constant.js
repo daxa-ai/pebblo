@@ -1,10 +1,9 @@
 import { ApplicationsList, SnippetDetails } from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
-import { get_Formatted_Date } from "../util.js";
+import { CONCAT_ARRAYS, get_Formatted_Date } from "../util.js";
 
 export const MEDIA_URL = document.scripts[0].getAttribute("staticURL");
 export const APP_DATA = JSON.parse(document.scripts[0].getAttribute("appData"));
-export const APP_DETAILS_ROUTE = "/appDetails";
 
 export const MONTHS = [
   "Jan",
@@ -30,7 +29,6 @@ export const APP_DETAILS_FINDINGS_TABLE = [
   {
     label: "Finding",
     field: "labelName",
-    type: "label",
     align: "start",
   },
   {
@@ -91,7 +89,6 @@ export const FILES_WITH_FINDINGS_TABLE = [
     </div>
  `,
     align: "start",
-    type: "label",
   },
   {
     label: "Findings-Topics",
@@ -106,7 +103,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
   {
     label: "Data Source",
     field: "findings",
-    align: "start",
+    align: "end",
   },
 ];
 
@@ -120,7 +117,6 @@ export const DATA_SOURCE_TABLE = [
     label: "Finding",
     field: "labelName",
     align: "start",
-    type: "label",
   },
   {
     label: "Source Files",
@@ -158,11 +154,14 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
   {
     label: "",
     field: "actions",
-    actions: (item) => /*html*/ `
-        <div class="flex gap-4 justify-end">
-          <img id="${item?.name}" class="download-icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
-        </div>
-      `,
+    actions: (item) =>
+      Tooltip({
+        children: /*html*/ `<div class="flex gap-4 justify-end">
+      <img id="${item?.name}" class="download-icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
+    </div>`,
+        title: "Download Icon",
+      }),
+    align: "end",
     //   actions: /*html*/ `
     //   <div class="flex gap-4 justify-end">
     //     <img id="download_icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
@@ -176,24 +175,23 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
 export const TABLE_DATA_FOR_FINDINGS = [
   {
     label: "Finding type",
-    field: "findingType",
+    field: "findingsType",
     align: "start",
   },
   {
     label: "Finding",
-    field: "label",
+    field: "labelName",
     align: "start",
-    type: "label",
   },
   {
     label: "Source Files",
-    field: "sourceFiles",
+    field: "fileCount",
     align: "end",
   },
   {
     label: "Snippets",
-    field: "snippets",
-    align: "start",
+    field: "snippetCount",
+    align: "end",
   },
   {
     label: "Data Source",
@@ -210,17 +208,8 @@ export const TABLE_DATA_FOR_FINDINGS = [
 export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
   {
     label: "File Name",
-    field: "fileName",
-    render: (item) => /*html*/ `
-    <div class="flex flex-col inter">
-       <div class="surface-10 font-13">${item.fileName || "-"}</div>
-       <div class="surface-10-opacity-50 font-12 flex">
-         <div>${item?.size || "-"} | ${item?.owner || "-"}</div>
-       </div>
-    </div>
- `,
+    field: "labelName",
     align: "start",
-    type: "label",
   },
   {
     label: "Findings-Topics",
@@ -255,7 +244,6 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
       </div>
    `,
     align: "start",
-    type: "label",
   },
   {
     label: "Findings-Topics",
@@ -280,26 +268,26 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
 export const TABS_ARR_FOR_APPLICATIONS = [
   {
     label: "Applications With Findings",
-    critical: APP_DATA?.applicationAtRisk || 0,
+    critical: APP_DATA?.applicationsAtRiskCount || 0,
     outOf: APP_DATA?.appList?.length || 0,
     value: 0,
     isCritical: true,
   },
   {
     label: "Findings",
-    critical: APP_DATA?.findings || 0,
+    critical: APP_DATA?.findingsCount || 0,
     value: 1,
     isCritical: true,
   },
   {
     label: "Files With Findings",
-    critical: APP_DATA?.filesWithFindings || 0,
+    critical: APP_DATA?.documentsWithFindingsCount || 0,
     value: 2,
     isCritical: true,
   },
   {
     label: "Data Source",
-    critical: APP_DATA?.dataSource || 0,
+    critical: APP_DATA?.dataSourceCount || 0,
     value: 3,
     isCritical: false,
   },
@@ -320,7 +308,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
     value: {
       title: "Findings",
       tableCol: TABLE_DATA_FOR_FINDINGS,
-      tableData: [],
+      tableData: CONCAT_ARRAYS(APP_DATA?.dataSources, "findingsDetails"),
       isDownloadReport: false,
     },
     component: ApplicationsList,
@@ -329,7 +317,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
     value: {
       title: "Files With Findings",
       tableCol: TABLE_DATA_FOR_FILES_WITH_FINDINGS,
-      tableData: [],
+      tableData: CONCAT_ARRAYS(APP_DATA?.dataSources, "findingsSummary"),
       isDownloadReport: false,
     },
     component: ApplicationsList,
@@ -338,7 +326,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
     value: {
       title: "Data Source",
       tableCol: TABLE_DATA_FOR_DATA_SOURCE,
-      tableData: [],
+      tableData: APP_DATA?.dataSources,
       isDownloadReport: false,
     },
     component: ApplicationsList,
@@ -423,7 +411,8 @@ export const LOAD_HISTORY_TABLE_COL = [
   {
     label: "Report Name",
     field: "reportName",
-    type: "label",
+    isTooltip: true,
+    tooltipTitle: (item) => item.reportName,
   },
   {
     label: "Findings",
