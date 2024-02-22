@@ -13,6 +13,8 @@ class CacheDir(Enum):
     home_dir = config_details.get('reports', {}).get('outputDir', '~/.pebblo')
     renderer = config_details.get('reports', {}).get('renderer')
     format = config_details.get('reports', {}).get('format')
+    proxy = f"http://{config_details.get('daemon', {}).get('host')}:{config_details.get('daemon', {}).get('port')}"
+
 
 
 class ReportConstants(Enum):

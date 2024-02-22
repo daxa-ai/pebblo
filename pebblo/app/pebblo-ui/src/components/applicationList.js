@@ -1,6 +1,6 @@
 import { MEDIA_URL } from "../constants/constant.js";
 import { KEYUP, LOAD, ACTIONS, CLICK } from "../constants/enums.js";
-import { APP_DETAILS_ROUTE } from "../constants/routesConstant.js";
+import { APP_DETAILS_ROUTE, GET_REPORT } from "../constants/routesConstant.js";
 import { GET_FILE } from "../services/get.js";
 import { waitForElement } from "../util.js";
 import { Button, Table, Td } from "./index.js";
@@ -13,7 +13,7 @@ export function ApplicationsList(props) {
       const download_icons = document.getElementsByClassName("download-icon");
       Array.from(download_icons).forEach((icon) => {
         icon?.addEventListener(CLICK, function () {
-          GET_FILE(`http://127.0.0.1:8000/getReport?app_name=${icon?.id}`);
+          GET_FILE(`${GET_REPORT}?app_name=${icon?.id}`);
         });
       });
     }
