@@ -18,9 +18,22 @@ const sidebars: SidebarsConfig = {
       label: "Development Environment", // sidebar label
     },
     {
-      type: "doc",
-      id: "daemon", // document ID
+      type: "category",
       label: "Pebblo Server", // sidebar label
+      items: [
+        {
+          type: "doc",
+          id: "daemon",
+        },
+        {
+          type: "doc",
+          id: "entityclassifier",
+        },
+        {
+          type: "doc",
+          id: "topicclassifier",
+        },
+      ],
     },
     {
       type: "doc",
@@ -37,20 +50,10 @@ const sidebars: SidebarsConfig = {
       id: "reports", // document ID
       label: "Reports", // sidebar label
     },
-     {
+    {
       type: "doc",
       id: "troubleshooting", // document ID
       label: "Troubleshooting Guide", // sidebar label
-    },
-    {
-      type: "doc",
-      id: "entityclassifier", // document ID
-      label: "Pebblo Entity Classifier", // sidebar label
-    },
-    {
-      type: "doc",
-      id: "topicclassifier", // document ID
-      label: "Pebblo Topic Classifier", // sidebar label
     },
   ],
 };
