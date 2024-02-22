@@ -25,6 +25,9 @@ def mocked_objects():
 
 @pytest.fixture
 def mocked_presidio_entity_response(mocker):
+    """
+    Mocking entity classifier response
+    """
     mocker.patch(
         "pebblo.entity_classifier.entity_classifier.EntityClassifier.analyze_response",
         return_value=Mock(),
@@ -63,6 +66,9 @@ def mocked_presidio_entity_response(mocker):
 
 @pytest.fixture
 def mocked_presidio_secret_response(mocker):
+    """
+    Mocking secret entity classifier response
+    """
     mocker.patch(
         "pebblo.entity_classifier.entity_classifier.EntityClassifier.analyze_response",
         return_value=Mock(),
@@ -98,9 +104,10 @@ def test_entity_classifier_init(mocked_objects) -> None:
     _ = EntityClassifier()
 
 
-def test_presidio_entity_classifier1(
-    entity_classifier, mocked_presidio_entity_response
-):
+def test_presidio_entity_classifier(entity_classifier, mocked_presidio_entity_response):
+    """
+    UTs for presidio_entity_classifier function
+    """
     entities, total_count = entity_classifier.presidio_entity_classifier(input_text1)
     assert entities == {"US ITIN": 1, "US SSN": 1}
     assert total_count == 2
@@ -123,9 +130,12 @@ def test_presidio_entity_classifier1(
     assert total_count == 0
 
 
-def test_presidio_secret_entity_classifier1(
+def test_presidio_secret_entity_classifier(
     entity_classifier, mocked_presidio_secret_response
 ):
+    """
+    UTs for presidio_secret_classifier function
+    """
     secret_entities, total_count = entity_classifier.presidio_secret_classifier(
         input_text1
     )
