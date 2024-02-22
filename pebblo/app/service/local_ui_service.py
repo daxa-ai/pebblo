@@ -94,8 +94,6 @@ class AppData:
                 dataSource=data_source_list
             )
 
-            print(data.dict())
-
             return json.dumps(data.dict(), indent=4)
 
         except Exception as ex:
