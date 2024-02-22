@@ -120,8 +120,7 @@ class AppDiscover:
             ai_apps = self._create_ai_apps_model(instance_details)
 
             # Write file to metadata location
-            file_path = (f"{CacheDir.home_dir.value}/{self.application_name}/{self.load_id}"
-                         f"/{CacheDir.metadata_file_path.value}")
+            file_path = (f"{CacheDir.home_dir.value}/{self.application_name}/{self.load_id}" f"/{CacheDir.metadata_file_path.value}")
             self._write_file_content_to_path(ai_apps.dict(), file_path)
 
             logger.debug(f"AiApp discovery request completed successfully")

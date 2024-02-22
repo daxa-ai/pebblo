@@ -49,7 +49,7 @@ export const waitForElement = (querySelector, timeout) => {
 };
 
 export const CONCAT_ARRAYS = (array, key) => {
-  if (window.location.pathname === "/dashboard") {
+  if (window.location.pathname === "/local-ui/dashboard") {
     let dummy = [];
     let dataSourceName = "";
     array?.forEach((item) => {

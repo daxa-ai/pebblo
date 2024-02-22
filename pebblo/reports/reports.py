@@ -1,6 +1,6 @@
 # Import HTML to PDF generator function
 
-from pebblo.reports.html_to_pdf_generator.report_generator import convertHtmlToPdf;
+from pebblo.reports.html_to_pdf_generator.report_generator import convertHtmlToPdf
 from pebblo.reports.enums.report_libraries import ReportLibraries, template_renderer_mapping
 from pebblo.reports.libs.logger import logger
 import os
@@ -13,8 +13,7 @@ class Reports:
             searchPath = os.path.join(os.path.dirname(__file__), 'templates/')
             try:
                 templateName = template_renderer_mapping[renderer]
-                pdfName = './' + data.name + '.pdf'
-                convertHtmlToPdf(data, pdfName, templateName = templateName, searchPath = searchPath, renderer = renderer)
+                convertHtmlToPdf(data, outputPath, templateName = templateName, searchPath = searchPath, renderer = renderer)
             except Exception as e:
                 logger.error(f"Renderer {renderer} not supported. Please use supported renderers: {ReportLibraries.WEASYPRINT} or {ReportLibraries.XHTML2PDF}, {e}")
         else:
