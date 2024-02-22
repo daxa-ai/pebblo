@@ -4,7 +4,6 @@ import { CONCAT_ARRAYS, get_Formatted_Date } from "../util.js";
 
 export const MEDIA_URL = document.scripts[0].getAttribute("staticURL");
 export const APP_DATA = JSON.parse(document.scripts[0].getAttribute("appData"));
-export const APP_DETAILS_ROUTE = "/local-ui/appDetails";
 
 export const MONTHS = [
   "Jan",

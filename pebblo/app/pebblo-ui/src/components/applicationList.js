@@ -1,9 +1,6 @@
-import {
-  APP_DETAILS_ROUTE,
-  MEDIA_URL,
-  APP_DATA,
-} from "../constants/constant.js";
+import { MEDIA_URL } from "../constants/constant.js";
 import { KEYUP, LOAD, ACTIONS, CLICK } from "../constants/enums.js";
+import { APP_DETAILS_ROUTE } from "../constants/routesConstant.js";
 import { GET_FILE } from "../services/get.js";
 import { waitForElement } from "../util.js";
 import { Button, Table, Td } from "./index.js";

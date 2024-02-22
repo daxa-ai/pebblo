@@ -1,4 +1,5 @@
 import { MONTHS } from "./constants/constant.js";
+import { APP_DETAILS_ROUTE } from "./constants/routesConstant.js";
 
 export const get_Formatted_Date = (date) => {
   const newDate = new Date(date);
@@ -49,7 +50,7 @@ export const waitForElement = (querySelector, timeout) => {
 };
 
 export const CONCAT_ARRAYS = (array, key) => {
-  if (window.location.pathname === "/local-ui/dashboard") {
+  if (window.location.pathname === APP_DETAILS_ROUTE) {
     let dummy = [];
     let dataSourceName = "";
     array?.forEach((item) => {
