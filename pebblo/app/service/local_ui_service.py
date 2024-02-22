@@ -2,7 +2,7 @@ import json
 import os
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.utils.utils import get_full_path, read_json_file
+from pebblo.app.utils.utils import get_full_path, read_json_file, delete_snippets
 from pebblo.app.models.models import AppListDetails, AppModel
 
 
@@ -28,7 +28,6 @@ class AppData:
                 # Path to metadata.json
                 app_path = f'{CacheDir.home_dir.value}/{app_dir}/{CacheDir.metadata_file_path.value}'
                 logger.debug(f'metadata.json path {app_path}')
-                app_details = dict()
                 app_json = read_json_file(app_path)
                 # Condition for handling loadId
                 if app_json and app_json.get('load_ids') is not None and len(app_json.get('load_ids')) > 0:
@@ -47,7 +46,18 @@ class AppData:
                             owner=report_summary.get('owner'),
                             loadId=latest_load_id
                         )
-                        data_source_list.append(app_detail_json.get('dataSources'))
+
+                        # Fetching dataSources
+                        data_source_details = app_detail_json.get('dataSources')
+                        # Fetching only required values for dashboard pages
+                        if data_source_details and len(data_source_details) > 0:
+                            for data in data_source_details:
+                                # Deleting findingsSummary from dataSources
+                                if data.get('findingsSummary'):
+                                    del data['findingsSummary']
+                                delete_snippets(data)
+                        # appending only required value for dashboard
+                        data_source_list.append(data_source_details)
                         findings += report_summary.get('findings', 0)
                         files_findings += report_summary.get('filesWithFindings', 0)
                         data_source += report_summary.get('dataSources', 0)
@@ -68,7 +78,6 @@ class AppData:
                 appList=all_apps,
                 dataSources=data_source_list
             )
-
             return json.dumps(data.dict(), indent=4)
 
         except Exception as ex:
