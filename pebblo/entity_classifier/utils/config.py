@@ -3,6 +3,16 @@ Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 """
 from enum import Enum
 
+secret_entities_context_mapping = {
+    "Github Token": ["github", "github_token"],
+    "Slack Token": ["slack", "slack token", "slack_token"],
+    "AWS Access Key": ["aws_access_key", "aws_key", "access", "id", "api"],
+    "AWS Secret Key": ["aws_secret_key", "secret"],
+    "Azure Key ID": ["azure_key", "azure_key_id", "azure_id", "key"],
+    "Azure Client Secret": ["azure_client_secret", "client", "secret"],
+    "Google API Key": ["google_api_key", "google_key", "google"],
+}
+
 
 class Entities(Enum):
     # PII
@@ -29,4 +39,6 @@ class SecretEntities(Enum):
 
 
 class ConfidenceScore(Enum):
-    Entity = "0.80"
+    Entity = "0.35"  # It denotes minimum confidence score when context matches
+    EntityMinScore = "0.4"  # It denotes the pattern's strength
+    ContextSimilarityScore = "0.3"  # It denotes how much to enhance confidence of match entity when context matches

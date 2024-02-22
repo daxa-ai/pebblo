@@ -1,9 +1,13 @@
 """
 Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 """
-from presidio_analyzer import Pattern, PatternRecognizer
+from presidio_analyzer import Pattern, PatternRecognizer, RecognizerRegistry
 
-from pebblo.entity_classifier.utils.config import SecretEntities, ConfidenceScore
+from pebblo.entity_classifier.utils.config import (
+    ConfidenceScore,
+    SecretEntities,
+    secret_entities_context_mapping,
+)
 from pebblo.entity_classifier.utils.regex_pattern import regex_secrets_patterns
 
 
@@ -20,22 +24,30 @@ def get_entities(entities_enum, response):
 
 
 def add_custom_regex_analyzer_registry():
-    regex_recognizer = []
+    """
+    Using context word enhancer
+    :return: Recognizer Registry with patterns and contexts
+    """
+    recognizer_registry = RecognizerRegistry()
+
     # Creating custom regex recognizer
     for entity, regex_pattern in regex_secrets_patterns.items():
+        # Define regex pattern
         pattern = [
             Pattern(
                 name=SecretEntities(entity).value,
                 regex=regex_pattern,
-                score=float(ConfidenceScore.Entity.value)
+                score=float(ConfidenceScore.EntityMinScore.value),
             ),
         ]
 
+        # Define recognizer with the defined pattern
         recognizer = PatternRecognizer(
             supported_entity=SecretEntities(entity).name,
             name=f"{'_'.join(entity.split(' '))}_recognizer",
-            patterns=pattern
+            patterns=pattern,
+            context=secret_entities_context_mapping[SecretEntities(entity).value],
         )
-        regex_recognizer.append(recognizer)
+        recognizer_registry.add_recognizer(recognizer)
 
-    return regex_recognizer
+    return recognizer_registry
