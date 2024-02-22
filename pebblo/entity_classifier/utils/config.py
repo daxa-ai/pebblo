@@ -3,7 +3,6 @@ Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 """
 from enum import Enum
 
-
 secret_entities_context_mapping = {
     "Github Token": ["github", "github_token"],
     "Slack Token": ["slack", "slack token", "slack_token"],

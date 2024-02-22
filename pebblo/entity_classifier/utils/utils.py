@@ -3,7 +3,11 @@ Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 """
 from presidio_analyzer import Pattern, PatternRecognizer, RecognizerRegistry
 
-from pebblo.entity_classifier.utils.config import SecretEntities, ConfidenceScore, secret_entities_context_mapping
+from pebblo.entity_classifier.utils.config import (
+    ConfidenceScore,
+    SecretEntities,
+    secret_entities_context_mapping,
+)
 from pebblo.entity_classifier.utils.regex_pattern import regex_secrets_patterns
 
 
@@ -33,7 +37,7 @@ def add_custom_regex_analyzer_registry():
             Pattern(
                 name=SecretEntities(entity).value,
                 regex=regex_pattern,
-                score=float(ConfidenceScore.EntityMinScore.value)
+                score=float(ConfidenceScore.EntityMinScore.value),
             ),
         ]
 
@@ -42,7 +46,7 @@ def add_custom_regex_analyzer_registry():
             supported_entity=SecretEntities(entity).name,
             name=f"{'_'.join(entity.split(' '))}_recognizer",
             patterns=pattern,
-            context=secret_entities_context_mapping[SecretEntities(entity).value]
+            context=secret_entities_context_mapping[SecretEntities(entity).value],
         )
         recognizer_registry.add_recognizer(recognizer)
 
