@@ -23,6 +23,7 @@ def start():
     server_start(config_details, p_bar)
     print("Pebblo server Stopped. BYE!")
 
+
 def classifier_init(p_bar):
     """Initialize topic and entity classifier."""
     p_bar.write("Downloading topic, entity classifier models ...")
@@ -32,7 +33,7 @@ def classifier_init(p_bar):
     p_bar.update(3)
     p_bar.write("Initializing topic classifier ...")
     p_bar.update(1)
-   
+
     # Init TopicClassifier(This step downloads the models and put in cache)
     with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
         _ = TopicClassifier()
