@@ -1,12 +1,20 @@
 import { MEDIA_URL } from "../constants/constant.js";
 import { KEYUP, LOAD, ACTIONS, CLICK } from "../constants/enums.js";
-import { APP_DETAILS_ROUTE, GET_REPORT } from "../constants/routesConstant.js";
+import { GET_REPORT } from "../constants/routesConstant.js";
 import { GET_FILE } from "../services/get.js";
 import { waitForElement } from "../util.js";
 import { Button, Table, Td } from "./index.js";
 
 export function ApplicationsList(props) {
-  const { title, tableCol, tableData, isDownloadReport, searchField } = props;
+  const {
+    title,
+    tableCol,
+    tableData,
+    isDownloadReport,
+    searchField,
+    isSorting,
+    link,
+  } = props;
 
   window.addEventListener(LOAD, function () {
     if (tableCol?.find((col) => col?.field === ACTIONS)) {
@@ -55,8 +63,8 @@ export function ApplicationsList(props) {
                     : item[col?.field],
                   align: col?.align,
                   link:
-                    col?.field !== ACTIONS && APP_DETAILS_ROUTE
-                      ? `${APP_DETAILS_ROUTE}/?app_name=${item?.name}`
+                    col?.field !== ACTIONS && link
+                      ? `${link}/?app_name=${item?.name}`
                       : "",
                   maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
                 })
@@ -92,9 +100,10 @@ export function ApplicationsList(props) {
         </div>
       </div>
       ${Table({
-        tableCol: tableCol,
-        tableData: tableData,
-        link: APP_DETAILS_ROUTE,
+        tableCol,
+        tableData,
+        link,
+        isSorting,
       })}
   </div>
     `;
