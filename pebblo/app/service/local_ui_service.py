@@ -53,10 +53,12 @@ class AppData:
                     continue
                 report_summary = app_detail_json.get('reportSummary')
                 app_name = app_json.get('name')
+                findings_entities = report_summary.get('findingsTopics', 0)
+                findings_topics = report_summary.get('findingsEntities', 0)
                 app_details = AppListDetails(
                     name=app_json.get('name'),
-                    topics=report_summary.get('findingsTopics', 0),
-                    entities=report_summary.get('findingsEntities', 0),
+                    topics=findings_topics,
+                    entities=findings_entities,
                     owner=report_summary.get('owner'),
                     loadId=latest_load_id
                 )
@@ -70,7 +72,7 @@ class AppData:
                     continue
                 for data in data_source_details:
                     # Adding appName in dataSource
-                    updated_data_source_dict = update_data_source(data, app_name)
+                    updated_data_source_dict = update_data_source(data, app_name, findings_entities, findings_topics)
                     data_source_list.append(updated_data_source_dict)
                     # Adding appName in findingsSummary
                     finding_data = update_findings_summary(data, app_name)
@@ -104,7 +106,7 @@ class AppData:
                 documentsWithFindings=document_with_findings_list,
                 dataSource=data_source_list
             )
-
+            print(f'---Data {data.dict()}----')
             return json.dumps(data.dict(), indent=4)
 
         except Exception as ex:

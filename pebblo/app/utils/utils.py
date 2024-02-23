@@ -105,7 +105,7 @@ def update_findings_summary(data, app_name):
         return {}
 
 
-def update_data_source(data, app_name):
+def update_data_source(data, app_name, findings_entities, findings_topics):
     """
         Update the 'appName' key in the given data dictionary with the provided app_name.
     """
@@ -119,7 +119,9 @@ def update_data_source(data, app_name):
                 'sourceType': data.get('sourceType'),
                 'sourceSize': data.get('sourceSize', 0),
                 'totalSnippetCount': data.get('totalSnippetCount', 0),
-                'displayedSnippetCount': data.get('displayedSnippetCount', 0)
+                'displayedSnippetCount': data.get('displayedSnippetCount', 0),
+                'findingsEntities': findings_entities,
+                'findingsTopics': findings_topics
             }
             logger.debug(f'Updated Data for dataSourceTab {updated_data}')
             return updated_data
