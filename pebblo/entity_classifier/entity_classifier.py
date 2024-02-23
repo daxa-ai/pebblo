@@ -93,10 +93,10 @@ class EntityClassifier:
                 registry=custom_registry,
                 context_aware_enhancer=LemmaContextAwareEnhancer(
                     context_similarity_factor=float(
-                        ConfidenceScore.ContextSimilarityScore.value
+                        ConfidenceScore.EntityContextSimilarityFactor.value
                     ),
                     min_score_with_context_similarity=float(
-                        ConfidenceScore.Entity.value
+                        ConfidenceScore.EntityMinScoreWithContext.value
                     ),
                 ),
             )
