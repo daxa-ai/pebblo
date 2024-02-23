@@ -41,5 +41,7 @@ class SecretEntities(Enum):
 class ConfidenceScore(Enum):
     Entity = "0.8"  # It denotes the
     EntityMinScore = "0.45"  # It denotes the pattern's strength
-    EntityContextSimilarityFactor = "0.35"  # It denotes how much to enhance confidence of match entity
+    EntityContextSimilarityFactor = (
+        "0.35"  # It denotes how much to enhance confidence of match entity
+    )
     EntityMinScoreWithContext = "0.4"  # It denotes minimum confidence score
