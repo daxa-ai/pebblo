@@ -64,3 +64,16 @@ export const CONCAT_ARRAYS = (array, key) => {
   }
   return [];
 };
+
+export const SORT_DATA = (array, order, key) => {
+  if (typeof array[0][key] === "string") {
+    if (order === "asc") {
+      return array.sort((a, b) => a[key].localeCompare(b[key]));
+    }
+    return array.sort((a, b) => b[key].localeCompare(a[key]));
+  }
+  if (order === "asc") {
+    return array.sort((a, b) => a[key] - b[key]);
+  }
+  return array.sort((a, b) => b[key] - a[key]);
+};

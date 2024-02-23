@@ -197,12 +197,15 @@ body {
 /* <----------- TEXT ALIGN -----------> */
 .text-start {
   text-align: start;
+  justify-content: start;
 }
 .text-center {
   text-align: center;
+  justify-content: center;
 }
 .text-end {
   text-align: end;
+  justify-content: end;
 }
 
 /* TEXT TRANSFORM  */
@@ -838,6 +841,27 @@ th {
 
 th {
   padding: 12px;
+}
+th.active {
+  color: var(--surface-50);
+}
+th.active > div > img {
+  filter: brightness(0.3);
+}
+
+th.asc > div > img {
+  rotate: 180deg;
+}
+
+th.dsc > div > img {
+  rotate: 0deg;
+}
+
+.sort-column:hover {
+  color: var(--surface-50);
+}
+.sort-column:hover img {
+  filter: brightness(0.3);
 }
 td.fit {
   width: 0;

@@ -8,6 +8,8 @@ const KEYUP = "keyup";
 const DOM_CONTENT_LOADED = "DOMContentLoaded";
 const LOAD = "load";
 const ACTIONS = "actions";
+const ASC = "asc";
+const DSC = "dsc";
 
 export {
   FLEX,
@@ -20,4 +22,6 @@ export {
   LOAD,
   ACTIONS,
   KEYUP,
+  ASC,
+  DSC,
 };
