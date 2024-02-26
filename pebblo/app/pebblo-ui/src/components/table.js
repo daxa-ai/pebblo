@@ -47,10 +47,12 @@ function Thead(props) {
       <thead>${tableCol?.myMap((col) => {
         const TEXT__ALIGN = get_Text_Orientation(col?.align);
         return `<th class="${TEXT__ALIGN} ${
-          !isSorting ? "" : "cursor-pointer sort-column"
+          !isSorting || col?.field === ACTIONS
+            ? ""
+            : "cursor-pointer sort-column"
         }" data-column="${col?.field}" data-order="${DSC}">
               ${
-                !isSorting
+                !isSorting || col?.field === ACTIONS
                   ? col.label
                   : /*html*/ `<div class="flex gap-1 items-center ${TEXT__ALIGN}">
               <img src="${MEDIA_URL}static/sort-icon.png" alt="Sort Icon" height="10" />
@@ -111,9 +113,7 @@ const TABLE_BODY = (props) => {
        children: col?.render ? col?.render(item) : item[col?.field],
        align: col?.align,
        link:
-         col?.field !== ACTIONS && link
-           ? `${link}/?app_name=${item?.name}`
-           : "",
+         col?.field !== ACTIONS && link ? `${link}?app_name=${item?.name}` : "",
        isTooltip: col?.isTooltip,
        tooltipTitle: col?.tooltipTitle ? col?.tooltipTitle(item) : "",
      })

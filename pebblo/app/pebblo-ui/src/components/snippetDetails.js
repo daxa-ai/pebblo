@@ -66,7 +66,7 @@ export function SnippetDetails(props) {
         <div class="inter surface-10 font-16 medium">${title}</div>
         <div class="flex">
           <div class="search">
-            <input type="text" id="snippet_search" />
+            <input type="text" id="snippet_search" autocomplete="off" />
             <img
               src="${MEDIA_URL}/static/search-icon.png"
               alt="Search Icon" />
