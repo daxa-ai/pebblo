@@ -1,6 +1,5 @@
 export function Tooltip(props) {
   const { children, title, variant = "top" } = props;
-  console.log(props);
   // return /*html*/ `
   //   <div class="tooltip"> ${children}
   //       <span class="tooltip-text">${title}</span>
