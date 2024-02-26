@@ -18,19 +18,27 @@ const sidebars: SidebarsConfig = {
       label: "Development Environment", // sidebar label
     },
     {
+      type: "doc",
+      id: "config", // document ID
+      label: "Pebblo Configuration File", // sidebar label
+    },
+    {
       type: "category",
-      label: "Pebblo Server", // sidebar label
+      label: "Pebblo", // sidebar label
       items: [
         {
           type: "doc",
+          label: "Server",
           id: "daemon",
         },
         {
           type: "doc",
+          label: "Entity Classifier",
           id: "entityclassifier",
         },
         {
           type: "doc",
+          label: "Topic Classifier",
           id: "topicclassifier",
         },
       ],
@@ -39,11 +47,6 @@ const sidebars: SidebarsConfig = {
       type: "doc",
       id: "rag", // document ID
       label: "Pebblo Safe DataLoader for Langchain", // sidebar label
-    },
-    {
-      type: "doc",
-      id: "config", // document ID
-      label: "Pebblo Configuration File", // sidebar label
     },
     {
       type: "doc",
