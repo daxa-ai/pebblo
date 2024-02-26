@@ -655,8 +655,7 @@
                 </td>
                 <td>
                   <div class="font-64 critical text-start inline-flex">
-                    {{ data.reportSummary.filesWithRestrictedData|default('0')
-                    }}
+                    {{ data.reportSummary.filesWithFindings|default('0') }}
                     <span class="surface-10 font-32 normal pb-1 mt-auto"
                       >/{{ data.reportSummary.totalFiles|default('0') }}</span
                     >
