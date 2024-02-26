@@ -2,6 +2,7 @@ import yaml
 
 from pydantic import BaseSettings, Field
 import pathlib
+from pebblo.app.config.config_validation import validate_config_details
 
 # Default config value
 dir_path = pathlib.Path().absolute()
@@ -52,19 +53,17 @@ def load_config(path) -> Config:
             return conf_obj.dict()
 
         # If Path exist, set config value
-        else:
-            con_file = path
-            try:
-                with open(con_file, "r") as output:
-                    cred_json = yaml.safe_load(output)
-                    parsed_config = Config.parse_obj(cred_json)
-                    config_dict = parsed_config.dict()
-                    return config_dict
-            except IOError as err:
-                print(f"no credentials file found at {con_file}. Error : {err}")
-                return conf_obj.dict()
+        con_file = path
+        try:
+            with open(con_file, "r") as output:
+                cred_json = yaml.safe_load(output)
+                parsed_config = Config.parse_obj(cred_json)
+                config_dict = parsed_config.dict()
+                validate_config_details(config_dict)
+                return config_dict
+        except IOError as err:
+            print(f"no credentials file found at {con_file}. Error : {err}")
+            return conf_obj.dict()
 
     except Exception as err:
         print(f'Error while loading config details, err: {err}')
-
-
