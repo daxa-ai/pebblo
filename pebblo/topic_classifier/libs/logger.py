@@ -8,10 +8,12 @@ import os
 def get_logger():
     """Get object of logger"""
     logger_obj = logging.getLogger("Topic Classifier Logger")
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     console_handle = logging.StreamHandler()
     console_handle.setFormatter(formatter)
-    logger_obj.setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
+    logger_obj.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
     logger_obj.propagate = False
     if not logger_obj.handlers:
         logger_obj.addHandler(console_handle)
