@@ -1,5 +1,5 @@
 from pebblo.app.api.local_ui_api import App
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 
 # Create an instance of APp with a specific prefix
 local_ui_router_instance = App(prefix="/pebblo")
@@ -12,5 +12,5 @@ local_ui_router_instance.router.add_api_route(
     "/app/", App.appDetails, methods=["GET"], response_class=HTMLResponse
 )
 local_ui_router_instance.router.add_api_route(
-    "/report/", App.getReport, methods=["GET"], response_class=dict
+    "/report/", App.getReport, methods=["GET"], response_class=FileResponse
 )
