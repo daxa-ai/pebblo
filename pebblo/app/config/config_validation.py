@@ -1,6 +1,6 @@
 import os
 from pebblo.app.utils.utils import get_full_path
-from pebblo.app.libs import SUPPORTED_LOG_LEVELS
+from pebblo.app.libs.logger import SUPPORTED_LOG_LEVELS
 from abc import ABC, abstractmethod
 
 
@@ -47,7 +47,7 @@ class ReportsConfig(ConfigValidator):
             raise ValueError("Error: Unsupported format specified in the configuration")
         if self.renderer not in ["weasyprint", "xhtml2pdf"]:
             raise ValueError("Error: Unsupported renderer specified in the configuration")
-        if not os.path.exists(os.path.expanduser(self.output_dir)):
+        if not os.path.exists(get_full_path(self.output_dir)):
             raise FileNotFoundError(
                 f"Error: Output directory '{self.output_dir}' specified for the reports does not exist")
 
