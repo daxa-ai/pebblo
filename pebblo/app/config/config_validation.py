@@ -25,8 +25,8 @@ class DaemonConfig(ConfigValidator):
 
         self.port = int(self.port)
 
-        if 0 < self.port <= 65535:
-            raise ValueError("Error: Unsupported Port specified in the configuration")
+        # if 0 < self.port <= 65535:
+        #     raise ValueError("Error: Unsupported Port specified in the configuration")
 
 
 class LoggingConfig(ConfigValidator):
