@@ -32,7 +32,7 @@ class Config(BaseSettings):
     logging: LoggingConfig
 
 
-def load_config(path) -> Config:
+def load_config(path) -> dict:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
