@@ -4,8 +4,9 @@ from pebblo.app.service.local_ui_service import AppData
 from fastapi.responses import FileResponse
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.utils.utils import get_full_path
+from pathlib import Path
  
-templates = Jinja2Templates(directory="pebblo/app/pebblo-ui")
+templates = Jinja2Templates(directory=Path(__file__).parent.parent.absolute() / "pebblo-ui")
 
 class App:
     """
