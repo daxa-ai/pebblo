@@ -1,12 +1,15 @@
+from pathlib import Path
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
-from pebblo.app.service.local_ui_service import AppData
 from fastapi.responses import FileResponse
+from pebblo.app.service.local_ui_service import AppData
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.utils.utils import get_full_path
-from pathlib import Path
 
-templates = Jinja2Templates(directory=Path(__file__).parent.parent.absolute() / "pebblo-ui")
+
+templates = Jinja2Templates(
+    directory=Path(__file__).parent.parent.absolute() / "pebblo-ui"
+)
 
 
 class App:
@@ -42,7 +45,7 @@ class App:
         )
 
     @staticmethod
-    def get_report(request: Request, app_name: str):
+    def get_report(app_name: str):
         # File path for app report
         file_path = f"{get_full_path(CacheDir.home_dir.value)}/{app_name}/{CacheDir.report_file_name.value}"
         # To view the file in the browser, use "inline" for the media_type
