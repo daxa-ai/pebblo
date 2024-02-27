@@ -4,6 +4,8 @@ slug: /
 
 # Overview
 
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=8ee2c5db-a0d6-4760-aa7e-96a1d37a11ad" />
+
 Pebblo enables developers to safely load data and promote their Gen AI app to deployment without worrying about the organization’s compliance and security requirements. The project identifies semantic topics and entities found in the loaded data and summarizes them on the UI or a PDF report.
 
 ![Pebblo Overview](../static/img/pebblo-overview.webp)
