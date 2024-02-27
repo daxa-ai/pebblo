@@ -4,7 +4,7 @@ These are all enums related to Inspector.
 from enum import Enum
 from pebblo.app.daemon import config_details
 
-
+print(f'--Config Details {config_details}--')
 class CacheDir(Enum):
     metadata_folder = "/metadata"
     metadata_file_path = f"{metadata_folder}/metadata.json"
