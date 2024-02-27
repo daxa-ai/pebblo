@@ -603,8 +603,7 @@
         <div class="surface-10 inter font-48 font-thin">Data Report</div>
         <div class="mt-2">
           <div
-            class="break-all surface-purple inter font-32 font-thin break-word"
-          >
+            class="break-all surface-purple inter font-32 font-thin break-word">
             {{data.name}}
           </div>
           <div class="surface-10 inter font-28 mt-2">
@@ -655,7 +654,8 @@
                 </td>
                 <td>
                   <div class="font-64 critical text-start inline-flex">
-                    {{ data.reportSummary.filesWithFindings|default('0') }}
+                    {{ data.reportSummary.filesWithRestrictedData|default('0')
+                    }}
                     <span class="surface-10 font-32 normal pb-1 mt-auto"
                       >/{{ data.reportSummary.totalFiles|default('0') }}</span
                     >
@@ -913,8 +913,7 @@
           <div class="key-value">
             <div class="surface-50 font-12 medium">Retrieved From</div>
             <div
-              class="surface-10 font-13 mt-2 break-all normal td-border pb-2"
-            >
+              class="surface-10 font-13 mt-2 break-all normal td-border pb-2">
               {{ snippet.sourcePath }}
             </div>
           </div>
