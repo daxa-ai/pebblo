@@ -30,7 +30,7 @@ class App:
         )
 
     @staticmethod
-    def appDetails(request: Request, app_name: str):
+    def app_details(request: Request, app_name: str):
         app_data = AppData()
         return templates.TemplateResponse(
             "index.html",
@@ -42,7 +42,7 @@ class App:
         )
 
     @staticmethod
-    def getReport(request: Request, app_name: str):
+    def get_report(request: Request, app_name: str):
         # File path for app report
         file_path = f"{get_full_path(CacheDir.home_dir.value)}/{app_name}/{CacheDir.report_file_name.value}"
         # To view the file in the browser, use "inline" for the media_type
