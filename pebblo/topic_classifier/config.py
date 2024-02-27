@@ -1,3 +1,8 @@
+"""
+Module to store Configuration parameters for the Pebblo topic classifier,
+including model paths, confidence score, and minimum text length.
+"""
+
 # Confidence score
 TOPIC_CONFIDENCE_SCORE = 0.60
 
