@@ -1,9 +1,17 @@
+"""
+This module tests the TopicClassifier class.
+It checks initialization, Hugging Face login, and various prediction scenarios.
+It uses pytest fixtures to mock necessary objects and methods.
+"""
 import os
 from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
+
+HARMFUL_ADVICE = "Harmful Advice"
+MEDICAL_ADVICE = "Medical Advice"
 
 
 @pytest.fixture
@@ -12,8 +20,8 @@ def mock_topic_display_names(mocker):
     Mock the topic_display_names
     """
     topic_display_names = {
-        "HARMFUL_ADVICE": "Harmful Advice",
-        "MEDICAL_ADVICE": "Medical Advice",
+        "HARMFUL_ADVICE": HARMFUL_ADVICE,
+        "MEDICAL_ADVICE": MEDICAL_ADVICE,
     }
     mocker.patch(
         "pebblo.topic_classifier.topic_classifier.topic_display_names",
@@ -23,6 +31,9 @@ def mock_topic_display_names(mocker):
 
 @pytest.fixture
 def mocked_objects():
+    """
+    Mock the HF Login and model objects used in the TopicClassifier class to avoid actual API calls
+    """
     with patch("pebblo.topic_classifier.topic_classifier.login") as mock_login, patch(
         "pebblo.topic_classifier.topic_classifier.AutoTokenizer.from_pretrained"
     ) as mock_tokenizer, patch(
@@ -35,6 +46,9 @@ def mocked_objects():
 
 @pytest.fixture
 def mocked_model_objects(mocker):
+    """
+    Mock the model objects used in the TopicClassifier class to avoid actual API calls
+    """
     mocker.patch(
         "pebblo.topic_classifier.topic_classifier.AutoTokenizer.from_pretrained",
         return_value=Mock(),
@@ -85,9 +99,9 @@ def test_predict_expected_topic(topic_classifier, mock_topic_display_names):
 
     # Assertions
     assert total_count == 1
-    assert "Harmful Advice" in topics
-    assert topics["Harmful Advice"] == 1
-    assert topics == {"Harmful Advice": 1}
+    assert HARMFUL_ADVICE in topics
+    assert topics[HARMFUL_ADVICE] == 1
+    assert topics == {HARMFUL_ADVICE: 1}
 
 
 def test_predict_low_score_topics(topic_classifier, mock_topic_display_names):
@@ -128,9 +142,9 @@ def test_predict_confidence_score_update(topic_classifier, mock_topic_display_na
 
     # Assertions
     assert total_count == 1
-    assert "Medical Advice" in topics
-    assert topics["Medical Advice"] == 1
-    assert topics == {"Medical Advice": 1}
+    assert MEDICAL_ADVICE in topics
+    assert topics[MEDICAL_ADVICE] == 1
+    assert topics == {MEDICAL_ADVICE: 1}
 
 
 def test_predict_empty_topics(topic_classifier):
