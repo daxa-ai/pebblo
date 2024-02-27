@@ -40,6 +40,11 @@ export function AppDetailsPage() {
     });
   });
 
+  // last updated date
+  // <div class="font-thin">Last Updated 13 Feb 2024
+  // </div>
+  // <div class="divider"></div>
+
   return /*html*/ `
     <div class="flex gap-6 flex-col h-full overflow-auto">
       <div class="flex justify-between">
@@ -50,9 +55,7 @@ export function AppDetailsPage() {
            <div class="flex flex-col gap-1 inter surface-10">
              <div class="font-24">${APP_DATA?.name}</div>
              <div class="font-12 flex gap-3">
-               <div class="font-thin">Last Updated 13 Feb 2024
-               </div>
-               <div class="divider"></div>
+          
                ${AccordionSummary({ children: "Instance Details", id: 1 })}
              </div>
            </div>

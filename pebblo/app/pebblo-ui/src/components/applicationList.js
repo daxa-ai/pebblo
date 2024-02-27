@@ -64,7 +64,7 @@ export function ApplicationsList(props) {
                   align: col?.align,
                   link:
                     col?.field !== ACTIONS && link
-                      ? `${link}/?app_name=${item?.name}`
+                      ? `${link}?app_name=${item?.name}`
                       : "",
                   maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
                 })
@@ -83,7 +83,7 @@ export function ApplicationsList(props) {
         <div class="inter surface-10 font-16 medium">${title}</div>
         <div class="flex">
           <div class="search" title="Search">
-            <input type="text" id="search_field" name="search" />
+            <input type="text" id="search_field" name="search" autocomplete="off" />
             <img
               src="${MEDIA_URL}/static/search-icon.png"
               alt="Search Icon" />

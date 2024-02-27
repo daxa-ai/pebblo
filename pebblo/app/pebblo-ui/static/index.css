@@ -1001,20 +1001,19 @@ dialog::backdrop {
 }
 
 .tooltip {
-  /*position: relative;*/
-  display: inline;
+  width: fit-content;
 }
-.tooltip-wrapper {
+.tooltip-wrapper-top {
   position: absolute;
   visibility: hidden;
 }
-.tooltip:hover .tooltip-wrapper {
+.tooltip:hover .tooltip-wrapper-top {
   visibility: visible;
   top: -24px;
   left: 0;
 }
 
-.tooltip-title {
+.tooltip-title-top {
   display: block;
   position: relative;
   width: fit-content;
@@ -1025,7 +1024,7 @@ dialog::backdrop {
   text-align: center;
   border-radius: 6px;
 }
-.tooltip-title:after {
+.tooltip-title-top:after {
   content: "";
   position: absolute;
   top: 100%;
@@ -1034,4 +1033,45 @@ dialog::backdrop {
   border-width: 5px;
   border-style: solid;
   border-color: black transparent transparent transparent;
+}
+
+.tooltip-wrapper-right {
+  position: absolute;
+  visibility: hidden;
+}
+.tooltip:hover .tooltip-wrapper-right {
+  visibility: visible;
+  top: 0;
+  left: 0px;
+  height: fit-content;
+  width: 100%;
+  margin: auto;
+  bottom: 0;
+}
+
+.tooltip-title-right {
+  width: fit-content;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px;
+  position: absolute;
+  right: 90%;
+  z-index: 999;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: fit-content;
+}
+
+.tooltip-title-right::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent black;
 }

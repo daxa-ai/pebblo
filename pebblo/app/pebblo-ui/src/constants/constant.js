@@ -73,8 +73,7 @@ export const APP_DETAILS = [
   },
   {
     label: "Path",
-    value:
-      "/Users/shreyasdamle/work/cloud_defense/daxa-analyzer-rc1/samples/basic_retrieval",
+    value: APP_DATA?.instanceDetails?.path,
   },
 ];
 
@@ -162,6 +161,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
       <img id="${item?.name}" class="download-icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
     </div>`,
         title: "Download Icon",
+        variant: "right",
       }),
     align: "end",
     //   render: /*html*/ `
