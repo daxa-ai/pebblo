@@ -649,7 +649,9 @@
               <tr>
                 <td>
                   <div class="critical font-64 normal">
-                    {{ data.reportSummary.findings|default('0') }}
+                    {{ 
+                      data.reportSummary.filesWithRestrictedData|default('0')
+                    }}
                   </div>
                   <div class="surface-10 font-13">Findings</div>
                 </td>
