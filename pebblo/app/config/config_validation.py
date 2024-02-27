@@ -1,22 +1,63 @@
 import os
 from pebblo.app.utils.utils import get_full_path
+from pebblo.app.libs import SUPPORTED_LOG_LEVELS
+from abc import ABC, abstractmethod
 
 
-def validate_config_details(config_dict):
-    SUPPORTED_RENDERERS = ['weasyprint', 'xhtml2pdf']
-    SUPPORTED_FORMATS = ['pdf']
+class ConfigValidator(ABC):
+    @abstractmethod
+    def validate(self):
+        pass
 
-    reports_config = config_dict.get('reports', {})
 
-    # Check if the renderer is supported
-    if reports_config.get('renderer') not in SUPPORTED_RENDERERS:
-        raise ValueError('Error: Unsupported renderer specified in the configuration')
+class DaemonConfig(ConfigValidator):
+    def __init__(self, config):
+        self.port = config.get("port")
+        self.host = config.get("host")
 
-    # Check if the format is supported
-    if reports_config.get('format') not in SUPPORTED_FORMATS:
-        raise ValueError('Error: Unsupported format specified in the configuration')
+    def validate(self):
+        # Add validation logic here
+        if not isinstance(self.port, int):
+            raise ValueError("Error: Unsupported port specified in the configuration")
 
-    # Verify the existence of the specified path
-    output_dir_path = get_full_path(reports_config.get('format'))
-    if not os.path.exists(output_dir_path):
-        raise FileNotFoundError(f"Error: Path '{output_dir_path}' specified for the outputDir does not exist")
+        self.port = int(self.port)
+
+        if self.port <= 65535:
+            raise ValueError("Error: Unsupported host specified in the configuration")
+
+
+class LoggingConfig(ConfigValidator):
+    def __init__(self, config):
+        self.level = config.get('level')
+
+    def validate(self):
+        # Check if level is supported or not
+        if self.level.upper() not in SUPPORTED_LOG_LEVELS:
+            raise ValueError("Error: Unsupported logLevel specified in the configuration")
+
+
+class ReportsConfig(ConfigValidator):
+    def __init__(self, config):
+        self.format = config.get("format")
+        self.renderer = config.get("renderer")
+        self.output_dir = config.get("outputDir")
+
+    def validate(self):
+        if self.format not in ["pdf"]:
+            raise ValueError("Error: Unsupported format specified in the configuration")
+        if self.renderer not in ["weasyprint", "xhtml2pdf"]:
+            raise ValueError("Error: Unsupported renderer specified in the configuration")
+        if not os.path.exists(os.path.expanduser(self.output_dir)):
+            raise FileNotFoundError(
+                f"Error: Output directory '{self.output_dir}' specified for the reports does not exist")
+
+
+def validate_config(config_dict):
+    daemon_config = DaemonConfig(config_dict.get('daemon', {}))
+    logging_config = LoggingConfig(config_dict.get('logging', {}))
+    reports_config = ReportsConfig(config_dict.get('reports', {}))
+
+    # Validate each section
+    daemon_config.validate()
+    logging_config.validate()
+    reports_config.validate()
