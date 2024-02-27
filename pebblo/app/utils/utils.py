@@ -101,7 +101,7 @@ def update_findings_summary(data, app_name):
         return data.get('findingsSummary')
 
     except Exception as e:
-        logger.error(f"Error occurred while adding appName for data  : {data}. Exception: {e}")
+        logger.warning(f"Error occurred while adding appName for data  : {data}. Exception: {e}")
         return {}
 
 
@@ -127,7 +127,7 @@ def update_data_source(data, app_name, findings_entities, findings_topics):
             return updated_data
 
     except Exception as e:
-        logger.error(f"Error occurred while updating dataSource for data  : {data}. Exception: {e}")
+        logger.warning(f"Error occurred while updating dataSource for data  : {data}. Exception: {e}")
         return {}
 
 
@@ -159,5 +159,5 @@ def get_document_with_findings_data(data):
                         loader_data_list.append(document_with_findings_data)  # Append the document data to the list
     except Exception as err:
         # Handle any exceptions and print the error message
-        logger.error(f"Error occurred: {str(err)}")
+        logger.warning(f"Error occurred: {str(err)}")
     return loader_data_list  # Return the list of document data

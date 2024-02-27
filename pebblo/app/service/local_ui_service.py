@@ -43,9 +43,10 @@ class AppData:
                     logger.debug(f"metadata.json path {app_path}")
                     app_json = read_json_file(app_path)
                     # Condition for handling loadId
+
                     if not app_json and not app_json.get("load_ids"):
                         # Unable to fetch LoadId Details
-                        logger.debug("Error: Unable to fetch loadId details")
+                        logger.warning(f"Error: Unable to fetch loadId details for {app_dir} app")
                         logger.debug(f"App Json : {app_json}")
                         continue
                         # Fetching latest loadId
@@ -55,7 +56,7 @@ class AppData:
                     logger.debug(f"report.json path {app_detail_path}")
                     app_detail_json = read_json_file(app_detail_path)
                     if not app_detail_json:
-                        logger.debug("Error: Unable to fetch loadId details")
+                        logger.warning(f"Error: Unable to fetch loadId details for {app_dir} app")
                         logger.debug(f"App Json : {app_json}")
                         continue
                     report_summary = app_detail_json.get("reportSummary")
@@ -74,7 +75,7 @@ class AppData:
                     data_source_details = app_detail_json.get("dataSources")
                     # Fetching only required values for dashboard pages
                     if not data_source_details:
-                        logger.debug("Error: Unable to fetch dataSources details")
+                        logger.warning(f"Error: Unable to fetch dataSources details for {app_dir} app")
                         logger.debug(f"App Detail Json : {app_detail_json}")
                         continue
                     for data in data_source_details:
@@ -107,7 +108,7 @@ class AppData:
                     all_apps.append(app_details.dict())
 
                 except Exception as err:
-                    logger.error(f"Error processing app {app_dir}: {err}")
+                    logger.warning(f"Error processing app {app_dir}: {err}")
 
             # Validation
             data = AppModel(
