@@ -161,7 +161,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
         title: "Download Icon",
         variant: "right",
       }),
-    align: "end",
+    align: "start",
     //   render: /*html*/ `
     //   <div class="flex gap-4 justify-end">
     //     <img id="download_icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
@@ -265,6 +265,37 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
   },
 ];
 
+export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
+  {
+    label: "Data Source Name",
+    field: "name",
+    render: (item) => /*html*/ `
+      <div class="flex flex-col inter">
+         <div class="surface-10 font-13">${item.name || "-"}</div>
+         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
+      item.sourcePath
+    }</div>
+      </div>
+   `,
+    align: "start",
+  },
+  {
+    label: "Findings-Topics",
+    render:()=>APP_DATA?.reportSummary?.findingsTopics,
+    align: "end",
+  },
+  {
+    label: "Findings-Entities",
+    render:()=> APP_DATA?.reportSummary?.findingsEntities,
+    align: "end",
+  },
+  {
+    label: "Application",
+    render:()=> APP_DATA?.name,
+    align: "start",
+  },
+];
+
 export const TABS_ARR_FOR_APPLICATIONS = [
   {
     label: "Applications With Findings",
@@ -361,8 +392,11 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
     label: "Snippets",
     critical: APP_DATA?.dataSources
-      ? APP_DATA?.dataSources[0]?.findingsDetails?.length
+      ? APP_DATA?.dataSources[0]?.displayedSnippetCount
       : 0,
+    outOf: APP_DATA?.dataSources
+    ? APP_DATA?.dataSources[0]?.totalSnippetCount
+    : 0,
     value: 3,
     isCritical: false,
   },
@@ -394,7 +428,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
   {
     value: {
       title: "Data Source",
-      tableCol: TABLE_DATA_FOR_DATA_SOURCE,
+      tableCol: TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS,
       tableData: APP_DATA?.dataSources ? APP_DATA?.dataSources : [],
       searchField: ["labelName", "findingsType"],
       isSorting: true,
