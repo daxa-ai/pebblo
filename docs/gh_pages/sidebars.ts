@@ -20,7 +20,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "doc",
       id: "config", // document ID
-      label: "Pebblo Configuration File", // sidebar label
+      label: "Configuration", // sidebar label
     },
     {
       type: "category",
