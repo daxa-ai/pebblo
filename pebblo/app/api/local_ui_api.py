@@ -6,14 +6,16 @@ from pebblo.app.enums.enums import CacheDir
 from pebblo.app.utils.utils import get_full_path
 from pathlib import Path
 
-templates = Jinja2Templates(directory=Path(__file__).parent.parent.absolute() / "pebblo-ui")
+templates = Jinja2Templates(
+    directory=Path(__file__).parent.parent.absolute() / "pebblo-ui"
+)
 
 
 class App:
     """
     Controller Class for all the api endpoints for local ui.
     """
-    
+
     def __init__(self, prefix: str):
         self.router = APIRouter(prefix=prefix)
 
