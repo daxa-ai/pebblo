@@ -5,7 +5,7 @@ from pebblo.app.service.discovery_service import AppDiscover
 
 class App:
     """
-        Controller Class for all the api endpoints for App resource.
+    Controller Class for all the api endpoints for App resource.
     """
     def __init__(self, prefix: str):
         self.router = APIRouter(prefix=prefix)

@@ -13,7 +13,6 @@ class App:
     """
     Controller Class for all the api endpoints for local ui.
     """
-
     def __init__(self, prefix: str):
         self.router = APIRouter(prefix=prefix)
 
