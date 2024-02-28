@@ -46,7 +46,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "doc",
       id: "rag", // document ID
-      label: "Pebblo Safe DataLoader for Langchain", // sidebar label
+      label: "Safe DataLoader for Langchain", // sidebar label
     },
     {
       type: "doc",
