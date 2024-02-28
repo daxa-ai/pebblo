@@ -1000,9 +1000,6 @@ dialog::backdrop {
   text-overflow: ellipsis;
 }
 
-.tooltip {
-  width: fit-content;
-}
 .tooltip-wrapper-top {
   position: absolute;
   visibility: hidden;
