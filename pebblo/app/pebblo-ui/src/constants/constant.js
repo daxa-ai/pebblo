@@ -45,8 +45,7 @@ export const APP_DETAILS_FINDINGS_TABLE = [
   },
   {
     label: "Data Source",
-    field: "findings",
-    align: "end",
+    render:() => APP_DATA?.dataSources[0]?.name
   },
 ];
 
@@ -103,8 +102,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
   },
   {
     label: "Data Source",
-    field: "findings",
-    align: "end",
+    render:() => APP_DATA?.dataSources[0]?.name
   },
 ];
 
@@ -282,7 +280,7 @@ export const TABS_ARR_FOR_APPLICATIONS = [
     isCritical: true,
   },
   {
-    label: "Files With Findings",
+    label: "Documents With Findings",
     critical: APP_DATA?.documentsWithFindingsCount || 0,
     value: 2,
     isCritical: true,
@@ -320,7 +318,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
   },
   {
     value: {
-      title: "Files With Findings",
+      title: "Documents With Findings",
       tableCol: TABLE_DATA_FOR_FILES_WITH_FINDINGS,
       tableData: APP_DATA?.documentsWithFindings,
       isDownloadReport: false,
@@ -348,7 +346,7 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
     isCritical: true,
   },
   {
-    label: "Files With Findings",
+    label: "Documents With Findings",
     critical: APP_DATA?.reportSummary?.filesWithFindings || 0,
     outOf: APP_DATA?.reportSummary?.totalFiles || 0,
     value: 1,
@@ -385,7 +383,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
   },
   {
     value: {
-      title: "Files With Findngs",
+      title: "Documents With Findings",
       tableCol: FILES_WITH_FINDINGS_TABLE,
       tableData: APP_DATA?.topFindings,
       searchField: ["fileOwner", "fileName"],
