@@ -44,20 +44,24 @@ class AppData:
                     app_json = read_json_file(app_path)
                     # Condition for handling loadId
 
-                    if not app_json and not app_json.get("load_ids"):
-                        # Unable to fetch LoadId Details
-                        logger.warning(f"Error: Unable to fetch loadId details for {app_dir} app")
-                        logger.debug(f"App Json : {app_json}")
+                    if not app_json:
+                        # Unable to find json file
+                        logger.warning(f"Error: {CacheDir.metadata_file_path.value} not found for {app_dir} app")
+                        logger.warning(f"Skipping app {app_json}")
                         continue
-                        # Fetching latest loadId
+
+                    if not app_json.get("load_ids"):
+                        logger.warning(f"Skipping app {app_json}")
+                        continue
+                    # Fetching latest loadId
                     latest_load_id = app_json.get("load_ids")[-1]
                     # Path to report.json
                     app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.report_data_file_name.value}"
                     logger.debug(f"report.json path {app_detail_path}")
                     app_detail_json = read_json_file(app_detail_path)
                     if not app_detail_json:
-                        logger.warning(f"Error: Unable to fetch loadId details for {app_dir} app")
-                        logger.debug(f"App Json : {app_json}")
+                        logger.warning(f"Error: {CacheDir.report_data_file_name.value} not found for {app_dir} app")
+                        logger.warning(f"Skipping app {app_json}")
                         continue
                     report_summary = app_detail_json.get("reportSummary")
                     app_name = app_json.get("name")
@@ -136,10 +140,14 @@ class AppData:
             # Reading metadata.json
             app_json = read_json_file(app_path)
             # Condition for handling loadId
-            if not app_json and not app_json.get("load_ids"):
+            if not app_json:
                 # Unable to fetch loadId details
-                logger.debug("Error: Unable to fetch loadId details")
-                logger.debug(f"App Json : {app_json}")
+                logger.warning(f"Error: {CacheDir.metadata_file_path.value} not found for app {app_path}")
+                return json.dumps({})
+
+            if not app_json.get("load_ids"):
+                # Unable to fetch loadId details
+                logger.warning(f"Error: Details  not found for app {app_path}")
                 return json.dumps({})
 
                 # Fetching latest loadId
