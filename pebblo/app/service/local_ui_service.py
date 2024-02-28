@@ -61,8 +61,8 @@ class AppData:
                         continue
                     report_summary = app_detail_json.get("reportSummary")
                     app_name = app_json.get("name")
-                    findings_entities = report_summary.get("findingsTopics", 0)
-                    findings_topics = report_summary.get("findingsEntities", 0)
+                    findings_entities = report_summary.get("findingsEntities", 0)
+                    findings_topics = report_summary.get("findingsTopics", 0)
                     app_details = AppListDetails(
                         name=app_json.get("name"),
                         topics=findings_topics,
