@@ -461,6 +461,7 @@ export const LOAD_HISTORY_TABLE_COL = [
   {
     label: "Findings",
     field: "findings",
+    align: "end",
   },
   {
     label: "Files With Findings",

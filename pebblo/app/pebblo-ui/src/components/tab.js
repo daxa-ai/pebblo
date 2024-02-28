@@ -48,7 +48,7 @@ function Tab(item) {
             } font-48 font-thin pointer-none">
              ${add_Zero(item?.critical)} ${
     item?.outOf
-      ? /*html*/ `<span class="surface-10 font-24 -ml-1">/${item?.outOf}</span>`
+      ? /*html*/ `<span class="surface-10 font-24 -ml-1">/${add_Zero(item?.outOf)}</span>`
       : ""
   }
             </div>
