@@ -26,13 +26,11 @@ class DaemonConfig(ConfigValidator):
             self.port = int(self.port)
         except ValueError:
             logger.error("Error: Port must be an integer")
-            sys.exit(1)
 
         self.port = int(self.port)
 
         if not (0 < self.port <= 65535):
             logger.error("Error: Port must be between 1 and 65535")
-            sys.exit(1)
 
 
 class LoggingConfig(ConfigValidator):
@@ -72,5 +70,5 @@ def validate_config(config_dict):
         logging_config.validate()
         reports_config.validate()
     except (ValueError, FileNotFoundError) as e:
-        logger.error(f"Error occurred: {str(e)}")
+        logger.error({str(e)})
         sys.exit(1)
