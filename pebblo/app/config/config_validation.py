@@ -7,68 +7,66 @@ import logging
 
 
 class ConfigValidator(ABC):
+    def __init__(self, config):
+        self.config = config
+        self.errors = []
+
     @abstractmethod
     def validate(self):
         pass
 
 
 class DaemonConfig(ConfigValidator):
-    def __init__(self, config):
-        self.port = config.get("port")
-        self.host = config.get("host")
-
     def validate(self):
-        # Add validation logic here
-        if not isinstance(self.host, str):
-            raise ValueError("Error: Host must be a sting")
+        host = self.config.get("host")
+        port = self.config.get("port")
 
+        if not isinstance(host, str):
+            self.errors.append("Error: Host must be a string")
         try:
-            self.port = int(self.port)
+            port = int(port)
+            if not (0 < port <= 65535):
+                self.errors.append("Error: Port must be between 1 and 65535")
         except ValueError:
-            logger.error("Error: Port must be an integer")
-
-        self.port = int(self.port)
-
-        if not (0 < self.port <= 65535):
-            logger.error("Error: Port must be between 1 and 65535")
+            self.errors.append("Error: Port must be an integer")
 
 
 class LoggingConfig(ConfigValidator):
-    def __init__(self, config):
-        self.level = config.get("level")
-
     def validate(self):
-        # Check if level is supported or not
-        if self.level.upper() not in logging._nameToLevel:
-            raise ValueError("Error: Unsupported logLevel specified in the configuration")
+        level = self.config.get("level", "").upper()
+        if level not in logging._nameToLevel:
+            self.errors.append("Error: Unsupported logLevel specified in the configuration")
 
 
 class ReportsConfig(ConfigValidator):
-    def __init__(self, config):
-        self.format = config.get("format")
-        self.renderer = config.get("renderer")
-        self.output_dir = config.get("outputDir")
-
     def validate(self):
-        if self.format not in ["pdf"]:
-            raise ValueError("Error: Unsupported format specified in the configuration")
-        if self.renderer not in ["weasyprint", "xhtml2pdf"]:
-            raise ValueError("Error: Unsupported renderer specified in the configuration")
-        if not os.path.exists(get_full_path(self.output_dir)):
-            raise FileNotFoundError(
-                f"Error: Output directory '{self.output_dir}' specified for the reports does not exist")
+        format_ = self.config.get("format")
+        renderer = self.config.get("renderer")
+        output_dir = self.config.get("outputDir")
+
+        if format_ not in ["pdf"]:
+            self.errors.append("Error: Unsupported format specified in the configuration")
+        if renderer not in ["weasyprint", "xhtml2pdf"]:
+            self.errors.append("Error: Unsupported renderer specified in the configuration")
+        if not os.path.exists(get_full_path(output_dir)):
+            self.errors.append(f"Error: Output directory '{output_dir}' specified for the reports does not exist")
 
 
 def validate_config(config_dict):
-    try:
-        daemon_config = DaemonConfig(config_dict.get("daemon", {}))
-        logging_config = LoggingConfig(config_dict.get("logging", {}))
-        reports_config = ReportsConfig(config_dict.get("reports", {}))
+    validators = {
+        "daemon": DaemonConfig,
+        "logging": LoggingConfig,
+        "reports": ReportsConfig
+    }
 
-        # Validate each section
-        daemon_config.validate()
-        logging_config.validate()
-        reports_config.validate()
-    except (ValueError, FileNotFoundError) as e:
-        logger.error({str(e)})
+    validation_errors = []
+
+    for section, ValidatorClass in validators.items():
+        validator = ValidatorClass(config_dict.get(section, {}))
+        validator.validate()
+        validation_errors.extend(validator.errors)
+
+    if validation_errors:
+        for error in validation_errors:
+            logger.error(error)
         sys.exit(1)
