@@ -26,7 +26,7 @@ pip install pebblo
 pebblo
 ```
 
-Pebblo server now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
+Pebblo server now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting. Pebblo UI interface would be available on `http://localhost:8000/pebblo `
 
 see [troubeshooting](troubleshooting.md) if you face any issues.
 
