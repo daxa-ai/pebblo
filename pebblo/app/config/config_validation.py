@@ -1,5 +1,6 @@
 import os
 from pebblo.app.utils.utils import get_full_path
+from pebblo.app.libs.logger import logger
 from abc import ABC, abstractmethod
 import sys
 import logging
