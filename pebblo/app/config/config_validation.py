@@ -22,20 +22,20 @@ class DaemonConfig(ConfigValidator):
         port = self.config.get("port")
 
         if not isinstance(host, str):
-            self.errors.append("Error: Host must be a string")
+            self.errors.append(f"Error: Invalid host {host}. Host must be a string.")
         try:
             port = int(port)
             if not (0 < port <= 65535):
-                self.errors.append("Error: Port must be between 1 and 65535")
+                self.errors.append(f"Error: Invalid port {port}. Port must be between 1 and 65535.")
         except ValueError:
-            self.errors.append("Error: Port must be an integer")
+            self.errors.append(f"Error: Invalid port value {port}. Port must be an integer.")
 
 
 class LoggingConfig(ConfigValidator):
     def validate(self):
         level = self.config.get("level", "").upper()
         if level not in logging._nameToLevel:
-            self.errors.append("Error: Unsupported logLevel specified in the configuration")
+            self.errors.append(f"Error: Unsupported logLevel {level} specified in the configuration")
 
 
 class ReportsConfig(ConfigValidator):
@@ -45,9 +45,9 @@ class ReportsConfig(ConfigValidator):
         output_dir = self.config.get("outputDir")
 
         if format_ not in ["pdf"]:
-            self.errors.append("Error: Unsupported format specified in the configuration")
+            self.errors.append(f"Error: Unsupported format {format_} specified in the configuration")
         if renderer not in ["weasyprint", "xhtml2pdf"]:
-            self.errors.append("Error: Unsupported renderer specified in the configuration")
+            self.errors.append(f"Error: Unsupported renderer {renderer} specified in the configuration")
         if not os.path.exists(get_full_path(output_dir)):
             self.errors.append(f"Error: Output directory '{output_dir}' specified for the reports does not exist")
 
