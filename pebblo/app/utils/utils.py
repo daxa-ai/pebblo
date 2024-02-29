@@ -2,6 +2,7 @@ import json
 from os import makedirs, path, getcwd
 from json import JSONEncoder, dump
 from pebblo.app.libs.logger import logger
+from pebblo.app.enums.enums import CacheDir
 
 
 class DatetimeEncoder(JSONEncoder):
@@ -161,3 +162,17 @@ def get_document_with_findings_data(data):
         # Handle any exceptions and print the error message
         logger.warning(f"Error occurred: {str(err)}")
     return loader_data_list  # Return the list of document data
+
+
+def get_latest_load_id(load_ids, app_dir):
+    for load_id in reversed(load_ids):
+        # Path to report.json
+        app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}"
+        logger.debug(f"Report File path: {app_detail_path}")
+        app_detail_json = read_json_file(app_detail_path)
+        if app_detail_json:
+            # If report is found, proceed with this load_id
+            latest_load_id = load_id
+            return latest_load_id, app_detail_json
+        else:
+            return None, None

@@ -2,13 +2,7 @@ import json
 import os
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.utils.utils import (
-    get_full_path,
-    read_json_file,
-    update_findings_summary,
-    update_data_source,
-    get_document_with_findings_data,
-)
+from pebblo.app.utils.utils import get_full_path, read_json_file, update_findings_summary, update_data_source, get_document_with_findings_data, app_detail_json, get_latest_load_id
 from pebblo.app.models.models import AppListDetails, AppModel
 
 
@@ -58,18 +52,10 @@ class AppData:
                         continue
 
                     # Fetching latest loadId
-                    for load_id in reversed(load_ids):
-                        # Path to report.json
-                        app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}"
-                        logger.debug(f"Report File path: {app_detail_path}")
-                        app_detail_json = read_json_file(app_detail_path)
-                        if app_detail_json:
-                            # If report is found, proceed with this load_id
-                            latest_load_id = load_id
-                            break
-                    else:
-                        # If no report is found for any load_id, skip this app
-                        logger.warning(f"No report found for app: {app_dir}. Skipping.")
+                    latest_load_id, app_detail_json = get_latest_load_id(load_ids, app_dir)
+
+                    if not latest_load_id:
+                        logger.warning(f"No loadIds found for app: {app_dir}. Skipping.")
                         continue
 
                     report_summary = app_detail_json.get("reportSummary")
@@ -162,27 +148,12 @@ class AppData:
                 return json.dumps({})
 
             # Fetching latest loadId
-            latest_load_id = None
-            for load_id in reversed(load_ids):
-                # Path to report.json
-                app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}"
-                logger.debug(f"App Metadata file path: {app_detail_path}")
-                app_detail_json = read_json_file(app_detail_path)
-                if app_detail_json:
-                    # If report is found, proceed with this load_id
-                    latest_load_id = load_id
-                    break
+            latest_load_id, app_detail_json = get_latest_load_id(load_ids, app_dir)
 
             if not latest_load_id:
                 logger.warning(f"No valid load_ids found for app {app_path}.")
                 return json.dumps({})
 
-            # Path to report.json
-            app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.report_data_file_name.value}"
-            logger.debug(f"App Metadata file path: {app_detail_path}")
-
-            # Reading report.json
-            app_detail_json = read_json_file(app_detail_path)
             if not app_detail_json:
                 return json.dumps({})
 
