@@ -19,6 +19,23 @@ class EntityClassifier:
         self.analyzer = AnalyzerEngine()
         self.anonymizer = AnonymizerEngine()
 
+    def custom_analyze(self, combine=False):
+        # Adding custom analyzer
+        custom_registry = add_custom_regex_analyzer_registry()
+        if combine:  # Only in case of text anomyzer
+            custom_registry.load_predefined_recognizers()
+        self.analyzer = AnalyzerEngine(
+            registry=custom_registry,
+            context_aware_enhancer=LemmaContextAwareEnhancer(
+                context_similarity_factor=float(
+                    ConfidenceScore.EntityContextSimilarityFactor.value
+                ),
+                min_score_with_context_similarity=float(
+                    ConfidenceScore.EntityMinScoreWithContext.value
+                ),
+            ),
+        )
+
     def analyze_response(self, input_text):
         analyzer_results = self.analyzer.analyze(text=input_text, language="en")
         analyzer_results = [
@@ -32,8 +49,7 @@ class EntityClassifier:
         anonymized_text = self.anonymizer.anonymize(
             text=input_text, analyzer_results=analyzer_results
         )
-        response = anonymized_text.items
-        return response
+        return anonymized_text.items, anonymized_text.text
 
     def presidio_entity_classifier(self, input_text):
         """
@@ -55,7 +71,7 @@ class EntityClassifier:
             logger.debug("Presidio Entity Classifier Started.")
             logger.debug(f"Data Input: {input_text}")
             analyzer_results = self.analyze_response(input_text)
-            response = self.anomyze_response(analyzer_results, input_text)
+            response, _ = self.anomyze_response(analyzer_results, input_text)
             logger.debug(f"Presidio Entity Classifier Response: {response}")
             entities, total_count = get_entities(Entities, response)
             logger.debug(f"Presidio Entity Classifier Finished {entities}")
@@ -87,22 +103,9 @@ class EntityClassifier:
             logger.debug("Presidio Secret Entity Classifier Started.")
             logger.debug(f"Data Input: {input_text}")
 
-            # Adding custom analyzer
-            custom_registry = add_custom_regex_analyzer_registry()
-            self.analyzer = AnalyzerEngine(
-                registry=custom_registry,
-                context_aware_enhancer=LemmaContextAwareEnhancer(
-                    context_similarity_factor=float(
-                        ConfidenceScore.EntityContextSimilarityFactor.value
-                    ),
-                    min_score_with_context_similarity=float(
-                        ConfidenceScore.EntityMinScoreWithContext.value
-                    ),
-                ),
-            )
-
+            self.custom_analyze()
             analyzer_results = self.analyze_response(input_text)
-            response = self.anomyze_response(analyzer_results, input_text)
+            response, _ = self.anomyze_response(analyzer_results, input_text)
             logger.debug(f"Presidio Secret Entity Classifier Response: {response}")
             secret_entities, total_count = get_entities(SecretEntities, response)
             logger.debug(
@@ -113,3 +116,22 @@ class EntityClassifier:
         except Exception as e:
             logger.error(f"Presidio Secret Entity Classifier Failed, Exception: {e}")
             return secret_entities, total_count
+
+    def presidio_anomyze_text(self, input_text):
+        """
+        Returns plain input text as anomyzed text output
+        :param input_text: Input string / document snippet
+        :return: Input text in anomyzed form
+        Example:
+
+        input_text = "Hello, My name is John"
+        response = "Hello, My name is <PERSON>"
+        """
+        logger.debug("Presidio Text Anomyzer Started.")
+        logger.debug(f"Data Input: {input_text}")
+
+        self.custom_analyze(combine=True)
+        analyzer_results = self.analyze_response(input_text)
+        _, response = self.anomyze_response(analyzer_results, input_text)
+        logger.debug(f"Presidio Text Anomyzer Response: {response}")
+        return response

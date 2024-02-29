@@ -33,26 +33,38 @@ def mocked_presidio_entity_response(mocker):
         return_value=Mock(),
     )
 
-    anomyze_response1 = [
-        TestOperatorResult("PERSON"),
-        TestOperatorResult("US_ITIN"),
-        TestOperatorResult("US_SSN"),
-        TestOperatorResult("PERSON"),
-    ]
-    anomyze_response2 = [
-        TestOperatorResult("US_SSN"),
-        TestOperatorResult("US_ITIN"),
-        TestOperatorResult("IBAN_CODE"),
-        TestOperatorResult("CREDIT_CARD"),
-    ]
-    anomyze_response3 = [
-        TestOperatorResult("US_SSN"),
-        TestOperatorResult("CREDIT_CARD"),
-    ]
-    anomyze_response4 = [
-        TestOperatorResult("PERSON"),
-        TestOperatorResult("PERSON"),
-    ]
+    anomyze_response1 = (
+        [
+            TestOperatorResult("PERSON"),
+            TestOperatorResult("US_ITIN"),
+            TestOperatorResult("US_SSN"),
+            TestOperatorResult("PERSON"),
+        ],
+        "",
+    )
+    anomyze_response2 = (
+        [
+            TestOperatorResult("US_SSN"),
+            TestOperatorResult("US_ITIN"),
+            TestOperatorResult("IBAN_CODE"),
+            TestOperatorResult("CREDIT_CARD"),
+        ],
+        "",
+    )
+    anomyze_response3 = (
+        [
+            TestOperatorResult("US_SSN"),
+            TestOperatorResult("CREDIT_CARD"),
+        ],
+        "",
+    )
+    anomyze_response4 = (
+        [
+            TestOperatorResult("PERSON"),
+            TestOperatorResult("PERSON"),
+        ],
+        "",
+    )
     mocker.patch(
         "pebblo.entity_classifier.entity_classifier.EntityClassifier.anomyze_response",
         side_effect=[
@@ -74,21 +86,60 @@ def mocked_presidio_secret_response(mocker):
         return_value=Mock(),
     )
 
-    anomyze_response1 = [
-        TestOperatorResult("GITHUB_TOKEN"),
-        TestOperatorResult("AWS_ACCESS_KEY"),
-    ]
-    anomyze_response2 = [
-        TestOperatorResult("SLACK_TOKEN"),
-        TestOperatorResult("SLACK_TOKEN"),
-        TestOperatorResult("GITHUB_TOKEN"),
-        TestOperatorResult("AWS_SECRET_KEY"),
-        TestOperatorResult("AWS_ACCESS_KEY"),
-    ]
-    anomyze_response3 = []
+    anomyze_response1 = (
+        [
+            TestOperatorResult("GITHUB_TOKEN"),
+            TestOperatorResult("AWS_ACCESS_KEY"),
+        ],
+        "",
+    )
+    anomyze_response2 = (
+        [
+            TestOperatorResult("SLACK_TOKEN"),
+            TestOperatorResult("SLACK_TOKEN"),
+            TestOperatorResult("GITHUB_TOKEN"),
+            TestOperatorResult("AWS_SECRET_KEY"),
+            TestOperatorResult("AWS_ACCESS_KEY"),
+        ],
+        "",
+    )
+    anomyze_response3 = [], ""
     mocker.patch(
         "pebblo.entity_classifier.entity_classifier.EntityClassifier.anomyze_response",
         side_effect=[anomyze_response1, anomyze_response2, anomyze_response3],
+    )
+
+
+@pytest.fixture
+def mocked_presidio_anomyze_response(mocker):
+    """
+    Mocking secret entity classifier response
+    """
+    mocker.patch(
+        "pebblo.entity_classifier.entity_classifier.EntityClassifier.analyze_response",
+        return_value=Mock(),
+    )
+
+    anomyze_response1 = (
+        "",
+        """
+        <PERSON>'s SSN is <US_SSN>.
+        ITIN number <US_ITIN>
+        His AWS Access Key is: <AWS_ACCESS_KEY>.
+        And <PERSON> is: <GITHUB_TOKEN>
+    """,
+    )
+    anomyze_response2 = (
+        "",
+        """
+        <PERSON>'s SSN is 222-85.
+        His AWS Access Key is: AKIPT4PDORIRTV6PH.
+        And <PERSON> is: ghpu657yiujgwfrtigu3ver238765tyuhygvtrder6t7gyvhbuy5e676578976tyghy76578uygfyfgcyturtdf
+    """,
+    )
+    mocker.patch(
+        "pebblo.entity_classifier.entity_classifier.EntityClassifier.anomyze_response",
+        side_effect=[anomyze_response1, anomyze_response2],
     )
 
 
@@ -158,3 +209,29 @@ def test_presidio_secret_entity_classifier(
     )
     assert secret_entities == {}
     assert total_count == 0
+
+
+def test_presidio_anomyze_text(entity_classifier, mocked_presidio_anomyze_response):
+    """
+    UTs for presidio_anomyze_text function
+    """
+    anomyzed_text = entity_classifier.presidio_anomyze_text(input_text1)
+    assert (
+        anomyzed_text
+        == """
+        <PERSON>'s SSN is <US_SSN>.
+        ITIN number <US_ITIN>
+        His AWS Access Key is: <AWS_ACCESS_KEY>.
+        And <PERSON> is: <GITHUB_TOKEN>
+    """
+    )
+
+    anomyzed_text = entity_classifier.presidio_anomyze_text(negative_data)
+    assert (
+        anomyzed_text
+        == """
+        <PERSON>'s SSN is 222-85.
+        His AWS Access Key is: AKIPT4PDORIRTV6PH.
+        And <PERSON> is: ghpu657yiujgwfrtigu3ver238765tyuhygvtrder6t7gyvhbuy5e676578976tyghy76578uygfyfgcyturtdf
+    """
+    )
