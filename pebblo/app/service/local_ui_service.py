@@ -2,7 +2,7 @@ import json
 import os
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.utils.utils import get_full_path, read_json_file, update_findings_summary, update_data_source, get_document_with_findings_data, app_detail_json, get_latest_load_id
+from pebblo.app.utils.utils import get_full_path, read_json_file, update_findings_summary, update_data_source, get_document_with_findings_data, get_latest_load_id
 from pebblo.app.models.models import AppListDetails, AppModel
 
 
