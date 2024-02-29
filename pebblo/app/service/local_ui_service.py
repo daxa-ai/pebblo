@@ -46,23 +46,32 @@ class AppData:
 
                     if not app_json:
                         # Unable to find json file
-                        logger.warning(f"Metadata file ({CacheDir.metadata_file_path.value}) not found for app: {app_dir}.")
+                        logger.warning(
+                            f"Metadata file ({CacheDir.metadata_file_path.value}) not found for app: {app_dir}.")
                         logger.warning(f"Skipping app: {app_json}")
                         continue
 
-                    if not app_json.get("load_ids"):
-                        logger.warning(f"Skipping app {app_dir}: No loadIds found.")
+                    load_ids = app_json.get("load_ids", [])
+
+                    if not load_ids:
+                        logger.warning(f"No loadIds found for app: {app_dir}. Skipping.")
                         continue
+
                     # Fetching latest loadId
-                    latest_load_id = app_json.get("load_ids")[-1]
-                    # Path to report.json
-                    app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.report_data_file_name.value}"
-                    logger.debug(f"Report File path: {app_detail_path}")
-                    app_detail_json = read_json_file(app_detail_path)
-                    if not app_detail_json:
-                        logger.warning(f"Error: Report File {CacheDir.report_data_file_name.value} not found for {app_dir} app")
-                        logger.warning(f"Skipping app: {app_json}")
+                    for load_id in reversed(load_ids):
+                        # Path to report.json
+                        app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}"
+                        logger.debug(f"Report File path: {app_detail_path}")
+                        app_detail_json = read_json_file(app_detail_path)
+                        if app_detail_json:
+                            # If report is found, proceed with this load_id
+                            latest_load_id = load_id
+                            break
+                    else:
+                        # If no report is found for any load_id, skip this app
+                        logger.warning(f"No report found for app: {app_dir}. Skipping.")
                         continue
+
                     report_summary = app_detail_json.get("reportSummary")
                     app_name = app_json.get("name")
                     findings_entities = report_summary.get("findingsEntities", 0)
@@ -145,13 +154,28 @@ class AppData:
                 logger.warning(f"Error: Report Json {CacheDir.metadata_file_path.value} not found for app {app_path}")
                 return json.dumps({})
 
-            if not app_json.get("load_ids"):
+            load_ids = app_json.get("load_ids", [])
+
+            if not load_ids:
                 # Unable to fetch loadId details
-                logger.warning(f"Error: Details  not found for app {app_path}")
+                logger.warning(f"Error: Details not found for app {app_path}")
                 return json.dumps({})
 
-                # Fetching latest loadId
-            latest_load_id = app_json.get("load_ids")[-1]
+            # Fetching latest loadId
+            latest_load_id = None
+            for load_id in reversed(load_ids):
+                # Path to report.json
+                app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}"
+                logger.debug(f"App Metadata file path: {app_detail_path}")
+                app_detail_json = read_json_file(app_detail_path)
+                if app_detail_json:
+                    # If report is found, proceed with this load_id
+                    latest_load_id = load_id
+                    break
+
+            if not latest_load_id:
+                logger.warning(f"No valid load_ids found for app {app_path}.")
+                return json.dumps({})
 
             # Path to report.json
             app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{latest_load_id}/{CacheDir.report_data_file_name.value}"
@@ -165,4 +189,4 @@ class AppData:
             return json.dumps(app_detail_json, indent=4)
 
         except Exception as ex:
-            logger.error(f"Error in app detail. Error:{ex}")
+            logger.error(f"Error in app detail. Error: {ex}")
