@@ -14,6 +14,7 @@ export function ApplicationsList(props) {
     searchField,
     isSorting,
     link,
+    searchTxt
   } = props;
 
   window.addEventListener(LOAD, function () {
@@ -83,7 +84,7 @@ export function ApplicationsList(props) {
         <div class="inter surface-10 font-16 medium">${title}</div>
         <div class="flex">
           <div class="search" title="Search">
-            <input type="text" id="search_field" name="search" autocomplete="off" />
+            <input type="text" id="search_field" name="search" placeholder="${searchTxt}" autocomplete="off" />
             <img
               src="${MEDIA_URL}/static/search-icon.png"
               alt="Search Icon" />

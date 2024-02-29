@@ -238,6 +238,7 @@ body {
   width: 100%;
   height: 1px;
   background: rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 
 /* <----------- FONT WEIGHT PROPERTY -----------> */
@@ -753,8 +754,8 @@ body {
 
 /* <---------- INPUT BOX (SEARCH) ----------> */
 .search {
-  max-width: 259px;
-  width: 259px;
+  max-width: 280px;
+  width: 280px;
   border-bottom: 1px solid var(--surface-70);
   display: flex;
   padding: 6px 0px;
@@ -767,6 +768,11 @@ body {
   font-size: 12px;
   width: 100%;
   background: none;
+  padding-left: 8px;
+}
+.search input::placeholder{
+  color: var(--surface-60);
+  opacity: 50%;
 }
 
 .search > input:focus,
