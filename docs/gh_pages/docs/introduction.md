@@ -6,7 +6,7 @@ slug: /
 
 Pebblo enables developers to safely load data and promote their Gen AI app to deployment without worrying about the organization’s compliance and security requirements. The project identifies semantic topics and entities found in the loaded data and summarizes them on the UI or a PDF report.
 
-![Pebblo Overview](../static/img/pebblo-overview.jpg)
+![Pebblo Overview](../static/img/pebblo-overview.webp)
 
 # Benefits
 
@@ -30,7 +30,7 @@ Pebblo has two components.
 - [Installation](installation.md)
 - [Development Environment](development.md)
 - [Pebblo Server](daemon.md)
-- [Pebblo Safe DataLoader for Langchain](rag.md)
-- [Pebblo Configuration File ](config.md)
+- [Safe DataLoader for Langchain](rag.md)
+- [Configuration](config.md)
 - [Reports](reports.md)
 - [Troubleshooting](troubleshooting.md)

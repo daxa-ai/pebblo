@@ -1,5 +1,8 @@
 # Setting up development environment
 
+> **Note**  
+> Please note that Pebblo requires Python version 3.9 or above to function optimally.
+
 Pebblo is currently supported in MacOS and Linux.
 
 The following instructions are **tested on Mac OSX and Linux (Debian).**
