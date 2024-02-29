@@ -2,13 +2,12 @@ import json
 import os
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.utils.utils import get_full_path, read_json_file, update_findings_summary, update_data_source, get_document_with_findings_data, get_latest_load_id
+from pebblo.app.utils.utils import get_full_path, read_json_file, update_findings_summary, update_data_source, get_document_with_findings_data
 from pebblo.app.models.models import AppListDetails, AppModel
 
 
 class AppData:
-    @staticmethod
-    def get_all_apps_details():
+    def get_all_apps_details(self):
         """Returns all necessary app details required for listing."""
         try:
             dir_full_path = get_full_path(CacheDir.home_dir.value)
@@ -48,14 +47,14 @@ class AppData:
                     load_ids = app_json.get("load_ids", [])
 
                     if not load_ids:
-                        logger.warning(f"No loadIds found for app: {app_dir}. Skipping.")
+                        logger.warning(f"No valid loadIds found for app: {app_dir}. Skipping.")
                         continue
 
                     # Fetching latest loadId
-                    latest_load_id, app_detail_json = get_latest_load_id(load_ids, app_dir)
+                    latest_load_id, app_detail_json = self.get_latest_load_id(load_ids, app_dir)
 
                     if not latest_load_id:
-                        logger.warning(f"No loadIds found for app: {app_dir}. Skipping.")
+                        logger.warning(f"No valid loadIds found for app: {app_dir}. Skipping.")
                         continue
 
                     report_summary = app_detail_json.get("reportSummary")
@@ -126,8 +125,7 @@ class AppData:
         except Exception as ex:
             logger.error(f"Error in Dashboard app Listing. Error:{ex}")
 
-    @staticmethod
-    def get_app_details(app_dir):
+    def get_app_details(self, app_dir):
         try:
             # Path to metadata.json
             app_path = f"{CacheDir.home_dir.value}/{app_dir}/{CacheDir.metadata_file_path.value}"
@@ -148,10 +146,10 @@ class AppData:
                 return json.dumps({})
 
             # Fetching latest loadId
-            latest_load_id, app_detail_json = get_latest_load_id(load_ids, app_dir)
+            latest_load_id, app_detail_json = self.get_latest_load_id(load_ids, app_dir)
 
             if not latest_load_id:
-                logger.warning(f"No valid load_ids found for app {app_path}.")
+                logger.warning(f"No valid loadIds found for app {app_path}.")
                 return json.dumps({})
 
             if not app_detail_json:
@@ -161,3 +159,17 @@ class AppData:
 
         except Exception as ex:
             logger.error(f"Error in app detail. Error: {ex}")
+
+    @staticmethod
+    def get_latest_load_id(load_ids, app_dir):
+        for load_id in reversed(load_ids):
+            # Path to report.json
+            app_detail_path = f"{CacheDir.home_dir.value}/{app_dir}/{load_id}/{CacheDir.report_data_file_name.value}"
+            logger.debug(f"Report File path: {app_detail_path}")
+            app_detail_json = read_json_file(app_detail_path)
+            if app_detail_json:
+                # If report is found, proceed with this load_id
+                latest_load_id = load_id
+                return latest_load_id, app_detail_json
+            else:
+                return None, None
