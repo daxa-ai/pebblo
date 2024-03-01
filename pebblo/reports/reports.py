@@ -8,7 +8,7 @@ import os
 class Reports:
     # Generate report - JSON data, output file name, template file name
     @staticmethod
-    def generate_report(data, outputPath='./report.pdf', format = 'pdf', renderer = ReportLibraries.WEASYPRINT):
+    def generate_report(data, outputPath='./report.pdf', format = 'pdf', renderer = ReportLibraries.XHTML2PDF):
         if format == 'pdf':
             searchPath = os.path.join(os.path.dirname(__file__), 'templates/')
             try:
