@@ -19,15 +19,15 @@ And following Secret Entities:
 5. Azure Key ID
 6. Azure Client Secret
 7. Google API Key
-    
+
 ## How to use
 Entity Classifier
 ```
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 
 text = <Input Data>
-entity_classifier_obj = EntityClassifier(text)
-entity_groups, total_entity_count = entity_classifier_obj.presidio_entity_classifier()
+entity_classifier_obj = EntityClassifier()
+entity_groups, total_entity_count = entity_classifier_obj.presidio_entity_classifier(text)
 print(f"Entity Group: {entity_groups}")
 print(f"Entity Count: {total_entity_count}")
 ```
@@ -36,8 +36,18 @@ Secret Entity Classifier
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 
 text = <Input Data>
-entity_classifier_obj = EntityClassifier(text)
-secret_entity_groups, total_entity_count = entity_classifier_obj.presidio_secret_classifier()
+entity_classifier_obj = EntityClassifier()
+secret_entity_groups, total_entity_count = entity_classifier_obj.presidio_secret_classifier(text)
 print(f"Secret Entity Group: {secret_entity_groups}")
 print(f"Secret Entity Count: {total_entity_count}")
+```
+
+Document Anomyzer
+```
+from pebblo.entity_classifier.entity_classifier import EntityClassifier
+
+text = <Document text>
+entity_classifier_obj = EntityClassifier()
+response = entity_classifier_obj.presidio_anomyze_text(text)
+print(f"Anomyze Response: {response}")
 ```
