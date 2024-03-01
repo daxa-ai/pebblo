@@ -2,7 +2,6 @@ import json
 from os import makedirs, path, getcwd
 from json import JSONEncoder, dump
 from pebblo.app.libs.logger import logger
-from pebblo.app.enums.enums import CacheDir
 
 
 class DatetimeEncoder(JSONEncoder):
