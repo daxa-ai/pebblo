@@ -36,18 +36,11 @@ def load_config(path) -> dict:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
-            daemon=PortConfig(
-                host="localhost",
-                port=8000
-            ),
+            daemon=PortConfig(host="localhost", port=8000),
             reports=ReportConfig(
-                format="pdf",
-                renderer="xhtml2pdf",
-                outputDir="~/.pebblo"
+                format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
             ),
-            logging=LoggingConfig(
-                level="info"
-            )
+            logging=LoggingConfig(level="info"),
         )
         if not path:
             # Setting Default config details
