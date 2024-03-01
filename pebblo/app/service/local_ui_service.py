@@ -2,13 +2,7 @@ import json
 import os
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.utils.utils import (
-    get_full_path,
-    read_json_file,
-    update_findings_summary,
-    update_data_source,
-    get_document_with_findings_data,
-)
+from pebblo.app.utils.utils import get_full_path, read_json_file, update_findings_summary, update_data_source, get_document_with_findings_data
 from pebblo.app.models.models import AppListDetails, AppModel
 
 
@@ -46,28 +40,21 @@ class AppData:
                     if not app_json:
                         # Unable to find json file
                         logger.warning(
-                            f"Metadata file ({CacheDir.metadata_file_path.value}) not found for app: {app_dir}."
-                        )
+                            f"Metadata file ({CacheDir.metadata_file_path.value}) not found for app: {app_dir}.")
                         logger.warning(f"Skipping app: {app_json}")
                         continue
 
                     load_ids = app_json.get("load_ids", [])
 
                     if not load_ids:
-                        logger.warning(
-                            f"No valid loadIds found for app: {app_dir}. Skipping."
-                        )
+                        logger.warning(f"No valid loadIds found for app: {app_dir}. Skipping.")
                         continue
 
                     # Fetching latest loadId
-                    latest_load_id, app_detail_json = self.get_latest_load_id(
-                        load_ids, app_dir
-                    )
+                    latest_load_id, app_detail_json = self.get_latest_load_id(load_ids, app_dir)
 
                     if not latest_load_id:
-                        logger.warning(
-                            f"No valid loadIds found for app: {app_dir}. Skipping."
-                        )
+                        logger.warning(f"No valid loadIds found for app: {app_dir}. Skipping.")
                         continue
 
                     report_summary = app_detail_json.get("reportSummary")
@@ -86,9 +73,7 @@ class AppData:
                     data_source_details = app_detail_json.get("dataSources")
                     # Fetching only required values for dashboard pages
                     if not data_source_details:
-                        logger.warning(
-                            f"Error: Unable to fetch dataSources details for {app_dir} app"
-                        )
+                        logger.warning(f"Error: Unable to fetch dataSources details for {app_dir} app")
                         logger.debug(f"App Detail Json : {app_detail_json}")
                         continue
                     for data in data_source_details:
@@ -150,9 +135,7 @@ class AppData:
             # Condition for handling loadId
             if not app_json:
                 # Unable to fetch loadId details
-                logger.warning(
-                    f"Error: Report Json {CacheDir.metadata_file_path.value} not found for app {app_path}"
-                )
+                logger.warning(f"Error: Report Json {CacheDir.metadata_file_path.value} not found for app {app_path}")
                 return json.dumps({})
 
             load_ids = app_json.get("load_ids", [])
