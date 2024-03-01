@@ -1,10 +1,11 @@
-import yaml
-
-from pydantic import BaseSettings, Field
 import pathlib
+import yaml
+from pydantic import BaseSettings, Field
+
 
 # Default config value
 dir_path = pathlib.Path().absolute()
+
 
 # Port BaseModel
 class PortConfig(BaseSettings):
@@ -26,11 +27,12 @@ class LoggingConfig(BaseSettings):
 
 # ConfigFile BaseModel
 class Config(BaseSettings):
-    daemon:  PortConfig
+    daemon: PortConfig
     reports: ReportConfig
     logging: LoggingConfig
 
-def load_config(path) -> Config:
+
+def load_config(path) -> dict:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
@@ -52,19 +54,16 @@ def load_config(path) -> Config:
             return conf_obj.dict()
 
         # If Path exist, set config value
-        else:
-            con_file = path
-            try:
-                with open(con_file, "r") as output:
-                    cred_json = yaml.safe_load(output)
-                    parsed_config = Config.parse_obj(cred_json)
-                    config_dict = parsed_config.dict()
-                    return config_dict
-            except IOError as err:
-                print(f"no credentials file found at {con_file}. Error : {err}")
-                return conf_obj.dict()
+        con_file = path
+        try:
+            with open(con_file, "r") as output:
+                cred_json = yaml.safe_load(output)
+                parsed_config = Config.parse_obj(cred_json)
+                config_dict = parsed_config.dict()
+                return config_dict
+        except IOError as err:
+            print(f"no credentials file found at {con_file}. Error : {err}")
+            return conf_obj.dict()
 
     except Exception as err:
         print(f"Error while loading config details, err: {err}")
-
-
