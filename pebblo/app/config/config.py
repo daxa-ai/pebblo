@@ -8,20 +8,20 @@ dir_path = pathlib.Path().absolute()
 
 # Port BaseModel
 class PortConfig(BaseSettings):
-    host: str = Field(default='localhost')
+    host: str = Field(default="localhost")
     port: int = Field(default=8000)
 
 
 # Report BaseModel
 class ReportConfig(BaseSettings):
-    format: str = Field(default='pdf')
-    renderer: str = Field(default='xhtml2pdf')
+    format: str = Field(default="pdf")
+    renderer: str = Field(default="xhtml2pdf")
     outputDir: str = Field(dir_path)
 
 
 # Logging BaseModel
 class LoggingConfig(BaseSettings):
-    level: str = Field(default='info')
+    level: str = Field(default="info")
 
 
 # ConfigFile BaseModel
@@ -35,16 +35,16 @@ def load_config(path) -> Config:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
             daemon=PortConfig(
-                host='localhost',
+                host="localhost",
                 port=8000
             ),
             reports=ReportConfig(
-                format='pdf',
-                renderer='xhtml2pdf',
-                outputDir='~/.pebblo'
+                format="pdf",
+                renderer="xhtml2pdf",
+                outputDir="~/.pebblo"
             ),
             logging=LoggingConfig(
-                level='info'
+                level="info"
             )
         )
         if not path:
@@ -65,6 +65,6 @@ def load_config(path) -> Config:
                 return conf_obj.dict()
 
     except Exception as err:
-        print(f'Error while loading config details, err: {err}')
+        print(f"Error while loading config details, err: {err}")
 
 
