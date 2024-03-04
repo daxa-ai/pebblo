@@ -20,14 +20,16 @@ import {
 import { CLICK, LOAD, PATH } from "../constants/enums.js";
 import { GET_FILE } from "../services/get.js";
 import { GET_REPORT } from "../constants/routesConstant.js";
+import { CheckIcon, CopyIcon, DownloadIcon, LoadHistoryIcon } from "../icons/index.js";
+
 
 const DialogBody = () => {
   return /*html*/ `
   <div class="load-history-table pt-6 pb-6 pr-6 pl-6 rounded-md">
     ${Table({
-      tableCol: LOAD_HISTORY_TABLE_COL,
-      tableData: LOAD_HISTORY_TABLE,
-    })}
+    tableCol: LOAD_HISTORY_TABLE_COL,
+    tableData: LOAD_HISTORY_TABLE,
+  })}
   </div>
   `;
 };
@@ -35,10 +37,26 @@ const DialogBody = () => {
 export function AppDetailsPage() {
   window.addEventListener(LOAD, function () {
     const download_icon = document.getElementById("download_report_btn");
-    download_icon.addEventListener(CLICK, function () {
+    const copyPath = document.getElementById("copy_path")
+    download_icon?.addEventListener(CLICK, function () {
       GET_FILE(`${GET_REPORT}?app_name=${APP_DATA?.name}`);
     });
+    copyPath?.addEventListener('click', onCopyText)
   });
+
+  function onCopyText() {
+    const pathValue = document.getElementById("path_value");
+    const copyIcon = document.getElementById("copy_path")
+    const copyTooltip = document.getElementById("copy_tooltip")
+    copyIcon.innerHTML = CheckIcon({ color: 'success' });
+    copyTooltip.style.visibility = "visible"
+    navigator.clipboard.writeText(pathValue.textContent);
+    const setIcon = setTimeout(() => {
+      copyIcon.innerHTML = CopyIcon({ color: "grey", class: "cursor-pointer" });
+      copyTooltip.style.visibility = "hidden"
+      clearTimeout(setIcon)
+    }, 2000)
+  }
 
   // last updated date
   // <div class="font-thin">Last Updated 13 Feb 2024
@@ -62,54 +80,55 @@ export function AppDetailsPage() {
         </div>
         <div class="flex gap-2 mt-auto h-fit">
           ${Button({
-            variant: "text",
-            btnText: "Download Report",
-            startIcon: "/static/download-icon.png",
-            id: "download_report_btn",
-          })}
+    variant: "text",
+    btnText: "Download Report",
+    startIcon: DownloadIcon({ color: "primary" }),
+    id: "download_report_btn",
+    color: "primary"
+  })}
           <div class="divider mt-2 mb-2"></div>
           ${Button({
-            variant: "text",
-            btnText: "Load History",
-            startIcon: "/static/pending-icon.png",
-            id: "load_history_dialog_btn",
-          })}
+    variant: "text",
+    btnText: "Load History",
+    startIcon: LoadHistoryIcon({ color: "primary" }),
+    id: "load_history_dialog_btn",
+    color: "primary"
+  })}
         </div>
       </div>
       ${AccordionDetails({
-        children: /*html*/ `<div class="grid grid-cols-4 row-gap-3 col-gap-3 w-full">
+    children: /*html*/ `<div class="grid grid-cols-4 row-gap-3 col-gap-3 w-full">
            ${APP_DETAILS?.myMap((item) =>
-             KeyValue({
-               key: item.label,
-               value: item.value,
-               className: item?.label === PATH ? "col-4" : "",
-             })
-           )}
+      KeyValue({
+        key: item.label,
+        value: item?.render ? item.render : item.value,
+        className: item?.label === PATH ? "col-4" : "",
+      })
+    )}
         </div>`,
-        id: "panel-1",
-      })}
+    id: "panel-1",
+  })}
       <div class="divider-horizontal"></div>
       <div class="flex flex-col gap-4 h-full">
         <div class="flex gap-2 surface-10 inter items-center">
            <div class="font-16">Report Summary</div>
-           <div class="font-12">Current Load By ${
-             APP_DATA?.reportSummary.owner
-           }, ${get_Formatted_Date(APP_DATA?.reportSummary.createdAt)} </div>
+           <div class="font-12">Current Load By ${APP_DATA?.reportSummary.owner
+    }, ${get_Formatted_Date(APP_DATA?.reportSummary.createdAt)} </div>
 
         </div>
         ${Tabs(
-          TABS_ARR_FOR_APPLICATION_DETAILS,
-          TAB_PANEL_ARR_FOR_APPLICATION_DETAILS
-        )}
+      TABS_ARR_FOR_APPLICATION_DETAILS,
+      TAB_PANEL_ARR_FOR_APPLICATION_DETAILS
+    )}
       </div>
 
       ${Dialog({
-        title: "Load History",
-        maxWidth: "md",
-        dialogBody: DialogBody(),
-        dialogId: "load_history_dialog",
-        btnId: "load_history_dialog_btn",
-      })}
+      title: "Load History",
+      maxWidth: "md",
+      dialogBody: DialogBody(),
+      dialogId: "load_history_dialog",
+      btnId: "load_history_dialog_btn",
+    })}
    </div>
     `;
 }

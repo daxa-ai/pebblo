@@ -1,6 +1,7 @@
 import { MEDIA_URL } from "../constants/constant.js";
 import { KEYUP, LOAD, ACTIONS, CLICK } from "../constants/enums.js";
 import { GET_REPORT } from "../constants/routesConstant.js";
+import { DownloadIcon, SearchIcon } from "../icons/index.js";
 import { GET_FILE } from "../services/get.js";
 import { waitForElement } from "../util.js";
 import { Button, Table, Td } from "./index.js";
@@ -53,25 +54,25 @@ export function ApplicationsList(props) {
     document.getElementsByTagName("tbody")[0].innerHTML = filteredData?.length
       ? `
         ${filteredData?.myMap(
-          (item) => /*html*/ `
+        (item) => /*html*/ `
             <tr class="table-row">
               ${tableCol?.myMap((col) =>
-                Td({
-                  children: col?.actions
-                    ? col?.actions(item)
-                    : col?.render
-                    ? col?.render(item)
-                    : item[col?.field],
-                  align: col?.align,
-                  link:
-                    col?.field !== ACTIONS && link
-                      ? `${link}?app_name=${item?.name}`
-                      : "",
-                  maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
-                })
-              )}
-            </tr>`
+          Td({
+            children: col?.actions
+              ? col?.actions(item)
+              : col?.render
+                ? col?.render(item)
+                : item[col?.field],
+            align: col?.align,
+            link:
+              col?.field !== ACTIONS && link
+                ? `${link}?app_name=${item?.name}`
+                : "",
+            maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
+          })
         )}
+            </tr>`
+      )}
       `
       : /*html*/ ` <tr class="table-row">
              <td class="pt-3 pb-3 pl-3 pr-3 text-center" colspan="${tableCol?.length}">No Data Found</td>
@@ -85,27 +86,25 @@ export function ApplicationsList(props) {
         <div class="flex">
           <div class="search" title="Search">
             <input type="text" id="search_field" name="search" placeholder="${searchTxt}" autocomplete="off" />
-            <img
-              src="${MEDIA_URL}/static/search-icon.png"
-              alt="Search Icon" />
+            ${SearchIcon({ color: 'grey' })}  
           </div>
-       ${
-         isDownloadReport
-           ? /*html*/ `<div class="divider mt-2 mb-2 ml-4 mr-1"></div>
+       ${isDownloadReport
+      ? /*html*/ `<div class="divider mt-2 mb-2 ml-4 mr-1"></div>
           ${Button({
-            btnText: "Download Reports",
-            startIcon: "/static/download-icon.png",
-          })}`
-           : ""
-       }
+        btnText: "Download Reports",
+        startIcon: DownloadIcon({ color: "primary" }),
+        color: "primary"
+      })}`
+      : ""
+    }
         </div>
       </div>
       ${Table({
-        tableCol,
-        tableData,
-        link,
-        isSorting,
-      })}
+      tableCol,
+      tableData,
+      link,
+      isSorting,
+    })}
   </div>
     `;
 }

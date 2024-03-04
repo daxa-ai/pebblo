@@ -5,18 +5,19 @@ import {
   APP_DETAILS_ROUTE,
   DASHBOARD_ROUTE,
 } from "./constants/routesConstant.js";
+import { LeftArrowIcon } from "./icons/index.js";
 
 export function App() {
   const UI = appRoutes();
   const button =
     window.location.pathname === APP_DETAILS_ROUTE
       ? Button({
-          variant: "text",
-          btnText: "Back",
-          startIcon: "/static/left-arrow.png",
-          href: DASHBOARD_ROUTE,
-          style: "color:white;",
-        })
+        variant: "text",
+        btnText: "Back",
+        startIcon: LeftArrowIcon({ color: "white" }),
+        href: DASHBOARD_ROUTE,
+        color: "white"
+      })
       : "";
 
   return /*html*/ `

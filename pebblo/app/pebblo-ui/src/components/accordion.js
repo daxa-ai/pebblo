@@ -6,6 +6,7 @@ import {
   FLEX,
   NONE,
 } from "../constants/enums.js";
+import { UpArrowIcon } from "../icons/index.js";
 
 document.addEventListener(DOM_CONTENT_LOADED, function () {
   const ACCORDION__BUTTON =
@@ -18,9 +19,8 @@ document.addEventListener(DOM_CONTENT_LOADED, function () {
 function onClick(evt) {
   this.classList.toggle(ACTIVE);
   let ACCORDION__PANEL = document.getElementById(
-    `panel-${
-      Number(evt.target.parentElement.dataset.value) ||
-      Number(evt.target.dataset.value)
+    `panel-${Number(evt.target.parentElement.dataset.value) ||
+    Number(evt.target.dataset.value)
     }`
   );
   if (ACCORDION__PANEL.style.display === FLEX) {
@@ -35,7 +35,8 @@ function AccordionSummary(props) {
   return /*html*/ ` 
       <button title="Accordion-summary" type="button" class="accordion-summary flex gap-1 items-center" data-value="${id}">
         <div>${children}</div>
-        <img id="arrow_icon" src="${MEDIA_URL}/static/${icon}" alt="Arrow icon"/>
+       
+        ${UpArrowIcon({ id: "arrow_icon" })}
       </button>
     `;
 }

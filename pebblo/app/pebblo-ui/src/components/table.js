@@ -2,6 +2,7 @@ import { SORT_DATA, get_Text_Orientation, waitForElement } from "../util.js";
 import { ACTIONS, ACTIVE, ASC, CLICK, DSC, LOAD } from "../constants/enums.js";
 import { Tooltip } from "./tooltip.js";
 import { MEDIA_URL } from "../constants/constant.js";
+import { StraightIcon } from "../icons/index.js";
 
 function Table(props) {
   const { tableCol, tableData, link, isSorting } = props;
@@ -45,22 +46,20 @@ function Thead(props) {
   const { tableCol, isSorting } = props;
   return /*html*/ `
       <thead>${tableCol?.myMap((col) => {
-        const TEXT__ALIGN = get_Text_Orientation(col?.align);
-        return `<th class="${TEXT__ALIGN} ${
-          !isSorting || col?.field === ACTIONS
-            ? ""
-            : "cursor-pointer sort-column"
-        }" data-column="${col?.field}" data-order="${DSC}">
-              ${
-                !isSorting || col?.field === ACTIONS
-                  ? col.label
-                  : /*html*/ `<div class="flex gap-1 items-center ${TEXT__ALIGN}">
-              <img src="${MEDIA_URL}static/sort-icon.png" alt="Sort Icon" height="10" />
+    const TEXT__ALIGN = get_Text_Orientation(col?.align);
+    return /*html*/`<th class="${TEXT__ALIGN} ${!isSorting || col?.field === ACTIONS
+      ? ""
+      : "cursor-pointer sort-column"
+      }" data-column="${col?.field}" data-order="${DSC}">
+              ${!isSorting || col?.field === ACTIONS
+        ? col.label
+        : /*html*/ `<div class="flex gap-1 items-center ${TEXT__ALIGN}">
+              ${StraightIcon({ color: 'grey', size: 'sm' })}
               <div>${col.label}</div>
               </div>`
-              }
+      }
         </th>`;
-      })}</thead>
+  })}</thead>
     `;
 }
 
@@ -94,9 +93,9 @@ function Td(props) {
     return /*html*/ `
     <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 text-ellipsis">
        ${Tooltip({
-         children: children || "-",
-         title: tooltipTitle,
-       })}
+      children: children || "-",
+      title: tooltipTitle,
+    })}
        </td>
     `;
   }
@@ -107,22 +106,21 @@ const TABLE_BODY = (props) => {
   const { tableCol, tableData, link } = props;
   return tableData?.length
     ? tableData?.myMap(
-        (item) => /*html*/ `<tr class="table-row">
+      (item) => /*html*/ `<tr class="table-row">
    ${tableCol?.myMap((col) =>
-     Td({
-       children: col?.render ? col?.render(item) : item[col?.field],
-       align: col?.align,
-       link:
-         col?.field !== ACTIONS && link ? `${link}?app_name=${item?.name}` : "",
-       isTooltip: col?.isTooltip,
-       tooltipTitle: col?.tooltipTitle ? col?.tooltipTitle(item) : "",
-     })
-   )}
+        Td({
+          children: col?.render ? col?.render(item) : item[col?.field],
+          align: col?.align,
+          link:
+            col?.field !== ACTIONS && link ? `${link}?app_name=${item?.name}` : "",
+          isTooltip: col?.isTooltip,
+          tooltipTitle: col?.tooltipTitle ? col?.tooltipTitle(item) : "",
+        })
+      )}
      </tr>`
-      )
-    : /*html*/ `<td class="pt-3 pb-3 pl-3 pr-3 text-center" colspan="${
-        tableCol?.length + 1
-      }">No Data Found</td>`;
+    )
+    : /*html*/ `<td class="pt-3 pb-3 pl-3 pr-3 text-center" colspan="${tableCol?.length + 1
+    }">No Data Found</td>`;
 };
 
 export { Table, Tbody, Thead, Td };
