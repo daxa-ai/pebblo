@@ -26,10 +26,10 @@ install: build
 TEST_FILE ?= tests/
 
 test:
-	pytest $(TEST_FILE)
+	pytest $(TEST_FILE) --durations=10
 
 tests:
-	pytest $(TEST_FILE)
+	pytest $(TEST_FILE) --durations=10
 
 ################################################
 # LINT

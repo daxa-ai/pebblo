@@ -1,9 +1,11 @@
+"""
+This is entry point for Pebblo(Pebblo Server and Local UI)
+"""
 from contextlib import redirect_stderr, redirect_stdout
-
+import argparse
 from io import StringIO
 from tqdm import tqdm
 from pebblo.app.config.config import load_config
-import argparse
 
 
 config_details = {}
@@ -14,7 +16,7 @@ def start():
     global config_details
     # For loading config file details
     parser = argparse.ArgumentParser(description="Pebblo  CLI")
-    parser.add_argument('--config', type=str, help="config file path")
+    parser.add_argument("--config", type=str, help="config file path")
     args = parser.parse_args()
     path = args.config
     p_bar = tqdm(range(10))
@@ -50,13 +52,14 @@ def classifier_init(p_bar):
     p_bar.update(1)
 
 
-def server_start(config_details, p_bar):
+def server_start(config: dict, p_bar: tqdm):
     """Start server."""
     p_bar.write("Pebblo server starting ...")
     # Starting Uvicorn Service Using config details
     from pebblo.app.config.service import Service
+
     p_bar.update(1)
-    svc = Service(config_details)
+    svc = Service(config_details=config)
     p_bar.update(2)
     p_bar.close()
     svc.start()
