@@ -45,12 +45,7 @@ jobs:
             echo "Unexpected issue detected at server."
             exit 1 
           fi
-            
-      - name: Install Pebblo-Langchain Packages
-        run: |
-            echo 'Installing Pebblo Package'
-            pip3 install pebblo-langchain --force-reinstall
-        
+  
       - name: Install Required Sample Application Dependencies
         run: |
             echo 'Install Sample Application dependency'
