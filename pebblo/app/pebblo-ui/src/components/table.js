@@ -20,8 +20,8 @@ function Table(props) {
         el.addEventListener(CLICK, () => {
           Array.from(table_head).forEach((th) => {
             th.classList.remove("active");
-            th.classList.remove("asc");
-            th.classList.remove("dsc");
+            th.classList.remove(ASC);
+            th.classList.remove(DSC);
           });
           el.classList.add("active");
           el.classList.add(el.dataset.order);

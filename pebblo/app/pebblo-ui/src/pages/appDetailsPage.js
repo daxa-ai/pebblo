@@ -11,7 +11,7 @@ import {
 import {
   APP_DATA,
   APP_DETAILS,
-  LOAD_HISTORY_TABLE,
+  LOAD_HISTORY_TABLE_DATA,
   LOAD_HISTORY_TABLE_COL,
   MEDIA_URL,
   TABS_ARR_FOR_APPLICATION_DETAILS,
@@ -28,7 +28,7 @@ const DialogBody = () => {
   <div class="load-history-table pt-6 pb-6 pr-6 pl-6 rounded-md">
     ${Table({
     tableCol: LOAD_HISTORY_TABLE_COL,
-    tableData: LOAD_HISTORY_TABLE,
+    tableData: LOAD_HISTORY_TABLE_DATA,
   })}
   </div>
   `;

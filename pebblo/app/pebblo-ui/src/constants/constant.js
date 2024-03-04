@@ -480,4 +480,4 @@ export const LOAD_HISTORY_TABLE_COL = [
   },
 ];
 
-export const LOAD_HISTORY_TABLE = APP_DATA?.loadHistory?.history;
+export const LOAD_HISTORY_TABLE_DATA = APP_DATA?.loadHistory?.history;

@@ -62,22 +62,6 @@ export const waitForElement = (querySelector, timeout) => {
   });
 };
 
-export const CONCAT_ARRAYS = (array, key) => {
-  if (window.location.pathname === DASHBOARD_ROUTE) {
-    let dummy = [];
-    let dataSourceName = "";
-    array?.forEach((item) => {
-      dataSourceName = item[0]?.name;
-      if (item[0][key]) {
-        dummy = [...dummy, ...item[0][key]];
-      }
-    });
-
-    return dummy?.map((item) => ({ ...item, dataSource: dataSourceName }));
-  }
-  return [];
-};
-
 export const SORT_DATA = (array, order, key) => {
   if (typeof array[0][key] === "string") {
     if (order === "asc") {
