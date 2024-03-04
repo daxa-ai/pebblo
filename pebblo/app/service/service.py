@@ -40,8 +40,8 @@ class AppLoaderDoc:
         full_file_path = get_full_path(current_load_report_file_path)
         report_obj.generate_report(
             data=final_report,
-            outputPath=full_file_path,
-            format=report_format,
+            output_path=full_file_path,
+            format_string=report_format,
             renderer=renderer,
         )
 
@@ -53,8 +53,8 @@ class AppLoaderDoc:
         full_file_path = get_full_path(current_app_report_file_path)
         report_obj.generate_report(
             data=final_report,
-            outputPath=full_file_path,
-            format=report_format,
+            output_path=full_file_path,
+            format_string=report_format,
             renderer=renderer,
         )
         logger.info(f"PDF report generated, please check path : {full_file_path}")
