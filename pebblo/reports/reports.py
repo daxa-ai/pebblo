@@ -1,37 +1,51 @@
+"""
+Reports Module
+Contains generate_report() to generate report pdf
+"""
 # Import HTML to PDF generator function
 
-from pebblo.reports.html_to_pdf_generator.report_generator import convertHtmlToPdf
+import os
+from pebblo.reports.html_to_pdf_generator.report_generator import convert_html_to_pdf
 from pebblo.reports.enums.report_libraries import (
     ReportLibraries,
     template_renderer_mapping,
 )
 from pebblo.reports.libs.logger import logger
-import os
 
 
 class Reports:
-    # Generate report - JSON data, output file name, template file name
+    """
+    Reports Class
+    Contains generate_report() to generate report pdf
+    """
+
     @staticmethod
     def generate_report(
         data,
-        outputPath="./report.pdf",
-        format="pdf",
-        renderer=ReportLibraries.WEASYPRINT,
+        output_path="./report.pdf",
+        format_string="pdf",
+        renderer=ReportLibraries.XHTML2PDF,
     ):
-        if format == "pdf":
-            searchPath = os.path.join(os.path.dirname(__file__), "templates/")
+        """Generates report pdf for given format and renderer"""
+        if format_string == "pdf":
+            search_path = os.path.join(os.path.dirname(__file__), "templates/")
             try:
-                templateName = template_renderer_mapping[renderer]
-                convertHtmlToPdf(
+                template_name = template_renderer_mapping[renderer]
+                convert_html_to_pdf(
                     data,
-                    outputPath,
-                    templateName=templateName,
-                    searchPath=searchPath,
+                    output_path,
+                    template_name=template_name,
+                    search_path=search_path,
                     renderer=renderer,
                 )
-            except Exception as e:
+            except KeyError as e:
                 logger.error(
-                    f"Renderer {renderer} not supported. Please use supported renderers: {ReportLibraries.WEASYPRINT} or {ReportLibraries.XHTML2PDF}, {e}"
+                    "Renderer %s not supported. Please use supported renderers: "
+                    "%s or %s, %s",
+                    renderer,
+                    ReportLibraries.WEASYPRINT,
+                    ReportLibraries.XHTML2PDF,
+                    e,
                 )
         else:
-            logger.error(f"Output file format {format} not supported")
+            logger.error("Output file format %s not supported", format)
