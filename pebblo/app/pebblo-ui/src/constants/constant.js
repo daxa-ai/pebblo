@@ -5,24 +5,12 @@ import { DownloadIcon } from "../icons/index.js";
 import { get_Formatted_Date } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
-export const MEDIA_URL = document.scripts[0].getAttribute("staticURL");
-export const APP_DATA = JSON.parse(document.scripts[0].getAttribute("appData"));
+const SCRIPT_ELEMENT = document.getElementById("main_script")
+
+export const MEDIA_URL = SCRIPT_ELEMENT.dataset['static'];
+export const APP_DATA = JSON.parse(SCRIPT_ELEMENT.dataset['appdata'] || '');
 export const PORT = window.location.port;
 
-export const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 
 export const APP_DETAILS_FINDINGS_TABLE = [
   {

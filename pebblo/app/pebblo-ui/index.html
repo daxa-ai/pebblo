@@ -25,8 +25,9 @@
   </body>
   <script
     type="module"
+    id="main_script"
     src="{{ url_for('static', path='index.js') }}"
-    data-staticURL="{{ url_for('static', path='') }}"
-    data-appData="{{data}}"
+    data-static="{{ url_for('static', path='') }}"
+    data-appdata="{{data}}"
     data-proxy="{{proxy}}"></script>
 </html>

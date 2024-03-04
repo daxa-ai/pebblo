@@ -1,5 +1,19 @@
-import { MONTHS } from "./constants/constant.js";
 import { DASHBOARD_ROUTE } from "./constants/routesConstant.js";
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 export const get_Formatted_Date = (date) => {
   const newDate = new Date(date);
