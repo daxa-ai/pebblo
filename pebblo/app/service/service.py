@@ -41,7 +41,7 @@ class AppLoaderDoc:
         report_obj.generate_report(
             data=final_report,
             output_path=full_file_path,
-            format=report_format,
+            format_string=report_format,
             renderer=renderer,
         )
 
@@ -54,7 +54,7 @@ class AppLoaderDoc:
         report_obj.generate_report(
             data=final_report,
             output_path=full_file_path,
-            format=report_format,
+            format_string=report_format,
             renderer=renderer,
         )
         logger.info(f"PDF report generated, please check path : {full_file_path}")
