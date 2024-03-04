@@ -1,4 +1,5 @@
 import { KEYUP } from "../constants/enums.js";
+import { SearchIcon } from "../icons/index.js";
 import { waitForElement } from "../util.js";
 import { KeyValue } from "./index.js";
 
@@ -9,7 +10,7 @@ import { KeyValue } from "./index.js";
 // }
 
 export function SnippetDetails(props) {
-  const { title, data, searchField } = props;
+  const { title, data, searchField, inputPlaceholder } = props;
 
   waitForElement("#snippet_search", 1000).then(function () {
     const inputEl = document.getElementById("snippet_search");
@@ -69,7 +70,7 @@ export function SnippetDetails(props) {
         <div class="inter surface-10 font-16 medium">${title}</div>
         <div class="flex">
           <div class="search">
-            <input type="text" id="snippet_search" autocomplete="off" />
+            <input type="text" id="snippet_search" placeholder="${inputPlaceholder}" autocomplete="off" />
               ${SearchIcon({ color: 'grey' })}  
           </div>
         </div>

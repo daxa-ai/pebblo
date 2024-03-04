@@ -451,7 +451,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
         ? APP_DATA?.dataSources[0]?.findingsDetails
         : [],
       searchField: ["labelName"],
-      inputPlaceholder: "Search by Snippet Label",
+      inputPlaceholder: "Search",
     },
     component: SnippetDetails,
   },
