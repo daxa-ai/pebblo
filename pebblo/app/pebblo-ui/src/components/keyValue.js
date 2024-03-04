@@ -1,3 +1,9 @@
+// PROPS {
+//   key: string,
+//   value: string,
+//   className: string
+// }
+
 export function KeyValue(props) {
   const { key, value, className = "" } = props;
   return /*html*/ `

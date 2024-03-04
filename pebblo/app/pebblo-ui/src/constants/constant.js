@@ -1,7 +1,7 @@
 import { ApplicationsList, SnippetDetails } from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
-import DownloadIcon from "../icons/downloadIcon.js";
+import { DownloadIcon } from "../icons/index.js";
 import { get_Formatted_Date } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
@@ -168,7 +168,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     render: (item) =>
       Tooltip({
         children: /*html*/ `<div class="flex gap-4 justify-end">
-      ${DownloadIcon({ color: "primary", class: 'download-icon', id: `${item?.name} icon` })}
+      ${DownloadIcon({ color: "primary", class: 'download-icon', id: `${item?.name}` })}
     </div>`,
         title: "Download Icon",
         variant: "right",
@@ -176,9 +176,9 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     align: "start",
     //   render: /*html*/ `
     //   <div class="flex gap-4 justify-end">
-    //     <img id="download_icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
+    //       ${DownloadIcon({ color: "primary", class: 'download-icon', id: `${item?.name}` })}
     //     <div class="divider"></div>
-    //     <img id="load_history_icon" class="cursor-pointer" src="${MEDIA_URL}/static/pending-icon.png" alt="Download Icon" />
+    //       ${LoadHistoryIcon({ color: "primary" })}
     //   </div>
     // `
   },
@@ -345,7 +345,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       searchField: ["name", "owner"],
       isSorting: true,
       link: APP_DETAILS_ROUTE,
-      searchTxt: "Search by Application & Owner",
+      inputPlaceholder: "Search by Application & Owner",
     },
     component: ApplicationsList,
   },
@@ -357,7 +357,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       isDownloadReport: false,
       searchField: ["findingsType", "labelName", "appName"],
       isSorting: true,
-      searchTxt: "Search by Finding, Type & Application",
+      inputPlaceholder: "Search by Finding, Type & Application",
     },
     component: ApplicationsList,
   },
@@ -369,7 +369,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       isDownloadReport: false,
       searchField: ["sourceFilePath", "appName"],
       isSorting: true,
-      searchTxt: "Search by File, Data Source & Application",
+      inputPlaceholder: "Search by File, Data Source & Application",
     },
     component: ApplicationsList,
   },
@@ -381,7 +381,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       isDownloadReport: false,
       searchField: ["name", "appName"],
       isSorting: true,
-      searchTxt: "Search by Data Source & Application",
+      inputPlaceholder: "Search by Data Source & Application",
     },
     component: ApplicationsList,
   },
@@ -430,7 +430,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
         : [],
       searchField: ["labelName", "findingsType"],
       isSorting: true,
-      searchTxt: "Search by Finding & Type",
+      inputPlaceholder: "Search by Finding & Type",
     },
     component: ApplicationsList,
   },
@@ -441,7 +441,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
       tableData: APP_DATA?.topFindings,
       searchField: ["fileName"],
       isSorting: true,
-      searchTxt: "Search by File",
+      inputPlaceholder: "Search by File",
     },
     component: ApplicationsList,
   },
@@ -452,7 +452,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
       tableData: APP_DATA?.dataSources ? APP_DATA?.dataSources : [],
       searchField: ["name"],
       isSorting: true,
-      searchTxt: "Search by Data Source",
+      inputPlaceholder: "Search by Data Source",
     },
     component: ApplicationsList,
   },
@@ -463,7 +463,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
         ? APP_DATA?.dataSources[0]?.findingsDetails
         : [],
       searchField: ["labelName"],
-      searchTxt: "Search by Snippet Label",
+      inputPlaceholder: "Search by Snippet Label",
     },
     component: SnippetDetails,
   },

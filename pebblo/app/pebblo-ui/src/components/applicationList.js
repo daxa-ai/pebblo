@@ -1,10 +1,23 @@
-import { MEDIA_URL } from "../constants/constant.js";
 import { KEYUP, LOAD, ACTIONS, CLICK } from "../constants/enums.js";
 import { GET_REPORT } from "../constants/routesConstant.js";
 import { DownloadIcon, SearchIcon } from "../icons/index.js";
 import { GET_FILE } from "../services/get.js";
 import { waitForElement } from "../util.js";
 import { Button, Table, Td } from "./index.js";
+
+// PROPS { title: string, 
+//   tableCol: Array<{
+//   label:string;
+//   field:string;
+//   align?:string;
+//   render?:(e)=>void 
+//   }>, 
+//   tableData: Array<unknown>, 
+//   isDownloadReport?: boolean, 
+//   searchField: Array < string >, 
+//   isSorting?: boolean, 
+//   link?: string, 
+//   inputPlaceholder?: string }
 
 export function ApplicationsList(props) {
   const {
@@ -15,7 +28,7 @@ export function ApplicationsList(props) {
     searchField,
     isSorting,
     link,
-    searchTxt
+    inputPlaceholder = "Search"
   } = props;
 
   window.addEventListener(LOAD, function () {
@@ -85,7 +98,7 @@ export function ApplicationsList(props) {
         <div class="inter surface-10 font-16 medium">${title}</div>
         <div class="flex">
           <div class="search" title="Search">
-            <input type="text" id="search_field" name="search" placeholder="${searchTxt}" autocomplete="off" />
+            <input type="text" id="search_field" name="search" placeholder="${inputPlaceholder}" autocomplete="off" />
             ${SearchIcon({ color: 'grey' })}  
           </div>
        ${isDownloadReport

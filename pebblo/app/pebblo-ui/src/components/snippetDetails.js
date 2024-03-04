@@ -1,7 +1,12 @@
-import { MEDIA_URL } from "../constants/constant.js";
 import { KEYUP } from "../constants/enums.js";
 import { waitForElement } from "../util.js";
 import { KeyValue } from "./index.js";
+
+// PROPS {
+//   title: string,
+//   data: Array<unknown>,
+//   searchField: Array<string>
+// }
 
 export function SnippetDetails(props) {
   const { title, data, searchField } = props;

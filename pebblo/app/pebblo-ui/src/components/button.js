@@ -1,3 +1,15 @@
+// PROPS {
+//   href?: string,
+//   variant?: string,
+//   btnText: string || HTMLElement,
+//   startIcon?: HTMLElement,
+//   endIcon?: HTMLElement,
+//   id?:string,
+//   className?:string,
+//   style?:string,
+//   color?:string,
+// }
+
 export function Button(props) {
   const { href } = props;
   if (href) {
@@ -17,14 +29,13 @@ const getButton = (props) => {
     startIcon,
     endIcon,
     id,
-    className,
+    className = "",
     style = '',
     color = "primary"
   } = props;
 
   return /*html*/ `
-  <button ${id ? `id="${id}"` : ""} class="btn btn-${variant}-${color} ${className ? className : ""
-    } relative" style="${style}">
+  <button ${id ? `id="${id}"` : ""} class="btn btn-${variant}-${color} ${className} relative" style="${style}">
         <div class="flex gap-1 items-center">
         ${startIcon
       ? startIcon

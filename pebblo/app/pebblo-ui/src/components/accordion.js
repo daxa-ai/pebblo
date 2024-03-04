@@ -1,4 +1,3 @@
-import { MEDIA_URL } from "../constants/constant.js";
 import {
   ACTIVE,
   CLICK,
@@ -7,6 +6,8 @@ import {
   NONE,
 } from "../constants/enums.js";
 import { UpArrowIcon } from "../icons/index.js";
+
+// Adding event to toggle accordion
 
 document.addEventListener(DOM_CONTENT_LOADED, function () {
   const ACCORDION__BUTTON =
@@ -30,16 +31,19 @@ function onClick(evt) {
   }
 }
 
+// PROPS {children: HTMLElement || string, id: string, icon?: HTMLElement }
+
 function AccordionSummary(props) {
-  const { children, id, icon = "arrow.png" } = props;
+  const { children, id, icon = UpArrowIcon({ id: "arrow_icon" }) } = props;
   return /*html*/ ` 
       <button title="Accordion-summary" type="button" class="accordion-summary flex gap-1 items-center" data-value="${id}">
-        <div>${children}</div>
-       
-        ${UpArrowIcon({ id: "arrow_icon" })}
+        <div>${children}</div> 
+        ${icon}
       </button>
     `;
 }
+
+// PROPS {children: HTMLElement || string, id: string }
 
 function AccordionDetails(props) {
   const { children, id } = props;

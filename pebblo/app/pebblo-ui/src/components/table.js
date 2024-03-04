@@ -1,8 +1,14 @@
 import { SORT_DATA, get_Text_Orientation, waitForElement } from "../util.js";
 import { ACTIONS, ACTIVE, ASC, CLICK, DSC, LOAD } from "../constants/enums.js";
 import { Tooltip } from "./tooltip.js";
-import { MEDIA_URL } from "../constants/constant.js";
 import { StraightIcon } from "../icons/index.js";
+
+// PROPS {
+//   tableCol: Array<unknown>,
+//   tableData: Array<unknown>,
+//   link?: string,
+//   isSorting: boolean,
+// }
 
 function Table(props) {
   const { tableCol, tableData, link, isSorting } = props;
@@ -42,6 +48,11 @@ function Table(props) {
    </table>`;
 }
 
+// PROPS {
+//   tableCol: Array<unknown>,
+//   isSorting?: boolean 
+// }
+
 function Thead(props) {
   const { tableCol, isSorting } = props;
   return /*html*/ `
@@ -71,8 +82,16 @@ function Tbody(props) {
     `;
 }
 
+// PROPS {
+//   children: string | HTMLElement,
+//   align?: string,
+//   link?: string,
+//   isTooltip?: boolean,
+//   tooltipTitle?: string,
+// }
+
 function Td(props) {
-  const { children, align, link, isTooltip, tooltipTitle } = props;
+  const { children, align = "start", link, isTooltip, tooltipTitle } = props;
   const TEXT__ALIGN = get_Text_Orientation(align);
   let td;
   if (link) {
@@ -101,6 +120,12 @@ function Td(props) {
   }
   return td;
 }
+
+// PROPS {
+//   tableCol: Array<unknown>,
+//   tableData: Array<unknown>,
+//   link?: string,
+// }
 
 const TABLE_BODY = (props) => {
   const { tableCol, tableData, link } = props;

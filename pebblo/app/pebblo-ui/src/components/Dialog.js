@@ -1,13 +1,21 @@
-import { MEDIA_URL } from "../constants/constant.js";
 import { CLICK, LOAD } from "../constants/enums.js";
 import CloseIcon from "../icons/closeIcon.js";
 import { IconButton } from "./IconButton.js";
+
+// PROPS { 
+//   dialogBody: HTMLElement,
+//   fullWidth?:boolean,
+//   maxWidth?: string,
+//   title:string,
+//   btnId:string
+//   dialogId: string
+//  }
 
 const Dialog = (props) => {
   const {
     dialogBody,
     fullWidth,
-    maxWidth,
+    maxWidth = "md",
     title = "Dialog",
     btnId,
     dialogId,

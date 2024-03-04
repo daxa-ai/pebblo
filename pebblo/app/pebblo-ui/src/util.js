@@ -3,9 +3,8 @@ import { DASHBOARD_ROUTE } from "./constants/routesConstant.js";
 
 export const get_Formatted_Date = (date) => {
   const newDate = new Date(date);
-  return `${newDate.getDate()} ${
-    MONTHS[newDate.getMonth()]
-  } ${newDate.getFullYear()}`;
+  return `${newDate.getDate()} ${MONTHS[newDate.getMonth()]
+    } ${newDate.getFullYear()}`;
 };
 
 export const add_Zero = (number) => {
