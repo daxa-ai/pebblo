@@ -7,3 +7,5 @@ reports:
   format: pdf
   renderer: xhtml2pdf
   outputDir: ~/.pebblo
+classifier:
+  all_entities_anonymize: True

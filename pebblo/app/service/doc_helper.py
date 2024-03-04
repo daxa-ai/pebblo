@@ -17,7 +17,7 @@ from pebblo.app.models.models import (
 from pebblo.app.utils.utils import read_json_file, get_full_path
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
-from pebblo.app.enums.enums import ReportConstants, CacheDir
+from pebblo.app.enums.enums import ReportConstants, CacheDir, ClassifierConstant
 
 # Init topic classifier
 topic_classifier_obj = TopicClassifier()
@@ -76,14 +76,14 @@ class LoaderHelper:
 
     @staticmethod
     def _update_raw_data(
-        raw_data,
-        loader_source_snippets,
-        total_findings,
-        findings_entities,
-        findings_topics,
-        snippet_count,
-        file_count,
-        data_source_findings,
+            raw_data,
+            loader_source_snippets,
+            total_findings,
+            findings_entities,
+            findings_topics,
+            snippet_count,
+            file_count,
+            data_source_findings,
     ):
         """
         Reassigning raw data
@@ -176,17 +176,16 @@ class LoaderHelper:
                 (
                     entities,
                     entity_count,
-                ) = self.entity_classifier_obj.presidio_entity_classifier(doc_info.data)
-                (
-                    secrets,
-                    secret_count,
-                ) = self.entity_classifier_obj.presidio_secret_classifier(doc_info.data)
-                entities.update(secrets)
-                entity_count += secret_count
+                    anonymized_doc,
+                ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
+                    doc_info.data,
+                    all_entities=ClassifierConstant.anonymize_all_entity.value,
+                )
                 doc_info.topics = topics
                 doc_info.entities = entities
                 doc_info.topicCount = topic_count
                 doc_info.entityCount = entity_count
+                doc_info.data = anonymized_doc
             return doc_info
         except Exception as e:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
@@ -394,8 +393,8 @@ class LoaderHelper:
         load_history["moreReportsPath"] = "-"
         report_counts = len(load_ids)
         top_n_latest_loader_id = load_ids[
-            -ReportConstants.LOADER_HISTORY__LIMIT.value - 1 :
-        ]
+                                 -ReportConstants.LOADER_HISTORY__LIMIT.value - 1 :
+                                 ]
         top_n_latest_loader_id.reverse()
 
         for load_id in top_n_latest_loader_id:
@@ -422,8 +421,8 @@ class LoaderHelper:
                 )
                 load_history["history"].append(load_history_model_obj.dict())
         if (
-            len(load_history["history"]) == ReportConstants.LOADER_HISTORY__LIMIT.value
-            and report_counts > ReportConstants.LOADER_HISTORY__LIMIT.value + 1
+                len(load_history["history"]) == ReportConstants.LOADER_HISTORY__LIMIT.value
+                and report_counts > ReportConstants.LOADER_HISTORY__LIMIT.value + 1
         ):
             more_reports = f"{CacheDir.HOME_DIR.value}/{app_name}/"
             more_report_full_path = get_full_path(more_reports)
@@ -453,12 +452,12 @@ class LoaderHelper:
         # If source path is already present, then add values
         if source_path in loader_source_snippets.keys():
             loader_source_snippets[source_path]["findings_entities"] = (
-                loader_source_snippets[source_path].get("findings_entities", 0)
-                + doc["entityCount"]
+                    loader_source_snippets[source_path].get("findings_entities", 0)
+                    + doc["entityCount"]
             )
             loader_source_snippets[source_path]["findings_topics"] = (
-                loader_source_snippets[source_path].get("findings_topics", 0)
-                + doc["topicCount"]
+                    loader_source_snippets[source_path].get("findings_topics", 0)
+                    + doc["topicCount"]
             )
             loader_source_snippets[source_path]["findings"] += findings
             total_findings += findings

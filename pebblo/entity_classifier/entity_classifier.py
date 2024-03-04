@@ -13,17 +13,22 @@ from pebblo.entity_classifier.utils.utils import (
     get_entities,
 )
 
+ALL_ENTITIES = list(Entities.__members__.keys()).extend(
+    list(SecretEntities.__members__.keys())
+)
+
 
 class EntityClassifier:
     def __init__(self):
         self.analyzer = AnalyzerEngine()
         self.anonymizer = AnonymizerEngine()
+        self.entities = list(Entities.__members__.keys())
+        self.entities.extend(list(SecretEntities.__members__.keys()))
 
-    def custom_analyze(self, combine=False):
+    def custom_analyze(self):
         # Adding custom analyzer
         custom_registry = add_custom_regex_analyzer_registry()
-        if combine:  # Only in case of text anomyzer
-            custom_registry.load_predefined_recognizers()
+        custom_registry.load_predefined_recognizers()
         self.analyzer = AnalyzerEngine(
             registry=custom_registry,
             context_aware_enhancer=LemmaContextAwareEnhancer(
@@ -36,102 +41,72 @@ class EntityClassifier:
             ),
         )
 
-    def analyze_response(self, input_text):
+    def analyze_response(self, input_text, all_entities=True):
+        # Returns analyzed output
         analyzer_results = self.analyzer.analyze(text=input_text, language="en")
         analyzer_results = [
             result
             for result in analyzer_results
             if result.score >= float(ConfidenceScore.Entity.value)
         ]
+        if not all_entities:  # Condition for anonymized document
+            analyzer_results = [
+                result
+                for result in analyzer_results
+                if result.entity_type in self.entities
+            ]
         return analyzer_results
 
-    def anomyze_response(self, analyzer_results, input_text):
+    def anonymize_response(self, analyzer_results, input_text):
+        # Returns analyzed output
         anonymized_text = self.anonymizer.anonymize(
             text=input_text, analyzer_results=analyzer_results
         )
         return anonymized_text.items, anonymized_text.text
 
-    def presidio_entity_classifier(self, input_text):
+    def presidio_entity_classifier_and_anonymizer(self, input_text, all_entities=True):
         """
         Perform classification on the input data and return a dictionary with the count of each entity group.
-        Parameters:
-            - input_data (dict): A dictionary containing input data for classification.
-        Returns:
-            dict: containing the entity group Name as key and its count as value.
-            total_count: Total count of entity groups.
-        Example:{
-                "Person":2, # EntityGroup: Count of occurrence of entity group
-                "Credit Card Number": 1
-            },
-            total_count: 3 # Total Count of All Entity group Occurrences
+        And also returns plain input text as anonymized text output
+        :param all_entities: conditional param to check whether we need to anonymize all entities
+        :param input_text: Input string / document snippet
+        :return: entities: containing the entity group Name as key and its count as value.
+                 total_count: Total count of entity groupsInput text in anonymized form.
+                 anonymized_text: Input text in anonymized form.
+        Example:
+
+        input_text = " My SSN is 222-85-4836.
+        ITIN number 993-77 0690
+        And AWS Access Key is: AKIAQIPT4PDORIRTV6PH."
+        response:
+        entities = {'AWS Access Key': 1, 'US ITIN': 1, 'US SSN': 1}
+        total_count = 3
+        anonymized_text = "My SSN is <US_SSN>.
+            ITIN number <US_ITIN>
+            And AWS Access Key is: <AWS_ACCESS_KEY>"
         """
         entities = {}
         total_count = 0
+        anonymized_text = ""
         try:
-            logger.debug("Presidio Entity Classifier Started.")
-            logger.debug(f"Data Input: {input_text}")
-            analyzer_results = self.analyze_response(input_text)
-            response, _ = self.anomyze_response(analyzer_results, input_text)
-            logger.debug(f"Presidio Entity Classifier Response: {response}")
-            entities, total_count = get_entities(Entities, response)
-            logger.debug(f"Presidio Entity Classifier Finished {entities}")
-            logger.debug(f"Entity Total count. {total_count}")
-            return entities, total_count
-        except Exception as e:
-            logger.error(f"Presidio Entity Classifier Failed, Exception: {e}")
-            return entities, total_count
-
-    def presidio_secret_classifier(self, input_text):
-        """
-        Find regex patterns in the given input data.
-
-        Parameters:
-        - input_data (str): The input string to search for regex patterns.
-
-        Returns:
-        dict: A dictionary containing key associated with regex patterns and their counts in the input data.
-        Example:
-        {
-            'AWS API ID': 3, # SecretKey: Count of Occurrences of secret key
-            'AWS API Secret': 1
-        },
-        total_count: 4 # total count of all SecretKeys Occurrences
-        """
-        secret_entities = {}
-        total_count = 0
-        try:
-            logger.debug("Presidio Secret Entity Classifier Started.")
+            logger.debug("Presidio Entity Classifier and Anonymizer Started.")
             logger.debug(f"Data Input: {input_text}")
 
             self.custom_analyze()
-            analyzer_results = self.analyze_response(input_text)
-            response, _ = self.anomyze_response(analyzer_results, input_text)
-            logger.debug(f"Presidio Secret Entity Classifier Response: {response}")
-            secret_entities, total_count = get_entities(SecretEntities, response)
-            logger.debug(
-                f"Presidio Secret Entity Classifier Finished {secret_entities}"
+            analyzer_results = self.analyze_response(input_text, all_entities)
+            anonymized_response, anonymized_text = self.anonymize_response(
+                analyzer_results, input_text
             )
-            logger.debug(f"Secret Entity Total count. {total_count}")
-            return secret_entities, total_count
+            logger.debug(f"Presidio Entity Classifier Response: {anonymized_response}")
+            logger.debug(f"Presidio Anonymizer Response: {anonymized_text}")
+            entities, total_count = get_entities(self.entities, anonymized_response)
+            logger.debug("Presidio Entity Classifier and Anonymizer Finished")
+            logger.debug(f"Entities: {entities}")
+            logger.debug(f"Entity Total count: {total_count}")
+            logger.debug(f"Anonymized Text: {anonymized_text}")
+            return entities, total_count, anonymized_text
         except Exception as e:
-            logger.error(f"Presidio Secret Entity Classifier Failed, Exception: {e}")
-            return secret_entities, total_count
-
-    def presidio_anomyze_text(self, input_text):
-        """
-        Returns plain input text as anomyzed text output
-        :param input_text: Input string / document snippet
-        :return: Input text in anomyzed form
-        Example:
-
-        input_text = "Hello, My name is John"
-        response = "Hello, My name is <PERSON>"
-        """
-        logger.debug("Presidio Text Anomyzer Started.")
-        logger.debug(f"Data Input: {input_text}")
-
-        self.custom_analyze(combine=True)
-        analyzer_results = self.analyze_response(input_text)
-        _, response = self.anomyze_response(analyzer_results, input_text)
-        logger.debug(f"Presidio Text Anomyzer Response: {response}")
-        return response
+            logger.error(
+                f"Presidio Entity Classifier and Anonymizer Failed, Exception: {e}"
+            )
+            return entities, total_count, anonymized_text

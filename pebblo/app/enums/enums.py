@@ -29,3 +29,7 @@ class ReportConstants(Enum):
     SNIPPET_LIMIT = 100
     TOP_FINDINGS_LIMIT = 5
     LOADER_HISTORY__LIMIT = 5
+
+
+class ClassifierConstant(Enum):
+    anonymize_all_entity = True
