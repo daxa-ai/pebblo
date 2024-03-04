@@ -13,23 +13,6 @@ secret_entities_context_mapping = {
     "Google API Key": ["google_api_key", "google_key", "google"],
 }
 
-ALL_ENTITIES = [
-    "US_SSN",
-    "US_PASSPORT",
-    "US_DRIVER_LICENSE",
-    "CREDIT_CARD",
-    "US_BANK_NUMBER",
-    "IBAN_CODE",
-    "US_ITIN",
-    "GITHUB_TOKEN",
-    "SLACK_TOKEN",
-    "AWS_ACCESS_KEY",
-    "AWS_SECRET_KEY",
-    "AZURE_KEY_ID",
-    "AZURE_CLIENT_SECRET",
-    "GOOGLE_API_KEY",
-]
-
 
 class Entities(Enum):
     # PII

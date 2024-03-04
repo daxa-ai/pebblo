@@ -13,10 +13,6 @@ from pebblo.entity_classifier.utils.utils import (
     get_entities,
 )
 
-ALL_ENTITIES = list(Entities.__members__.keys()).extend(
-    list(SecretEntities.__members__.keys())
-)
-
 
 class EntityClassifier:
     def __init__(self):

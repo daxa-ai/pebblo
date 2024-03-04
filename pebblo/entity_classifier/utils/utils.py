@@ -11,23 +11,6 @@ from pebblo.entity_classifier.utils.config import (
 )
 from pebblo.entity_classifier.utils.regex_pattern import regex_secrets_patterns
 
-ALL_ENTITIES = [
-    "US_SSN",
-    "US_PASSPORT",
-    "US_DRIVER_LICENSE",
-    "CREDIT_CARD",
-    "US_BANK_NUMBER",
-    "IBAN_CODE",
-    "US_ITIN",
-    "GITHUB_TOKEN",
-    "SLACK_TOKEN",
-    "AWS_ACCESS_KEY",
-    "AWS_SECRET_KEY",
-    "AZURE_KEY_ID",
-    "AZURE_CLIENT_SECRET",
-    "GOOGLE_API_KEY",
-]
-
 
 def get_entities(entities_list, response):
     entity_groups = dict()
