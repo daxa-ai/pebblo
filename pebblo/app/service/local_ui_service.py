@@ -45,22 +45,24 @@ class AppData:
 
                     if not app_json:
                         # Unable to find json file
-                        logger.warning(
+                        logger.debug(
                             f"Metadata file ({CacheDir.metadata_file_path.value}) not found for app: {app_dir}.")
-                        logger.warning(f"Skipping app: {app_json}")
+                        logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
                         continue
 
                     load_ids = app_json.get("load_ids", [])
 
                     if not load_ids:
-                        logger.warning(f"No valid loadIds found for app: {app_dir}. Skipping.")
+                        logger.debug(f"No valid loadIds found for app: {app_dir}.")
+                        logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
                         continue
 
                     # Fetching latest loadId
                     latest_load_id, app_detail_json = self.get_latest_load_id(load_ids, app_dir)
 
                     if not latest_load_id:
-                        logger.warning(f"No valid loadIds found for app: {app_dir}. Skipping.")
+                        logger.debug(f"No valid loadIds found for app: {app_dir}. Skipping.")
+                        logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
                         continue
 
                     report_summary = app_detail_json.get("reportSummary")
@@ -79,8 +81,9 @@ class AppData:
                     data_source_details = app_detail_json.get("dataSources")
                     # Fetching only required values for dashboard pages
                     if not data_source_details:
-                        logger.warning(f"Error: Unable to fetch dataSources details for {app_dir} app")
+                        logger.debug(f"Error: Unable to fetch dataSources details for {app_dir} app")
                         logger.debug(f"App Detail Json : {app_detail_json}")
+                        logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
                         continue
                     for data in data_source_details:
                         # Adding appName in dataSource
@@ -141,21 +144,24 @@ class AppData:
             # Condition for handling loadId
             if not app_json:
                 # Unable to fetch loadId details
-                logger.warning(f"Error: Report Json {CacheDir.metadata_file_path.value} not found for app {app_path}")
+                logger.debug(f"Error: Report Json {CacheDir.metadata_file_path.value} not found for app {app_path}")
+                logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
                 return json.dumps({})
 
             load_ids = app_json.get("load_ids", [])
 
             if not load_ids:
                 # Unable to fetch loadId details
-                logger.warning(f"Error: Details not found for app {app_path}")
+                logger.debug(f"Error: Details not found for app {app_path}")
+                logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
                 return json.dumps({})
 
             # Fetching latest loadId
             latest_load_id, app_detail_json = self.get_latest_load_id(load_ids, app_dir)
 
             if not latest_load_id:
-                logger.warning(f"No valid loadIds found for app {app_path}.")
+                logger.debug(f"No valid loadIds found for app {app_path}.")
+                logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
                 return json.dumps({})
 
             if not app_detail_json:
