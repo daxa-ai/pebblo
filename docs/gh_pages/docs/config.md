@@ -35,7 +35,7 @@ logging:
   level: info
 reports:
   format: pdf
-  renderer: weasyprint
+  renderer: xhtml2pdf
   outputDir: ~/.pebblo
 
 ```
