@@ -45,7 +45,7 @@ class EntityClassifier:
             for result in analyzer_results
             if result.score >= float(ConfidenceScore.Entity.value)
         ]
-        if notanonymize_all_entities:  # Condition for anonymized document
+        if not anonymize_all_entities:  # Condition for anonymized document
             analyzer_results = [
                 result
                 for result in analyzer_results
