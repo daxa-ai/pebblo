@@ -37,7 +37,7 @@ class EntityClassifier:
             ),
         )
 
-    def analyze_response(self, input_text, anoanymize_all_entities=True):
+    def analyze_response(self, input_text,anonymize_all_entities=True):
         # Returns analyzed output
         analyzer_results = self.analyzer.analyze(text=input_text, language="en")
         analyzer_results = [
@@ -45,7 +45,7 @@ class EntityClassifier:
             for result in analyzer_results
             if result.score >= float(ConfidenceScore.Entity.value)
         ]
-        if not anoanymize_all_entities:  # Condition for anonymized document
+        if notanonymize_all_entities:  # Condition for anonymized document
             analyzer_results = [
                 result
                 for result in analyzer_results
@@ -61,12 +61,12 @@ class EntityClassifier:
         return anonymized_text.items, anonymized_text.text
 
     def presidio_entity_classifier_and_anonymizer(
-        self, input_text, anoanymize_all_entities=True
+        self, input_text,anonymize_all_entities=True
     ):
         """
         Perform classification on the input data and return a dictionary with the count of each entity group.
         And also returns plain input text as anonymized text output
-        :param anoanymize_all_entities: conditional param to check whether we need to anonymize all entities
+        :paramanonymize_all_entities: conditional param to check whether we need to anonymize all entities
         :param input_text: Input string / document snippet
         :return: entities: containing the entity group Name as key and its count as value.
                  total_count: Total count of entity groupsInput text in anonymized form.
@@ -92,7 +92,7 @@ class EntityClassifier:
 
             self.custom_analyze()
             analyzer_results = self.analyze_response(
-                input_text, anoanymize_all_entities
+                input_text,anonymize_all_entities
             )
             anonymized_response, anonymized_text = self.anonymize_response(
                 analyzer_results, input_text
