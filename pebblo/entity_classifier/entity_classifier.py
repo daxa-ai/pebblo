@@ -99,6 +99,7 @@ class EntityClassifier:
             )
             logger.debug(f"Presidio Entity Classifier Response: {anonymized_response}")
             logger.debug(f"Presidio Anonymizer Response: {anonymized_text}")
+            anonymized_text = anonymized_text.replace("<", "&lt;").replace(">", "&gt;")
             entities, total_count = get_entities(self.entities, anonymized_response)
             logger.debug("Presidio Entity Classifier and Anonymizer Finished")
             logger.debug(f"Entities: {entities}")

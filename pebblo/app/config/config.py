@@ -48,6 +48,7 @@ def load_config(path) -> dict:
                 format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
             ),
             logging=LoggingConfig(level="info"),
+            classifier=ClassifierConfig(anonymize_all_entities=True),
         )
         if not path:
             # Setting Default config details
