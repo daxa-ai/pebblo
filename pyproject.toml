@@ -116,6 +116,7 @@ dependencies = [
   "tqdm",
   "xhtml2pdf==0.2.15",
   "weasyprint==60.2",
+  "filelock"
 ]
 
 # List additional groups of dependencies here (e.g. development
