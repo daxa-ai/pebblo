@@ -49,13 +49,13 @@ def load_config(path) -> dict:
             return conf_obj.dict()
 
         # If Path exist, set config value
-
         con_file = path
         try:
             with open(con_file, "r") as output:
                 cred_json = yaml.safe_load(output)
                 parsed_config = Config.parse_obj(cred_json)
                 config_dict = parsed_config.dict()
+                validate_config()
                 return config_dict
         except IOError as err:
             print(f"no credentials file found at {con_file}. Error : {err}")
