@@ -21,7 +21,7 @@ class AppData:
     """
     def get_all_apps_details(self):
         """
-        Returns all necessary app details required for listing.
+        Returns all necessary app details required for list app functionality.
         """
         try:
             dir_full_path = get_full_path(CacheDir.HOME_DIR.value)
