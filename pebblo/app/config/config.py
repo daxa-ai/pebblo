@@ -1,7 +1,7 @@
 import pathlib
+
 import yaml
 from pydantic import BaseSettings, Field
-
 
 from pebblo.app.config.config_validation import validate_config
 
@@ -27,11 +27,16 @@ class LoggingConfig(BaseSettings):
     level: str = Field(default="info")
 
 
+class ClassifierConfig(BaseSettings):
+    anonymize_all_entities: bool = Field(default=True)
+
+
 # ConfigFile BaseModel
 class Config(BaseSettings):
     daemon: PortConfig
     reports: ReportConfig
     logging: LoggingConfig
+    classifier: ClassifierConfig
 
 
 def load_config(path) -> dict:

@@ -27,7 +27,7 @@ Notes:
 
 ### Classifier
 
-- `anonymize_all_entity`: Condition to anonymize all entity in document.
+- `anonymize_all_entities`: Condition to anonymize all entities in document.
 
 ### Default Configuration
 

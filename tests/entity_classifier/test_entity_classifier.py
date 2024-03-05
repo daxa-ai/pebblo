@@ -170,7 +170,7 @@ def test_presidio_entity_classifier_and_anonymizer(
         total_count,
         anonymized_text,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        input_text1, all_entities=False
+        input_text1, anoanymize_all_entities=False
     )
     assert entities == {
         "Github Token": 1,
@@ -205,7 +205,7 @@ def test_presidio_entity_classifier_and_anonymizer(
         total_count,
         anonymized_text,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        input_text1, all_entities=False
+        input_text1, anoanymize_all_entities=False
     )
     assert entities == {
         "Slack Token": 2,
@@ -225,7 +225,7 @@ def test_presidio_entity_classifier_and_anonymizer(
         total_count,
         anonymized_text,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        negative_data, all_entities=True
+        negative_data, anoanymize_all_entities=True
     )
     assert entities == {}
     assert total_count == 0
@@ -236,7 +236,7 @@ def test_presidio_entity_classifier_and_anonymizer(
         total_count,
         anonymized_text,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        negative_data, all_entities=False
+        negative_data, anoanymize_all_entities=False
     )
     assert entities == {}
     assert total_count == 0

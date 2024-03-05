@@ -4,20 +4,21 @@
 import ast
 import os.path
 from datetime import datetime
+
+from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import (
     AiDataModel,
     AiDocs,
+    DataSource,
+    LoadHistory,
     ReportModel,
     Snippets,
     Summary,
-    DataSource,
-    LoadHistory,
 )
-from pebblo.app.utils.utils import read_json_file, get_full_path
+from pebblo.app.utils.utils import get_full_path, read_json_file
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
-from pebblo.app.enums.enums import ReportConstants, CacheDir, ClassifierConstant
 
 # Init topic classifier
 topic_classifier_obj = TopicClassifier()
@@ -76,14 +77,14 @@ class LoaderHelper:
 
     @staticmethod
     def _update_raw_data(
-            raw_data,
-            loader_source_snippets,
-            total_findings,
-            findings_entities,
-            findings_topics,
-            snippet_count,
-            file_count,
-            data_source_findings,
+        raw_data,
+        loader_source_snippets,
+        total_findings,
+        findings_entities,
+        findings_topics,
+        snippet_count,
+        file_count,
+        data_source_findings,
     ):
         """
         Reassigning raw data
@@ -109,7 +110,7 @@ class LoaderHelper:
         last_used = datetime.now()
         doc_model = AiDocs(
             appId=self.load_id,
-            doc=doc.get("doc"),
+            doc=doc_info.data,
             sourceSize=doc.get("source_path_size", 0),
             fileOwner=doc.get("file_owner", "-"),
             sourcePath=doc.get("source_path"),
@@ -179,13 +180,14 @@ class LoaderHelper:
                     anonymized_doc,
                 ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
                     doc_info.data,
-                    all_entities=ClassifierConstant.anonymize_all_entity.value,
+                    anoanymize_all_entities=ClassifierConstants.anonymize_all_entities.value,
                 )
                 doc_info.topics = topics
                 doc_info.entities = entities
                 doc_info.topicCount = topic_count
                 doc_info.entityCount = entity_count
                 doc_info.data = anonymized_doc
+                logger.debug(f"Anonymized Doc: {anonymized_doc}")
             return doc_info
         except Exception as e:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
@@ -301,7 +303,7 @@ class LoaderHelper:
                 {
                     key: value[key]
                     for key in value
-                    if key not in (value[key],"unique_snippets")
+                    if key not in (value[key], "unique_snippets")
                 }
                 for value in raw_data["data_source_findings"].values()
             ]
@@ -393,19 +395,23 @@ class LoaderHelper:
         load_history["moreReportsPath"] = "-"
         report_counts = len(load_ids)
         top_n_latest_loader_id = load_ids[
-                                 -ReportConstants.LOADER_HISTORY__LIMIT.value - 1 :
-                                 ]
+            -ReportConstants.LOADER_HISTORY__LIMIT.value - 1 :
+        ]
         top_n_latest_loader_id.reverse()
 
         for load_id in top_n_latest_loader_id:
             if load_id == current_load_id:
                 continue
-            load_report_file_path = (f"{CacheDir.HOME_DIR.value}/{app_name}/"
-                                     f"{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}")
+            load_report_file_path = (
+                f"{CacheDir.HOME_DIR.value}/{app_name}/"
+                f"{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
+            )
             report = read_json_file(load_report_file_path)
             if report:
-                pdf_report_path = (f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/"
-                                   f"{CacheDir.REPORT_FILE_NAME.value}")
+                pdf_report_path = (
+                    f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/"
+                    f"{CacheDir.REPORT_FILE_NAME.value}"
+                )
                 report_name = get_full_path(pdf_report_path)
                 if not os.path.exists(report_name):
                     # Pdf file is not present, Skipping it
@@ -421,8 +427,8 @@ class LoaderHelper:
                 )
                 load_history["history"].append(load_history_model_obj.dict())
         if (
-                len(load_history["history"]) == ReportConstants.LOADER_HISTORY__LIMIT.value
-                and report_counts > ReportConstants.LOADER_HISTORY__LIMIT.value + 1
+            len(load_history["history"]) == ReportConstants.LOADER_HISTORY__LIMIT.value
+            and report_counts > ReportConstants.LOADER_HISTORY__LIMIT.value + 1
         ):
             more_reports = f"{CacheDir.HOME_DIR.value}/{app_name}/"
             more_report_full_path = get_full_path(more_reports)
@@ -452,12 +458,12 @@ class LoaderHelper:
         # If source path is already present, then add values
         if source_path in loader_source_snippets.keys():
             loader_source_snippets[source_path]["findings_entities"] = (
-                    loader_source_snippets[source_path].get("findings_entities", 0)
-                    + doc["entityCount"]
+                loader_source_snippets[source_path].get("findings_entities", 0)
+                + doc["entityCount"]
             )
             loader_source_snippets[source_path]["findings_topics"] = (
-                    loader_source_snippets[source_path].get("findings_topics", 0)
-                    + doc["topicCount"]
+                loader_source_snippets[source_path].get("findings_topics", 0)
+                + doc["topicCount"]
             )
             loader_source_snippets[source_path]["findings"] += findings
             total_findings += findings
@@ -554,7 +560,7 @@ class LoaderHelper:
                 doc_obj = self._create_doc_model(doc, doc_info)
                 ai_app_docs.append(doc_obj)
                 raw_data = self._get_doc_report_metadata(doc_obj, raw_data)
-
+        logger.debug(f"ai_app_docs: {ai_app_docs}")
         # Updating ai apps details
         self._update_app_details(raw_data, ai_app_docs)
 
