@@ -19,6 +19,6 @@ topic_display_names = {
     "PATENT_APPLICATION_FILLINGS_AGREEMENT": "Patent Application Fillings",
     "PRICE_LIST_AGREEMENT": "Price List",
     "SETTLEMENT_AGREEMENT": "Settlement Agreement",
-    "SEXUAL_HARRASSMENT_AGREEMENT": "Sexual Harassment",
+    "SEXUAL_HARRASSMENT": "Sexual Harassment",
     "EMPLOYEE_AGREEMENT": "Employee Agreement",
 }
