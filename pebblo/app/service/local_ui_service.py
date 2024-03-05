@@ -16,8 +16,13 @@ from pebblo.app.models.models import AppListDetails, AppModel
 
 
 class AppData:
+    """
+    This class handles business logic for local UI
+    """
     def get_all_apps_details(self):
-        """Returns all necessary app details required for listing."""
+        """
+        Returns all necessary app details required for listing.
+        """
         try:
             dir_full_path = get_full_path(CacheDir.HOME_DIR.value)
             # List all apps in the directory
@@ -162,6 +167,9 @@ class AppData:
             return json.dumps({})
 
     def get_app_details(self, app_dir):
+        """
+        Returns app details for an app.
+        """
         try:
             # Path to metadata.json
             app_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
@@ -209,6 +217,9 @@ class AppData:
 
     @staticmethod
     def get_latest_load_id(load_ids, app_dir):
+        """
+        Returns app latestLoadId for an app.
+        """
         for load_id in reversed(load_ids):
             # Path to report.json
             app_detail_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
