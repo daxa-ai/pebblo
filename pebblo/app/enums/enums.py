@@ -16,7 +16,7 @@ class CacheDir(Enum):
     METADATA_FILE_PATH = f"{METADATA_FOLDER}/metadata.json"
     APPLICATION_METADATA_FILE_PATH = f"{METADATA_FOLDER}/app_metadata.json"
     APPLICATION_METADATA_LOCK_FILE_PATH = f"{METADATA_FOLDER}/app_metadata_lock_file"
-    METADATA_LOCK_FILE_PATH = f"{METADATA_FOLDER}/metadata_lock_file"
+    METADATA_LOCK_FILE_PATH = f"{METADATA_FOLDER}/metadata.json.lock"
     REPORT_DATA_FILE_NAME = "report.json"
     REPORT_FILE_NAME = (
         f"pebblo_report.{config_details.get('reports', {}).get('format')}"
