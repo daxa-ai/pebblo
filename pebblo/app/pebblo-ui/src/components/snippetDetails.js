@@ -84,8 +84,8 @@ export function SnippetDetails(props) {
                   item?.labelName
                 }</div>
                 <div class="surface-10-opacity-50 font-12">Showing ${
-                  item?.snippetCount
-                } out of ${item?.findings}</div>
+                  item?.snippets?.length
+                } out of ${item?.snippetCount}</div>
               </div>
               ${item?.snippets?.myMap(
                 (snipp) => `

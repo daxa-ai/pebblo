@@ -45,8 +45,7 @@ export const APP_DETAILS_FINDINGS_TABLE = [
   },
   {
     label: "Data Source",
-    field: "findings",
-    align: "end",
+    render:() => APP_DATA?.dataSources[0]?.name
   },
 ];
 
@@ -103,8 +102,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
   },
   {
     label: "Data Source",
-    field: "findings",
-    align: "end",
+    render:() => APP_DATA?.dataSources[0]?.name
   },
 ];
 
@@ -163,7 +161,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
         title: "Download Icon",
         variant: "right",
       }),
-    align: "end",
+    align: "start",
     //   render: /*html*/ `
     //   <div class="flex gap-4 justify-end">
     //     <img id="download_icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
@@ -267,6 +265,38 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
   },
 ];
 
+export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
+  {
+    label: "Data Source Name",
+    field: "name",
+    render: (item) => /*html*/ `
+      <div class="flex flex-col inter">
+         <div class="surface-10 font-13">${item.name || "-"}</div>
+         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
+      item.sourcePath
+    }</div>
+      </div>
+   `,
+    align: "start",
+  },
+  {
+    label: "Findings-Topics",
+    render:()=>APP_DATA?.reportSummary?.findingsTopics,
+    align: "end",
+  },
+  {
+    label: "Findings-Entities",
+    render:()=> APP_DATA?.reportSummary?.findingsEntities,
+    align: "end",
+  },
+  {
+    label: "Application",
+    field:"appName",
+    render:()=> APP_DATA?.name,
+    align: "start",
+  },
+];
+
 export const TABS_ARR_FOR_APPLICATIONS = [
   {
     label: "Applications With Findings",
@@ -282,7 +312,7 @@ export const TABS_ARR_FOR_APPLICATIONS = [
     isCritical: true,
   },
   {
-    label: "Files With Findings",
+    label: "Documents With Findings",
     critical: APP_DATA?.documentsWithFindingsCount || 0,
     value: 2,
     isCritical: true,
@@ -314,16 +344,18 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       tableCol: TABLE_DATA_FOR_FINDINGS,
       tableData: APP_DATA?.findings,
       isDownloadReport: false,
+      searchField: ["findingsType", "labelName","appName"],
       isSorting: true,
     },
     component: ApplicationsList,
   },
   {
     value: {
-      title: "Files With Findings",
+      title: "Documents With Findings",
       tableCol: TABLE_DATA_FOR_FILES_WITH_FINDINGS,
       tableData: APP_DATA?.documentsWithFindings,
       isDownloadReport: false,
+      searchField: ["sourceFilePath", "appName"],
       isSorting: true,
     },
     component: ApplicationsList,
@@ -334,6 +366,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       tableCol: TABLE_DATA_FOR_DATA_SOURCE,
       tableData: APP_DATA?.dataSource,
       isDownloadReport: false,
+      searchField: ["name", "appName"],
       isSorting: true,
     },
     component: ApplicationsList,
@@ -348,7 +381,7 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
     isCritical: true,
   },
   {
-    label: "Files With Findings",
+    label: "Documents With Findings",
     critical: APP_DATA?.reportSummary?.filesWithFindings || 0,
     outOf: APP_DATA?.reportSummary?.totalFiles || 0,
     value: 1,
@@ -363,8 +396,11 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
     label: "Snippets",
     critical: APP_DATA?.dataSources
-      ? APP_DATA?.dataSources[0]?.findingsDetails?.length
+      ? APP_DATA?.dataSources[0]?.displayedSnippetCount
       : 0,
+    outOf: APP_DATA?.dataSources
+    ? APP_DATA?.dataSources[0]?.totalSnippetCount
+    : 0,
     value: 3,
     isCritical: false,
   },
@@ -385,10 +421,10 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
   },
   {
     value: {
-      title: "Files With Findngs",
+      title: "Documents With Findings",
       tableCol: FILES_WITH_FINDINGS_TABLE,
       tableData: APP_DATA?.topFindings,
-      searchField: ["fileOwner", "fileName"],
+      searchField: ["fileName"],
       isSorting: true,
     },
     component: ApplicationsList,
@@ -396,9 +432,9 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
   {
     value: {
       title: "Data Source",
-      tableCol: TABLE_DATA_FOR_DATA_SOURCE,
+      tableCol: TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS,
       tableData: APP_DATA?.dataSources ? APP_DATA?.dataSources : [],
-      searchField: ["labelName", "findingsType"],
+      searchField: ["name"],
       isSorting: true,
     },
     component: ApplicationsList,

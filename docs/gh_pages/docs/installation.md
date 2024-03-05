@@ -1,5 +1,8 @@
 # Installation
 
+> **Note**  
+> Please note that Pebblo requires Python version 3.9 or above to function optimally.
+
 ### Pre-requisites
 
 #### Mac OSX
@@ -36,4 +39,4 @@ see [troubeshooting](troubleshooting.md) if you face any issues.
 
 ```bash
 pebblo --config [PATH TO CONFIG FILE]
-````
+```
