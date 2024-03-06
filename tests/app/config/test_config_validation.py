@@ -5,6 +5,20 @@ from pebblo.app.config.config_validation import (
     ReportsConfig,
 )
 import pytest
+import os
+import shutil
+
+
+@pytest.fixture
+def setup_and_teardown():
+    """
+    Create a directory before running the test and delete it after the test is done.
+    """
+    # Setup: Create directory
+    os.makedirs(os.path.expanduser("~/.pebblo"), exist_ok=True)
+    yield
+    # Teardown: Delete directory
+    shutil.rmtree(os.path.expanduser("~/.pebblo"))
 
 
 def test_daemon_config_validate():
@@ -62,7 +76,7 @@ def test_logging_config_validate():
     ]
 
 
-def test_reports_config_validate():
+def test_reports_config_validate(setup_and_teardown):
     # Test with valid format, renderer, and output directory
     config = {"format": "pdf", "renderer": "xhtml2pdf", "outputDir": "~/.pebblo"}
     validator = ReportsConfig(config)
@@ -98,7 +112,7 @@ def test_reports_config_validate():
     ]
 
 
-def test_validate_config():
+def test_validate_config(setup_and_teardown):
     # Test with valid configuration
     config = {
         "daemon": {"host": "localhost", "port": "8000"},
