@@ -54,7 +54,7 @@ class EntityClassifier:
         return analyzer_results
 
     def anonymize_response(self, analyzer_results, input_text):
-        # Returns analyzed output
+        # Returns anonymized output
         anonymized_text = self.anonymizer.anonymize(
             text=input_text, analyzer_results=analyzer_results
         )

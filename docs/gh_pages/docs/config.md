@@ -42,6 +42,5 @@ reports:
   renderer: xhtml2pdf
   outputDir: ~/.pebblo
 classifier:
-  anonymizeAllEntity: true
-
+  anonymize_all_entities: true
 ```
