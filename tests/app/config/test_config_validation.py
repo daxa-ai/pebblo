@@ -15,10 +15,10 @@ def setup_and_teardown():
     Create a directory before running the test and delete it after the test is done.
     """
     # Setup: Create directory
-    os.makedirs(os.path.expanduser("~/.pebblo_test"), exist_ok=True)
+    os.makedirs(os.path.expanduser("~/.pebblo_test_"), exist_ok=True)
     yield
     # Teardown: Delete directory
-    shutil.rmtree(os.path.expanduser("~/.pebblo_test"))
+    shutil.rmtree(os.path.expanduser("~/.pebblo_test_"))
 
 
 def test_daemon_config_validate():
@@ -78,13 +78,13 @@ def test_logging_config_validate():
 
 def test_reports_config_validate(setup_and_teardown):
     # Test with valid format, renderer, and output directory
-    config = {"format": "pdf", "renderer": "xhtml2pdf", "outputDir": "~/.pebblo_test"}
+    config = {"format": "pdf", "renderer": "xhtml2pdf", "outputDir": "~/.pebblo_test_"}
     validator = ReportsConfig(config)
     validator.validate()
     assert validator.errors == []
 
     # Test with invalid format
-    config = {"format": "doc", "renderer": "xhtml2pdf", "outputDir": "~/.pebblo_test"}
+    config = {"format": "doc", "renderer": "xhtml2pdf", "outputDir": "~/.pebblo_test_"}
     validator = ReportsConfig(config)
     validator.validate()
     assert validator.errors == [
@@ -92,7 +92,7 @@ def test_reports_config_validate(setup_and_teardown):
     ]
 
     # Test with invalid renderer
-    config = {"format": "pdf", "renderer": "invalid_renderer", "outputDir": "~/.pebblo_test"}
+    config = {"format": "pdf", "renderer": "invalid_renderer", "outputDir": "~/.pebblo_test_"}
     validator = ReportsConfig(config)
     validator.validate()
     assert validator.errors == [
@@ -120,7 +120,7 @@ def test_validate_config(setup_and_teardown):
         "reports": {
             "format": "pdf",
             "renderer": "xhtml2pdf",
-            "outputDir": "~/.pebblo_test",
+            "outputDir": "~/.pebblo_test_",
         },
     }
     validate_config(config)
@@ -133,7 +133,7 @@ def test_validate_config(setup_and_teardown):
         "reports": {
             "format": "doc",
             "renderer": "xhtml2pdf",
-            "outputDir": "~/.pebblo_test",
+            "outputDir": "~/.pebblo_test_",
         },
     }
     with pytest.raises(SystemExit):
