@@ -2,9 +2,11 @@
 Report generator and supporting functions
 """
 
-from decimal import Decimal
 import datetime
+from decimal import Decimal
+
 import jinja2
+
 from pebblo.reports.enums.report_libraries import library_function_mapping
 
 

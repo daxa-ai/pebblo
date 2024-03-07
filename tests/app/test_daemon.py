@@ -1,12 +1,11 @@
-from unittest.mock import Mock
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 from fastapi import FastAPI
 from starlette.testclient import TestClient
 
-from pebblo.app.routers.routers import router_instance
 from pebblo.app import daemon
+from pebblo.app.routers.routers import router_instance
 
 app = FastAPI()
 app.include_router(router_instance.router)

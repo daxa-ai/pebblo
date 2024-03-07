@@ -4,16 +4,17 @@ This module handles business logic for local UI
 
 import json
 import os
+
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
+from pebblo.app.models.models import AppListDetails, AppModel
 from pebblo.app.utils.utils import (
+    get_document_with_findings_data,
     get_full_path,
     read_json_file,
-    update_findings_summary,
     update_data_source,
-    get_document_with_findings_data,
+    update_findings_summary,
 )
-from pebblo.app.models.models import AppListDetails, AppModel
 
 
 class AppData:

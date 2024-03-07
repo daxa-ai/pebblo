@@ -1,6 +1,7 @@
 import json
-from os import makedirs, path, getcwd
 from json import JSONEncoder, dump
+from os import getcwd, makedirs, path
+
 from pebblo.app.libs.logger import logger
 
 

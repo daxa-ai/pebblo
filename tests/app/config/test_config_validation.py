@@ -1,12 +1,14 @@
+import os
+import shutil
+
+import pytest
+
 from pebblo.app.config.config_validation import (
-    validate_config,
     DaemonConfig,
     LoggingConfig,
     ReportsConfig,
+    validate_config,
 )
-import pytest
-import os
-import shutil
 
 
 @pytest.fixture

@@ -1,5 +1,6 @@
-from pebblo.app.api.redirection_api import App
 from fastapi.responses import RedirectResponse
+
+from pebblo.app.api.redirection_api import App
 
 # Create an instance of APp with a specific prefix
 redirect_router_instance = App()

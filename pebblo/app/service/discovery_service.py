@@ -3,12 +3,14 @@ This module handles app discovery business logic.
 """
 
 from datetime import datetime
-from pydantic import ValidationError
+
 from fastapi import HTTPException
+from pydantic import ValidationError
+
 from pebblo.app.enums.enums import CacheDir
-from pebblo.app.utils.utils import write_json_to_file, read_json_file
 from pebblo.app.libs.logger import logger
-from pebblo.app.models.models import Metadata, AiApp, InstanceDetails
+from pebblo.app.models.models import AiApp, InstanceDetails, Metadata
+from pebblo.app.utils.utils import read_json_file, write_json_to_file
 
 
 class AppDiscover:

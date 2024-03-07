@@ -6,10 +6,10 @@ from langchain.chains import RetrievalQA
 from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.schema import Document
 from langchain.vectorstores.utils import filter_complex_metadata
+from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
-from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
 load_dotenv()
 logging.basicConfig(level=10)
