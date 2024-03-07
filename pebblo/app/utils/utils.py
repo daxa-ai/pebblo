@@ -24,9 +24,7 @@ def write_json_to_file(data, file_path):
         dir_path = path.dirname(full_file_path)
         makedirs(dir_path, exist_ok=True)
         with open(full_file_path, "w") as metadata_file:
-            dump(
-                data, metadata_file, indent=4, cls=DatetimeEncoder
-            )
+            dump(data, metadata_file, indent=4, cls=DatetimeEncoder)
             logger.debug(f"JSON data written successfully to: {full_file_path}")
     except Exception as e:
         logger.error(f"Error writing JSON data to file: {e}")

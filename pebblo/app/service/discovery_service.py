@@ -1,6 +1,7 @@
 """
 This module handles app discovery business logic.
 """
+
 from datetime import datetime
 from pydantic import ValidationError
 from fastapi import HTTPException
@@ -14,6 +15,7 @@ class AppDiscover:
     """
     This class handles app discovery business logic.
     """
+
     def __init__(self, data: dict):
         self.data = data
         self.load_id = data.get("load_id")

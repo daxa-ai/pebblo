@@ -1,6 +1,7 @@
 """
 Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 """
+
 from presidio_analyzer import Pattern, PatternRecognizer, RecognizerRegistry
 
 from pebblo.entity_classifier.utils.config import (

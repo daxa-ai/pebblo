@@ -1,6 +1,7 @@
 """
-    Doc helper module for loader doc related task
+Doc helper module for loader doc related task
 """
+
 import ast
 import os.path
 from datetime import datetime
@@ -254,9 +255,9 @@ class LoaderHelper:
                     )
                 unique_snippets_set.add(source_path)
                 data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
-                data_source_findings[label_name][
-                    "unique_snippets"
-                ] = unique_snippets_set
+                data_source_findings[label_name]["unique_snippets"] = (
+                    unique_snippets_set
+                )
 
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list

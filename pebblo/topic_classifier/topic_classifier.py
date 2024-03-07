@@ -2,6 +2,7 @@
 Module for topic classification using Pebblo and Hugging Face.
 Defines the TopicClassifier class with methods for predicting topics and extracting them from the model's response.
 """
+
 import os
 
 from huggingface_hub import login

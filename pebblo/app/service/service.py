@@ -1,6 +1,7 @@
 """
 This module handles app loader/doc API business logic.
 """
+
 from datetime import datetime
 
 from fastapi import HTTPException
@@ -18,6 +19,7 @@ class AppLoaderDoc:
     """
     This class handles app loader/doc API business logic.
     """
+
     def __init__(self, data):
         self.data = data
         self.app_name = self.data.get("name")
@@ -117,8 +119,10 @@ class AppLoaderDoc:
             )
 
             # Read metadata file & get current load details
-            app_metadata_file_path = (f"{CacheDir.HOME_DIR.value}/{self.app_name}/"
-                                      f"{CacheDir.METADATA_FILE_PATH.value}")
+            app_metadata_file_path = (
+                f"{CacheDir.HOME_DIR.value}/{self.app_name}/"
+                f"{CacheDir.METADATA_FILE_PATH.value}"
+            )
             app_metadata = read_json_file(app_metadata_file_path)
             if not app_metadata:
                 return {
@@ -140,7 +144,7 @@ class AppLoaderDoc:
                 )
                 return {
                     "Message": f"Could not read metadata file at "
-                               f"{app_load_metadata_file_path}. Exiting"
+                    f"{app_load_metadata_file_path}. Exiting"
                 }
 
             # Add/Update Loader Details with input loader details
