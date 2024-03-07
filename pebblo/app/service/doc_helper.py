@@ -110,7 +110,6 @@ class LoaderHelper:
         loader_details = self.data.get("loader_details", {})
         last_used = datetime.now()
         doc_model = AiDocs(
-            appId=self.load_id,
             doc=doc_info.data,
             sourceSize=doc.get("source_path_size", 0),
             fileOwner=doc.get("file_owner", "-"),
@@ -375,7 +374,7 @@ class LoaderHelper:
         Retrieve previous runs details and create load history and return
         """
         logger.debug("Fetching previous execution details and creating loader history")
-        load_history = {}
+        load_history = dict()
         # Reading metadata file & get load details
         app_name = self.data.get("name")
         current_load_id = self.load_id

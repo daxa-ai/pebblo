@@ -33,9 +33,9 @@ class AppDiscover:
         metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
         ai_apps_model = AiApp(
             metadata=metadata,
-            name=self.data.get("name"),
+            name=self.data.get("name", ""),
             description=self.data.get("description", "-"),
-            owner=self.data.get("owner"),
+            owner=self.data.get("owner", ""),
             pluginVersion=self.data.get("plugin_version"),
             instanceDetails=instance_details,
             framework=self.data.get("framework"),
