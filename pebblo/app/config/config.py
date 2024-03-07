@@ -66,7 +66,6 @@ def load_config(path) -> dict:
                         cred_yaml[key] = conf_obj.dict()[key]
                 parsed_config = Config.parse_obj(cred_yaml)
                 config_dict = parsed_config.dict()
-                print(config_dict)
                 validate_config(config_dict)
                 return config_dict
         except IOError as err:
