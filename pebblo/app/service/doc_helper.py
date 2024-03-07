@@ -30,7 +30,7 @@ class LoaderHelper:
     Class for loader doc related task
     """
 
-    def __init__(self, app_details, data, load_id, run_id):
+    def __init__(self, app_details, data, load_id, run_id=None):
         self.app_details = app_details
         self.data = data
         self.run_id = run_id

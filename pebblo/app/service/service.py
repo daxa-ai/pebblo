@@ -8,6 +8,7 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 
 from pebblo.app.enums.enums import CacheDir
+from pebblo.app.utils.utils import write_json_to_file, read_json_file, get_full_path, acquire_lock, release_lock
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import LoaderMetadata
 from pebblo.app.service.doc_helper import LoaderHelper
@@ -40,6 +41,7 @@ class AppLoaderDoc:
             f"/{load_id}/{CacheDir.REPORT_FILE_NAME.value}"
         )
         full_file_path = get_full_path(current_load_report_file_path)
+        logger.debug(f"output_path: {full_file_path}, format_string: {report_format}, renderer: {renderer}")
         report_obj.generate_report(
             data=final_report,
             output_path=full_file_path,
@@ -108,6 +110,51 @@ class AppLoaderDoc:
                 loader_list.append(new_loader_data.dict())
                 app_details["loaders"] = loader_list
 
+    def _execute_app(self, report_file_path, load_id, run_id = None):
+        """
+
+        """
+        app_details = read_json_file(report_file_path)
+        if not app_details:
+            # TODO: Handle the case where discover call did not happen,
+            #  but loader doc is being called.
+            logger.error(
+                f"Could not read metadata file at {report_file_path}. Exiting."
+            )
+            return {
+                "Message": f"Could not read metadata file at "
+                           f"{report_file_path}. Exiting"
+            }
+        # Add/Update Loader Details with input loader details
+        self._upsert_loader_details(app_details)
+
+        # process input docs, app details, and generate final report
+        loader_helper_obj = LoaderHelper(app_details, self.data, load_id, run_id)
+        (
+            app_details,
+            final_report,
+        ) = loader_helper_obj.process_docs_and_generate_report()
+
+        logger.debug(f"Final Report with doc details: {final_report}")
+
+        if run_id:
+            # Explicitly Write file to load level
+            app_load_metadata_file_path = (
+                f"{CacheDir.HOME_DIR.value}/{self.app_name}"
+                f"/{load_id}/{CacheDir.METADATA_FILE_PATH.value}"
+            )
+            # Write current state to the file, Updating app details
+            write_json_to_file(app_details, app_load_metadata_file_path)
+
+        # Writing file at run level or load level whatever is given
+        write_json_to_file(app_details, report_file_path)
+
+        return app_details, final_report
+
+    def _generate_run_level_report(self, app_details, final_report):
+        pass
+
+
     def process_request(self):
         """
         This process is entrypoint function for loader doc API implementation.
@@ -124,13 +171,14 @@ class AppLoaderDoc:
                 f"{CacheDir.METADATA_FILE_PATH.value}"
             )
             app_metadata = read_json_file(app_metadata_file_path)
+            logger.debug(f"AppMetadata: {app_metadata}")
             if not app_metadata:
                 return {
                     "Message": "App details not present, Please execute discovery api first"
                 }
 
             # Get current app details from run id
-            run_id = self.data("run_id", None)
+            run_id = self.data.get("run_id", None)
             if run_id:
                 load_id = self.data["load_id"]
                 app_run_metadata_file_path = (
@@ -142,65 +190,25 @@ class AppLoaderDoc:
                     f"{CacheDir.HOME_DIR.value}/{self.app_name}"
                     f"/{run_id}/{CacheDir.METADATA_LOCK_FILE_PATH.value}"
                 )
-                with app_run_metadata_lock_file_path:
-                    app_details = read_json_file(app_run_metadata_file_path)
-                    if not app_details:
-                        # TODO: Handle the case where discover call did not happen,
-                        #  but loader doc is being called.
-                        logger.error(
-                            f"Could not read metadata file at {app_run_metadata_file_path}. Exiting."
-                        )
-                        return {
-                            "Message": f"Could not read metadata file at "
-                                       f"{app_run_metadata_file_path}. Exiting"
-                        }
-                    # Add/Update Loader Details with input loader details
-                    self._upsert_loader_details(app_details)
+                logger.debug(f"AppMetadataLockFile: {app_run_metadata_lock_file_path}")
 
-                    # process input docs, app details, and generate final report
-                    loader_helper_obj = LoaderHelper(app_details, self.data, load_id, run_id)
-                    (
-                        app_details,
-                        final_report,
-                    ) = loader_helper_obj.process_docs_and_generate_report()
-
-                    logger.debug(f"Final Report with doc details: {final_report}")
-
-                    # Write current state to the file, Updating app details
-                    write_json_to_file(app_details, app_run_metadata_file_path)
+                try:
+                    # Acquiring Lock
+                    acquire_lock(app_run_metadata_lock_file_path)
+                    logger.debug("Lock acquired.")
+                    app_details, final_report = self._execute_app(app_run_metadata_file_path, load_id, run_id)
+                finally:
+                    # Releasing lock
+                    release_lock(app_run_metadata_lock_file_path)
             else:
                 # Get current app details from load id
+                logger.debug("LoadIds")
                 load_id = self.data["load_id"]
                 app_load_metadata_file_path = (
                     f"{CacheDir.HOME_DIR.value}/{self.app_name}"
                     f"/{load_id}/{CacheDir.METADATA_FILE_PATH.value}"
                 )
-                app_details = read_json_file(app_load_metadata_file_path)
-                if not app_details:
-                    # TODO: Handle the case where discover call did not happen,
-                    #  but loader doc is being called.
-                    logger.error(
-                        f"Could not read metadata file at {app_load_metadata_file_path}. Exiting."
-                    )
-                    return {
-                        "Message": f"Could not read metadata file at "
-                                   f"{app_load_metadata_file_path}. Exiting"
-                    }
-
-                # Add/Update Loader Details with input loader details
-                self._upsert_loader_details(app_details)
-
-                # process input docs, app details, and generate final report
-                loader_helper_obj = LoaderHelper(app_details, self.data, load_id)
-                (
-                    app_details,
-                    final_report,
-                ) = loader_helper_obj.process_docs_and_generate_report()
-
-                logger.debug(f"Final Report with doc details: {final_report}")
-
-                # Write current state to the file, Updating app details
-                write_json_to_file(app_details, app_load_metadata_file_path)
+                app_details, final_report = self._execute_app(app_load_metadata_file_path, load_id)
 
             # check whether report generation is necessary
             loading_end = self.data["loading_end"]
@@ -213,6 +221,8 @@ class AppLoaderDoc:
                     f"/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
                 )
                 write_json_to_file(final_report, json_report_file_path)
+
+                # self._generate_run_level_report(app_details, final_report)
 
                 # Writing report in pdf format
                 self._write_pdf_report(final_report)

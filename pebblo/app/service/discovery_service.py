@@ -20,7 +20,8 @@ class AppDiscover:
 
     def __init__(self, data: dict):
         self.data = data
-        self.load_id = data.get("load_id")
+        self.load_id = data.get("load_id", None)
+        self.run_id = data.get("run_id", None)
         self.application_name = self.data.get("name")
 
     def _create_ai_apps_model(self, instance_details):
@@ -100,16 +101,28 @@ class AppDiscover:
         # write metadata file if it is not present
         if not app_metadata:
             # Writing app metadata to metadata file
-            app_metadata = {"name": self.application_name, "load_ids": [self.load_id]}
-        else:
-            if "load_ids" in app_metadata.keys():
-                # Metadata file is already present,
-                # Appending the current metadata details
-                app_metadata.get("load_ids").append(self.load_id)
+            if self.run_id:
+                app_metadata = {"name": self.application_name, "run_ids": {self.run_id: [self.load_id]}}
             else:
-                # metadata file is present, but load_ids is not,
-                # This is to support backward compatibility
-                app_metadata["load_ids"] = [self.load_id]
+                app_metadata = {"name": self.application_name, "load_ids": [self.load_id]}
+        else:
+            if self.run_id:
+                if "run_id" in app_metadata.keys():
+                    if self.run_id in app_metadata["run_ids"].keys():
+                        app_metadata["run_ids"][self.run_id].append(self.load_id)
+                    else:
+                        app_metadata["run_ids"][self.run_id] = [self.load_id]
+                else:
+                    app_metadata["run_ids"] = {self.run_id: [self.load_id]}
+            else:
+                if "load_ids" in app_metadata.keys():
+                    # Metadata file is already present,
+                    # Appending the current metadata details
+                    app_metadata.get("load_ids").append(self.load_id)
+                else:
+                    # metadata file is present, but load_ids is not,
+                    # This is to support backward compatibility
+                    app_metadata["load_ids"] = [self.load_id]
 
         # Writing metadata file
         self._write_file_content_to_path(app_metadata, app_metadata_file_path)
@@ -133,11 +146,21 @@ class AppDiscover:
             ai_apps = self._create_ai_apps_model(instance_details)
 
             # Write file to metadata location
-            file_path = (
+            load_dir_file_path = (
                 f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.load_id}"
                 f"/{CacheDir.METADATA_FILE_PATH.value}"
             )
-            self._write_file_content_to_path(ai_apps.dict(), file_path)
+            self._write_file_content_to_path(ai_apps.dict(), load_dir_file_path)
+
+            #TODO: We are writing app metadata to load id metadata.json but what we should write for runId metadata.json same data\
+            # or appending the existing values
+            # Write file to metadata location
+            if self.run_id:
+                run_dir_file_path = (
+                    f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.run_id}"
+                    f"/{CacheDir.METADATA_FILE_PATH.value}"
+                )
+                self._write_file_content_to_path(ai_apps.dict(), run_dir_file_path) # content should be change
 
             logger.debug("AiApp discovery request completed successfully")
             return {"message": "App Discover Request Processed Successfully"}
