@@ -110,20 +110,20 @@ class AppLoaderDoc:
                 loader_list.append(new_loader_data.dict())
                 app_details["loaders"] = loader_list
 
-    def _execute_app(self, report_file_path, load_id, run_id = None):
+    def _execute_app(self, metadata_file_path, load_id, run_id = None):
         """
 
         """
-        app_details = read_json_file(report_file_path)
+        app_details = read_json_file(metadata_file_path)
         if not app_details:
             # TODO: Handle the case where discover call did not happen,
             #  but loader doc is being called.
             logger.error(
-                f"Could not read metadata file at {report_file_path}. Exiting."
+                f"Could not read metadata file at {metadata_file_path}. Exiting."
             )
             return {
                 "Message": f"Could not read metadata file at "
-                           f"{report_file_path}. Exiting"
+                           f"{metadata_file_path}. Exiting"
             }
         # Add/Update Loader Details with input loader details
         self._upsert_loader_details(app_details)
@@ -147,13 +147,12 @@ class AppLoaderDoc:
             write_json_to_file(app_details, app_load_metadata_file_path)
 
         # Writing file at run level or load level whatever is given
-        write_json_to_file(app_details, report_file_path)
+        write_json_to_file(app_details, metadata_file_path)
 
         return app_details, final_report
 
     def _generate_run_level_report(self, app_details, final_report):
         pass
-
 
     def process_request(self):
         """
