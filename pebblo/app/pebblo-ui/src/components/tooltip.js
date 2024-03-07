@@ -1,11 +1,11 @@
+// PROPS {
+//   children: string | HTMLElement,
+//   title: string,
+//   variant?: string,
+// }
+
 export function Tooltip(props) {
   const { children, title, variant = "top" } = props;
-  // return /*html*/ `
-  //   <div class="tooltip"> ${children}
-  //       <span class="tooltip-text">${title}</span>
-  //   </div>
-  //   `;
-
   return /*html*/ `
   <div class="tooltip">
   <div class="tooltip-content">${children}</div>
