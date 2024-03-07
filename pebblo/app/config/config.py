@@ -28,7 +28,7 @@ class LoggingConfig(BaseSettings):
 
 
 class ClassifierConfig(BaseSettings):
-    anonymize_all_entities: bool = Field(default=True)
+    anonymizeAllEntities: bool = Field(default=True)
 
 
 # ConfigFile BaseModel
@@ -48,7 +48,7 @@ def load_config(path) -> dict:
                 format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
             ),
             logging=LoggingConfig(level="info"),
-            classifier=ClassifierConfig(anonymize_all_entities=True),
+            classifier=ClassifierConfig(anonymizeAllEntities=True),
         )
         if not path:
             # Setting Default config details
