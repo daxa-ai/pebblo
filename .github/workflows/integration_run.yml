@@ -21,11 +21,18 @@ jobs:
         with:
           ref: 'main'
           python-version: ${{ env.PYTHON_VERSION }}
-        
+
+      - name: Build Pebblo
+        run: |
+          pip install build
+          python -m build --wheel
+          ls -la dist/
+          
       - name: Install Pebblo Packages
         run: |
             echo 'Install Pebblo Package'
-            pip3 install pebblo --force-reinstall
+            pkg_file=$(ls dist | grep .whl)
+            pip3 install dist/$pkg_file --force-reinstall
             pip3 install --upgrade pip
             
       - name: Start Pebblo Server
