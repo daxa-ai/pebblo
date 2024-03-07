@@ -13,7 +13,9 @@ from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 # in this directory before proceeding
 
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 class AcmeCorpRAG:
     def __init__(self, file_path: str):
@@ -25,9 +27,9 @@ class AcmeCorpRAG:
         print("Loading RAG documents ...")
         self.loader = PebbloSafeLoader(
             CSVLoader(self.file_path),
-            name="acme-corp-rag-1", # App name (Mandatory)
-            owner="Joe Smith",      # Owner (Optional)
-            description="Support productivity RAG application", # Description (Optional)
+            name="acme-corp-rag-1",  # App name (Mandatory)
+            owner="Joe Smith",  # Owner (Optional)
+            description="Support productivity RAG application",  # Description (Optional)
         )
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
@@ -46,7 +48,7 @@ class AcmeCorpRAG:
             llm=llm,
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
-            verbose=True
+            verbose=True,
         )
 
     @staticmethod

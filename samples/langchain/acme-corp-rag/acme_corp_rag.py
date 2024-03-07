@@ -12,7 +12,9 @@ from typing import List
 # in this directory before proceeding
 
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 class AcmeCorpRAG:
     def __init__(self, file_path: str):
@@ -40,7 +42,7 @@ class AcmeCorpRAG:
             llm=llm,
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
-            verbose=True
+            verbose=True,
         )
 
     @staticmethod

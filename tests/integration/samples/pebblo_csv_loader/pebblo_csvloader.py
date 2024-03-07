@@ -18,8 +18,10 @@ logging.basicConfig(level=10)
 class OpenAIGenieCsv:
     def __init__(self, file_path: str):
         self.loader = PebbloSafeLoader(
-            CSVLoader(file_path), "Pebblo_Automation_Testing_CSVLoader", "Pebblo Automation",
-            "CSV Loader Working as expected"
+            CSVLoader(file_path),
+            "Pebblo_Automation_Testing_CSVLoader",
+            "Pebblo Automation",
+            "CSV Loader Working as expected",
         )
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
@@ -29,7 +31,7 @@ class OpenAIGenieCsv:
             llm=llm,
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
-            verbose=True
+            verbose=True,
         )
 
     @staticmethod

@@ -92,7 +92,11 @@ def test_reports_config_validate(setup_and_teardown):
     ]
 
     # Test with invalid renderer
-    config = {"format": "pdf", "renderer": "invalid_renderer", "outputDir": "~/.pebblo_test_"}
+    config = {
+        "format": "pdf",
+        "renderer": "invalid_renderer",
+        "outputDir": "~/.pebblo_test_",
+    }
     validator = ReportsConfig(config)
     validator.validate()
     assert validator.errors == [
