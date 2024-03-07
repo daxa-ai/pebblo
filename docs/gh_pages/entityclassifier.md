@@ -21,8 +21,7 @@ Below is the list of `entities` supported by Pebblo -
   8. Github Access Token  
   9. Slack Access Token  
 10. AWS Access Key  
-11. AWS Secret Key  
-12. Azure Key ID  
+11. AWS Secret Key   
   
   
 User can get details of classified entities for their loader source files in Pebblo report.  
