@@ -27,11 +27,16 @@ class LoggingConfig(BaseSettings):
     level: str = Field(default="info")
 
 
+class ClassifierConfig(BaseSettings):
+    anonymizeAllEntities: bool = Field(default=True)
+
+
 # ConfigFile BaseModel
 class Config(BaseSettings):
     daemon: PortConfig
     reports: ReportConfig
     logging: LoggingConfig
+    classifier: ClassifierConfig
 
 
 def load_config(path) -> dict:
@@ -43,6 +48,9 @@ def load_config(path) -> dict:
                 format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
             ),
             logging=LoggingConfig(level="info"),
+            classifier=ClassifierConfig(
+                anonymizeAllEntities=True
+            ),
         )
         if not path:
             # Setting Default config details
@@ -58,6 +66,7 @@ def load_config(path) -> dict:
                         cred_yaml[key] = conf_obj.dict()[key]
                 parsed_config = Config.parse_obj(cred_yaml)
                 config_dict = parsed_config.dict()
+                print(config_dict)
                 validate_config(config_dict)
                 return config_dict
         except IOError as err:

@@ -3,6 +3,7 @@ from pebblo.app.config.config_validation import (
     DaemonConfig,
     LoggingConfig,
     ReportsConfig,
+    ClassifierConfig,
 )
 import pytest
 import os
@@ -112,6 +113,36 @@ def test_reports_config_validate(setup_and_teardown):
     ]
 
 
+def test_classifier_config_validate():
+    # Test with True value
+    config = {"anonymizeAllEntities": True}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == []
+
+    # Test with False value
+    config = {"anonymizeAllEntities": False}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == []
+
+    # Test with invalid int
+    config = {"anonymizeAllEntities": 70000}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == [
+        "Error: Invalid anonymizeAllEntities '70000'. AnonymizeAllEntities must be a boolean."
+    ]
+
+    # Test with invalid str
+    config = {"anonymizeAllEntities": 'abc'}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == [
+        "Error: Invalid anonymizeAllEntities 'abc'. AnonymizeAllEntities must be a boolean."
+    ]
+
+
 def test_validate_config(setup_and_teardown):
     # Test with valid configuration
     config = {
@@ -121,6 +152,9 @@ def test_validate_config(setup_and_teardown):
             "format": "pdf",
             "renderer": "xhtml2pdf",
             "outputDir": "~/.pebblo_test_",
+        },
+        "classifier":{
+            "anonymizeAllEntities": True,
         },
     }
     validate_config(config)
@@ -134,6 +168,9 @@ def test_validate_config(setup_and_teardown):
             "format": "doc",
             "renderer": "xhtml2pdf",
             "outputDir": "~/.pebblo_test_",
+        },
+        "classifier": {
+            "anonymizeAllEntities": "abc",
         },
     }
     with pytest.raises(SystemExit):
