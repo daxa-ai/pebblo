@@ -106,14 +106,20 @@ class AppDiscover:
             else:
                 app_metadata = {"name": self.application_name, "load_ids": [self.load_id]}
         else:
+            # For multiple loaders support.
             if self.run_id:
-                if "run_id" in app_metadata.keys():
+                # Already run_id is present
+                if "run_ids" in app_metadata.keys():
                     if self.run_id in app_metadata["run_ids"].keys():
                         app_metadata["run_ids"][self.run_id].append(self.load_id)
                     else:
                         app_metadata["run_ids"][self.run_id] = [self.load_id]
+
+                # This is first load of this run_id
                 else:
                     app_metadata["run_ids"] = {self.run_id: [self.load_id]}
+
+            # Backward compatibility of multiple loaders support.
             else:
                 if "load_ids" in app_metadata.keys():
                     # Metadata file is already present,
