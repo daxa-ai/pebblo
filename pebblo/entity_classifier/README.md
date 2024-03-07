@@ -16,28 +16,16 @@ And following Secret Entities:
 2. Slack Token
 3. AWS Access Key
 4. AWS Secret Key
-5. Azure Key ID
-6. Azure Client Secret
-7. Google API Key
-    
+
 ## How to use
 Entity Classifier
 ```
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 
 text = <Input Data>
-entity_classifier_obj = EntityClassifier(text)
-entity_groups, total_entity_count = entity_classifier_obj.presidio_entity_classifier()
+entity_classifier_obj = EntityClassifier()
+entities, total_count, anonymized_text = entity_classifier_obj.presidio_entity_classifier_and_anonymizer(text,anonymize_all_entities)
 print(f"Entity Group: {entity_groups}")
 print(f"Entity Count: {total_entity_count}")
-```
-Secret Entity Classifier
-```
-from pebblo.entity_classifier.entity_classifier import EntityClassifier
-
-text = <Input Data>
-entity_classifier_obj = EntityClassifier(text)
-secret_entity_groups, total_entity_count = entity_classifier_obj.presidio_secret_classifier()
-print(f"Secret Entity Group: {secret_entity_groups}")
-print(f"Secret Entity Count: {total_entity_count}")
+print(f"Anonymized Text: {anonymized_text}")
 ```
