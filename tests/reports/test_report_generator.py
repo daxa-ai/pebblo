@@ -1,7 +1,6 @@
 import os
 import datetime
 import unittest
-from pathlib import Path
 from pebblo.reports.enums.report_libraries import (
     ReportLibraries,
     template_renderer_mapping,
