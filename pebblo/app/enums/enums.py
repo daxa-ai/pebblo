@@ -1,6 +1,7 @@
 """
 These are all enums related to Pebblo Server.
 """
+
 from enum import Enum
 
 from pebblo.app.daemon import config_details

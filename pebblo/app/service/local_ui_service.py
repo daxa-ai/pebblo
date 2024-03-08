@@ -1,24 +1,27 @@
 """
 This module handles business logic for local UI
 """
+
 import json
 import os
+
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
+from pebblo.app.models.models import AppListDetails, AppModel
 from pebblo.app.utils.utils import (
+    get_document_with_findings_data,
     get_full_path,
     read_json_file,
-    update_findings_summary,
     update_data_source,
-    get_document_with_findings_data,
+    update_findings_summary,
 )
-from pebblo.app.models.models import AppListDetails, AppModel
 
 
 class AppData:
     """
     This class handles business logic for local UI
     """
+
     @staticmethod
     def get_all_apps_details():
         """
@@ -47,8 +50,10 @@ class AppData:
                         logger.debug(f"Skipping hidden folder {app_dir}")
                         continue
                     # Path to metadata.json
-                    app_path = (f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                                f"{CacheDir.METADATA_FILE_PATH.value}")
+                    app_path = (
+                        f"{CacheDir.HOME_DIR.value}/{app_dir}/"
+                        f"{CacheDir.METADATA_FILE_PATH.value}"
+                    )
                     logger.debug(f"metadata.json path {app_path}")
                     app_json = read_json_file(app_path)
 
@@ -63,8 +68,10 @@ class AppData:
                     # Fetch latest loadId
                     latest_load_id = app_json.get("load_ids")[-1]
 
-                    app_detail_path = (f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                                       f"{latest_load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}")
+                    app_detail_path = (
+                        f"{CacheDir.HOME_DIR.value}/{app_dir}/"
+                        f"{latest_load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
+                    )
                     logger.debug(f"report.json path {app_detail_path}")
                     app_detail_json = read_json_file(app_detail_path)
 
@@ -116,7 +123,8 @@ class AppData:
                     # Fetch document with findings details from app metadata.json file
                     app_metadata_detail_path = (
                         f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                        f"{latest_load_id}/{CacheDir.METADATA_FILE_PATH.value}")
+                        f"{latest_load_id}/{CacheDir.METADATA_FILE_PATH.value}"
+                    )
                     app_metadata_json_details = read_json_file(app_metadata_detail_path)
 
                     # Fetch required data for DocumentWithFindings
@@ -179,8 +187,10 @@ class AppData:
             latest_load_id = app_json.get("load_ids")[-1]
 
             # Path to report.json
-            app_detail_path = (f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                               f"{latest_load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}")
+            app_detail_path = (
+                f"{CacheDir.HOME_DIR.value}/{app_dir}/"
+                f"{latest_load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
+            )
             logger.debug(f"metadata.json path {app_detail_path}")
 
             # Read app details from report.json

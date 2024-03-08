@@ -6,10 +6,10 @@ from langchain.chains import RetrievalQA
 from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.schema import Document
 from langchain.vectorstores.utils import filter_complex_metadata
+from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
-from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
 load_dotenv()
 logging.basicConfig(level=10)
@@ -18,8 +18,10 @@ logging.basicConfig(level=10)
 class OpenAIGenieCsv:
     def __init__(self, file_path: str):
         self.loader = PebbloSafeLoader(
-            CSVLoader(file_path), "Pebblo_Automation_Testing_CSVLoader", "Pebblo Automation",
-            "CSV Loader Working as expected"
+            CSVLoader(file_path),
+            "Pebblo_Automation_Testing_CSVLoader",
+            "Pebblo Automation",
+            "CSV Loader Working as expected",
         )
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
@@ -29,7 +31,7 @@ class OpenAIGenieCsv:
             llm=llm,
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
-            verbose=True
+            verbose=True,
         )
 
     @staticmethod

@@ -3,7 +3,8 @@ Defines functions to generate PDF from HTML for respective renderers
 """
 
 import os
-from weasyprint import HTML, CSS
+
+from weasyprint import CSS, HTML
 from xhtml2pdf import pisa
 
 

@@ -1,9 +1,10 @@
-import os
-from pebblo.app.utils.utils import get_full_path
-from pebblo.app.libs.logger import logger
-from abc import ABC, abstractmethod
-import sys
 import logging
+import os
+import sys
+from abc import ABC, abstractmethod
+
+from pebblo.app.libs.logger import logger
+from pebblo.app.utils.utils import get_full_path
 
 
 class ConfigValidator(ABC):
