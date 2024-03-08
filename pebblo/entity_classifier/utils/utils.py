@@ -5,18 +5,22 @@ from presidio_analyzer import Pattern, PatternRecognizer, RecognizerRegistry
 
 from pebblo.entity_classifier.utils.config import (
     ConfidenceScore,
+    Entities,
     SecretEntities,
     secret_entities_context_mapping,
 )
 from pebblo.entity_classifier.utils.regex_pattern import regex_secrets_patterns
 
 
-def get_entities(entities_enum, response):
+def get_entities(entities_list, response):
     entity_groups = dict()
     total_count = 0
     for entity in response:
-        if entity.entity_type in entities_enum.__members__:
-            mapped_entity = entities_enum[entity.entity_type].value
+        if entity.entity_type in entities_list:
+            if entity.entity_type in Entities.__members__:
+                mapped_entity = Entities[entity.entity_type].value
+            elif entity.entity_type in SecretEntities.__members__:
+                mapped_entity = SecretEntities[entity.entity_type].value
             entity_groups[mapped_entity] = entity_groups.get(mapped_entity, 0) + 1
             total_count += 1
 

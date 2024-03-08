@@ -18,11 +18,11 @@ Below is the list of `entities` supported by Pebblo -
 1. US Bank Account Number
 1. IBAN Code
 1. US ITIN
-1. Github Access Token
+1. GitHub Access Token
 1. Slack Access Token
 1. AWS Access Key
 1. AWS Secret Key
-1. Azure Key ID
+
 
 User can get details of classified entities for their loader source files in Pebblo report.  
 Different sections of Pebblo report such as , `Top Files with Most Findings`, `Data Source Findings Table` and `Snippets` helps to get overview of pebblo entity classifier output for user's Rag application.

@@ -1,5 +1,5 @@
 :root {
-  --primary-blue: #2190f7;
+  --primary-blue: #5468f3;
   --white: #fff;
   --main: #f5f5f9;
   --surface-10: #191c2d;
@@ -27,6 +27,34 @@ body {
 }
 /* <=========== Common styles start ===========> */
 
+/* ICON STYLES */
+
+svg.icon-size-md{
+  height: 20px;
+  width: 20px;
+}
+
+svg.icon-size-sm{
+  height: 14px;
+  width: 14px;
+}
+
+svg.icon-primary{
+  fill: var(--primary-blue);
+}
+svg.icon-white{
+  fill: white;
+}
+
+svg:focus{
+  outline: none;
+}
+svg.icon-grey{
+  fill: #7E83A5;
+}
+svg.icon-success{
+  fill: #14BE9B;
+}
 /* <----------- POSITION -----------> */
 .absolute {
   position: absolute;
@@ -229,15 +257,16 @@ body {
 
 /* <----------- DIVIDER -----------> */
 .divider {
-  width: 1px;
+  width: 0.5px;
   margin: 2px 0px;
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(25, 28, 46, 0.2);
 }
 .divider-horizontal {
   width: 100%;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.2);
+  height: 0.5px;
+  background: rgba(25, 28, 46, 0.2);
+  flex-shrink: 0;
 }
 
 /* <----------- FONT WEIGHT PROPERTY -----------> */
@@ -753,8 +782,8 @@ body {
 
 /* <---------- INPUT BOX (SEARCH) ----------> */
 .search {
-  max-width: 259px;
-  width: 259px;
+  max-width: 280px;
+  width: 280px;
   border-bottom: 1px solid var(--surface-70);
   display: flex;
   padding: 6px 0px;
@@ -767,6 +796,14 @@ body {
   font-size: 12px;
   width: 100%;
   background: none;
+  padding-left: 8px;
+}
+.search input::placeholder{
+  color: var(--surface-60);
+  opacity: 50%;
+}
+.search svg{
+  opacity: 50%;
 }
 
 .search > input:focus,
@@ -780,6 +817,7 @@ body {
 }
 
 /* <---------- BUTTON ----------> */
+
 button {
   cursor: pointer;
   border: none;
@@ -788,16 +826,48 @@ button {
   font-size: 12px;
   font-family: "Inter", sans-serif;
   width: fit-content;
-}
-button.text {
-  color: var(--primary-blue);
-  background: none;
   border: none;
-  padding: 6px 10px;
+  padding: 8px 10px;
+  background: none;
 }
 
-button.text:hover {
-  background: #2090f61a;
+button.btn-contained-primary{
+  background-color: var(--primary-blue);
+  color: white; 
+}
+
+button.btn-contained-primary svg{
+  fill: white; 
+}
+
+button.btn-outlined-primary{
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
+}
+
+button.btn-text-primary{
+  color: var(--primary-blue);
+  padding: 8px 10px;
+}
+
+button.btn-contained-primary:hover{
+  background-color: #4d61ef;
+}
+
+button.btn-outlined-primary:hover{
+  background: #5468f308;
+  border: 1px solid #4d61ef;
+}
+
+button.btn-text-primary:hover {
+  background: #f1f3ff80;
+}
+
+button.btn-text-white{
+  color: white;
+}
+button.btn-text-white:hover{
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* <---------- TABLE ----------> */
@@ -844,24 +914,28 @@ th {
 }
 th.active {
   color: var(--surface-50);
+  opacity: 1;
 }
-th.active > div > img {
-  filter: brightness(0.3);
+th.active > div > svg {
+  fill: var(--surface-50);
 }
 
-th.asc > div > img {
+th.asc > div > svg {
   rotate: 180deg;
 }
 
-th.dsc > div > img {
+th.dsc > div > svg {
   rotate: 0deg;
 }
-
+.sort-column{
+  opacity: 0.8;
+}
 .sort-column:hover {
   color: var(--surface-50);
+  opacity: 1;
 }
-.sort-column:hover img {
-  filter: brightness(0.3);
+.sort-column:hover svg {
+  fill:  var(--surface-50) !important;
 }
 td.fit {
   width: 0;
@@ -902,6 +976,7 @@ button.accordion-summary {
   color: var(--surface-10);
   font-size: 12px;
   font-weight: 500;
+  padding: 0;
 }
 #arrow_icon {
   transition: 0.3s;
@@ -928,6 +1003,7 @@ button.accordion-summary {
 dialog[open] {
   opacity: 1;
   transform: scaleY(1);
+  z-index: 0;
 }
 
 /*   Closed state of the dialog   */
@@ -938,6 +1014,7 @@ dialog {
   margin: auto;
   border: none;
   border-radius: 4px;
+  z-index: -1;
 }
 
 /*   Before-open state  */
@@ -1000,7 +1077,7 @@ dialog::backdrop {
   text-overflow: ellipsis;
 }
 
-.tooltip-wrapper-top {
+.tooltip-wrapper-top, .tooltip-wrapper-right, .tooltip-wrapper-bottom, .tooltip-wrapper-left {
   position: absolute;
   visibility: hidden;
 }
@@ -1032,21 +1109,17 @@ dialog::backdrop {
   border-color: black transparent transparent transparent;
 }
 
-.tooltip-wrapper-right {
-  position: absolute;
-  visibility: hidden;
-}
-.tooltip:hover .tooltip-wrapper-right {
+.tooltip:hover .tooltip-wrapper-bottom {
   visibility: visible;
   top: 0;
-  left: 0px;
+  left: 0;
   height: fit-content;
   width: 100%;
   margin: auto;
   bottom: 0;
 }
 
-.tooltip-title-right {
+.tooltip-title-bottom {
   width: fit-content;
   background-color: black;
   color: #fff;
@@ -1062,7 +1135,7 @@ dialog::backdrop {
   height: fit-content;
 }
 
-.tooltip-title-right::after {
+.tooltip-title-bottom::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -1071,4 +1144,30 @@ dialog::backdrop {
   border-width: 5px;
   border-style: solid;
   border-color: transparent transparent transparent black;
+}
+
+/* TOOLTIP FOR COPY TEXT  */
+.copy-text-tooltip {
+  width: fit-content;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px;
+  position: absolute;
+  z-index: 1;
+  top: 150%;
+  margin-left: -24px;
+  visibility: hidden;
+}
+
+.copy-text-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
 }

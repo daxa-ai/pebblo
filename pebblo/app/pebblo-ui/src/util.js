@@ -1,11 +1,24 @@
-import { MONTHS } from "./constants/constant.js";
 import { DASHBOARD_ROUTE } from "./constants/routesConstant.js";
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 export const get_Formatted_Date = (date) => {
   const newDate = new Date(date);
-  return `${newDate.getDate()} ${
-    MONTHS[newDate.getMonth()]
-  } ${newDate.getFullYear()}`;
+  return `${newDate.getDate()} ${MONTHS[newDate.getMonth()]
+    } ${newDate.getFullYear()}`;
 };
 
 export const add_Zero = (number) => {
@@ -47,22 +60,6 @@ export const waitForElement = (querySelector, timeout) => {
         reject();
       }, timeout);
   });
-};
-
-export const CONCAT_ARRAYS = (array, key) => {
-  if (window.location.pathname === DASHBOARD_ROUTE) {
-    let dummy = [];
-    let dataSourceName = "";
-    array?.forEach((item) => {
-      dataSourceName = item[0]?.name;
-      if (item[0][key]) {
-        dummy = [...dummy, ...item[0][key]];
-      }
-    });
-
-    return dummy?.map((item) => ({ ...item, dataSource: dataSourceName }));
-  }
-  return [];
 };
 
 export const SORT_DATA = (array, order, key) => {

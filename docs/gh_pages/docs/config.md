@@ -25,6 +25,10 @@ Notes:
 - `renderer`: Specifies the rendering engine for generating reports. Options include 'weasyprint', 'xhtml2pdf'.
 - `outputDir`: Defines the directory where generated reports will be saved.
 
+### Classifier
+
+- `anonymizeAllEntities`: Condition to anonymize all entities in document.
+
 ### Default Configuration
 
 ```yaml
@@ -37,5 +41,6 @@ reports:
   format: pdf
   renderer: xhtml2pdf
   outputDir: ~/.pebblo
-
+classifier:
+  anonymizeAllEntities: true
 ```

@@ -1,7 +1,7 @@
 import pathlib
+
 import yaml
 from pydantic import BaseSettings, Field
-
 
 from pebblo.app.config.config_validation import validate_config
 
@@ -48,9 +48,7 @@ def load_config(path) -> dict:
                 format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
             ),
             logging=LoggingConfig(level="info"),
-            classifier=ClassifierConfig(
-                anonymizeAllEntities=True
-            ),
+            classifier=ClassifierConfig(anonymizeAllEntities=True),
         )
         if not path:
             # Setting Default config details
