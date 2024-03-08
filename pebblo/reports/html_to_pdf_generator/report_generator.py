@@ -6,11 +6,12 @@ from decimal import Decimal
 import datetime
 import jinja2
 from pebblo.reports.enums.report_libraries import library_function_mapping
+import time
 
 
 def date_formatter(date_obj):
     """Converts date string to object and returns formatted string for date (D M Y, H:M)"""
-    return date_obj.strftime("%d %B %Y , %H:%M")
+    return date_obj.strftime("%d %B %Y , %H:%M") + " " + time.localtime().tm_zone
 
 
 def get_file_size(size):
@@ -31,9 +32,12 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
     template_loader = jinja2.FileSystemLoader(searchpath=search_path)
     template_env = jinja2.Environment(loader=template_loader)
     template = template_env.get_template(template_name)
+    current_date = (
+        datetime.datetime.now().strftime("%B %d, %Y") + " " + time.localtime().tm_zone
+    )
     source_html = template.render(
         data=data,
-        date=datetime.datetime.now(),
+        date=current_date,
         datastores=data["dataSources"][0],
         findingDetails=data["dataSources"][0]["findingsDetails"],
         loadHistoryItemsToDisplay=data["loadHistory"]["history"],
