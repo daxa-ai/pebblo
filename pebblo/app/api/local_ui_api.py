@@ -1,11 +1,12 @@
 from pathlib import Path
-from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import FileResponse
-from pebblo.app.service.local_ui_service import AppData
-from pebblo.app.enums.enums import CacheDir
-from pebblo.app.utils.utils import get_full_path
 
+from fastapi import APIRouter, Request
+from fastapi.responses import FileResponse
+from fastapi.templating import Jinja2Templates
+
+from pebblo.app.enums.enums import CacheDir
+from pebblo.app.service.local_ui_service import AppData
+from pebblo.app.utils.utils import get_full_path
 
 templates = Jinja2Templates(
     directory=Path(__file__).parent.parent.absolute() / "pebblo-ui"

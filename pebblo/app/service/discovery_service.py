@@ -1,19 +1,23 @@
 """
 This module handles app discovery business logic.
 """
+
 from datetime import datetime
-from pydantic import ValidationError
+
 from fastapi import HTTPException
+from pydantic import ValidationError
+
 from pebblo.app.enums.enums import CacheDir
-from pebblo.app.utils.utils import write_json_to_file, read_json_file
 from pebblo.app.libs.logger import logger
-from pebblo.app.models.models import Metadata, AiApp, InstanceDetails
+from pebblo.app.models.models import AiApp, InstanceDetails, Metadata
+from pebblo.app.utils.utils import read_json_file, write_json_to_file
 
 
 class AppDiscover:
     """
     This class handles app discovery business logic.
     """
+
     def __init__(self, data: dict):
         self.data = data
         self.load_id = data.get("load_id")
@@ -31,7 +35,7 @@ class AppDiscover:
             metadata=metadata,
             name=self.data.get("name"),
             description=self.data.get("description", "-"),
-            owner=self.data.get("owner"),
+            owner=self.data.get("owner", ""),
             pluginVersion=self.data.get("plugin_version"),
             instanceDetails=instance_details,
             framework=self.data.get("framework"),

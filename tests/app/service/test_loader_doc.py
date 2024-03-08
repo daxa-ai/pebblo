@@ -1,6 +1,8 @@
 import datetime
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
+
 from pebblo.app.models.models import DataSource
 from pebblo.app.service.doc_helper import LoaderHelper
 

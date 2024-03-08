@@ -1,6 +1,7 @@
 """
 Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 """
+
 from enum import Enum
 
 secret_entities_context_mapping = {

@@ -1,13 +1,15 @@
+import os
+import shutil
+
+import pytest
+
 from pebblo.app.config.config_validation import (
-    validate_config,
     DaemonConfig,
     LoggingConfig,
     ReportsConfig,
     ClassifierConfig,
+    validate_config,
 )
-import pytest
-import os
-import shutil
 
 
 @pytest.fixture
@@ -93,7 +95,11 @@ def test_reports_config_validate(setup_and_teardown):
     ]
 
     # Test with invalid renderer
-    config = {"format": "pdf", "renderer": "invalid_renderer", "outputDir": "~/.pebblo_test_"}
+    config = {
+        "format": "pdf",
+        "renderer": "invalid_renderer",
+        "outputDir": "~/.pebblo_test_",
+    }
     validator = ReportsConfig(config)
     validator.validate()
     assert validator.errors == [

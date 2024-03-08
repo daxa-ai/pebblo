@@ -1,18 +1,18 @@
-from langchain.chains import RetrievalQA
-from langchain.document_loaders.csv_loader import CSVLoader
-from langchain_openai.embeddings import OpenAIEmbeddings
-from langchain_openai.llms import OpenAI
-from langchain.schema import Document
-from langchain_community.vectorstores import Chroma
-from langchain_community.vectorstores.utils import filter_complex_metadata
 from typing import List
-
 
 # Fill-in OPENAI_API_KEY in .env file
 # in this directory before proceeding
-
 from dotenv import load_dotenv
+from langchain.chains import RetrievalQA
+from langchain.document_loaders.csv_loader import CSVLoader
+from langchain.schema import Document
+from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores.utils import filter_complex_metadata
+from langchain_openai.embeddings import OpenAIEmbeddings
+from langchain_openai.llms import OpenAI
+
 load_dotenv()
+
 
 class AcmeCorpRAG:
     def __init__(self, file_path: str):
@@ -40,7 +40,7 @@ class AcmeCorpRAG:
             llm=llm,
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
-            verbose=True
+            verbose=True,
         )
 
     @staticmethod
