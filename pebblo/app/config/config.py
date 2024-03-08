@@ -19,7 +19,7 @@ class PortConfig(BaseSettings):
 class ReportConfig(BaseSettings):
     format: str = Field(default="pdf")
     renderer: str = Field(default="xhtml2pdf")
-    outputDir: str = Field(dir_path)
+    outputDir: str = Field(default=str(dir_path))
 
 
 # Logging BaseModel
