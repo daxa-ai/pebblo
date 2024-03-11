@@ -171,7 +171,7 @@ class AppDiscover:
         """
         Write content to the specified file path
         """
-        logger.debug(f"Writing content to file path: {file_content}")
+        # logger.debug(f"Writing content to file path: {file_content}")
         # Writing file content to given file path
         write_json_to_file(file_content, file_path)
 
@@ -180,7 +180,7 @@ class AppDiscover:
         """
         Retrieve the content of the specified file.
         """
-        logger.debug(f"Reading content from file: {file_path}")
+        # logger.debug(f"Reading content from file: {file_path}")
         file_content = read_json_file(file_path)
         return file_content
 
@@ -199,9 +199,15 @@ class AppDiscover:
         if not app_metadata:
             # Writing app metadata to metadata file
             if self.run_id:
-                app_metadata = {"name": self.application_name, "run_ids": {self.run_id: [self.load_id]}}
+                app_metadata = {
+                    "name": self.application_name,
+                    "run_ids": {self.run_id: [self.load_id]},
+                }
             else:
-                app_metadata = {"name": self.application_name, "load_ids": [self.load_id]}
+                app_metadata = {
+                    "name": self.application_name,
+                    "load_ids": [self.load_id],
+                }
         else:
             # For multiple loaders support.
             if self.run_id:
@@ -319,7 +325,7 @@ class AppDiscover:
             )
             self._write_file_content_to_path(ai_apps.dict(), load_dir_file_path)
 
-            #TODO: We are writing app metadata to load id metadata.json but what we should write for runId metadata.json same data\
+            # TODO: We are writing app metadata to load id metadata.json but what we should write for runId metadata.json same data\
             # or appending the existing values
             # Write file to metadata location
             if self.run_id:
@@ -327,7 +333,9 @@ class AppDiscover:
                     f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.run_id}"
                     f"/{CacheDir.METADATA_FILE_PATH.value}"
                 )
-                self._write_file_content_to_path(ai_apps.dict(), run_dir_file_path) # content should be change
+                self._write_file_content_to_path(
+                    ai_apps.dict(), run_dir_file_path
+                )  # content should be change
 
             # Prepare response
             message = "App Discover Request Processed Successfully"

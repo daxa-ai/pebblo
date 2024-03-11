@@ -205,10 +205,19 @@ class AppData:
                             all_loader_apps.append(loader_app)
                     elif app_type == "retrieval":
                         retrieval_app = self.prepare_retrieval_response(
-                            app_dir, app_json
-                        )
+                            app_dir, app_json)
                         if retrieval_app:
                             all_retrieval_apps.append(retrieval_app)
+
+                    # Get load_ids from run_id
+                    # If not run_id then use load_id
+                    load_ids = app_json.get("load_ids", [])
+
+                    if not load_ids:
+                        logger.debug(f"No valid loadIds found for app: {app_dir}.")
+                        logger.warning(
+                            f"Skipping app '{app_dir}' due to missing or invalid file"
+                        )
 
                 except Exception as err:
                     logger.warning(f"Error processing app {app_dir}: {err}")
