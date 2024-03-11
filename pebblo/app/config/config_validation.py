@@ -68,7 +68,9 @@ class ClassifierConfig(ConfigValidator):
     def validate(self):
         anonymize_all_entities = self.config.get("anonymizeAllEntities")
         if not isinstance(anonymize_all_entities, bool):
-            self.errors.append(f"Error: Invalid anonymizeAllEntities '{anonymize_all_entities}'. AnonymizeAllEntities must be a boolean.")
+            self.errors.append(
+                f"Error: Invalid anonymizeAllEntities '{anonymize_all_entities}'. AnonymizeAllEntities must be a boolean."
+            )
 
 
 def validate_config(config_dict):
