@@ -67,7 +67,7 @@ def load_config(path) -> dict:
                 validate_config(config_dict)
                 return config_dict
         except IOError as err:
-            print(f"no credentials file found at {path}. Error : {err}")
+            print(f"no config file found at {path}. Error : {err}")
             return conf_obj.dict()
 
     except Exception as err:
