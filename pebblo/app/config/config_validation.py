@@ -59,10 +59,9 @@ class ReportsConfig(ConfigValidator):
             self.errors.append(
                 f"Error: Unsupported renderer '{renderer}' specified in the configuration"
             )
-        if not os.path.exists(get_full_path(output_dir)):
-            self.errors.append(
-                f"Error: Output directory '{output_dir}' specified for the reports does not exist"
-            )
+        # Check if the output directory exists, create if it doesn't
+        if not os.path.exists(get_full_path(str(output_dir))):
+            os.makedirs(get_full_path(str(output_dir)), exist_ok=True)
 
 
 class ClassifierConfig(ConfigValidator):
