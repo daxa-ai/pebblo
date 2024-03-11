@@ -84,12 +84,12 @@ class AppLoaderDoc:
 
         # Checking for same loader details in app details
         if loader_name and source_type:
-            loader_list = app_details.get("loaders", []) # [ {"name": "Akshay"} ]
+            loader_list = app_details.get("loaders", [])
             loader_exist = False
             for loader in loader_list:
 
                 # If loader exist, update loader SourcePath and SourceType
-                if loader and loader.get("name", "") == loader_name: # Akshay == Akshay  #DirLoader
+                if loader and loader.get("name", "") == loader_name:
                     loader["sourcePath"] = source_path
                     loader["sourceType"] = source_type
                     loader["sourceSize"] = source_size

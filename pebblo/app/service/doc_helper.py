@@ -243,59 +243,59 @@ class LoaderHelper:
             fileOwner=doc.get("fileOwner", "-"),
         )
         for label_name, value in doc[entity_type].items():
-            if self.run_id:
-                # new Logic
-                pass
+            # if self.run_id:
+            #     new logic
+            # else:
+            #     pass
+            if label_name in data_source_findings.keys():
+                data_source_findings[label_name]["snippetCount"] += 1
+                data_source_findings[label_name]["findings"] += value
+                raw_data["total_snippet_counter"] += 1
+
+                unique_snippets_set = data_source_findings[label_name][
+                    "unique_snippets"
+                ]
+                if isinstance(unique_snippets_set, str):
+                    # When we write data_source_findings[label_name]['unique_snippets']
+                    # to metadata file, it gets stored as str.
+                    # We would need it as set again for further processing.
+                    # This is why we are using as.literal_eval() here.
+                    unique_snippets_set = ast.literal_eval(
+                        data_source_findings[label_name]["unique_snippets"]
+                    )
+                unique_snippets_set.add(source_path)
+                data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
+                data_source_findings[label_name][
+                    "unique_snippets"
+                ] = unique_snippets_set
+
+                #  If the snippet count exceeds the snippet limit,
+                #  we will refrain from adding the snippet to the snippet list
+                if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
+                    data_source_findings[label_name]["snippets"].append(snippet.dict())
+                    raw_data["snippet_counter"] += 1
             else:
-                if label_name in data_source_findings.keys():
-                    data_source_findings[label_name]["snippetCount"] += 1
-                    data_source_findings[label_name]["findings"] += value
-                    raw_data["total_snippet_counter"] += 1
+                # The source path is encountered for the first time,
+                # so we are initializing its object.
+                dict_obj = {
+                    "labelName": label_name,
+                    "findings": value,
+                    "findingsType": entity_type,
+                    "snippetCount": 1,
+                    "fileCount": 1,
+                }
+                data_source_findings[label_name] = dict_obj
+                data_source_findings[label_name]["unique_snippets"] = set()
+                data_source_findings[label_name]["unique_snippets"].add(source_path)
+                raw_data["total_snippet_counter"] += 1
 
-                    unique_snippets_set = data_source_findings[label_name][
-                        "unique_snippets"
-                    ]
-                    if isinstance(unique_snippets_set, str):
-                        # When we write data_source_findings[label_name]['unique_snippets']
-                        # to metadata file, it gets stored as str.
-                        # We would need it as set again for further processing.
-                        # This is why we are using as.literal_eval() here.
-                        unique_snippets_set = ast.literal_eval(
-                            data_source_findings[label_name]["unique_snippets"]
-                        )
-                    unique_snippets_set.add(source_path)
-                    data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
-                    data_source_findings[label_name][
-                        "unique_snippets"
-                    ] = unique_snippets_set
-
-                    #  If the snippet count exceeds the snippet limit,
-                    #  we will refrain from adding the snippet to the snippet list
-                    if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                        data_source_findings[label_name]["snippets"].append(snippet.dict())
-                        raw_data["snippet_counter"] += 1
+                #  If the snippet count exceeds the snippet limit,
+                #  we will refrain from adding the snippet to the snippet list
+                if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
+                    data_source_findings[label_name]["snippets"] = [snippet.dict()]
+                    raw_data["snippet_counter"] += 1
                 else:
-                    # The source path is encountered for the first time,
-                    # so we are initializing its object.
-                    dict_obj = {
-                        "labelName": label_name,
-                        "findings": value,
-                        "findingsType": entity_type,
-                        "snippetCount": 1,
-                        "fileCount": 1,
-                    }
-                    data_source_findings[label_name] = dict_obj
-                    data_source_findings[label_name]["unique_snippets"] = set()
-                    data_source_findings[label_name]["unique_snippets"].add(source_path)
-                    raw_data["total_snippet_counter"] += 1
-
-                    #  If the snippet count exceeds the snippet limit,
-                    #  we will refrain from adding the snippet to the snippet list
-                    if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                        data_source_findings[label_name]["snippets"] = [snippet.dict()]
-                        raw_data["snippet_counter"] += 1
-                    else:
-                        data_source_findings[label_name]["snippets"] = []
+                    data_source_findings[label_name]["snippets"] = []
 
     def _get_data_source_details(self, raw_data):
         """
