@@ -110,7 +110,7 @@ def test_reports_config_validate(setup_and_teardown):
     config = {
         "format": "pdf",
         "renderer": "xhtml2pdf",
-        "outputDir": "/non/existent/directory",
+        "outputDir": "~/.non_pebblo_test_",
     }
     validator = ReportsConfig(config)
     validator.validate()
