@@ -22,8 +22,7 @@ class AppData:
     This class handles business logic for local UI
     """
 
-    @staticmethod
-    def get_all_apps_details():
+    def get_all_apps_details(self):
         """
         Returns all necessary app details required for list app functionality.
         """
@@ -57,30 +56,37 @@ class AppData:
                     logger.debug(f"metadata.json path {app_path}")
                     app_json = read_json_file(app_path)
 
-                    # Skip app if unable to fetch load id details
-                    if not app_json and not app_json.get("load_ids"):
-                        logger.warning(
-                            f"Error: Unable to fetch loadId details for {app_dir} app"
+                    if not app_json:
+                        # Unable to find json file
+                        logger.debug(
+                            f"Metadata file ({CacheDir.METADATA_FILE_PATH.value}) not found for app: {app_dir}."
                         )
-                        logger.debug(f"App Json : {app_json}")
+                        logger.warning(
+                            f"Skipping app '{app_dir}' due to missing or invalid file"
+                        )
                         continue
 
-                    # Fetch latest loadId
-                    latest_load_id = app_json.get("load_ids")[-1]
+                    load_ids = app_json.get("load_ids", [])
 
-                    app_detail_path = (
-                        f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                        f"{latest_load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
-                    )
-                    logger.debug(f"report.json path {app_detail_path}")
-                    app_detail_json = read_json_file(app_detail_path)
-
-                    # Skip app if report.json is empty for some reason.
-                    if not app_detail_json:
+                    if not load_ids:
+                        logger.debug(f"No valid loadIds found for app: {app_dir}.")
                         logger.warning(
-                            f"Error: Unable to fetch loadId details for {app_dir} app"
+                            f"Skipping app '{app_dir}' due to missing or invalid file"
                         )
-                        logger.debug(f"App Json : {app_json}")
+                        continue
+
+                    # Fetching latest loadId
+                    latest_load_id, app_detail_json = self.get_latest_load_id(
+                        load_ids, app_dir
+                    )
+
+                    if not latest_load_id:
+                        logger.debug(
+                            f"No valid loadIds found for app: {app_dir}. Skipping."
+                        )
+                        logger.warning(
+                            f"Skipping app '{app_dir}' due to missing or invalid file"
+                        )
                         continue
 
                     report_summary = app_detail_json.get("reportSummary")
@@ -100,10 +106,13 @@ class AppData:
 
                     # Skip app if data source details are not present for some reason.
                     if not data_source_details:
-                        logger.warning(
+                        logger.debug(
                             f"Error: Unable to fetch dataSources details for {app_dir} app"
                         )
                         logger.debug(f"App Detail Json : {app_detail_json}")
+                        logger.warning(
+                            f"Skipping app '{app_dir}' due to missing or invalid file"
+                        )
                         continue
 
                     # Prepare output data
@@ -163,45 +172,68 @@ class AppData:
             logger.error(f"Error in Dashboard app Listing. Error:{ex}")
             return json.dumps({})
 
-    @staticmethod
-    def get_app_details(app_dir):
+    def get_app_details(self, app_dir):
         """
         Returns app details for an app.
         """
         try:
             # Path to metadata.json
             app_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
-            logger.debug(f"metadata.json path {app_path}")
-
-            # Read metadata.json
+            logger.debug(f"Metadata file path: {app_path}")
+            # Reading metadata.json
             app_json = read_json_file(app_path)
-
-            # Skip app if unable to fetch load id details
-            if not app_json and not app_json.get("load_ids"):
+            # Condition for handling loadId
+            if not app_json:
                 # Unable to fetch loadId details
-                logger.debug("Error: Unable to fetch loadId details")
-                logger.debug(f"App Json : {app_json}")
+                logger.debug(
+                    f"Error: Report Json {CacheDir.METADATA_FILE_PATH.value} not found for app {app_path}"
+                )
+                logger.warning(
+                    f"Skipping app '{app_dir}' due to missing or invalid file"
+                )
                 return json.dumps({})
 
-            # Fetch latest loadId
-            latest_load_id = app_json.get("load_ids")[-1]
+            load_ids = app_json.get("load_ids", [])
 
-            # Path to report.json
-            app_detail_path = (
-                f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                f"{latest_load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
-            )
-            logger.debug(f"metadata.json path {app_detail_path}")
+            if not load_ids:
+                # Unable to fetch loadId details
+                logger.debug(f"Error: Details not found for app {app_path}")
+                logger.warning(
+                    f"Skipping app '{app_dir}' due to missing or invalid file"
+                )
+                return json.dumps({})
 
-            # Read app details from report.json
-            app_detail_json = read_json_file(app_detail_path)
+            # Fetching latest loadId
+            latest_load_id, app_detail_json = self.get_latest_load_id(load_ids, app_dir)
 
-            # Skip app if unable to fetch app details
+            if not latest_load_id:
+                logger.debug(f"No valid loadIds found for app {app_path}.")
+                logger.warning(
+                    f"Skipping app '{app_dir}' due to missing or invalid file"
+                )
+                return json.dumps({})
+
             if not app_detail_json:
                 return json.dumps({})
 
             return json.dumps(app_detail_json, indent=4)
 
         except Exception as ex:
-            logger.error(f"Error in app detail. Error:{ex}")
-            return json.dumps({})
+            logger.error(f"Error in app detail. Error: {ex}")
+
+    @staticmethod
+    def get_latest_load_id(load_ids, app_dir):
+        """
+        Returns app latestLoadId for an app.
+        """
+        for load_id in reversed(load_ids):
+            # Path to report.json
+            app_detail_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
+            logger.debug(f"Report File path: {app_detail_path}")
+            app_detail_json = read_json_file(app_detail_path)
+            if app_detail_json:
+                # If report is found, proceed with this load_id
+                latest_load_id = load_id
+                return latest_load_id, app_detail_json
+            else:
+                return None, None
