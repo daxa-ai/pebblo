@@ -199,31 +199,37 @@ class LoaderHelper:
         Updating ai app details loader source files
         """
         logger.debug("Updating app details")
+        loader_details = self.data.get("loader_details", {})  # input
+        logger.error(f"InputLoaderDetails: {loader_details}")
+        loader_name = loader_details.get("loader", None)
+        logger.error(f"LoaderName: {loader_name}")
         self.app_details["docs"] = ai_app_docs
         loader_source_snippets = raw_data["loader_source_snippets"]
+        logger.error(f"LoaderSourceSnippet: {loader_source_snippets}")
         # Updating app_details doc list and loader source files
         loader_details = self.app_details.get("loaders", {})
         for loader in loader_details:
-            for source_file in loader.get("sourceFiles", []):
-                name = source_file["name"]
-                if name not in loader_source_snippets:
-                    loader_source_snippets[name] = source_file
+            if loader.get("name") == loader_name:
+                for source_file in loader.get("sourceFiles", []):
+                    name = source_file["name"]
+                    if name not in loader_source_snippets.keys():
+                        loader_source_snippets[name] = source_file
 
-            new_source_files = [
-                {
-                    "name": key,
-                    "findings_entities": value["findings_entities"],
-                    "findings_topics": value["findings_topics"],
-                    "findings": value["findings"],
-                }
-                for key, value in loader_source_snippets.items()
-            ]
-
-            loader["sourceFiles"] = new_source_files
+                new_source_files = [
+                    {
+                        "name": key,
+                        "findings_entities": value["findings_entities"],
+                        "findings_topics": value["findings_topics"],
+                        "findings": value["findings"],
+                    }
+                    for key, value in loader_source_snippets.items() if value["loader_name"] == loader_name
+                ]
+                logger.error(f"NewLoaderDetails: {new_source_files}")
+                loader["sourceFiles"] = new_source_files
         self.app_details["report_metadata"] = raw_data
 
-    @staticmethod
-    def _get_finding_details(doc, data_source_findings, entity_type, raw_data):
+
+    def _get_finding_details(self, doc, data_source_findings, entity_type, raw_data):
         """
         Retrieve finding details from data source
         """
@@ -237,62 +243,68 @@ class LoaderHelper:
             fileOwner=doc.get("fileOwner", "-"),
         )
         for label_name, value in doc[entity_type].items():
-            if label_name in data_source_findings.keys():
-                data_source_findings[label_name]["snippetCount"] += 1
-                data_source_findings[label_name]["findings"] += value
-                raw_data["total_snippet_counter"] += 1
-
-                unique_snippets_set = data_source_findings[label_name][
-                    "unique_snippets"
-                ]
-                if isinstance(unique_snippets_set, str):
-                    # When we write data_source_findings[label_name]['unique_snippets']
-                    # to metadata file, it gets stored as str.
-                    # We would need it as set again for further processing.
-                    # This is why we are using as.literal_eval() here.
-                    unique_snippets_set = ast.literal_eval(
-                        data_source_findings[label_name]["unique_snippets"]
-                    )
-                unique_snippets_set.add(source_path)
-                data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
-                data_source_findings[label_name]["unique_snippets"] = (
-                    unique_snippets_set
-                )
-
-                #  If the snippet count exceeds the snippet limit,
-                #  we will refrain from adding the snippet to the snippet list
-                if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                    data_source_findings[label_name]["snippets"].append(snippet.dict())
-                    raw_data["snippet_counter"] += 1
+            if self.run_id:
+                # new Logic
+                pass
             else:
-                # The source path is encountered for the first time,
-                # so we are initializing its object.
-                dict_obj = {
-                    "labelName": label_name,
-                    "findings": value,
-                    "findingsType": entity_type,
-                    "snippetCount": 1,
-                    "fileCount": 1,
-                }
-                data_source_findings[label_name] = dict_obj
-                data_source_findings[label_name]["unique_snippets"] = set()
-                data_source_findings[label_name]["unique_snippets"].add(source_path)
-                raw_data["total_snippet_counter"] += 1
+                if label_name in data_source_findings.keys():
+                    data_source_findings[label_name]["snippetCount"] += 1
+                    data_source_findings[label_name]["findings"] += value
+                    raw_data["total_snippet_counter"] += 1
 
-                #  If the snippet count exceeds the snippet limit,
-                #  we will refrain from adding the snippet to the snippet list
-                if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                    data_source_findings[label_name]["snippets"] = [snippet.dict()]
-                    raw_data["snippet_counter"] += 1
+                    unique_snippets_set = data_source_findings[label_name][
+                        "unique_snippets"
+                    ]
+                    if isinstance(unique_snippets_set, str):
+                        # When we write data_source_findings[label_name]['unique_snippets']
+                        # to metadata file, it gets stored as str.
+                        # We would need it as set again for further processing.
+                        # This is why we are using as.literal_eval() here.
+                        unique_snippets_set = ast.literal_eval(
+                            data_source_findings[label_name]["unique_snippets"]
+                        )
+                    unique_snippets_set.add(source_path)
+                    data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
+                    data_source_findings[label_name][
+                        "unique_snippets"
+                    ] = unique_snippets_set
+
+                    #  If the snippet count exceeds the snippet limit,
+                    #  we will refrain from adding the snippet to the snippet list
+                    if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
+                        data_source_findings[label_name]["snippets"].append(snippet.dict())
+                        raw_data["snippet_counter"] += 1
                 else:
-                    data_source_findings[label_name]["snippets"] = []
+                    # The source path is encountered for the first time,
+                    # so we are initializing its object.
+                    dict_obj = {
+                        "labelName": label_name,
+                        "findings": value,
+                        "findingsType": entity_type,
+                        "snippetCount": 1,
+                        "fileCount": 1,
+                    }
+                    data_source_findings[label_name] = dict_obj
+                    data_source_findings[label_name]["unique_snippets"] = set()
+                    data_source_findings[label_name]["unique_snippets"].add(source_path)
+                    raw_data["total_snippet_counter"] += 1
+
+                    #  If the snippet count exceeds the snippet limit,
+                    #  we will refrain from adding the snippet to the snippet list
+                    if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
+                        data_source_findings[label_name]["snippets"] = [snippet.dict()]
+                        raw_data["snippet_counter"] += 1
+                    else:
+                        data_source_findings[label_name]["snippets"] = []
 
     def _get_data_source_details(self, raw_data):
         """
         Create data source findings details and data source findings summary
         """
+        # TODO: DataSource , Here we need to identify the DS issue.=
         logger.debug("Aggregating data source details")
         data_source_obj_list = []
+        logger.error(f"RunId: {self.run_id}, AppLoaderDetails: {self.app_details}")
         for loader in self.app_details["loaders"]:
             name = loader.get("name")
             source_path = loader.get("sourcePath")
@@ -325,6 +337,7 @@ class LoaderHelper:
                 findingsDetails=data_source_findings,
             )
             data_source_obj_list.append(data_source_obj)
+        raw_data["data_source_count"] = len(data_source_obj_list)
         return data_source_obj_list
 
     @staticmethod
@@ -474,8 +487,11 @@ class LoaderHelper:
 
         # If source path is not present, then initialize values
         else:
+            loader_details = self.data.get("loader_details", {})  # input
+            loader_name = loader_details.get("loader", None)
             total_findings += findings
             loader_source_snippets[source_path] = {
+                "loader_name": loader_name,
                 "findings_entities": doc["entityCount"],
                 "findings_topics": doc["topicCount"],
                 "findings": findings,
@@ -514,6 +530,9 @@ class LoaderHelper:
         # get count of files that have associated findings.
         files_with_findings_count = self._count_files_with_findings()
 
+        # Generating DataSource
+        data_source_obj_list = self._get_data_source_details(raw_data)
+
         # Create report summary
         report_summary = self._create_report_summary(
             raw_data, files_with_findings_count
@@ -521,9 +540,6 @@ class LoaderHelper:
 
         # get top N findings
         top_n_findings = self._get_top_n_findings(raw_data)
-
-        # Generating DataSource
-        data_source_obj_list = self._get_data_source_details(raw_data)
 
         # Retrieve LoadHistory From previous executions
         load_history = self._get_load_history()

@@ -74,7 +74,7 @@ class AppDiscover:
         """
         Write content to the specified file path
         """
-        logger.debug(f"Writing content to file path: {file_content}")
+        # logger.debug(f"Writing content to file path: {file_content}")
         # Writing file content to given file path
         write_json_to_file(file_content, file_path)
 
@@ -83,7 +83,7 @@ class AppDiscover:
         """
         Retrieve the content of the specified file.
         """
-        logger.debug(f"Reading content from file: {file_path}")
+        # logger.debug(f"Reading content from file: {file_path}")
         file_content = read_json_file(file_path)
         return file_content
 

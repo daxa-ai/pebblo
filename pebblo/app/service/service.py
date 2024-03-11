@@ -41,7 +41,7 @@ class AppLoaderDoc:
             f"/{load_id}/{CacheDir.REPORT_FILE_NAME.value}"
         )
         full_file_path = get_full_path(current_load_report_file_path)
-        logger.debug(f"output_path: {full_file_path}, format_string: {report_format}, renderer: {renderer}")
+        # logger.debug(f"output_path: {full_file_path}, format_string: {report_format}, renderer: {renderer}")
         report_obj.generate_report(
             data=final_report,
             output_path=full_file_path,
@@ -70,11 +70,13 @@ class AppLoaderDoc:
         """
         logger.debug("Upsert loader details to exiting ai app details")
         # Update loader details if it already exits in app
-        loader_details = self.data.get("loader_details", {})
+        loader_details = self.data.get("loader_details", {}) #input
         loader_name = loader_details.get("loader", None)
         source_type = loader_details.get("source_type", None)
         source_path = loader_details.get("source_path", None)
         loader_source_files = loader_details.get("source_files", [])
+        logger.error(f"InputLoaderDetails: {loader_details}")
+        logger.error(f"LoaderSourceFiles: {loader_source_files}")
         if loader_details.get("source_path_size") is not None:
             source_size = loader_details.get("source_path_size", 0)
         else:
@@ -82,11 +84,12 @@ class AppLoaderDoc:
 
         # Checking for same loader details in app details
         if loader_name and source_type:
-            loader_list = app_details.get("loaders", [])
+            loader_list = app_details.get("loaders", []) # [ {"name": "Akshay"} ]
             loader_exist = False
             for loader in loader_list:
+
                 # If loader exist, update loader SourcePath and SourceType
-                if loader and loader.get("name", "") == loader_name:
+                if loader and loader.get("name", "") == loader_name: # Akshay == Akshay  #DirLoader
                     loader["sourcePath"] = source_path
                     loader["sourceType"] = source_type
                     loader["sourceSize"] = source_size
@@ -109,6 +112,7 @@ class AppLoaderDoc:
                 )
                 loader_list.append(new_loader_data.dict())
                 app_details["loaders"] = loader_list
+                logger.error(f"LoaderAfterUpsertLoaderDetails: {app_details['loaders']}")
 
     def _execute_app(self, metadata_file_path, load_id, run_id = None):
         """
@@ -135,7 +139,7 @@ class AppLoaderDoc:
             final_report,
         ) = loader_helper_obj.process_docs_and_generate_report()
 
-        logger.debug(f"Final Report with doc details: {final_report}")
+        # logger.debug(f"Final Report with doc details: {final_report}")
 
         if run_id:
             # Explicitly Write file to load level
@@ -170,7 +174,7 @@ class AppLoaderDoc:
                 f"{CacheDir.METADATA_FILE_PATH.value}"
             )
             app_metadata = read_json_file(app_metadata_file_path)
-            logger.debug(f"AppMetadata: {app_metadata}")
+            # logger.debug(f"AppMetadata: {app_metadata}")
             if not app_metadata:
                 return {
                     "Message": "App details not present, Please execute discovery api first"
@@ -189,7 +193,7 @@ class AppLoaderDoc:
                     f"{CacheDir.HOME_DIR.value}/{self.app_name}"
                     f"/{run_id}/{CacheDir.METADATA_LOCK_FILE_PATH.value}"
                 )
-                logger.debug(f"AppMetadataLockFile: {app_run_metadata_lock_file_path}")
+                # logger.debug(f"AppMetadataLockFile: {app_run_metadata_lock_file_path}")
 
                 try:
                     # Acquiring Lock
