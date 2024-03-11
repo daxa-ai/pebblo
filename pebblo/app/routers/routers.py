@@ -1,6 +1,7 @@
 """
 Routes for Pebblo Server
 """
+
 from pebblo.app.api.api import App
 
 # Create an instance of APp with a specific prefix

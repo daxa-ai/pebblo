@@ -1,7 +1,9 @@
 import pathlib
+
 import yaml
 from pydantic import BaseSettings, Field
 
+from pebblo.app.config.config_validation import validate_config
 
 # Default config value
 dir_path = pathlib.Path().absolute()
@@ -25,11 +27,16 @@ class LoggingConfig(BaseSettings):
     level: str = Field(default="info")
 
 
+class ClassifierConfig(BaseSettings):
+    anonymizeAllEntities: bool = Field(default=True)
+
+
 # ConfigFile BaseModel
 class Config(BaseSettings):
     daemon: PortConfig
     reports: ReportConfig
     logging: LoggingConfig
+    classifier: ClassifierConfig
 
 
 def load_config(path) -> dict:
@@ -41,6 +48,7 @@ def load_config(path) -> dict:
                 format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
             ),
             logging=LoggingConfig(level="info"),
+            classifier=ClassifierConfig(anonymizeAllEntities=True),
         )
         if not path:
             # Setting Default config details
@@ -53,6 +61,7 @@ def load_config(path) -> dict:
                 cred_json = yaml.safe_load(output)
                 parsed_config = Config.parse_obj(cred_json)
                 config_dict = parsed_config.dict()
+                validate_config(config_dict)
                 return config_dict
         except IOError as err:
             print(f"no credentials file found at {con_file}. Error : {err}")

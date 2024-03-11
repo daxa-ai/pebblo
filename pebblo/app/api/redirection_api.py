@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from pebblo.app.enums.enums import CacheDir
 
 
@@ -11,4 +12,4 @@ class App:
 
     @staticmethod
     def redirect():
-        return f"{CacheDir.proxy.value}/pebblo/"
+        return f"{CacheDir.PROXY.value}/pebblo/"

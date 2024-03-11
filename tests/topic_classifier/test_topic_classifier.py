@@ -3,6 +3,7 @@ This module tests the TopicClassifier class.
 It checks initialization, Hugging Face login, and various prediction scenarios.
 It uses pytest fixtures to mock necessary objects and methods.
 """
+
 import os
 from unittest.mock import MagicMock, Mock, patch
 

@@ -1,19 +1,19 @@
-from langchain.chains import RetrievalQA
-from langchain.document_loaders.csv_loader import CSVLoader
-from langchain_openai.embeddings import OpenAIEmbeddings
-from langchain_openai.llms import OpenAI
-from langchain.schema import Document
-from langchain_community.vectorstores import Chroma
-from langchain_community.vectorstores.utils import filter_complex_metadata
 from typing import List
-
-from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
 # Fill-in OPENAI_API_KEY in .env file
 # in this directory before proceeding
-
 from dotenv import load_dotenv
+from langchain.chains import RetrievalQA
+from langchain.document_loaders.csv_loader import CSVLoader
+from langchain.schema import Document
+from langchain_community.document_loaders.pebblo import PebbloSafeLoader
+from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores.utils import filter_complex_metadata
+from langchain_openai.embeddings import OpenAIEmbeddings
+from langchain_openai.llms import OpenAI
+
 load_dotenv()
+
 
 class AcmeCorpRAG:
     def __init__(self, file_path: str):
@@ -25,9 +25,9 @@ class AcmeCorpRAG:
         print("Loading RAG documents ...")
         self.loader = PebbloSafeLoader(
             CSVLoader(self.file_path),
-            name="acme-corp-rag-1", # App name (Mandatory)
-            owner="Joe Smith",      # Owner (Optional)
-            description="Support productivity RAG application", # Description (Optional)
+            name="acme-corp-rag-1",  # App name (Mandatory)
+            owner="Joe Smith",  # Owner (Optional)
+            description="Support productivity RAG application",  # Description (Optional)
         )
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
@@ -46,7 +46,7 @@ class AcmeCorpRAG:
             llm=llm,
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
-            verbose=True
+            verbose=True,
         )
 
     @staticmethod

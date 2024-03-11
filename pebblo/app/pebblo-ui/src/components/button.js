@@ -1,4 +1,14 @@
-import { MEDIA_URL } from "../constants/constant.js";
+// PROPS {
+//   href?: string,
+//   variant?: string,
+//   btnText: string || HTMLElement,
+//   startIcon?: HTMLElement,
+//   endIcon?: HTMLElement,
+//   id?:string,
+//   className?:string,
+//   style?:string,
+//   color?:string,
+// }
 
 export function Button(props) {
   const { href } = props;
@@ -19,22 +29,20 @@ const getButton = (props) => {
     startIcon,
     endIcon,
     id,
-    className,
-    style,
+    className = "",
+    style = '',
+    color = "primary"
   } = props;
 
   return /*html*/ `
-  <button ${id ? `id="${id}"` : ""} class="relative ${variant} ${
-    className ? className : ""
-  }" style="${style}">
+  <button ${id ? `id="${id}"` : ""} class="btn btn-${variant}-${color} ${className} relative" style="${style}">
         <div class="flex gap-1 items-center">
-        ${
-          startIcon
-            ? `<img src="${MEDIA_URL}${startIcon}" alt="Start Icon" />`
-            : ""
-        }
+        ${startIcon
+      ? startIcon
+      : ""
+    }
          <span>${btnText}</span>
-         ${endIcon ? `<img src="${MEDIA_URL}${endIcon}" alt="End Icon" />` : ""}
+         ${endIcon ? endIcon : ""}
        </div>
   </button>`;
 };

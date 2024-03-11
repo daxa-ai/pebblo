@@ -1,26 +1,16 @@
 import { ApplicationsList, SnippetDetails } from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
+import { CopyIcon } from "../icons/index.js";
+import { DownloadIcon } from "../icons/index.js";
 import { get_Formatted_Date } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
-export const MEDIA_URL = document.scripts[0].getAttribute("staticURL");
-export const APP_DATA = JSON.parse(document.scripts[0].getAttribute("appData"));
+const SCRIPT_ELEMENT = document.getElementById("main_script")
+
+export const MEDIA_URL = SCRIPT_ELEMENT.dataset['static'];
+export const APP_DATA = JSON.parse(SCRIPT_ELEMENT.dataset['appdata'] || '');
 export const PORT = window.location.port;
 
-export const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 
 export const APP_DETAILS_FINDINGS_TABLE = [
   {
@@ -45,7 +35,7 @@ export const APP_DETAILS_FINDINGS_TABLE = [
   },
   {
     label: "Data Source",
-    render:() => APP_DATA?.dataSources[0]?.name
+    render: () => APP_DATA?.dataSources[0]?.name
   },
 ];
 
@@ -72,7 +62,17 @@ export const APP_DETAILS = [
   },
   {
     label: "Path",
-    value: APP_DATA?.instanceDetails?.path,
+    render: /*html*/`
+     <div class="flex items-center gap-2">
+         <div id="path_value">${APP_DATA?.instanceDetails?.path}</div>
+         <div class="relative flex items-center">
+          <div id="copy_tooltip" class="copy-text-tooltip">Copied!</div>
+          <div id="copy_path">
+           ${CopyIcon({ color: "grey", class: "cursor-pointer" })}
+          </div>
+         </div>
+     </div>
+    `,
   },
 ];
 
@@ -102,7 +102,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
   },
   {
     label: "Data Source",
-    render:() => APP_DATA?.dataSources[0]?.name
+    render: () => APP_DATA?.dataSources[0]?.name
   },
 ];
 
@@ -156,7 +156,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     render: (item) =>
       Tooltip({
         children: /*html*/ `<div class="flex gap-4 justify-end">
-      <img id="${item?.name}" class="download-icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
+      ${DownloadIcon({ color: "primary", class: 'download-icon', id: `${item?.name}` })}
     </div>`,
         title: "Download Icon",
         variant: "right",
@@ -164,9 +164,9 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     align: "start",
     //   render: /*html*/ `
     //   <div class="flex gap-4 justify-end">
-    //     <img id="download_icon" class="cursor-pointer" src="${MEDIA_URL}/static/download-icon.png" alt="Download Icon" />
+    //       ${DownloadIcon({ color: "primary", class: 'download-icon', id: `${item?.name}` })}
     //     <div class="divider"></div>
-    //     <img id="load_history_icon" class="cursor-pointer" src="${MEDIA_URL}/static/pending-icon.png" alt="Download Icon" />
+    //       ${LoadHistoryIcon({ color: "primary" })}
     //   </div>
     // `
   },
@@ -207,7 +207,7 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     align: "start",
     render: (item) => /*html*/ `
      <div>${item?.sourceFilePath}</div>
-     <div>By ${item?.owner}</div>
+     <div class="inter font-12 surface-10-opacity-50">By ${item?.owner}</div>
     `,
     isTooltip: true,
     tooltipTitle: (item) => item.sourceFilePath,
@@ -241,9 +241,8 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
-      item.sourcePath
-    }</div>
+         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${item.sourcePath
+      }</div>
       </div>
    `,
     align: "start",
@@ -272,27 +271,26 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
-      item.sourcePath
-    }</div>
+         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${item.sourcePath
+      }</div>
       </div>
    `,
     align: "start",
   },
   {
     label: "Findings-Topics",
-    render:()=>APP_DATA?.reportSummary?.findingsTopics,
+    render: () => APP_DATA?.reportSummary?.findingsTopics,
     align: "end",
   },
   {
     label: "Findings-Entities",
-    render:()=> APP_DATA?.reportSummary?.findingsEntities,
+    render: () => APP_DATA?.reportSummary?.findingsEntities,
     align: "end",
   },
   {
     label: "Application",
-    field:"appName",
-    render:()=> APP_DATA?.name,
+    field: "appName",
+    render: () => APP_DATA?.name,
     align: "start",
   },
 ];
@@ -335,6 +333,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       searchField: ["name", "owner"],
       isSorting: true,
       link: APP_DETAILS_ROUTE,
+      inputPlaceholder: "Search by Application & Owner",
     },
     component: ApplicationsList,
   },
@@ -344,8 +343,9 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       tableCol: TABLE_DATA_FOR_FINDINGS,
       tableData: APP_DATA?.findings,
       isDownloadReport: false,
-      searchField: ["findingsType", "labelName","appName"],
+      searchField: ["findingsType", "labelName", "appName"],
       isSorting: true,
+      inputPlaceholder: "Search by Finding, Type & Application",
     },
     component: ApplicationsList,
   },
@@ -357,6 +357,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       isDownloadReport: false,
       searchField: ["sourceFilePath", "appName"],
       isSorting: true,
+      inputPlaceholder: "Search by File, Data Source & Application",
     },
     component: ApplicationsList,
   },
@@ -368,6 +369,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       isDownloadReport: false,
       searchField: ["name", "appName"],
       isSorting: true,
+      inputPlaceholder: "Search by Data Source & Application",
     },
     component: ApplicationsList,
   },
@@ -399,8 +401,8 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
       ? APP_DATA?.dataSources[0]?.displayedSnippetCount
       : 0,
     outOf: APP_DATA?.dataSources
-    ? APP_DATA?.dataSources[0]?.totalSnippetCount
-    : 0,
+      ? APP_DATA?.dataSources[0]?.totalSnippetCount
+      : 0,
     value: 3,
     isCritical: false,
   },
@@ -416,6 +418,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
         : [],
       searchField: ["labelName", "findingsType"],
       isSorting: true,
+      inputPlaceholder: "Search by Finding & Type",
     },
     component: ApplicationsList,
   },
@@ -426,6 +429,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
       tableData: APP_DATA?.topFindings,
       searchField: ["fileName"],
       isSorting: true,
+      inputPlaceholder: "Search by File",
     },
     component: ApplicationsList,
   },
@@ -436,6 +440,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
       tableData: APP_DATA?.dataSources ? APP_DATA?.dataSources : [],
       searchField: ["name"],
       isSorting: true,
+      inputPlaceholder: "Search by Data Source",
     },
     component: ApplicationsList,
   },
@@ -445,7 +450,8 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
       data: APP_DATA?.dataSources
         ? APP_DATA?.dataSources[0]?.findingsDetails
         : [],
-      searchField: ["labelName", "findingsType"],
+      searchField: ["labelName"],
+      inputPlaceholder: "Search",
     },
     component: SnippetDetails,
   },
@@ -461,6 +467,7 @@ export const LOAD_HISTORY_TABLE_COL = [
   {
     label: "Findings",
     field: "findings",
+    align: "end",
   },
   {
     label: "Files With Findings",
@@ -473,4 +480,4 @@ export const LOAD_HISTORY_TABLE_COL = [
   },
 ];
 
-export const LOAD_HISTORY_TABLE = APP_DATA?.loadHistory?.history;
+export const LOAD_HISTORY_TABLE_DATA = APP_DATA?.loadHistory?.history;

@@ -1,6 +1,7 @@
 """
 Module to handle logging functionality
 """
+
 import logging
 import os
 
