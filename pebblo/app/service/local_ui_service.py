@@ -21,6 +21,7 @@ class AppData:
     """
     This class handles business logic for local UI
     """
+
     def get_all_apps_details(self):
         """
         Returns all necessary app details required for list app functionality.
