@@ -129,7 +129,7 @@ def test_classifier_config_validate():
     ]
 
     # Test with invalid str
-    config = {"anonymizeAllEntities": 'abc'}
+    config = {"anonymizeAllEntities": "abc"}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == [
@@ -147,7 +147,7 @@ def test_validate_config(setup_and_teardown):
             "renderer": "xhtml2pdf",
             "outputDir": "~/.pebblo_test_",
         },
-        "classifier":{
+        "classifier": {
             "anonymizeAllEntities": True,
         },
     }
