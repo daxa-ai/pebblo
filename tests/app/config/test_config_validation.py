@@ -115,7 +115,7 @@ def test_reports_config_validate(setup_and_teardown):
     validator = ReportsConfig(config)
     validator.validate()
     assert validator.errors == [
-        "Error: Output directory '/non/existent/directory' specified for the reports does not exist"
+        "Error: Output directory 'non_pebblo_test_' specified for the reports does not exist"
     ]
 
 
