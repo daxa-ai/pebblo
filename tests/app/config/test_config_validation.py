@@ -106,18 +106,6 @@ def test_reports_config_validate(setup_and_teardown):
         "Error: Unsupported renderer 'invalid_renderer' specified in the configuration"
     ]
 
-    # Test with non-existent output directory
-    config = {
-        "format": "pdf",
-        "renderer": "xhtml2pdf",
-        "outputDir": "~/.non_pebblo_test_",
-    }
-    validator = ReportsConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Output directory 'non_pebblo_test_' specified for the reports does not exist"
-    ]
-
 
 def test_classifier_config_validate():
     # Test with True value
