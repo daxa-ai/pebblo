@@ -5,12 +5,40 @@ import { DownloadIcon } from "../icons/index.js";
 import { get_Formatted_Date } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
-const SCRIPT_ELEMENT = document.getElementById("main_script")
+const SCRIPT_ELEMENT = document.getElementById("main_script");
+const DOCUMENTATION_URL = "https://daxa-ai.github.io/pebblo";
 
-export const MEDIA_URL = SCRIPT_ELEMENT.dataset['static'];
-export const APP_DATA = JSON.parse(SCRIPT_ELEMENT.dataset['appdata'] || '');
+export const MEDIA_URL = SCRIPT_ELEMENT.dataset["static"];
+export const APP_DATA = JSON.parse(SCRIPT_ELEMENT.dataset["appdata"] || "");
 export const PORT = window.location.port;
 
+export const NO_APPLICATIONS_FOUND = Object.keys(APP_DATA)?.length === 0;
+export const NO_FINDINGS_FOR_APP =
+  APP_DATA && APP_DATA?.reportSummary
+    ? APP_DATA.reportSummary?.findings === 0
+    : true;
+
+export const EMPTY_STATES = {
+  ENABLE_PEBBLO_EMPTY_STATE: {
+    image: `${MEDIA_URL}/static/pebblo-image.png`,
+    heading: "Enable Pebblo to unlock insights in your Gen-AI apps",
+    subHeading:
+      "Check out our installation guide or watch the video tutorial to enable Pebblo",
+    buttonNodes: [
+      {
+        variant: "contained",
+        btnText: "View Installation Guide",
+        href: `${DOCUMENTATION_URL}/installation`,
+      },
+    ],
+  },
+  NO_FINDINGS_EMPTY_STATE: {
+    image: `${MEDIA_URL}/static/no-findings.png`,
+    heading: "",
+    subHeading:
+      "We scanned all your documents and didn’t discover any documents with findings",
+  },
+};
 
 export const APP_DETAILS_FINDINGS_TABLE = [
   {
@@ -35,7 +63,7 @@ export const APP_DETAILS_FINDINGS_TABLE = [
   },
   {
     label: "Data Source",
-    render: () => APP_DATA?.dataSources[0]?.name
+    render: () => APP_DATA?.dataSources[0]?.name,
   },
 ];
 
@@ -62,7 +90,7 @@ export const APP_DETAILS = [
   },
   {
     label: "Path",
-    render: /*html*/`
+    render: /*html*/ `
      <div class="flex items-center gap-2">
          <div id="path_value">${APP_DATA?.instanceDetails?.path}</div>
          <div class="relative flex items-center">
@@ -102,7 +130,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
   },
   {
     label: "Data Source",
-    render: () => APP_DATA?.dataSources[0]?.name
+    render: () => APP_DATA?.dataSources[0]?.name,
   },
 ];
 
@@ -156,7 +184,11 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     render: (item) =>
       Tooltip({
         children: /*html*/ `<div class="flex gap-4 justify-end">
-      ${DownloadIcon({ color: "primary", class: 'download-icon', id: `${item?.name}` })}
+      ${DownloadIcon({
+        color: "primary",
+        class: "download-icon",
+        id: `${item?.name}`,
+      })}
     </div>`,
         title: "Download Icon",
         variant: "right",
@@ -241,8 +273,9 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${item.sourcePath
-      }</div>
+         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
+      item.sourcePath
+    }</div>
       </div>
    `,
     align: "start",
@@ -271,8 +304,9 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${item.sourcePath
-      }</div>
+         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
+      item.sourcePath
+    }</div>
       </div>
    `,
     align: "start",
@@ -295,31 +329,40 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
   },
 ];
 
+const IS_CRITICAL_DATA =
+  NO_APPLICATIONS_FOUND || APP_DATA?.applicationsAtRiskCount?.length === 0
+    ? false
+    : true;
+
 export const TABS_ARR_FOR_APPLICATIONS = [
   {
     label: "Applications With Findings",
-    critical: APP_DATA?.applicationsAtRiskCount || 0,
+    critical: NO_APPLICATIONS_FOUND
+      ? "-"
+      : APP_DATA?.applicationsAtRiskCount || 0,
     outOf: APP_DATA?.appList?.length || 0,
     value: 0,
-    isCritical: true,
+    isCritical: IS_CRITICAL_DATA,
   },
   {
     label: "Findings",
-    critical: APP_DATA?.findingsCount || 0,
+    critical: NO_APPLICATIONS_FOUND ? "-" : APP_DATA?.findingsCount || 0,
     value: 1,
-    isCritical: true,
+    isCritical: IS_CRITICAL_DATA,
   },
   {
     label: "Documents With Findings",
-    critical: APP_DATA?.documentsWithFindingsCount || 0,
+    critical: NO_APPLICATIONS_FOUND
+      ? "-"
+      : APP_DATA?.documentsWithFindingsCount || 0,
     value: 2,
-    isCritical: true,
+    isCritical: IS_CRITICAL_DATA,
   },
   {
     label: "Data Source",
-    critical: APP_DATA?.dataSourceCount || 0,
+    critical: NO_APPLICATIONS_FOUND ? "-" : APP_DATA?.dataSourceCount || 0,
     value: 3,
-    isCritical: false,
+    isCritical: IS_CRITICAL_DATA,
   },
 ];
 
@@ -332,6 +375,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       isDownloadReport: false,
       searchField: ["name", "owner"],
       isSorting: true,
+      error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
       link: APP_DETAILS_ROUTE,
       inputPlaceholder: "Search by Application & Owner",
     },
@@ -343,6 +387,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       tableCol: TABLE_DATA_FOR_FINDINGS,
       tableData: APP_DATA?.findings,
       isDownloadReport: false,
+      error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
       searchField: ["findingsType", "labelName", "appName"],
       isSorting: true,
       inputPlaceholder: "Search by Finding, Type & Application",
@@ -355,6 +400,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       tableCol: TABLE_DATA_FOR_FILES_WITH_FINDINGS,
       tableData: APP_DATA?.documentsWithFindings,
       isDownloadReport: false,
+      error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
       searchField: ["sourceFilePath", "appName"],
       isSorting: true,
       inputPlaceholder: "Search by File, Data Source & Application",
@@ -367,6 +413,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
       tableCol: TABLE_DATA_FOR_DATA_SOURCE,
       tableData: APP_DATA?.dataSource,
       isDownloadReport: false,
+      error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
       searchField: ["name", "appName"],
       isSorting: true,
       inputPlaceholder: "Search by Data Source & Application",
@@ -375,36 +422,46 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
   },
 ];
 
+const IS_CRITICAL_COUNT = NO_FINDINGS_FOR_APP ? false : true;
+
 export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
     label: "Findings",
-    critical: APP_DATA?.reportSummary?.findings || 0,
+    critical: NO_FINDINGS_FOR_APP
+      ? "-"
+      : APP_DATA?.reportSummary?.findings || 0,
     value: 0,
-    isCritical: true,
+    isCritical: IS_CRITICAL_COUNT,
   },
   {
     label: "Documents With Findings",
-    critical: APP_DATA?.reportSummary?.filesWithFindings || 0,
-    outOf: APP_DATA?.reportSummary?.totalFiles || 0,
+    critical: NO_FINDINGS_FOR_APP
+      ? "-"
+      : APP_DATA?.reportSummary?.filesWithFindings || 0,
+    outOf: NO_FINDINGS_FOR_APP ? "" : APP_DATA?.reportSummary?.totalFiles || 0,
     value: 1,
-    isCritical: true,
+    isCritical: IS_CRITICAL_COUNT,
   },
   {
     label: "Data Source",
     critical: APP_DATA?.reportSummary?.dataSources || 0,
     value: 2,
-    isCritical: false,
+    isCritical: IS_CRITICAL_COUNT,
   },
   {
     label: "Snippets",
-    critical: APP_DATA?.dataSources
+    critical: NO_FINDINGS_FOR_APP
+      ? "-"
+      : APP_DATA?.dataSources
       ? APP_DATA?.dataSources[0]?.displayedSnippetCount
       : 0,
-    outOf: APP_DATA?.dataSources
+    outOf: NO_FINDINGS_FOR_APP
+      ? ""
+      : APP_DATA?.dataSources
       ? APP_DATA?.dataSources[0]?.totalSnippetCount
       : 0,
     value: 3,
-    isCritical: false,
+    isCritical: IS_CRITICAL_COUNT,
   },
 ];
 
@@ -419,6 +476,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
       searchField: ["labelName", "findingsType"],
       isSorting: true,
       inputPlaceholder: "Search by Finding & Type",
+      error: NO_FINDINGS_FOR_APP ? "NO_FINDINGS_EMPTY_STATE" : null,
     },
     component: ApplicationsList,
   },
@@ -430,6 +488,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
       searchField: ["fileName"],
       isSorting: true,
       inputPlaceholder: "Search by File",
+      error: NO_FINDINGS_FOR_APP ? "NO_FINDINGS_EMPTY_STATE" : null,
     },
     component: ApplicationsList,
   },
@@ -452,6 +511,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
         : [],
       searchField: ["labelName"],
       inputPlaceholder: "Search",
+      error: NO_FINDINGS_FOR_APP ? "NO_FINDINGS_EMPTY_STATE" : null,
     },
     component: SnippetDetails,
   },

@@ -3,20 +3,21 @@ import { GET_REPORT } from "../constants/routesConstant.js";
 import { DownloadIcon, SearchIcon } from "../icons/index.js";
 import { GET_FILE } from "../services/get.js";
 import { waitForElement } from "../util.js";
+import { EmptyState } from "./emptyState.js";
 import { Button, Table, Td } from "./index.js";
 
-// PROPS { title: string, 
+// PROPS { title: string,
 //   tableCol: Array<{
 //   label:string;
 //   field:string;
 //   align?:string;
-//   render?:(e)=>void 
-//   }>, 
-//   tableData: Array<unknown>, 
-//   isDownloadReport?: boolean, 
-//   searchField: Array < string >, 
-//   isSorting?: boolean, 
-//   link?: string, 
+//   render?:(e)=>void
+//   }>,
+//   tableData: Array<unknown>,
+//   isDownloadReport?: boolean,
+//   searchField: Array < string >,
+//   isSorting?: boolean,
+//   link?: string,
 //   inputPlaceholder?: string }
 
 export function ApplicationsList(props) {
@@ -28,7 +29,8 @@ export function ApplicationsList(props) {
     searchField,
     isSorting,
     link,
-    inputPlaceholder = "Search"
+    inputPlaceholder = "Search",
+    error,
   } = props;
 
   window.addEventListener(LOAD, function () {
@@ -67,25 +69,25 @@ export function ApplicationsList(props) {
     document.getElementsByTagName("tbody")[0].innerHTML = filteredData?.length
       ? `
         ${filteredData?.myMap(
-        (item) => /*html*/ `
+          (item) => /*html*/ `
             <tr class="table-row">
               ${tableCol?.myMap((col) =>
-          Td({
-            children: col?.actions
-              ? col?.actions(item)
-              : col?.render
-                ? col?.render(item)
-                : item[col?.field],
-            align: col?.align,
-            link:
-              col?.field !== ACTIONS && link
-                ? `${link}?app_name=${item?.name}`
-                : "",
-            maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
-          })
-        )}
+                Td({
+                  children: col?.actions
+                    ? col?.actions(item)
+                    : col?.render
+                    ? col?.render(item)
+                    : item[col?.field],
+                  align: col?.align,
+                  link:
+                    col?.field !== ACTIONS && link
+                      ? `${link}?app_name=${item?.name}`
+                      : "",
+                  maxWidth: col?.type === "label" ? "text-ellipsis" : "fit",
+                })
+              )}
             </tr>`
-      )}
+        )}
       `
       : /*html*/ ` <tr class="table-row">
              <td class="pt-3 pb-3 pl-3 pr-3 text-center" colspan="${tableCol?.length}">No Data Found</td>
@@ -93,31 +95,38 @@ export function ApplicationsList(props) {
   }
 
   return /*html*/ `
-    <div class="application-container flex flex-col gap-4">
-      <div class="flex justify-between">
-        <div class="inter surface-10 font-16 medium">${title}</div>
-        <div class="flex">
-          <div class="search" title="Search">
-            <input type="text" id="search_field" name="search" placeholder="${inputPlaceholder}" autocomplete="off" />
-            ${SearchIcon({ color: 'grey' })}  
+    <div>
+      <div class="application-container flex flex-col gap-4">
+        <div class="flex justify-between">
+          <div class="inter surface-10 font-16 medium">${title}</div>
+          <div class="flex">
+            <div class="search" title="Search">
+              <input type="text" id="search_field" name="search" placeholder="${inputPlaceholder}" autocomplete="off" />
+              ${SearchIcon({ color: "grey" })}  
+            </div>
+          ${
+            isDownloadReport
+              ? /*html*/ `<div class="divider mt-2 mb-2 ml-4 mr-1"></div>
+              ${Button({
+                btnText: "Download Reports",
+                startIcon: DownloadIcon({ color: "primary" }),
+                color: "primary",
+              })}`
+              : ""
+          }
+            </div>
           </div>
-       ${isDownloadReport
-      ? /*html*/ `<div class="divider mt-2 mb-2 ml-4 mr-1"></div>
-          ${Button({
-        btnText: "Download Reports",
-        startIcon: DownloadIcon({ color: "primary" }),
-        color: "primary"
-      })}`
-      : ""
-    }
+          ${
+            !error
+              ? Table({
+                  tableCol,
+                  tableData,
+                  link,
+                  isSorting,
+                })
+              : `<div>${EmptyState({ variant: error })}</div>`
+          }
         </div>
-      </div>
-      ${Table({
-      tableCol,
-      tableData,
-      link,
-      isSorting,
-    })}
-  </div>
+    </div>
     `;
 }
