@@ -1,6 +1,7 @@
 import { KEYUP } from "../constants/enums.js";
 import { SearchIcon } from "../icons/index.js";
 import { waitForElement } from "../util.js";
+import { EmptyState } from "./emptyState.js";
 import { KeyValue } from "./index.js";
 
 // PROPS {
@@ -10,7 +11,7 @@ import { KeyValue } from "./index.js";
 // }
 
 export function SnippetDetails(props) {
-  const { title, data, searchField, inputPlaceholder } = props;
+  const { title, data, searchField, inputPlaceholder, error } = props;
 
   waitForElement("#snippet_search", 1000).then(function () {
     const inputEl = document.getElementById("snippet_search");
@@ -38,29 +39,31 @@ export function SnippetDetails(props) {
     snippet_body.innerHTML = "";
     snippet_body.innerHTML = filteredData?.length
       ? filteredData?.myMap(
-        (item) => /*html*/ `        
+          (item) => /*html*/ `        
        <div class="flex flex-col gap-1">
          <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
-           <div class="surface-10-opacity-65 font-14 medium">${item?.labelName
-          }</div>
-           <div class="surface-10-opacity-50 font-12">Showing ${item?.snippetCount
-          } out of ${item?.findings}</div>
+           <div class="surface-10-opacity-65 font-14 medium">${
+             item?.labelName
+           }</div>
+           <div class="surface-10-opacity-50 font-12">Showing ${
+             item?.snippetCount
+           } out of ${item?.findings}</div>
          </div>
          ${item?.snippets?.myMap(
-            (snipp) => `
+           (snipp) => `
               <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
                ${KeyValue({ key: "Snippets", value: snipp?.snippet })}
                ${KeyValue({
-              key: "Retrieved From",
-              value: snipp?.sourcePath,
-            })}
+                 key: "Retrieved From",
+                 value: snipp?.sourcePath,
+               })}
               <div class="divider-horizontal"></div>
              </div>
            `
-          )}
+         )}
      </div>
    `
-      )
+        )
       : /*html*/ `<div class="text-center pt-3 pb-3 pl-3 pr-3 inter surface-10 font-13 medium">No Data Found!!</div>`;
   }
 
@@ -71,39 +74,46 @@ export function SnippetDetails(props) {
         <div class="flex">
           <div class="search">
             <input type="text" id="snippet_search" placeholder="${inputPlaceholder}" autocomplete="off" />
-              ${SearchIcon({ color: 'grey' })}  
+              ${SearchIcon({ color: "grey" })}  
           </div>
         </div>
       </div>
-      <div id="snippet_body" class="flex flex-col gap-10 h-full">
-         ${data?.length
-      ? data?.myMap(
-        (item) => /*html*/ `        
-            <div class="flex flex-col gap-1">
-              <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
-                <div class="surface-10-opacity-65 font-14 medium">${item?.labelName
-          }</div>
-                <div class="surface-10-opacity-50 font-12">Showing ${item?.snippets?.length
-          } out of ${item?.snippetCount}</div>
-              </div>
-              ${item?.snippets?.myMap(
-            (snipp) => `
-                   <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
-                    ${KeyValue({ key: "Snippets", value: snipp?.snippet })}
-                    ${KeyValue({
-              key: "Retrieved From",
-              value: snipp?.sourcePath,
-            })}
-                   <div class="divider-horizontal"></div>
-                  </div>
-                `
-          )}
-          </div>
+      ${
+        !error
+          ? `<div id="snippet_body" class="flex flex-col gap-10 h-full">
+      ${
+        data?.length
+          ? data?.myMap(
+              (item) => /*html*/ `        
+         <div class="flex flex-col gap-1">
+           <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
+             <div class="surface-10-opacity-65 font-14 medium">${
+               item?.labelName
+             }</div>
+             <div class="surface-10-opacity-50 font-12">Showing ${
+               item?.snippets?.length
+             } out of ${item?.snippetCount}</div>
+           </div>
+           ${item?.snippets?.myMap(
+             (snipp) => `
+                <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
+                 ${KeyValue({ key: "Snippets", value: snipp?.snippet })}
+                 ${KeyValue({
+                   key: "Retrieved From",
+                   value: snipp?.sourcePath,
+                 })}
+                <div class="divider-horizontal"></div>
+               </div>
+             `
+           )}
+       </div>
         `
-      )
-      : /*html*/ `<div class="text-center pt-3 pb-3 pl-3 pr-3 inter surface-10 font-13 medium">No Data Found!!</div>`
-    }
-      </div>
+            )
+          : /*html*/ `<div class="text-center pt-3 pb-3 pl-3 pr-3 inter surface-10 font-13 medium">No Data Found!!</div>`
+      }
+      </div>`
+          : `<div>${EmptyState({ variant: error })}</div>`
+      }
   </div>
     `;
 }
