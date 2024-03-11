@@ -44,3 +44,12 @@ reports:
 classifier:
   anonymizeAllEntities: true
 ```
+
+`Note`:
+Users have the option to maintain any section or even a single field within a section. For instance, the `config` file might appear as follows:
+
+```yaml
+logging:
+  level: info
+```
+This flexibility empowers users to tailor configurations to their specific needs while retaining default values for other sections or fields.
