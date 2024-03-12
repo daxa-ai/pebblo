@@ -235,5 +235,5 @@ class AppData:
                 # If report is found, proceed with this load_id
                 latest_load_id = load_id
                 return latest_load_id, app_detail_json
-            else:
-                return None, None
+
+        return None, None
