@@ -78,13 +78,11 @@ class AppLoaderDoc:
         """
         logger.debug("Upsert loader details to exiting ai app details")
         # Update loader details if it already exits in app
-        loader_details = self.data.get("loader_details", {})  # input
+        loader_details = self.data.get("loader_details", {})
         loader_name = loader_details.get("loader", None)
         source_type = loader_details.get("source_type", None)
         source_path = loader_details.get("source_path", None)
         loader_source_files = loader_details.get("source_files", [])
-        logger.error(f"InputLoaderDetails: {loader_details}")
-        logger.error(f"LoaderSourceFiles: {loader_source_files}")
         if loader_details.get("source_path_size") is not None:
             source_size = loader_details.get("source_path_size", 0)
         else:
@@ -119,16 +117,11 @@ class AppLoaderDoc:
                 )
                 loader_list.append(new_loader_data.dict())
                 app_details["loaders"] = loader_list
-                logger.error(
-                    f"LoaderAfterUpsertLoaderDetails: {app_details['loaders']}"
-                )
 
     def _execute_app(self, metadata_file_path, load_id, run_id=None):
         """ """
         app_details = read_json_file(metadata_file_path)
         if not app_details:
-            # TODO: Handle the case where discover call did not happen,
-            #  but loader doc is being called.
             logger.error(
                 f"Could not read metadata file at {metadata_file_path}. Exiting."
             )
@@ -146,8 +139,6 @@ class AppLoaderDoc:
             final_report,
         ) = loader_helper_obj.process_docs_and_generate_report()
 
-        # logger.debug(f"Final Report with doc details: {final_report}")
-
         if run_id:
             # Explicitly Write file to load level
             app_load_metadata_file_path = (
@@ -162,9 +153,6 @@ class AppLoaderDoc:
 
         return app_details, final_report
 
-    def _generate_run_level_report(self, app_details, final_report):
-        pass
-
     def process_request(self):
         """
         This process is entrypoint function for loader doc API implementation.
@@ -175,43 +163,52 @@ class AppLoaderDoc:
                 f"Loader Doc, Application Name: {self.app_name}, Input Data: {self.data}"
             )
 
-            # Read metadata file & get current load details
-            app_metadata_file_path = (
+            app_metadata_lock_file_path = (
                 f"{CacheDir.HOME_DIR.value}/{self.app_name}/"
-                f"{CacheDir.METADATA_FILE_PATH.value}"
+                f"{CacheDir.METADATA_LOCK_FILE_PATH.value}"
             )
-            app_metadata = read_json_file(app_metadata_file_path)
-            # logger.debug(f"AppMetadata: {app_metadata}")
-            if not app_metadata:
-                return {
-                    "Message": "App details not present, Please execute discovery api first"
-                }
+            try:
+                # Read metadata file & get current load details
+                acquire_lock(app_metadata_lock_file_path)
+                app_metadata_file_path = (
+                    f"{CacheDir.HOME_DIR.value}/{self.app_name}/"
+                    f"{CacheDir.METADATA_FILE_PATH.value}"
+                )
+                app_metadata = read_json_file(app_metadata_file_path)
+
+                if not app_metadata:
+                    return {
+                        "Message": "App details not present, Please execute discovery api first"
+                    }
+            finally:
+                # Releasing lock
+                release_lock(app_metadata_lock_file_path)
 
             # Get current app details from run id
             run_id = self.data.get("run_id", None)
             if run_id:
-                load_id = self.data["load_id"]
-                app_run_metadata_file_path = (
-                    f"{CacheDir.HOME_DIR.value}/{self.app_name}"
-                    f"/{run_id}/{CacheDir.METADATA_FILE_PATH.value}"
-                )
-
                 app_run_metadata_lock_file_path = (
                     f"{CacheDir.HOME_DIR.value}/{self.app_name}"
                     f"/{run_id}/{CacheDir.METADATA_LOCK_FILE_PATH.value}"
                 )
-                # logger.debug(f"AppMetadataLockFile: {app_run_metadata_lock_file_path}")
-
                 try:
                     # Acquiring Lock
                     acquire_lock(app_run_metadata_lock_file_path)
-                    logger.debug("Lock acquired.")
+
+                    load_id = self.data["load_id"]
+                    app_run_metadata_file_path = (
+                        f"{CacheDir.HOME_DIR.value}/{self.app_name}"
+                        f"/{run_id}/{CacheDir.METADATA_FILE_PATH.value}"
+                    )
+
                     app_details, final_report = self._execute_app(
                         app_run_metadata_file_path, load_id, run_id
                     )
                 finally:
                     # Releasing lock
                     release_lock(app_run_metadata_lock_file_path)
+
+            # Backward compatibility of multiple data source support
             else:
                 # Get current app details from load id
                 logger.debug("LoadIds")
@@ -224,7 +221,7 @@ class AppLoaderDoc:
                     app_load_metadata_file_path, load_id
                 )
 
-            # check whether report generation is necessary
+            # Check whether report generation is necessary
             loading_end = self.data["loading_end"]
             if loading_end:
                 logger.debug("Loading finished, generating report")
@@ -235,8 +232,6 @@ class AppLoaderDoc:
                     f"/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
                 )
                 write_json_to_file(final_report, json_report_file_path)
-
-                # self._generate_run_level_report(app_details, final_report)
 
                 # Writing report in pdf format
                 self._write_pdf_report(final_report)

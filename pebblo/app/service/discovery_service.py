@@ -18,12 +18,13 @@ from pebblo.app.models.models import (
     PackageInfo,
     VectorDB,
 )
+from pebblo.app.models.models import AiApp, InstanceDetails, Metadata
 from pebblo.app.utils.utils import (
     acquire_lock,
-    get_pebblo_server_version,
     read_json_file,
     release_lock,
     write_json_to_file,
+    get_pebblo_server_version
 )
 
 
@@ -171,16 +172,17 @@ class AppDiscover:
         """
         Write content to the specified file path
         """
-        # logger.debug(f"Writing content to file path: {file_content}")
+        logger.debug(f"Writing content to file path: {file_content}")
         # Writing file content to given file path
         write_json_to_file(file_content, file_path)
 
+    # Below method are needed for unit test.
     @staticmethod
     def _read_file(file_path):
         """
         Retrieve the content of the specified file.
         """
-        # logger.debug(f"Reading content from file: {file_path}")
+        logger.debug(f"Reading content from file: {file_path}")
         file_content = read_json_file(file_path)
         return file_content
 
@@ -189,53 +191,62 @@ class AppDiscover:
         Update/Create app metadata file and write metadata for current run for loader type
         """
         # Read metadata file & get current app metadata
-        app_metadata_file_path = (
+        app_metadata_lock_file_path = (
             f"{CacheDir.HOME_DIR.value}/"
-            f"{self.application_name}/{CacheDir.METADATA_FILE_PATH.value}"
+            f"{self.application_name}/{CacheDir.METADATA_LOCK_FILE_PATH.value}"
         )
-        app_metadata = self._read_file(app_metadata_file_path)
+        try:
+            acquire_lock(app_metadata_lock_file_path)
+            app_metadata_file_path = (
+                f"{CacheDir.HOME_DIR.value}/"
+                f"{self.application_name}/{CacheDir.METADATA_FILE_PATH.value}"
+            )
+            app_metadata = self._read_file(app_metadata_file_path)
 
-        # write metadata file if it is not present
-        if not app_metadata:
-            # Writing app metadata to metadata file
-            if self.run_id:
-                app_metadata = {
-                    "name": self.application_name,
-                    "run_ids": {self.run_id: [self.load_id]},
-                }
+            # write metadata file if it is not present
+            if not app_metadata:
+                # Writing app metadata to metadata file
+                if self.run_id:
+                    app_metadata = {
+                        "name": self.application_name,
+                        "run_ids": {self.run_id: [self.load_id]},
+                    }
+                # Backward compatibility of multiple data source support.
+                else:
+                    app_metadata = {
+                        "name": self.application_name,
+                        "load_ids": [self.load_id],
+                    }
             else:
-                app_metadata = {
-                    "name": self.application_name,
-                    "load_ids": [self.load_id],
-                }
-        else:
-            # For multiple loaders support.
-            if self.run_id:
-                # Already run_id is present
-                if "run_ids" in app_metadata.keys():
-                    if self.run_id in app_metadata["run_ids"].keys():
-                        app_metadata["run_ids"][self.run_id].append(self.load_id)
+                # For multiple loaders support
+                if self.run_id:
+                    # Already run_id is present
+                    if "run_ids" in app_metadata.keys():
+                        if self.run_id in app_metadata["run_ids"].keys():
+                            app_metadata["run_ids"][self.run_id].append(self.load_id)
+                        else:
+                            app_metadata["run_ids"][self.run_id] = [self.load_id]
+
+                    # This is first load of this run_id
                     else:
-                        app_metadata["run_ids"][self.run_id] = [self.load_id]
+                        app_metadata["run_ids"] = {self.run_id: [self.load_id]}
 
-                # This is first load of this run_id
+                # Backward compatibility of multiple data source support.
                 else:
-                    app_metadata["run_ids"] = {self.run_id: [self.load_id]}
+                    if "load_ids" in app_metadata.keys():
+                        # Metadata file is already present,
+                        # Appending the current metadata details
+                        app_metadata.get("load_ids").append(self.load_id)
+                    else:
+                        # metadata file is present, but load_ids is not,
+                        # This is to support backward compatibility
+                        app_metadata["load_ids"] = [self.load_id]
 
-            # Backward compatibility of multiple loaders support.
-            else:
-                if "load_ids" in app_metadata.keys():
-                    # Metadata file is already present,
-                    # Appending the current metadata details
-                    app_metadata.get("load_ids").append(self.load_id)
-                else:
-                    # metadata file is present, but load_ids is not,
-                    # This is to support backward compatibility
-                    app_metadata["load_ids"] = [self.load_id]
-
-        app_metadata["app_type"] = ApplicationTypes.LOADER.value
-        # Writing metadata file
-        self._write_file_content_to_path(app_metadata, app_metadata_file_path)
+            app_metadata["app_type"] = ApplicationTypes.LOADER.value
+            # Writing metadata file
+            self._write_file_content_to_path(app_metadata, app_metadata_file_path)
+        finally:
+            release_lock(app_metadata_lock_file_path)
 
     def _upsert_metadata_file(self):
         """
@@ -318,24 +329,31 @@ class AppDiscover:
                 instance_details, chain_details, retrievals_details
             )
 
-            # Write file to metadata location
+            # Write file to load metadata location - this is backward compatibility after multiple data sources feature.
             load_dir_file_path = (
                 f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.load_id}"
                 f"/{CacheDir.METADATA_FILE_PATH.value}"
             )
             self._write_file_content_to_path(ai_apps.dict(), load_dir_file_path)
 
-            # TODO: We are writing app metadata to load id metadata.json but what we should write for runId metadata.json same data\
-            # or appending the existing values
-            # Write file to metadata location
+            # When run_id is present, write metadata to run metadata file by acquiring lock
             if self.run_id:
-                run_dir_file_path = (
+                run_dir_lock_file_path = (
                     f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.run_id}"
-                    f"/{CacheDir.METADATA_FILE_PATH.value}"
+                    f"/{CacheDir.METADATA_LOCK_FILE_PATH.value}"
                 )
-                self._write_file_content_to_path(
-                    ai_apps.dict(), run_dir_file_path
-                )  # content should be change
+                try:
+                    acquire_lock(run_dir_lock_file_path)
+                    run_dir_file_path = (
+                        f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.run_id}"
+                        f"/{CacheDir.METADATA_FILE_PATH.value}"
+                    )
+                    existing_ai_app_details = self._read_file(run_dir_file_path)
+                    # Check if file is not present, then write details, otherwise skip writing file again.
+                    if not existing_ai_app_details:
+                        self._write_file_content_to_path(ai_apps.dict(), run_dir_file_path)
+                finally:
+                    release_lock(run_dir_lock_file_path)
 
             # Prepare response
             message = "App Discover Request Processed Successfully"

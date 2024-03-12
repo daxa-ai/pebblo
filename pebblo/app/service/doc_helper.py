@@ -47,7 +47,31 @@ class LoaderHelper:
         """
         Initializing raw data and return as dict object
         """
+        # If report_metadata is already present, that means this is one of multiple data sources.
         if "report_metadata" in self.app_details.keys():
+            if self.run_id:
+                raw_data = self.app_details["report_metadata"]
+                loader_details = self.data.get("loader_details", {})
+                loader_name = loader_details.get("loader", None)
+
+                for loader in self.app_details.get("loaders", []):
+                    if (
+                        loader["name"] == loader_name
+                        and "data_source_findings" in loader.keys()
+                    ):
+                        raw_data["data_source_findings"] = loader[
+                            "data_source_findings"
+                        ]
+                        raw_data["total_snippet_counter"] = loader[
+                            "total_snippet_counter"
+                        ]
+                        raw_data["snippet_counter"] = loader["snippet_counter"]
+                    else:
+                        raw_data["data_source_findings"] = {}
+                        raw_data["total_snippet_counter"] = 0
+                        raw_data["snippet_counter"] = 0
+
+                return raw_data
             return self.app_details["report_metadata"]
 
         raw_data = {
@@ -195,7 +219,6 @@ class LoaderHelper:
                 doc_info.topicCount = topic_count
                 doc_info.entityCount = entity_count
                 doc_info.data = anonymized_doc
-                logger.debug(f"Anonymized Doc: {anonymized_doc}")
             return doc_info
         except Exception as e:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
@@ -206,13 +229,11 @@ class LoaderHelper:
         Updating ai app details loader source files
         """
         logger.debug("Updating app details")
-        loader_details = self.data.get("loader_details", {})  # input
-        logger.error(f"InputLoaderDetails: {loader_details}")
+        loader_details = self.data.get("loader_details", {})
         loader_name = loader_details.get("loader", None)
-        logger.error(f"LoaderName: {loader_name}")
         self.app_details["docs"] = ai_app_docs
         loader_source_snippets = raw_data["loader_source_snippets"]
-        logger.error(f"LoaderSourceSnippet: {loader_source_snippets}")
+
         # Updating app_details doc list and loader source files
         loader_details = self.app_details.get("loaders", {})
         for loader in loader_details:
@@ -232,17 +253,18 @@ class LoaderHelper:
                     for key, value in loader_source_snippets.items()
                     if value["loader_name"] == loader_name
                 ]
-                logger.error(f"NewLoaderDetails: {new_source_files}")
                 loader["sourceFiles"] = new_source_files
+                loader["data_source_findings"] = raw_data["data_source_findings"]
+                loader["total_snippet_counter"] = raw_data["total_snippet_counter"]
+                loader["snippet_counter"] = raw_data["snippet_counter"]
+
         self.app_details["report_metadata"] = raw_data
 
-    def _get_finding_details(self, doc, data_source_findings, entity_type, raw_data):
+    @staticmethod
+    def _get_finding_details(doc, data_source_findings, entity_type, raw_data):
         """
         Retrieve finding details from data source
         """
-        logger.debug(
-            f"Fetching finding details from data source for entity type: {entity_type}"
-        )
         source_path = doc.get("sourcePath")
         snippet = Snippets(
             snippet=doc["doc"],
@@ -250,11 +272,8 @@ class LoaderHelper:
             fileOwner=doc.get("fileOwner", "-"),
             authorizedIdentities=doc.get("authorizedIdentities", []),
         )
+
         for label_name, value in doc[entity_type].items():
-            # if self.run_id:
-            #     new logic
-            # else:
-            #     pass
             if label_name in data_source_findings.keys():
                 data_source_findings[label_name]["snippetCount"] += 1
                 data_source_findings[label_name]["findings"] += value
@@ -309,24 +328,24 @@ class LoaderHelper:
         """
         Create data source findings details and data source findings summary
         """
-        # TODO: DataSource , Here we need to identify the DS issue.=
         logger.debug("Aggregating data source details")
         data_source_obj_list = []
-        logger.error(f"RunId: {self.run_id}, AppLoaderDetails: {self.app_details}")
         for loader in self.app_details["loaders"]:
             name = loader.get("name")
             source_path = loader.get("sourcePath")
             source_type = loader.get("sourceType")
             source_size = loader.get("sourceSize")
-            total_snippet_count = raw_data["total_snippet_counter"]
-            displayed_snippet_count = raw_data["snippet_counter"]
+            # need to modify, Current at total level, now need to set at loader ds level
+            total_snippet_count = loader["total_snippet_counter"]
+            displayed_snippet_count = loader["snippet_counter"]
+
             data_source_findings = [
                 {
                     key: value[key]
                     for key in value
                     if key not in (value[key], "unique_snippets")
                 }
-                for value in raw_data["data_source_findings"].values()
+                for value in loader["data_source_findings"].values()
             ]
 
             # Create data source findings summary from data source findings
@@ -345,6 +364,7 @@ class LoaderHelper:
                 findingsDetails=data_source_findings,
             )
             data_source_obj_list.append(data_source_obj)
+
         raw_data["data_source_count"] = len(data_source_obj_list)
         return data_source_obj_list
 
@@ -495,7 +515,7 @@ class LoaderHelper:
 
         # If source path is not present, then initialize values
         else:
-            loader_details = self.data.get("loader_details", {})  # input
+            loader_details = self.data.get("loader_details", {})
             loader_name = loader_details.get("loader", None)
             total_findings += findings
             loader_source_snippets[source_path] = {
@@ -588,7 +608,7 @@ class LoaderHelper:
                 doc_obj = self._create_doc_model(doc, doc_info)
                 ai_app_docs.append(doc_obj)
                 raw_data = self._get_doc_report_metadata(doc_obj, raw_data)
-        logger.debug(f"ai_app_docs: {ai_app_docs}")
+
         # Updating ai apps details
         self._update_app_details(raw_data, ai_app_docs)
 

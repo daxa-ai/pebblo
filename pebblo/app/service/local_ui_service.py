@@ -432,7 +432,8 @@ class AppData:
             for run_id, load_ids in run_ids.items():
                 load_ids = app_json["run_ids"][run_id]
             logger.debug(f"Load ID : {load_ids}")
-        # If not run_id then use load_id
+
+        # If not run_id then use load_id. Backward compatibility of multiple data source support.
         else:
             load_ids = app_json.get("load_ids", [])
 
