@@ -5,11 +5,7 @@ from fastapi import Request
 
 
 async def not_found_error(request: Request, exc: HTTPException):
+    """Redirects to not-found route when 404 exception occurs"""
     return RedirectResponse('/pebblo/not-found')
 
-
-async def internal_error(request: Request, exc: HTTPException):
-    return RedirectResponse('/not-found')
-
-
-exception_handlers = {404: not_found_error, 500: internal_error}
+exception_handlers = {404: not_found_error, 500: not_found_error}
