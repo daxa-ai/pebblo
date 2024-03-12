@@ -15,3 +15,6 @@ local_ui_router_instance.router.add_api_route(
 local_ui_router_instance.router.add_api_route(
     "/report/", App.get_report, methods=["GET"], response_class=FileResponse
 )
+local_ui_router_instance.router.add_api_route(
+    "/not-found/", App.page_not_found, methods=["GET"], response_class=HTMLResponse
+)
