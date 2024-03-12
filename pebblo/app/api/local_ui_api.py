@@ -60,3 +60,14 @@ class App:
         )
         # Return the FileResponse object
         return response
+
+    @staticmethod
+    def page_not_found(request: Request):
+        return templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "data": {},
+                "proxy": CacheDir.PROXY.value,
+            },
+        )

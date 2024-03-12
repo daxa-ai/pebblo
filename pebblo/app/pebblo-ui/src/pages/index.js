@@ -1,3 +1,4 @@
 import { AppDetailsPage } from "./appDetailsPage.js";
 import { OverviewPage } from "./overviewPage.js";
-export { OverviewPage, AppDetailsPage };
+import { PageNotFound } from "./pageNotFound.js";
+export { OverviewPage, AppDetailsPage, PageNotFound };
