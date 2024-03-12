@@ -275,8 +275,8 @@ def test_update_app_details(loader_helper):
             "sourceSize": 1000,
         }
     ]
-    ai_apps_doc = []
-    loader_helper._update_app_details(input_data, ai_apps_doc)
+
+    loader_helper._update_app_details(input_data, [])
     expected_output = {
         "metadata": {
             "createdAt": "2024-01-31 13:58:35.937444",

@@ -66,21 +66,9 @@ class AppData:
                         )
                         continue
 
-                    # Get load_ids from run_id
-
-                    # If not run_id then use load_id
-                    load_ids = app_json.get("load_ids", [])
-
-                    if not load_ids:
-                        logger.debug(f"No valid loadIds found for app: {app_dir}.")
-                        logger.warning(
-                            f"Skipping app '{app_dir}' due to missing or invalid file"
-                        )
-                        continue
-
                     # Fetching latest loadId
                     latest_load_id, app_detail_json = self.get_latest_load_id(
-                        load_ids, app_dir
+                        app_json, app_dir
                     )
 
                     if not latest_load_id:
@@ -152,7 +140,7 @@ class AppData:
                     if report_summary.get("findings", 0) > 0:
                         apps_at_risk += 1
 
-                    all_apps.append(app_details.dict())
+                    all_apps.append(app_details)
 
                 except Exception as err:
                     logger.warning(f"Error processing app {app_dir}: {err}")
@@ -196,18 +184,8 @@ class AppData:
                 )
                 return json.dumps({})
 
-            load_ids = app_json.get("load_ids", [])
-
-            if not load_ids:
-                # Unable to fetch loadId details
-                logger.debug(f"Error: Details not found for app {app_path}")
-                logger.warning(
-                    f"Skipping app '{app_dir}' due to missing or invalid file"
-                )
-                return json.dumps({})
-
             # Fetching latest loadId
-            latest_load_id, app_detail_json = self.get_latest_load_id(load_ids, app_dir)
+            latest_load_id, app_detail_json = self.get_latest_load_id(app_json, app_dir)
 
             if not latest_load_id:
                 logger.debug(f"No valid loadIds found for app {app_path}.")
@@ -225,10 +203,31 @@ class AppData:
             logger.error(f"Error in app detail. Error: {ex}")
 
     @staticmethod
-    def get_latest_load_id(load_ids, app_dir):
+    def get_latest_load_id(app_json, app_dir):
         """
         Returns app latestLoadId for an app.
         """
+        app_path = (
+            f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
+        )
+        load_ids = []
+
+        # Get load_ids from run_id
+        run_ids = app_json.get("run_ids", [])
+        if run_ids:
+            for run_id, load_ids in run_ids.items():
+                load_ids = app_json["run_ids"][run_id]
+            logger.debug(f"Load ID : {load_ids}")
+        # If not run_id then use load_id
+        else:
+            load_ids = app_json.get("load_ids", [])
+
+        if not load_ids:
+            # Unable to fetch loadId details
+            logger.debug(f"Error: Details not found for app {app_path}")
+            logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
+            return None, None
+
         for load_id in reversed(load_ids):
             # Path to report.json
             app_detail_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
