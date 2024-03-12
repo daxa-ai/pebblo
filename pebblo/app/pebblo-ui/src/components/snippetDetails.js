@@ -112,7 +112,7 @@ export function SnippetDetails(props) {
           : /*html*/ `<div class="text-center pt-3 pb-3 pl-3 pr-3 inter surface-10 font-13 medium">No Data Found!!</div>`
       }
       </div>`
-          : `<div>${EmptyState({ variant: error })}</div>`
+          : EmptyState({ variant: error })
       }
   </div>
     `;

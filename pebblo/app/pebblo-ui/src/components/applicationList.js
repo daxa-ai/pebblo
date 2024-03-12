@@ -124,7 +124,7 @@ export function ApplicationsList(props) {
                   link,
                   isSorting,
                 })
-              : `<div>${EmptyState({ variant: error })}</div>`
+              : EmptyState({ variant: error })
           }
         </div>
     </div>

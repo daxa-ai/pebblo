@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from pebblo.app.routers.local_ui_routers import local_ui_router_instance
 from pebblo.app.routers.redirection_router import redirect_router_instance
+from pebblo.app.exceptions.exception_handler import exception_handlers
 
 with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
     from pebblo.app.routers.routers import router_instance
@@ -33,7 +34,7 @@ class NoCacheStaticFiles(StaticFiles):
 class Service:
     def __init__(self, config_details):
         # Initialise app instance
-        self.app = FastAPI()
+        self.app = FastAPI(exception_handlers=exception_handlers)
         # Register the router instance with the main app
         self.app.include_router(router_instance.router)
         self.app.include_router(local_ui_router_instance.router)
