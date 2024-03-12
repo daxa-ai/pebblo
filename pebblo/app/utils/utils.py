@@ -93,18 +93,28 @@ def delete_snippets(data):
 
 
 def acquire_lock(lock_file_path):
+    sleep_time = 20
     while True:
         try:
             full_lock_file_path = get_full_path(lock_file_path)
+
+            # Extract directory path from the lock file path
+            lock_dir = path.dirname(full_lock_file_path)
+
+            # Create directory if it doesn't exist
+            if not path.exists(lock_dir):
+                makedirs(lock_dir)
+
             # Try to open the file in write mode exclusively.
             # This will create the file if it doesn't exist and fail if it does.
             with open(full_lock_file_path, "x"):
                 # If successful, break out of the loop
-
+                logger.debug(f"Lock Acquired. {full_lock_file_path}")
                 break
         except FileExistsError:
             # If the file already exists, wait for a short while and try again
-            time.sleep(20)
+            logger.debug(f"Sleeping for {sleep_time} seconds")
+            time.sleep(sleep_time)
 
 
 def release_lock(lock_file_path):
@@ -112,7 +122,7 @@ def release_lock(lock_file_path):
     try:
         full_lock_file_path = get_full_path(lock_file_path)
         remove(full_lock_file_path)
-        logger.debug("Lock Released.")
+        logger.debug(f"Lock Released. {full_lock_file_path}")
     except FileNotFoundError:
         pass  # The lock file doesn't exist, nothing to release
 
