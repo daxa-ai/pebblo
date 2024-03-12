@@ -1,8 +1,7 @@
 import json
 import time
-from os import makedirs, path, getcwd, remove
 from json import JSONEncoder, dump
-from os import getcwd, makedirs, path
+from os import getcwd, makedirs, path, remove
 
 from pebblo.app.libs.logger import logger
 
@@ -92,18 +91,21 @@ def delete_snippets(data):
 
     return data
 
+
 def acquire_lock(lock_file_path):
     while True:
         try:
             full_lock_file_path = get_full_path(lock_file_path)
             # Try to open the file in write mode exclusively.
             # This will create the file if it doesn't exist and fail if it does.
-            with open(full_lock_file_path, "x") as lock_file:
+            with open(full_lock_file_path, "x"):
                 # If successful, break out of the loop
+
                 break
         except FileExistsError:
             # If the file already exists, wait for a short while and try again
             time.sleep(20)
+
 
 def release_lock(lock_file_path):
     # Simply delete the lock file to release the lock
@@ -113,6 +115,7 @@ def release_lock(lock_file_path):
         logger.debug("Lock Released.")
     except FileNotFoundError:
         pass  # The lock file doesn't exist, nothing to release
+
 
 def update_findings_summary(data, app_name):
     """

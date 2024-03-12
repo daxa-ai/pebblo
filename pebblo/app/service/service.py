@@ -8,11 +8,16 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 
 from pebblo.app.enums.enums import CacheDir
-from pebblo.app.utils.utils import write_json_to_file, read_json_file, get_full_path, acquire_lock, release_lock
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import LoaderMetadata
 from pebblo.app.service.doc_helper import LoaderHelper
-from pebblo.app.utils.utils import get_full_path, read_json_file, write_json_to_file
+from pebblo.app.utils.utils import (
+    acquire_lock,
+    get_full_path,
+    read_json_file,
+    release_lock,
+    write_json_to_file,
+)
 from pebblo.reports.reports import Reports
 
 
@@ -72,7 +77,7 @@ class AppLoaderDoc:
         """
         logger.debug("Upsert loader details to exiting ai app details")
         # Update loader details if it already exits in app
-        loader_details = self.data.get("loader_details", {}) #input
+        loader_details = self.data.get("loader_details", {})  # input
         loader_name = loader_details.get("loader", None)
         source_type = loader_details.get("source_type", None)
         source_path = loader_details.get("source_path", None)
@@ -89,7 +94,6 @@ class AppLoaderDoc:
             loader_list = app_details.get("loaders", [])
             loader_exist = False
             for loader in loader_list:
-
                 # If loader exist, update loader SourcePath and SourceType
                 if loader and loader.get("name", "") == loader_name:
                     loader["sourcePath"] = source_path
@@ -114,12 +118,12 @@ class AppLoaderDoc:
                 )
                 loader_list.append(new_loader_data.dict())
                 app_details["loaders"] = loader_list
-                logger.error(f"LoaderAfterUpsertLoaderDetails: {app_details['loaders']}")
+                logger.error(
+                    f"LoaderAfterUpsertLoaderDetails: {app_details['loaders']}"
+                )
 
-    def _execute_app(self, metadata_file_path, load_id, run_id = None):
-        """
-
-        """
+    def _execute_app(self, metadata_file_path, load_id, run_id=None):
+        """ """
         app_details = read_json_file(metadata_file_path)
         if not app_details:
             # TODO: Handle the case where discover call did not happen,
@@ -129,7 +133,7 @@ class AppLoaderDoc:
             )
             return {
                 "Message": f"Could not read metadata file at "
-                           f"{metadata_file_path}. Exiting"
+                f"{metadata_file_path}. Exiting"
             }
         # Add/Update Loader Details with input loader details
         self._upsert_loader_details(app_details)
@@ -201,7 +205,9 @@ class AppLoaderDoc:
                     # Acquiring Lock
                     acquire_lock(app_run_metadata_lock_file_path)
                     logger.debug("Lock acquired.")
-                    app_details, final_report = self._execute_app(app_run_metadata_file_path, load_id, run_id)
+                    app_details, final_report = self._execute_app(
+                        app_run_metadata_file_path, load_id, run_id
+                    )
                 finally:
                     # Releasing lock
                     release_lock(app_run_metadata_lock_file_path)
@@ -213,7 +219,9 @@ class AppLoaderDoc:
                     f"{CacheDir.HOME_DIR.value}/{self.app_name}"
                     f"/{load_id}/{CacheDir.METADATA_FILE_PATH.value}"
                 )
-                app_details, final_report = self._execute_app(app_load_metadata_file_path, load_id)
+                app_details, final_report = self._execute_app(
+                    app_load_metadata_file_path, load_id
+                )
 
             # check whether report generation is necessary
             loading_end = self.data["loading_end"]

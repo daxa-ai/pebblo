@@ -102,9 +102,15 @@ class AppDiscover:
         if not app_metadata:
             # Writing app metadata to metadata file
             if self.run_id:
-                app_metadata = {"name": self.application_name, "run_ids": {self.run_id: [self.load_id]}}
+                app_metadata = {
+                    "name": self.application_name,
+                    "run_ids": {self.run_id: [self.load_id]},
+                }
             else:
-                app_metadata = {"name": self.application_name, "load_ids": [self.load_id]}
+                app_metadata = {
+                    "name": self.application_name,
+                    "load_ids": [self.load_id],
+                }
         else:
             # For multiple loaders support.
             if self.run_id:
@@ -158,7 +164,7 @@ class AppDiscover:
             )
             self._write_file_content_to_path(ai_apps.dict(), load_dir_file_path)
 
-            #TODO: We are writing app metadata to load id metadata.json but what we should write for runId metadata.json same data\
+            # TODO: We are writing app metadata to load id metadata.json but what we should write for runId metadata.json same data\
             # or appending the existing values
             # Write file to metadata location
             if self.run_id:
@@ -166,7 +172,9 @@ class AppDiscover:
                     f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.run_id}"
                     f"/{CacheDir.METADATA_FILE_PATH.value}"
                 )
-                self._write_file_content_to_path(ai_apps.dict(), run_dir_file_path) # content should be change
+                self._write_file_content_to_path(
+                    ai_apps.dict(), run_dir_file_path
+                )  # content should be change
 
             logger.debug("AiApp discovery request completed successfully")
             return {"message": "App Discover Request Processed Successfully"}

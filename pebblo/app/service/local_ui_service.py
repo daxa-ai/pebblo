@@ -66,6 +66,9 @@ class AppData:
                         )
                         continue
 
+                    # Get load_ids from run_id
+
+                    # If not run_id then use load_id
                     load_ids = app_json.get("load_ids", [])
 
                     if not load_ids:

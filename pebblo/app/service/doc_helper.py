@@ -222,12 +222,12 @@ class LoaderHelper:
                         "findings_topics": value["findings_topics"],
                         "findings": value["findings"],
                     }
-                    for key, value in loader_source_snippets.items() if value["loader_name"] == loader_name
+                    for key, value in loader_source_snippets.items()
+                    if value["loader_name"] == loader_name
                 ]
                 logger.error(f"NewLoaderDetails: {new_source_files}")
                 loader["sourceFiles"] = new_source_files
         self.app_details["report_metadata"] = raw_data
-
 
     def _get_finding_details(self, doc, data_source_findings, entity_type, raw_data):
         """
@@ -265,9 +265,9 @@ class LoaderHelper:
                     )
                 unique_snippets_set.add(source_path)
                 data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
-                data_source_findings[label_name][
-                    "unique_snippets"
-                ] = unique_snippets_set
+                data_source_findings[label_name]["unique_snippets"] = (
+                    unique_snippets_set
+                )
 
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list
