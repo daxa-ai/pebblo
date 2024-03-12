@@ -59,9 +59,17 @@ class ReportsConfig(ConfigValidator):
             self.errors.append(
                 f"Error: Unsupported renderer '{renderer}' specified in the configuration"
             )
-        if not os.path.exists(get_full_path(output_dir)):
+        # Check if the output directory exists, create if it doesn't
+        if not os.path.exists(get_full_path(str(output_dir))):
+            os.makedirs(get_full_path(str(output_dir)), exist_ok=True)
+
+
+class ClassifierConfig(ConfigValidator):
+    def validate(self):
+        anonymize_all_entities = self.config.get("anonymizeAllEntities")
+        if not isinstance(anonymize_all_entities, bool):
             self.errors.append(
-                f"Error: Output directory '{output_dir}' specified for the reports does not exist"
+                f"Error: Invalid anonymizeAllEntities '{anonymize_all_entities}'. AnonymizeAllEntities must be a boolean."
             )
 
 
@@ -70,6 +78,7 @@ def validate_config(config_dict):
         "daemon": DaemonConfig,
         "logging": LoggingConfig,
         "reports": ReportsConfig,
+        "classifier": ClassifierConfig,
     }
 
     validation_errors = []

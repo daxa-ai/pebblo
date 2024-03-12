@@ -19,7 +19,7 @@ class PortConfig(BaseSettings):
 class ReportConfig(BaseSettings):
     format: str = Field(default="pdf")
     renderer: str = Field(default="xhtml2pdf")
-    outputDir: str = Field(dir_path)
+    outputDir: str = Field(default=str(dir_path))
 
 
 # Logging BaseModel
@@ -55,16 +55,19 @@ def load_config(path) -> dict:
             return conf_obj.dict()
 
         # If Path exist, set config value
-        con_file = path
         try:
-            with open(con_file, "r") as output:
-                cred_json = yaml.safe_load(output)
-                parsed_config = Config.parse_obj(cred_json)
+            with open(path, "r") as output:
+                cred_yaml = yaml.safe_load(output)
+                # Replace missing fields with default values
+                for key in conf_obj.dict().keys():
+                    if key not in cred_yaml:
+                        cred_yaml[key] = conf_obj.dict()[key]
+                parsed_config = Config.parse_obj(cred_yaml)
                 config_dict = parsed_config.dict()
                 validate_config(config_dict)
                 return config_dict
         except IOError as err:
-            print(f"no credentials file found at {con_file}. Error : {err}")
+            print(f"no config file found at {path}. Error : {err}")
             return conf_obj.dict()
 
     except Exception as err:

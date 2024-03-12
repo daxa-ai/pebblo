@@ -7,6 +7,7 @@ from pebblo.app.config.config_validation import (
     DaemonConfig,
     LoggingConfig,
     ReportsConfig,
+    ClassifierConfig,
     validate_config,
 )
 
@@ -105,16 +106,34 @@ def test_reports_config_validate(setup_and_teardown):
         "Error: Unsupported renderer 'invalid_renderer' specified in the configuration"
     ]
 
-    # Test with non-existent output directory
-    config = {
-        "format": "pdf",
-        "renderer": "xhtml2pdf",
-        "outputDir": "/non/existent/directory",
-    }
-    validator = ReportsConfig(config)
+
+def test_classifier_config_validate():
+    # Test with True value
+    config = {"anonymizeAllEntities": True}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == []
+
+    # Test with False value
+    config = {"anonymizeAllEntities": False}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == []
+
+    # Test with invalid int
+    config = {"anonymizeAllEntities": 70000}
+    validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == [
-        "Error: Output directory '/non/existent/directory' specified for the reports does not exist"
+        "Error: Invalid anonymizeAllEntities '70000'. AnonymizeAllEntities must be a boolean."
+    ]
+
+    # Test with invalid str
+    config = {"anonymizeAllEntities": "abc"}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == [
+        "Error: Invalid anonymizeAllEntities 'abc'. AnonymizeAllEntities must be a boolean."
     ]
 
 
@@ -128,6 +147,9 @@ def test_validate_config(setup_and_teardown):
             "renderer": "xhtml2pdf",
             "outputDir": "~/.pebblo_test_",
         },
+        "classifier": {
+            "anonymizeAllEntities": True,
+        },
     }
     validate_config(config)
     # If the configuration is valid, validate_config should not raise any exceptions
@@ -140,6 +162,9 @@ def test_validate_config(setup_and_teardown):
             "format": "doc",
             "renderer": "xhtml2pdf",
             "outputDir": "~/.pebblo_test_",
+        },
+        "classifier": {
+            "anonymizeAllEntities": "abc",
         },
     }
     with pytest.raises(SystemExit):
