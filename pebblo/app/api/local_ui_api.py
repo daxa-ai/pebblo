@@ -71,4 +71,3 @@ class App:
                 "proxy": CacheDir.PROXY.value,
             },
         )
-
