@@ -20,7 +20,7 @@ export const NO_FINDINGS_FOR_APP =
 
 export const EMPTY_STATES = {
   ENABLE_PEBBLO_EMPTY_STATE: {
-    image: `${MEDIA_URL}/static/pebblo-image.png`,
+    image: `${MEDIA_URL}/pebblo-image.png`,
     heading: "Enable Pebblo to unlock insights in your Gen-AI apps",
     subHeading:
       "Check out our installation guide or watch the video tutorial to enable Pebblo",
@@ -33,7 +33,7 @@ export const EMPTY_STATES = {
     ],
   },
   NO_FINDINGS_EMPTY_STATE: {
-    image: `${MEDIA_URL}/static/no-findings.png`,
+    image: `${MEDIA_URL}/no-findings.png`,
     heading: "",
     subHeading:
       "We scanned all your documents and didn’t discover any documents with findings",
