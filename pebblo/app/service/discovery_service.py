@@ -14,7 +14,7 @@ from pebblo.app.utils.utils import (
     acquire_lock,
     read_json_file,
     release_lock,
-    write_json_to_file
+    write_json_to_file,
 )
 
 
@@ -79,8 +79,6 @@ class AppDiscover:
         """
         Write content to the specified file path
         """
-        # logger.debug(f"Writing content to file path: {file_content}")
-        # Writing file content to given file path
         write_json_to_file(file_content, file_path)
 
     @staticmethod
@@ -88,7 +86,6 @@ class AppDiscover:
         """
         Retrieve the content of the specified file.
         """
-        # logger.debug(f"Reading content from file: {file_path}")
         file_content = read_json_file(file_path)
         return file_content
 

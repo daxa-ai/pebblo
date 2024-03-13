@@ -77,7 +77,7 @@ class AppLoaderDoc:
         """
         logger.debug("Upsert loader details to exiting ai app details")
         # Update loader details if it already exits in app
-        loader_details = self.data.get("loader_details", {})  # input
+        loader_details = self.data.get("loader_details", {})
         loader_name = loader_details.get("loader", None)
         source_type = loader_details.get("source_type", None)
         source_path = loader_details.get("source_path", None)
@@ -116,9 +116,6 @@ class AppLoaderDoc:
                 )
                 loader_list.append(new_loader_data.dict())
                 app_details["loaders"] = loader_list
-                # logger.error(
-                #     f"LoaderAfterUpsertLoaderDetails: {app_details['loaders']}"
-                # )
 
     def _execute_app(self, metadata_file_path, load_id, run_id=None):
         """ """
@@ -143,8 +140,6 @@ class AppLoaderDoc:
             final_report,
         ) = loader_helper_obj.process_docs_and_generate_report()
 
-        # logger.debug(f"Final Report with doc details: {final_report}")
-
         if run_id:
             # Explicitly Write file to load level
             app_load_metadata_file_path = (
@@ -159,9 +154,6 @@ class AppLoaderDoc:
         write_json_to_file(app_details, metadata_file_path)
 
         return app_details, final_report
-
-    def _generate_run_level_report(self, app_details, final_report):
-        pass
 
     def process_request(self):
         """
@@ -185,7 +177,7 @@ class AppLoaderDoc:
                     f"{CacheDir.METADATA_FILE_PATH.value}"
                 )
                 app_metadata = read_json_file(app_metadata_file_path)
-                # logger.debug(f"AppMetadata: {app_metadata}")
+
                 if not app_metadata:
                     return {
                         "Message": "App details not present, Please execute discovery api first"
@@ -210,8 +202,6 @@ class AppLoaderDoc:
                         f"{CacheDir.HOME_DIR.value}/{self.app_name}"
                         f"/{run_id}/{CacheDir.METADATA_FILE_PATH.value}"
                     )
-
-                    # logger.debug(f"AppMetadataLockFile: {app_run_metadata_lock_file_path}")
 
                     app_details, final_report = self._execute_app(
                         app_run_metadata_file_path, load_id, run_id
@@ -242,8 +232,6 @@ class AppLoaderDoc:
                     f"/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
                 )
                 write_json_to_file(final_report, json_report_file_path)
-
-                # self._generate_run_level_report(app_details, final_report)
 
                 # Writing report in pdf format
                 self._write_pdf_report(final_report)

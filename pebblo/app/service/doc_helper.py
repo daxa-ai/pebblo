@@ -52,9 +52,16 @@ class LoaderHelper:
                 logger.error(f"LoaderName: {loader_name}")
                 logger.error(f"AppLoaderDetails #1: {self.app_details.get('loaders')}")
                 for loader in self.app_details.get("loaders", []):
-                    if loader["name"] == loader_name and "data_source_findings" in loader.keys():
-                        raw_data["data_source_findings"] = loader["data_source_findings"]
-                        raw_data["total_snippet_counter"] = loader["total_snippet_counter"]
+                    if (
+                        loader["name"] == loader_name
+                        and "data_source_findings" in loader.keys()
+                    ):
+                        raw_data["data_source_findings"] = loader[
+                            "data_source_findings"
+                        ]
+                        raw_data["total_snippet_counter"] = loader[
+                            "total_snippet_counter"
+                        ]
                         raw_data["snippet_counter"] = loader["snippet_counter"]
                     else:
                         raw_data["data_source_findings"] = {}
@@ -597,7 +604,7 @@ class LoaderHelper:
                 doc_obj = self._create_doc_model(doc, doc_info)
                 ai_app_docs.append(doc_obj)
                 raw_data = self._get_doc_report_metadata(doc_obj, raw_data)
-        # logger.debug(f"ai_app_docs: {ai_app_docs}")
+
         # Updating ai apps details
         self._update_app_details(raw_data, ai_app_docs)
 
