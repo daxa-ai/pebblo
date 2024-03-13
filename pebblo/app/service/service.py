@@ -121,8 +121,6 @@ class AppLoaderDoc:
         """ """
         app_details = read_json_file(metadata_file_path)
         if not app_details:
-            # TODO: Handle the case where discover call did not happen,
-            #  but loader doc is being called.
             logger.error(
                 f"Could not read metadata file at {metadata_file_path}. Exiting."
             )
@@ -150,7 +148,6 @@ class AppLoaderDoc:
             write_json_to_file(app_details, app_load_metadata_file_path)
 
         # Writing file at run level or load level whatever is given
-        logger.debug(f"App Details : {app_details}")
         write_json_to_file(app_details, metadata_file_path)
 
         return app_details, final_report
@@ -209,6 +206,8 @@ class AppLoaderDoc:
                 finally:
                     # Releasing lock
                     release_lock(app_run_metadata_lock_file_path)
+
+            # Backward compatibility of multiple data source support
             else:
                 # Get current app details from load id
                 logger.debug("LoadIds")
@@ -221,7 +220,7 @@ class AppLoaderDoc:
                     app_load_metadata_file_path, load_id
                 )
 
-            # check whether report generation is necessary
+            # Check whether report generation is necessary
             loading_end = self.data["loading_end"]
             if loading_end:
                 logger.debug("Loading finished, generating report")
