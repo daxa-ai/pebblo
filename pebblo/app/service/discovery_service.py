@@ -188,7 +188,6 @@ class AppDiscover:
                         f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.run_id}"
                         f"/{CacheDir.METADATA_FILE_PATH.value}"
                     )
-                    # breakpoint()
                     existing_ai_app_details = read_json_file(run_dir_file_path)
                     if not existing_ai_app_details:
                         self._write_file_content_to_path(

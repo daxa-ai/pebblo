@@ -180,7 +180,6 @@ class AppLoaderDoc:
             try:
                 # Read metadata file & get current load details
                 acquire_lock(app_metadata_lock_file_path)
-                # breakpoint()
                 app_metadata_file_path = (
                     f"{CacheDir.HOME_DIR.value}/{self.app_name}/"
                     f"{CacheDir.METADATA_FILE_PATH.value}"
