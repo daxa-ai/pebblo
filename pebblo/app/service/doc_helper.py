@@ -180,7 +180,7 @@ class LoaderHelper:
                     anonymized_doc,
                 ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
                     doc_info.data,
-                    anonymize_all_entities=ClassifierConstants.anonymize_all_entities.value,
+                    anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
                 )
                 doc_info.topics = topics
                 doc_info.entities = entities
@@ -254,9 +254,9 @@ class LoaderHelper:
                     )
                 unique_snippets_set.add(source_path)
                 data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
-                data_source_findings[label_name]["unique_snippets"] = (
-                    unique_snippets_set
-                )
+                data_source_findings[label_name][
+                    "unique_snippets"
+                ] = unique_snippets_set
 
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list

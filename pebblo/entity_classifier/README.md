@@ -24,7 +24,7 @@ from pebblo.entity_classifier.entity_classifier import EntityClassifier
 
 text = <Input Data>
 entity_classifier_obj = EntityClassifier()
-entities, total_count, anonymized_text = entity_classifier_obj.presidio_entity_classifier_and_anonymizer(text,anonymize_all_entities)
+entities, total_count, anonymized_text = entity_classifier_obj.presidio_entity_classifier_and_anonymizer(text,anonymize_snippets)
 print(f"Entity Group: {entity_groups}")
 print(f"Entity Count: {total_entity_count}")
 print(f"Anonymized Text: {anonymized_text}")

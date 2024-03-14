@@ -27,7 +27,7 @@ Notes:
 
 ### Classifier
 
-- `anonymizeAllEntities`: Condition to anonymize all entities in document.
+- `anonymizeSnippets`: Condition to anonymize all entities in document.
 
 ### Default Configuration
 
@@ -42,7 +42,7 @@ reports:
   renderer: xhtml2pdf
   outputDir: ~/.pebblo
 classifier:
-  anonymizeAllEntities: true
+  anonymizeSnippets: false
 ```
 
 `Note`:

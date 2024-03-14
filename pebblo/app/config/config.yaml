@@ -8,4 +8,4 @@ reports:
   renderer: xhtml2pdf
   outputDir: ~/.pebblo
 classifier:
-  anonymizeAllEntities: True
+  anonymizeSnippets: False
