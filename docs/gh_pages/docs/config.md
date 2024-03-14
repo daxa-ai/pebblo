@@ -27,7 +27,7 @@ Notes:
 
 ### Classifier
 
-- `anonymizeSnippets`: Flag to anonymize snippet in report.
+- `anonymizeSnippets`: Flag to anonymize snippets in report. Possible values are 'True' and 'False'. When its value is 'True', snippets in reports will be shown as anonymized and vice versa.
 
 ### Default Configuration
 
@@ -43,7 +43,7 @@ reports:
   renderer: xhtml2pdf
   outputDir: ~/.pebblo
 classifier:
-  anonymizeSnippets: false
+  anonymizeSnippets: False
 ```
 
 `Note`:

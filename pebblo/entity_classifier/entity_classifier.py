@@ -67,7 +67,7 @@ class EntityClassifier:
         """
         Perform classification on the input data and return a dictionary with the count of each entity group.
         And also returns plain input text as anonymized text output
-        :param anonymize_snippets: conditional param to check whether we need to anonymize all entities
+        :param anonymize_snippets: Flag whether to anonymize snippets in report.
         :param input_text: Input string / document snippet
         :return: entities: containing the entity group Name as key and its count as value.
                  total_count: Total count of entity groupsInput text in anonymized form.
@@ -106,10 +106,10 @@ class EntityClassifier:
             logger.debug("Presidio Entity Classifier and Anonymizer Finished")
             logger.debug(f"Entities: {entities}")
             logger.debug(f"Entity Total count: {total_count}")
-            logger.debug(f"Anonymized Text: {input_text}")
+            logger.debug(f"Output Text: {input_text}")
             return entities, total_count, input_text
         except Exception as e:
             logger.error(
                 f"Presidio Entity Classifier and Anonymizer Failed, Exception: {e}"
             )
-            return entities, total_count, anonymized_text
+            return entities, total_count, input_text

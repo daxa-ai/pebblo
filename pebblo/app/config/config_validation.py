@@ -69,7 +69,7 @@ class ClassifierConfig(ConfigValidator):
         anonymize_snippets = self.config.get("anonymizeSnippets")
         if not isinstance(anonymize_snippets, bool):
             self.errors.append(
-                f"Error: Invalid anonymizeSnippets '{anonymize_snippets}'. AnonymizeAllEntities must be a boolean."
+                f"Error: Invalid anonymizeSnippets '{anonymize_snippets}'. anonymizeSnippets must be a boolean."
             )
 
 
