@@ -125,7 +125,7 @@ def test_classifier_config_validate():
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == [
-        "Error: Invalid anonymizeSnippets '70000'. AnonymizeAllEntities must be a boolean."
+        "Error: Invalid anonymizeSnippets '70000'. anonymizeSnippets must be a boolean."
     ]
 
     # Test with invalid str
@@ -133,7 +133,7 @@ def test_classifier_config_validate():
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == [
-        "Error: Invalid anonymizeSnippets 'abc'. AnonymizeAllEntities must be a boolean."
+        "Error: Invalid anonymizeSnippets 'abc'. anonymizeSnippets must be a boolean."
     ]
 
 
