@@ -455,11 +455,6 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
       : APP_DATA?.dataSources
       ? APP_DATA?.dataSources[0]?.displayedSnippetCount
       : 0,
-    outOf: NO_FINDINGS_FOR_APP
-      ? ""
-      : APP_DATA?.dataSources
-      ? APP_DATA?.dataSources[0]?.totalSnippetCount
-      : 0,
     value: 3,
     isCritical: IS_CRITICAL_COUNT,
   },
