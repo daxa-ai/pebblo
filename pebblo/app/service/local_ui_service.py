@@ -416,44 +416,53 @@ class AppData:
         except Exception as ex:
             logger.error(f"Error in app detail. Error: {ex}")
 
-    @staticmethod
-    def get_latest_load_id(app_json, app_dir):
+    def get_latest_load_id(self, app_json, app_dir):
         """
         Returns app latestLoadId for an app.
         """
-        app_path = (
-            f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
-        )
-        load_ids = []
-
         # Get load_ids from run_id
         run_ids = app_json.get("run_ids", [])
         if run_ids:
-            for run_id, load_ids in run_ids.items():
+            for run_id, load_ids in reversed(run_ids.items()):
                 load_ids = app_json["run_ids"][run_id]
-            logger.debug(f"Load ID : {load_ids}")
+                latest_load_id, app_detail_json = self._fetch_valid_load_id(app_dir, load_ids, run_id)
+                if latest_load_id is None:
+                    continue
+                return latest_load_id, app_detail_json
 
         # If not run_id then use load_id. Backward compatibility of multiple data source support.
         else:
             load_ids = app_json.get("load_ids", [])
+            latest_load_id, app_detail_json = self._fetch_valid_load_id(app_dir, load_ids)
+            return latest_load_id, app_detail_json
 
-        if not load_ids:
-            # Unable to fetch loadId details
-            logger.debug(f"Error: Details not found for app {app_path}")
-            logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
+
+    @staticmethod
+    def _fetch_valid_load_id(app_dir, load_ids, run_id=None):
+        try:
+            logger.debug(f"Run ID: {run_id}, Load ID's : {load_ids}")
+
+            if not load_ids:
+                app_path = (
+                    f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
+                )
+                # Unable to fetch loadId details
+                logger.debug(f"Error: Details not found for app {app_path}")
+                logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
+                return None, None
+
+            for load_id in reversed(load_ids):
+                app_detail_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
+                logger.debug(f"Report File path: {app_detail_path}")
+                app_detail_json = read_json_file(app_detail_path)
+                if app_detail_json:
+                    # If report is found, proceed with this load_id
+                    latest_load_id = load_id
+                    return latest_load_id, app_detail_json
             return None, None
-
-        for load_id in reversed(load_ids):
-            # Path to report.json
-            app_detail_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
-            logger.debug(f"Report File path: {app_detail_path}")
-            app_detail_json = read_json_file(app_detail_path)
-            if app_detail_json:
-                # If report is found, proceed with this load_id
-                latest_load_id = load_id
-                return latest_load_id, app_detail_json
-
-        return None, None
+        except Exception as err:
+            logger.error(f"Unable to fetch valid load id: Error: {err}")
+            return None, None
 
     def get_retrieval_app_details(self, app_content):
         retrieval_data = app_content.get("retrievals", [])
