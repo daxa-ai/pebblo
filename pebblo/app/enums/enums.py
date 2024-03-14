@@ -38,6 +38,4 @@ class ReportConstants(Enum):
 
 
 class ClassifierConstants(Enum):
-    anonymize_all_entities = config_details.get("classifier", {}).get(
-        "anonymizeAllEntities"
-    )
+    anonymize_snippets = config_details.get("classifier", {}).get("anonymizeSnippets")

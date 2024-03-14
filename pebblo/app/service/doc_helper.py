@@ -180,7 +180,7 @@ class LoaderHelper:
                     anonymized_doc,
                 ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
                     doc_info.data,
-                    anonymize_all_entities=ClassifierConstants.anonymize_all_entities.value,
+                    anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
                 )
                 doc_info.topics = topics
                 doc_info.entities = entities

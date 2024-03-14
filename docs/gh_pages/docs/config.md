@@ -27,7 +27,7 @@ Notes:
 
 ### Classifier
 
-- `anonymizeAllEntities`: Condition to anonymize all entities in document.
+- `anonymizeSnippets`: Flag to anonymize snippets in report. Possible values are 'True' and 'False'. When its value is 'True', snippets in reports will be shown as anonymized and vice versa.
 
 ### Default Configuration
 
@@ -36,13 +36,14 @@ daemon:
   port: 8000
   host: localhost
 logging:
+
   level: info
 reports:
   format: pdf
   renderer: xhtml2pdf
   outputDir: ~/.pebblo
 classifier:
-  anonymizeAllEntities: true
+  anonymizeSnippets: False
 ```
 
 `Note`:

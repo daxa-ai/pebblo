@@ -66,10 +66,10 @@ class ReportsConfig(ConfigValidator):
 
 class ClassifierConfig(ConfigValidator):
     def validate(self):
-        anonymize_all_entities = self.config.get("anonymizeAllEntities")
-        if not isinstance(anonymize_all_entities, bool):
+        anonymize_snippets = self.config.get("anonymizeSnippets")
+        if not isinstance(anonymize_snippets, bool):
             self.errors.append(
-                f"Error: Invalid anonymizeAllEntities '{anonymize_all_entities}'. AnonymizeAllEntities must be a boolean."
+                f"Error: Invalid anonymizeSnippets '{anonymize_snippets}'. anonymizeSnippets must be a boolean."
             )
 
 

@@ -58,15 +58,16 @@ class EntityClassifier:
         anonymized_text = self.anonymizer.anonymize(
             text=input_text, analyzer_results=analyzer_results
         )
+
         return anonymized_text.items, anonymized_text.text
 
     def presidio_entity_classifier_and_anonymizer(
-        self, input_text, anonymize_all_entities=True
+        self, input_text, anonymize_snippets=False
     ):
         """
         Perform classification on the input data and return a dictionary with the count of each entity group.
         And also returns plain input text as anonymized text output
-        :param anonymize_all_entities: conditional param to check whether we need to anonymize all entities
+        :param anonymize_snippets: Flag whether to anonymize snippets in report.
         :param input_text: Input string / document snippet
         :return: entities: containing the entity group Name as key and its count as value.
                  total_count: Total count of entity groupsInput text in anonymized form.
@@ -91,21 +92,22 @@ class EntityClassifier:
             logger.debug(f"Data Input: {input_text}")
 
             self.custom_analyze()
-            analyzer_results = self.analyze_response(input_text, anonymize_all_entities)
+            analyzer_results = self.analyze_response(input_text)
             anonymized_response, anonymized_text = self.anonymize_response(
                 analyzer_results, input_text
             )
             logger.debug(f"Presidio Entity Classifier Response: {anonymized_response}")
             logger.debug(f"Presidio Anonymizer Response: {anonymized_text}")
-            anonymized_text = anonymized_text.replace("<", "&lt;").replace(">", "&gt;")
+            if anonymize_snippets:  # If Document snippet needs to be anonymized
+                input_text = anonymized_text.replace("<", "&lt;").replace(">", "&gt;")
             entities, total_count = get_entities(self.entities, anonymized_response)
             logger.debug("Presidio Entity Classifier and Anonymizer Finished")
             logger.debug(f"Entities: {entities}")
             logger.debug(f"Entity Total count: {total_count}")
-            logger.debug(f"Anonymized Text: {anonymized_text}")
-            return entities, total_count, anonymized_text
+            logger.debug(f"Output Text: {input_text}")
+            return entities, total_count, input_text
         except Exception as e:
             logger.error(
                 f"Presidio Entity Classifier and Anonymizer Failed, Exception: {e}"
             )
-            return entities, total_count, anonymized_text
+            return entities, total_count, input_text

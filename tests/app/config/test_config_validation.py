@@ -4,10 +4,10 @@ import shutil
 import pytest
 
 from pebblo.app.config.config_validation import (
+    ClassifierConfig,
     DaemonConfig,
     LoggingConfig,
     ReportsConfig,
-    ClassifierConfig,
     validate_config,
 )
 
@@ -109,31 +109,31 @@ def test_reports_config_validate(setup_and_teardown):
 
 def test_classifier_config_validate():
     # Test with True value
-    config = {"anonymizeAllEntities": True}
+    config = {"anonymizeSnippets": True}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == []
 
     # Test with False value
-    config = {"anonymizeAllEntities": False}
+    config = {"anonymizeSnippets": False}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == []
 
     # Test with invalid int
-    config = {"anonymizeAllEntities": 70000}
+    config = {"anonymizeSnippets": 70000}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == [
-        "Error: Invalid anonymizeAllEntities '70000'. AnonymizeAllEntities must be a boolean."
+        "Error: Invalid anonymizeSnippets '70000'. anonymizeSnippets must be a boolean."
     ]
 
     # Test with invalid str
-    config = {"anonymizeAllEntities": "abc"}
+    config = {"anonymizeSnippets": "abc"}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == [
-        "Error: Invalid anonymizeAllEntities 'abc'. AnonymizeAllEntities must be a boolean."
+        "Error: Invalid anonymizeSnippets 'abc'. anonymizeSnippets must be a boolean."
     ]
 
 
@@ -148,7 +148,7 @@ def test_validate_config(setup_and_teardown):
             "outputDir": "~/.pebblo_test_",
         },
         "classifier": {
-            "anonymizeAllEntities": True,
+            "anonymizeSnippets": True,
         },
     }
     validate_config(config)
@@ -164,7 +164,7 @@ def test_validate_config(setup_and_teardown):
             "outputDir": "~/.pebblo_test_",
         },
         "classifier": {
-            "anonymizeAllEntities": "abc",
+            "anonymizeSnippets": "abc",
         },
     }
     with pytest.raises(SystemExit):
