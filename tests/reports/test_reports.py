@@ -2,7 +2,6 @@ import pytest
 from pathlib import Path
 from pebblo.reports.enums.report_libraries import ReportLibraries
 from pebblo.reports.reports import Reports
-from pebblo.reports.html_to_pdf_generator.report_generator import convert_html_to_pdf
 
 @pytest.fixture
 def convert_html_to_pdf(mocker):
