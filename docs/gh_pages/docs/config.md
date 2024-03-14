@@ -27,7 +27,7 @@ Notes:
 
 ### Classifier
 
-- `anonymizeSnippets`: Condition to anonymize all entities in document.
+- `anonymizeSnippets`: Flag to anonymize snippet in report.
 
 ### Default Configuration
 
@@ -36,6 +36,7 @@ daemon:
   port: 8000
   host: localhost
 logging:
+
   level: info
 reports:
   format: pdf

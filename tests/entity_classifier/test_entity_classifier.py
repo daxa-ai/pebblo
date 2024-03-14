@@ -4,12 +4,8 @@ import pytest
 
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from tests.entity_classifier.mock_response import (
-    mock_input_text1_all_entity_false,
-    mock_input_text1_all_entity_true,
-    mock_input_text2_all_entity_false,
-    mock_input_text2_all_entity_true,
-    mock_negative_data_all_entity_false,
-    mock_negative_data_all_entity_true,
+    mock_input_text1_anonymize_snippet_true,
+    mock_input_text2_anonymize_snippet_true,
 )
 from tests.entity_classifier.test_data import input_text1, input_text2, negative_data
 
@@ -50,7 +46,7 @@ def mocked_entity_classifier_response(mocker):
             TestAnonymizerResult("US_ITIN"),
             TestAnonymizerResult("US_SSN"),
         ],
-        mock_input_text1_all_entity_false,
+        input_text1,
     )
 
     anonymize_response2 = (
@@ -60,7 +56,7 @@ def mocked_entity_classifier_response(mocker):
             TestAnonymizerResult("US_ITIN"),
             TestAnonymizerResult("US_SSN"),
         ],
-        mock_input_text1_all_entity_true,
+        mock_input_text1_anonymize_snippet_true,
     )
 
     anonymize_response3 = (
@@ -75,7 +71,7 @@ def mocked_entity_classifier_response(mocker):
             TestAnonymizerResult("CREDIT_CARD"),
             TestAnonymizerResult("US_SSN"),
         ],
-        mock_input_text2_all_entity_false,
+        input_text2,
     )
 
     anonymize_response4 = (
@@ -104,17 +100,17 @@ def mocked_entity_classifier_response(mocker):
             TestAnonymizerResult("DATE_TIME"),
             TestAnonymizerResult("PERSON"),
         ],
-        mock_input_text2_all_entity_true,
+        mock_input_text2_anonymize_snippet_true,
     )
 
     anonymize_negative_response1 = (
         [],
-        mock_negative_data_all_entity_true,
+        negative_data,
     )
 
     anonymize_negative_response2 = (
         [],
-        mock_negative_data_all_entity_false,
+        negative_data,
     )
 
     mocker.patch(
@@ -163,14 +159,14 @@ def test_presidio_entity_classifier_and_anonymizer(
         "US SSN": 1,
     }
     assert total_count == 4
-    assert anonymized_text == mock_input_text1_all_entity_false
+    assert anonymized_text == input_text1
 
     (
         entities,
         total_count,
         anonymized_text,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        input_text1, anonymize_snippets=False
+        input_text1, anonymize_snippets=True
     )
     assert entities == {
         "Github Token": 1,
@@ -179,7 +175,7 @@ def test_presidio_entity_classifier_and_anonymizer(
         "US SSN": 1,
     }
     assert total_count == 4
-    assert anonymized_text == mock_input_text1_all_entity_true
+    assert anonymized_text == mock_input_text1_anonymize_snippet_true
 
     (
         entities,
@@ -198,14 +194,14 @@ def test_presidio_entity_classifier_and_anonymizer(
     }
 
     assert total_count == 9
-    assert anonymized_text == mock_input_text2_all_entity_false
+    assert anonymized_text == input_text2
 
     (
         entities,
         total_count,
         anonymized_text,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        input_text1, anonymize_snippets=False
+        input_text1, anonymize_snippets=True
     )
     assert entities == {
         "Slack Token": 2,
@@ -218,7 +214,16 @@ def test_presidio_entity_classifier_and_anonymizer(
         "US SSN": 1,
     }
     assert total_count == 9
-    assert anonymized_text == mock_input_text2_all_entity_true
+    assert anonymized_text == mock_input_text2_anonymize_snippet_true
+
+    (
+        entities,
+        total_count,
+        anonymized_text,
+    ) = entity_classifier.presidio_entity_classifier_and_anonymizer(negative_data)
+    assert entities == {}
+    assert total_count == 0
+    assert anonymized_text == negative_data
 
     (
         entities,
@@ -229,15 +234,4 @@ def test_presidio_entity_classifier_and_anonymizer(
     )
     assert entities == {}
     assert total_count == 0
-    assert anonymized_text == mock_negative_data_all_entity_true
-
-    (
-        entities,
-        total_count,
-        anonymized_text,
-    ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        negative_data, anonymize_snippets=False
-    )
-    assert entities == {}
-    assert total_count == 0
-    assert anonymized_text == mock_negative_data_all_entity_false
+    assert anonymized_text == negative_data
