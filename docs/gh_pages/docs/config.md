@@ -23,6 +23,7 @@ Notes:
 
 - `format`: Specifies the format of generated reports. Available options include 'pdf'.
 - `renderer`: Specifies the rendering engine for generating reports. Options include 'weasyprint', 'xhtml2pdf'.
+Note: If you put renderer as `xhtml2pdf`, then you need to install Pango. Follow [these instructions](./installation.md#pre-requisites) for the same.
 - `outputDir`: Defines the directory where generated reports will be saved.
 
 ### Classifier
