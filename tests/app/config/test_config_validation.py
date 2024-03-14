@@ -4,10 +4,10 @@ import shutil
 import pytest
 
 from pebblo.app.config.config_validation import (
+    ClassifierConfig,
     DaemonConfig,
     LoggingConfig,
     ReportsConfig,
-    ClassifierConfig,
     validate_config,
 )
 
