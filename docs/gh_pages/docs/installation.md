@@ -5,7 +5,7 @@
 
 ### Pre-requisites
 Install the following prerequisites. This is needed for PDF report generation,
-if you have put weasyprint as renderer in the config.yaml
+if you have put `weasyprint` as renderer in the config.yaml
 
 #### Mac OSX
 
