@@ -3,12 +3,13 @@ Report generator and supporting functions
 """
 
 import datetime
+import time
 from decimal import Decimal
 
 import jinja2
 
 from pebblo.reports.enums.report_libraries import library_function_mapping
-import time
+from pebblo.reports.libs.logger import logger
 
 
 def date_formatter(date_obj):
@@ -36,7 +37,9 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         template_env = jinja2.Environment(loader=template_loader)
         template = template_env.get_template(template_name)
         current_date = (
-            datetime.datetime.now().strftime("%B %d, %Y") + " " + time.localtime().tm_zone
+            datetime.datetime.now().strftime("%B %d, %Y")
+            + " "
+            + time.localtime().tm_zone
         )
         source_html = template.render(
             data=data,
@@ -51,5 +54,5 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         status, result = pdf_converter(source_html, output_path, search_path)
         return status, result
     except Exception as e:
-        print(e)
-        return False
+        logger.error(e)
+        return False, ""

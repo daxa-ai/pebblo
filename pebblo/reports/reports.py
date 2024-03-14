@@ -50,7 +50,7 @@ class Reports:
                     ReportLibraries.XHTML2PDF,
                     e,
                 )
-                return False
+                return False, ""
         else:
             logger.error("Output file format %s not supported", format)
-            return False
+            return False, ""
