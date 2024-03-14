@@ -152,7 +152,7 @@ def test_loader_doc_success(
 
     reports_instance = reports.return_value
     reports_instance.generate_report = Mock()
-    reports_instance.generate_report.return_value = None
+    reports_instance.generate_report.return_value = None, None
 
     loader_doc = {
         "name": "Test App",
