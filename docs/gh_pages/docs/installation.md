@@ -19,6 +19,11 @@ brew install pango
 sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
 ```
 
+### Install weasyprint library
+```sh
+pip install weasyprint
+```
+
 ### Pebblo Server
 
 ```

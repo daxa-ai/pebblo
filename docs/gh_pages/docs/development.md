@@ -25,6 +25,11 @@ brew install pango
 sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
 ```
 
+### Install weasyprint library
+```sh
+pip install weasyprint
+```
+
 ## Build, Install and Run
 
 Fork and clone the pebblo repo. From within the pebblo directory, create a python virtual-env, build pebblo package (in `wheel` format), install and run.
