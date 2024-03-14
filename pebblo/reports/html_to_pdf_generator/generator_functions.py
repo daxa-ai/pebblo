@@ -10,18 +10,20 @@ def weasyprint_pdf_converter(source_html, output_path, search_path):
     """PDF generator function for weasyprint renderer"""
     try:
         from weasyprint import CSS, HTML
+
+        base_url = os.path.dirname(os.path.realpath(__file__))
+        html_doc = HTML(string=source_html, base_url=base_url)
+        result = html_doc.write_pdf(
+            target=output_path, stylesheets=[CSS(search_path + "/index.css")]
+        )
+        return True, result
     except ImportError:
         error = """Could not import weasyprint package. Please install weasyprint and Pango to generate report using weasyprint.
           Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"
         """
         return False, error
-
-    base_url = os.path.dirname(os.path.realpath(__file__))
-    html_doc = HTML(string=source_html, base_url=base_url)
-    result = html_doc.write_pdf(
-        target=output_path, stylesheets=[CSS(search_path + "/index.css")]
-    )
-    return True, result
+    except Exception as e:
+        return False, e
 
 
 # Creates PDF from template using xhtml2pdf
