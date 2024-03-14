@@ -9,7 +9,9 @@ The following instructions are **tested on Mac OSX and Linux (Debian).**
 
 ### Prerequisites
 
-Install the following prerequisites. This is needed for PDF report generation.
+Install the following prerequisites. This is needed for PDF report generation,
+
+if you have put `weasyprint` as renderer in the config.yaml
 
 #### Mac OSX
 
@@ -21,6 +23,11 @@ brew install pango
 
 ```sh
 sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
+```
+
+### Install weasyprint library
+```sh
+pip install weasyprint
 ```
 
 ## Build, Install and Run

@@ -40,7 +40,7 @@ class AppLoaderDoc:
             f"/{load_id}/{CacheDir.REPORT_FILE_NAME.value}"
         )
         full_file_path = get_full_path(current_load_report_file_path)
-        report_obj.generate_report(
+        _, _ = report_obj.generate_report(
             data=final_report,
             output_path=full_file_path,
             format_string=report_format,
@@ -53,13 +53,16 @@ class AppLoaderDoc:
             f"/{CacheDir.REPORT_FILE_NAME.value}"
         )
         full_file_path = get_full_path(current_app_report_file_path)
-        report_obj.generate_report(
+        status, result = report_obj.generate_report(
             data=final_report,
             output_path=full_file_path,
             format_string=report_format,
             renderer=renderer,
         )
-        logger.info(f"PDF report generated, please check path : {full_file_path}")
+        if not status:
+            logger.error(f"PDF report is not generated. {result}")
+        else:
+            logger.info(f"PDF report generated, please check path : {full_file_path}")
 
     def _upsert_loader_details(self, app_details):
         """

@@ -32,13 +32,15 @@ class Reports:
             search_path = os.path.join(os.path.dirname(__file__), "templates/")
             try:
                 template_name = template_renderer_mapping[renderer]
-                convert_html_to_pdf(
+                status, result = convert_html_to_pdf(
                     data,
                     output_path,
                     template_name=template_name,
                     search_path=search_path,
                     renderer=renderer,
                 )
+                return status, result
+
             except KeyError as e:
                 logger.error(
                     "Renderer %s not supported. Please use supported renderers: "
@@ -48,5 +50,7 @@ class Reports:
                     ReportLibraries.XHTML2PDF,
                     e,
                 )
+                return False, ""
         else:
             logger.error("Output file format %s not supported", format)
+            return False, ""

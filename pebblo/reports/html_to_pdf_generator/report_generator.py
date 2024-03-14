@@ -3,12 +3,13 @@ Report generator and supporting functions
 """
 
 import datetime
+import time
 from decimal import Decimal
 
 import jinja2
 
 from pebblo.reports.enums.report_libraries import library_function_mapping
-import time
+from pebblo.reports.libs.logger import logger
 
 
 def date_formatter(date_obj):
@@ -30,21 +31,28 @@ def get_file_size(size):
 
 
 def convert_html_to_pdf(data, output_path, template_name, search_path, renderer):
-    """Convert HTML Template to PDF by embedding JSON data"""
-    template_loader = jinja2.FileSystemLoader(searchpath=search_path)
-    template_env = jinja2.Environment(loader=template_loader)
-    template = template_env.get_template(template_name)
-    current_date = (
-        datetime.datetime.now().strftime("%B %d, %Y") + " " + time.localtime().tm_zone
-    )
-    source_html = template.render(
-        data=data,
-        date=current_date,
-        datastores=data["dataSources"][0],
-        findingDetails=data["dataSources"][0]["findingsDetails"],
-        loadHistoryItemsToDisplay=data["loadHistory"]["history"],
-        dateFormatter=date_formatter,
-        getFileSize=get_file_size,
-    )
-    pdf_converter = library_function_mapping[renderer]
-    pdf_converter(source_html, output_path, search_path)
+    try:
+        """Convert HTML Template to PDF by embedding JSON data"""
+        template_loader = jinja2.FileSystemLoader(searchpath=search_path)
+        template_env = jinja2.Environment(loader=template_loader)
+        template = template_env.get_template(template_name)
+        current_date = (
+            datetime.datetime.now().strftime("%B %d, %Y")
+            + " "
+            + time.localtime().tm_zone
+        )
+        source_html = template.render(
+            data=data,
+            date=current_date,
+            datastores=data["dataSources"][0],
+            findingDetails=data["dataSources"][0]["findingsDetails"],
+            loadHistoryItemsToDisplay=data["loadHistory"]["history"],
+            dateFormatter=date_formatter,
+            getFileSize=get_file_size,
+        )
+        pdf_converter = library_function_mapping[renderer]
+        status, result = pdf_converter(source_html, output_path, search_path)
+        return status, result
+    except Exception as e:
+        logger.error(e)
+        return False, ""

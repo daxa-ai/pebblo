@@ -4,6 +4,8 @@
 > Please note that Pebblo requires Python version 3.9 or above to function optimally.
 
 ### Pre-requisites
+Install the following prerequisites. This is needed for PDF report generation,
+if you have put `weasyprint` as renderer in the config.yaml
 
 #### Mac OSX
 
@@ -15,6 +17,11 @@ brew install pango
 
 ```
 sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
+```
+
+### Install weasyprint library
+```sh
+pip install weasyprint
 ```
 
 ### Pebblo Server

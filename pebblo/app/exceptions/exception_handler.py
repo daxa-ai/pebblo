@@ -1,6 +1,6 @@
+from fastapi import Request
 from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
-from fastapi import Request
 
 
 async def not_found_error(request: Request, exc: HTTPException):
