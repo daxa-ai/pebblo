@@ -1,5 +1,6 @@
 import datetime
 import unittest
+import time
 from unittest.mock import Mock, patch
 from pebblo.reports.html_to_pdf_generator.report_generator import date_formatter, get_file_size, convert_html_to_pdf
 
@@ -14,7 +15,7 @@ class TestReportGenerator(unittest.TestCase):
     def test_date_formatter(self):
         # Test if date formatter returns correct string
         output_str = date_formatter(self.date_obj)
-        assert output_str == "02 February 2024 , 16:25"
+        assert output_str == "02 February 2024 , 16:25" +  " " + time.localtime().tm_zone
 
     def test_file_size_conversion(self):
         # Test file size conversion

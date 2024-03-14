@@ -8,7 +8,7 @@ def convert_html_to_pdf(mocker):
     """
     Mock the convert_html_to_pdf function
     """
-    return mocker.patch("pebblo.reports.reports.convert_html_to_pdf")
+    return mocker.patch("pebblo.reports.reports.convert_html_to_pdf", return_value=[True, ""])
 
 def test_generate_report(convert_html_to_pdf):
     # Get the template path
