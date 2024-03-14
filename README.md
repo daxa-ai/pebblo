@@ -20,49 +20,36 @@
 
 Pebblo has two components.
 
-1. Pebblo Daemon - a REST api application with topic-classifier, entity-classifier and reporting features
+1. Pebblo Server - a REST api application with topic-classifier, entity-classifier and reporting features
 1. Pebblo Safe DataLoader - a thin wrapper to Gen-AI framework's data loaders
 
-## Pebblo Daemon
+## Pebblo Server
 
 ### Installation
 
-#### Pre-requisites
-
-##### Mac OSX
-
-```bash
-brew install pango
-```
-
-##### Linux (debian/ubuntu)
-
-```bash
-sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
-```
-
-#### Install Pebblo Daemon
 
 ```bash
 pip install pebblo
 ```
 
-#### Run Pebblo daemon
+### Run Pebblo Server
 
 ```bash
 pebblo
 ```
-see [troubleshooting](docs/gh_pages/docs/troubleshooting.md) guide for troubleshooting info.
 
-Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
+Pebblo Server now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
 
 #### Pebblo Optional Flags
 
-- `--config <file>`: Specifies a custom configuration file in yaml format.
+- `--config <file>`: specify a configuration file in yaml format.
 
-```bash
-pebblo --config config.yaml
-````
+
+See [configuration](docs/gh_pages/docs/config.md) guide for knobs to control Pebblo Server behavior like enabling snippet anonymization, selecting specific report renderer, etc.
+
+#### Troubleshooting
+
+Refer to [troubleshooting](docs/gh_pages/docs/troubleshooting.md) guide.
 
 ## Pebblo Safe DataLoader
 
