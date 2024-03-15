@@ -94,8 +94,12 @@ class AppLoaderDoc:
             loader_exist = False
             for loader in loader_list:
                 # If loader exist, update loader SourcePath and SourceType
-                if loader and loader.get("name", "") == loader_name and loader["sourcePath"] == source_path\
-                        and loader["sourceType"] == source_type:
+                if (
+                    loader
+                    and loader.get("name", "") == loader_name
+                    and loader["sourcePath"] == source_path
+                    and loader["sourceType"] == source_type
+                ):
                     loader["sourcePath"] = source_path
                     loader["sourceType"] = source_type
                     loader["sourceSize"] = source_size

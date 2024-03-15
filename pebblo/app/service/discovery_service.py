@@ -351,7 +351,9 @@ class AppDiscover:
                     existing_ai_app_details = self._read_file(run_dir_file_path)
                     # Check if file is not present, then write details, otherwise skip writing file again.
                     if not existing_ai_app_details:
-                        self._write_file_content_to_path(ai_apps.dict(), run_dir_file_path)
+                        self._write_file_content_to_path(
+                            ai_apps.dict(), run_dir_file_path
+                        )
                 finally:
                     release_lock(run_dir_lock_file_path)
 

@@ -426,7 +426,9 @@ class AppData:
         if run_ids:
             for run_id, load_ids in reversed(run_ids.items()):
                 load_ids = app_json["run_ids"][run_id]
-                latest_load_id, app_detail_json = self._fetch_valid_load_id(app_dir, load_ids, run_id)
+                latest_load_id, app_detail_json = self._fetch_valid_load_id(
+                    app_dir, load_ids, run_id
+                )
                 if latest_load_id is None:
                     continue
                 return latest_load_id, app_detail_json
@@ -434,7 +436,9 @@ class AppData:
         # If not run_id then use load_id. Backward compatibility of multiple data source support.
         else:
             load_ids = app_json.get("load_ids", [])
-            latest_load_id, app_detail_json = self._fetch_valid_load_id(app_dir, load_ids)
+            latest_load_id, app_detail_json = self._fetch_valid_load_id(
+                app_dir, load_ids
+            )
             return latest_load_id, app_detail_json
 
     @staticmethod
@@ -443,12 +447,12 @@ class AppData:
             logger.debug(f"Run ID: {run_id}, Load ID's : {load_ids}")
 
             if not load_ids:
-                app_path = (
-                    f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
-                )
+                app_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
                 # Unable to fetch loadId details
                 logger.debug(f"Error: Details not found for app {app_path}")
-                logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
+                logger.warning(
+                    f"Skipping app '{app_dir}' due to missing or invalid file"
+                )
                 return None, None
 
             for load_id in reversed(load_ids):

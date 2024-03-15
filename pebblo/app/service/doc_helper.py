@@ -4,8 +4,8 @@ Doc helper module for loader doc related task
 
 import ast
 import os.path
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
 from pebblo.app.libs.logger import logger
@@ -35,7 +35,9 @@ class LoaderHelper:
     Class for loader doc related task
     """
 
-    def __init__(self, app_details: dict, data: dict, load_id: uuid, run_id: uuid = None):
+    def __init__(
+        self, app_details: dict, data: dict, load_id: uuid, run_id: uuid = None
+    ):
         self.app_details = app_details
         self.data = data
         self.run_id = run_id
@@ -240,22 +242,37 @@ class LoaderHelper:
         # Updating app_details doc list and loader source files
         loader_details = self.app_details.get("loaders", {})
         for loader in loader_details:
-            if loader.get("name") == loader_name and loader.get("sourcePath") == source_path:
-                for source_file in loader.get("sourceFiles", []):
-                    name = source_file["name"]
-                    if name not in loader_source_snippets.keys():
-                        loader_source_snippets[name] = source_file
+            new_source_files = []
+            if (
+                    loader.get("name") == loader_name
+                    and loader.get("sourcePath") == source_path
+            ):
 
-                new_source_files = [
-                    {
-                        "name": key,
-                        "findings_entities": value["findings_entities"],
-                        "findings_topics": value["findings_topics"],
-                        "findings": value["findings"],
-                    }
-                    for key, value in loader_source_snippets.items()
-                    if value["loader_name"] == loader_name
-                ]
+                processed_files = []
+                # Update Existing Files
+                for source_file in loader.get("sourceFiles", []):
+                    file_name = source_file["name"]
+                    if file_name in loader_source_snippets.keys():
+                        source_file["findings_entities"] += loader_source_snippets[file_name].get("findings_entities",
+                                                                                                  0)
+                        source_file["findings_topics"] += loader_source_snippets[file_name].get("findings_topics ", 0)
+                        source_file["findings"] = source_file["findings_entities"] + source_file["findings_topics"]
+                        new_source_files.append(source_file)
+                    else:
+                        new_source_files.append(source_file)
+                    processed_files.append(file_name)
+
+                 # Check for files which is not present in loader.
+                for file_name in loader_source_snippets.keys():
+                    if file_name not in processed_files and loader_source_snippets[file_name]["loader_name"] == loader_name:
+                        if loader_name != "DirectoryLoader" and loader_source_snippets[file_name]["file_level_source_path"] != source_path:
+                            continue
+                        dict_file = {"name": file_name,
+                                     "findings_entities": loader_source_snippets[file_name]["findings_entities"],
+                                     "findings_topics": loader_source_snippets[file_name]["findings_topics"],
+                                     "findings": loader_source_snippets[file_name]["findings"]}
+                        new_source_files.append(dict_file)
+
                 loader["sourceFiles"] = new_source_files
                 loader["data_source_findings"] = raw_data["data_source_findings"]
                 loader["total_snippet_counter"] = raw_data["total_snippet_counter"]
@@ -436,7 +453,7 @@ class LoaderHelper:
 
         if current_run_id:
             # list of run_ids
-            load_ids = list(app_metadata.get('run_ids', {}).keys())
+            load_ids = list(app_metadata.get("run_ids", {}).keys())
         else:
             # list of load_ids, This is to support backward compatibility
             load_ids = app_metadata.get("load_ids", [])
@@ -460,8 +477,10 @@ class LoaderHelper:
                 run_loads_ids = app_metadata.get("run_ids").get(load_id)
                 # loop all loadId & fetch last generated load report.
                 for run_load_id in reversed(run_loads_ids):
-                    report, report_name = self._is_pdf_file_present(app_name, run_load_id)
-                    if not report: # if no valid file found in the load_ids, we will look for next load_id
+                    report, report_name = self._is_pdf_file_present(
+                        app_name, run_load_id
+                    )
+                    if not report:  # if no valid file found in the load_ids, we will look for next load_id
                         continue
                     break
                 # if no valid file found the run, we will look for next run_id
@@ -554,7 +573,7 @@ class LoaderHelper:
             total_findings += findings
             loader_source_snippets[source_path] = {
                 "loader_name": loader_name,
-                "source_path": loader_source_path,
+                "file_level_source_path": loader_source_path,
                 "findings_entities": doc["entityCount"],
                 "findings_topics": doc["topicCount"],
                 "findings": findings,

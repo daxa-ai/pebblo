@@ -127,7 +127,9 @@ def test_get_doc_report_metadata(loader_helper):
                 "findings_topics": 1,
                 "findings": 3,
                 "fileOwner": "fileOwner",
+                "loader_name": "CSVLoader",
                 "sourceSize": 1000,
+                "source_path": "/home/ubuntu/sens_data.csv",
             }
         },
         "file_count": 1,
@@ -279,6 +281,14 @@ def test_update_app_details(loader_helper):
     loader_helper.app_details["loaders"] = [
         {
             "name": "CSVLoader",
+            "sourceFiles": [
+                {
+                    "findings": 3,
+                    "findings_entities": 2,
+                    "findings_topics": 1,
+                    "name": "/home/ubuntu/sens_data.csv",
+                },
+            ],
             "sourcePath": "sourcePath",
             "sourceType": "sourceType",
             "sourceSize": 1000,
@@ -441,6 +451,9 @@ def test_get_datasource_details(loader_helper):
         {
             "name": "CSVloader",
             "sourcePath": "sourcePath",
+            "total_snippet_counter": 3,
+            "snippet_counter": 3,
+            "data_source_findings": input_data["data_source_findings"],
             "sourceType": "sourceType",
             "sourceSize": 1000,
         }
