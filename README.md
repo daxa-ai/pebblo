@@ -87,7 +87,7 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
     vectordb = Chroma.from_documents(documents, OpenAIEmbeddings())
 ```
 
-See [here](https://github.com/srics/pebblo/tree/main/samples) for samples with Pebblo enabled RAG applications and [this](https://daxa-ai.github.io/pebblo/rag) document for more details.
+See [here](https://github.com/srics/pebblo/tree/main/pebblo_safeloader) for samples with Pebblo enabled RAG applications and [this](https://daxa-ai.github.io/pebblo/rag) document for more details.
 
 # Contribution
 
