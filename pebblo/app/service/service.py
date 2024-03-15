@@ -94,7 +94,8 @@ class AppLoaderDoc:
             loader_exist = False
             for loader in loader_list:
                 # If loader exist, update loader SourcePath and SourceType
-                if loader and loader.get("name", "") == loader_name:
+                if loader and loader.get("name", "") == loader_name and loader["sourcePath"] == source_path\
+                        and loader["sourceType"] == source_type:
                     loader["sourcePath"] = source_path
                     loader["sourceType"] = source_type
                     loader["sourceSize"] = source_size
@@ -118,7 +119,7 @@ class AppLoaderDoc:
                 loader_list.append(new_loader_data.dict())
                 app_details["loaders"] = loader_list
 
-    def _execute_app(self, metadata_file_path, load_id, run_id=None):
+    def start_processing(self, metadata_file_path, load_id, run_id=None):
         """ """
         app_details = read_json_file(metadata_file_path)
         if not app_details:
@@ -201,7 +202,7 @@ class AppLoaderDoc:
                         f"/{run_id}/{CacheDir.METADATA_FILE_PATH.value}"
                     )
 
-                    app_details, final_report = self._execute_app(
+                    app_details, final_report = self.start_processing(
                         app_run_metadata_file_path, load_id, run_id
                     )
                 finally:
@@ -217,7 +218,7 @@ class AppLoaderDoc:
                     f"{CacheDir.HOME_DIR.value}/{self.app_name}"
                     f"/{load_id}/{CacheDir.METADATA_FILE_PATH.value}"
                 )
-                app_details, final_report = self._execute_app(
+                app_details, final_report = self.start_processing(
                     app_load_metadata_file_path, load_id
                 )
 

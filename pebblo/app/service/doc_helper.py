@@ -53,10 +53,13 @@ class LoaderHelper:
                 raw_data = self.app_details["report_metadata"]
                 loader_details = self.data.get("loader_details", {})
                 loader_name = loader_details.get("loader", None)
-
+                source_path = loader_details.get("sourcePath", None)
+                source_type = loader_details.get("sourceType", None)
                 for loader in self.app_details.get("loaders", []):
                     if (
                         loader["name"] == loader_name
+                        and loader["sourcePath"]  == source_path
+                        # can add condition on sourceType as well : loader["sourceType"] == source_type
                         and "data_source_findings" in loader.keys()
                     ):
                         raw_data["data_source_findings"] = loader[
@@ -231,13 +234,15 @@ class LoaderHelper:
         logger.debug("Updating app details")
         loader_details = self.data.get("loader_details", {})
         loader_name = loader_details.get("loader", None)
+        source_path = loader_details.get("source_path", None)
+        source_type = loader_details.get("source_type", None)
         self.app_details["docs"] = ai_app_docs
         loader_source_snippets = raw_data["loader_source_snippets"]
 
         # Updating app_details doc list and loader source files
         loader_details = self.app_details.get("loaders", {})
         for loader in loader_details:
-            if loader.get("name") == loader_name:
+            if loader.get("name") == loader_name and loader.get("sourcePath") == source_path:
                 for source_file in loader.get("sourceFiles", []):
                     name = source_file["name"]
                     if name not in loader_source_snippets.keys():
@@ -251,7 +256,7 @@ class LoaderHelper:
                         "findings": value["findings"],
                     }
                     for key, value in loader_source_snippets.items()
-                    if value["loader_name"] == loader_name
+                    if value["loader_name"] == loader_name and value["source_path"] == source_path
                 ]
                 loader["sourceFiles"] = new_source_files
                 loader["data_source_findings"] = raw_data["data_source_findings"]
@@ -517,9 +522,11 @@ class LoaderHelper:
         else:
             loader_details = self.data.get("loader_details", {})
             loader_name = loader_details.get("loader", None)
+            loader_source_path = loader_details.get("sourcePath", None)
             total_findings += findings
             loader_source_snippets[source_path] = {
                 "loader_name": loader_name,
+                "source_path": loader_source_path,
                 "findings_entities": doc["entityCount"],
                 "findings_topics": doc["topicCount"],
                 "findings": findings,
