@@ -8,7 +8,8 @@ on:
       - "docs/**/*.png"
       - "docs/**/*.jpg"
       - "docs/**/*.yml"
-      - "samples/**/*.md"
+      - "pebblo_safeloader/**/*.md"
+      - "pebblo_saferetriever/**/*.md"
       - "**/pyproject.toml"
 
 jobs:

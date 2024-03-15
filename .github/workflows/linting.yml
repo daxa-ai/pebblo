@@ -6,7 +6,7 @@ on:
     paths:
       - "pebblo/**/*.py"
       - "tests/**/*.py"
-      - "samples/**/*.py"
+      - "pebblo_safeloader/**/*.py"
 
 jobs:
 

@@ -163,7 +163,7 @@ package-data = {"pebblo" = ['reports/templates/*', 'reports/assets/*','app/pebbl
 include-package-data = false
 
 [tool.setuptools.packages.find]
-exclude=["tests*", "samples*"]
+exclude=["tests*", "pebblo_safeloader*", "pebblo_saferetriever*"]
 
 [build-system]
 # These are the assumed default build requirements from pip:
