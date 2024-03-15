@@ -2,7 +2,11 @@ import datetime
 import unittest
 import time
 from unittest.mock import Mock, patch
-from pebblo.reports.html_to_pdf_generator.report_generator import date_formatter, get_file_size, convert_html_to_pdf
+from pebblo.reports.html_to_pdf_generator.report_generator import (
+    date_formatter,
+    get_file_size,
+    convert_html_to_pdf,
+)
 
 
 class TestReportGenerator(unittest.TestCase):
@@ -15,13 +19,13 @@ class TestReportGenerator(unittest.TestCase):
     def test_date_formatter(self):
         # Test if date formatter returns correct string
         output_str = date_formatter(self.date_obj)
-        assert output_str == "02 February 2024 , 16:25" +  " " + time.localtime().tm_zone
+        assert output_str == "02 February 2024 , 16:25" + " " + time.localtime().tm_zone
 
     def test_file_size_conversion(self):
         # Test file size conversion
         output_size = get_file_size(self.file_size)
         assert output_size == "2.04 KB"
-    
+
     @patch("jinja2.Environment", return_value=Mock(get_template=Mock()))
     @patch("jinja2.FileSystemLoader")
     def test_convert_html_to_pdf(self, mock_filesystem_loader, mock_environment):
@@ -58,7 +62,6 @@ class TestReportGenerator(unittest.TestCase):
             output_path,
             search_path,
         )
-
 
 
 if __name__ == "__main__":

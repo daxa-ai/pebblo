@@ -3,12 +3,16 @@ from pathlib import Path
 from pebblo.reports.enums.report_libraries import ReportLibraries
 from pebblo.reports.reports import Reports
 
+
 @pytest.fixture
 def convert_html_to_pdf(mocker):
     """
     Mock the convert_html_to_pdf function
     """
-    return mocker.patch("pebblo.reports.reports.convert_html_to_pdf", return_value=[True, ""])
+    return mocker.patch(
+        "pebblo.reports.reports.convert_html_to_pdf", return_value=[True, ""]
+    )
+
 
 def test_generate_report(convert_html_to_pdf):
     # Get the template path
@@ -34,6 +38,7 @@ def test_generate_report(convert_html_to_pdf):
         renderer=ReportLibraries.XHTML2PDF,
     )
 
+
 def test_generate_report_with_wrong_format_string(convert_html_to_pdf):
     # Call the generate_report method with wrong format_string
     Reports.generate_report(
@@ -58,4 +63,3 @@ def test_generate_report_with_wrong_renderer(convert_html_to_pdf):
 
     # Assert that the mock function was not called
     convert_html_to_pdf.assert_not_called()
-
