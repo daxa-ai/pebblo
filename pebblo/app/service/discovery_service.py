@@ -76,7 +76,7 @@ class AppDiscover:
 
     # Below method are needed for unit test.
     @staticmethod
-    def _write_file_content_to_path(file_content, file_path):
+    def _write_file_content_to_path(file_content: dict, file_path: str):
         """
         Write content to the specified file path
         """
@@ -86,7 +86,7 @@ class AppDiscover:
 
     # Below method are needed for unit test.
     @staticmethod
-    def _read_file(file_path):
+    def _read_file(file_path: str):
         """
         Retrieve the content of the specified file.
         """
