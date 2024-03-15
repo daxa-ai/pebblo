@@ -41,7 +41,7 @@ lint:
 	ruff check .
 	ruff format . --diff
 	ruff --select I .
-	mkdir -p $(MYPY_CACHE) && mypy --install-types --non-interactive $(PYTHON_FILES) --cache-dir $(MYPY_CACHE) --exclude build/ --exclude pebblo_saferetriever
+	mkdir -p $(MYPY_CACHE) && mypy --install-types --non-interactive $(PYTHON_FILES) --cache-dir $(MYPY_CACHE) --exclude build/ --exclude pebblo_saferetriever --check-untyped-defs
 
 spell_check:
 	codespell --toml pyproject.toml
