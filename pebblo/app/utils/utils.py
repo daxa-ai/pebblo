@@ -14,7 +14,7 @@ class DatetimeEncoder(JSONEncoder):
             return str(o)
 
 
-def write_json_to_file(data, file_path):
+def write_json_to_file(data: dict, file_path: str):
     """
     Write content to the specified file path
     """
@@ -32,7 +32,7 @@ def write_json_to_file(data, file_path):
         logger.error(f"Error writing JSON data to file: {e}")
 
 
-def read_json_file(file_path):
+def read_json_file(file_path: str):
     """
     Retrieve the content of the specified file.
     """

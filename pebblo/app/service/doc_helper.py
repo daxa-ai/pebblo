@@ -5,6 +5,7 @@ Doc helper module for loader doc related task
 import ast
 import os.path
 from datetime import datetime
+import uuid
 
 from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
 from pebblo.app.libs.logger import logger
@@ -34,7 +35,7 @@ class LoaderHelper:
     Class for loader doc related task
     """
 
-    def __init__(self, app_details, data, load_id, run_id=None):
+    def __init__(self, app_details: dict, data: dict, load_id: uuid, run_id: uuid = None):
         self.app_details = app_details
         self.data = data
         self.run_id = run_id
@@ -54,12 +55,10 @@ class LoaderHelper:
                 loader_details = self.data.get("loader_details", {})
                 loader_name = loader_details.get("loader", None)
                 source_path = loader_details.get("sourcePath", None)
-                source_type = loader_details.get("sourceType", None)
                 for loader in self.app_details.get("loaders", []):
                     if (
                         loader["name"] == loader_name
-                        and loader["sourcePath"]  == source_path
-                        # can add condition on sourceType as well : loader["sourceType"] == source_type
+                        and loader["sourcePath"] == source_path
                         and "data_source_findings" in loader.keys()
                     ):
                         raw_data["data_source_findings"] = loader[
@@ -235,7 +234,6 @@ class LoaderHelper:
         loader_details = self.data.get("loader_details", {})
         loader_name = loader_details.get("loader", None)
         source_path = loader_details.get("source_path", None)
-        source_type = loader_details.get("source_type", None)
         self.app_details["docs"] = ai_app_docs
         loader_source_snippets = raw_data["loader_source_snippets"]
 
@@ -256,7 +254,7 @@ class LoaderHelper:
                         "findings": value["findings"],
                     }
                     for key, value in loader_source_snippets.items()
-                    if value["loader_name"] == loader_name and value["source_path"] == source_path
+                    if value["loader_name"] == loader_name
                 ]
                 loader["sourceFiles"] = new_source_files
                 loader["data_source_findings"] = raw_data["data_source_findings"]
@@ -425,6 +423,9 @@ class LoaderHelper:
         # Reading metadata file & get load details
         app_name = self.data.get("name")
         current_load_id = self.load_id
+        current_run_id = self.run_id
+        report = False
+        report_name = None
         app_metadata_file_path = (
             f"{CacheDir.HOME_DIR.value}/{app_name}/{CacheDir.METADATA_FILE_PATH.value}"
         )
@@ -432,7 +433,13 @@ class LoaderHelper:
         if not app_metadata:
             # No app metadata is present
             return load_history
-        load_ids = app_metadata.get("load_ids", [])
+
+        if current_run_id:
+            # list of run_ids
+            load_ids = list(app_metadata.get('run_ids', {}).keys())
+        else:
+            # list of load_ids, This is to support backward compatibility
+            load_ids = app_metadata.get("load_ids", [])
 
         # Retrieving load id report file
         # LoadHistory will be considered up to the specified load history limit.
@@ -447,23 +454,25 @@ class LoaderHelper:
         top_n_latest_loader_id.reverse()
 
         for load_id in top_n_latest_loader_id:
-            if load_id == current_load_id:
+            if load_id == current_run_id or load_id == current_load_id:
                 continue
-            load_report_file_path = (
-                f"{CacheDir.HOME_DIR.value}/{app_name}/"
-                f"{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
-            )
-            report = read_json_file(load_report_file_path)
-            if report:
-                pdf_report_path = (
-                    f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/"
-                    f"{CacheDir.REPORT_FILE_NAME.value}"
-                )
-                report_name = get_full_path(pdf_report_path)
-                if not os.path.exists(report_name):
-                    # Pdf file is not present, Skipping it
+            if self.run_id:
+                run_loads_ids = app_metadata.get("run_ids").get(load_id)
+                # loop all loadId & fetch last generated load report.
+                for run_load_id in reversed(run_loads_ids):
+                    report, report_name = self._is_pdf_file_present(app_name, run_load_id)
+                    if not report: # if no valid file found in the load_ids, we will look for next load_id
+                        continue
+                    break
+                # if no valid file found the run, we will look for next run_id
+                if not report:
                     continue
-                # create loader history object
+            else:
+                report, report_name = self._is_pdf_file_present(app_name, load_id)
+                if not report:
+                    continue
+
+            if report:
                 report_summary = report.get("reportSummary")
                 load_history_model_obj = LoadHistory(
                     loadId=load_id,
@@ -481,6 +490,25 @@ class LoaderHelper:
             more_report_full_path = get_full_path(more_reports)
             load_history["moreReportsPath"] = more_report_full_path
         return load_history
+
+    @staticmethod
+    def _is_pdf_file_present(app_name, load_id):
+        load_report_file_path = (
+            f"{CacheDir.HOME_DIR.value}/{app_name}/"
+            f"{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
+        )
+        report = read_json_file(load_report_file_path)
+        if report:
+            pdf_report_path = (
+                f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/"
+                f"{CacheDir.REPORT_FILE_NAME.value}"
+            )
+            report_name = get_full_path(pdf_report_path)
+            if not os.path.exists(report_name):
+                # Pdf file is not present, Skipping it
+                return False, False
+            return report, report_name
+        return False, False
 
     def _get_doc_report_metadata(self, doc, raw_data):
         """
@@ -522,7 +550,7 @@ class LoaderHelper:
         else:
             loader_details = self.data.get("loader_details", {})
             loader_name = loader_details.get("loader", None)
-            loader_source_path = loader_details.get("sourcePath", None)
+            loader_source_path = source_path
             total_findings += findings
             loader_source_snippets[source_path] = {
                 "loader_name": loader_name,

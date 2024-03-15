@@ -116,7 +116,8 @@ dependencies = [
   "tqdm",
   "xhtml2pdf==0.2.15",
   "python-dateutil==2.9.0",
-  "filelock"
+  "filelock",
+  "UUID",
 ]
 
 # List additional groups of dependencies here (e.g. development

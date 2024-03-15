@@ -4,6 +4,7 @@ This module handles business logic for local UI
 
 import json
 import os
+import uuid
 
 from dateutil import parser
 
@@ -416,12 +417,12 @@ class AppData:
         except Exception as ex:
             logger.error(f"Error in app detail. Error: {ex}")
 
-    def get_latest_load_id(self, app_json, app_dir):
+    def get_latest_load_id(self, app_json: dict, app_dir: str):
         """
         Returns app latestLoadId for an app.
         """
         # Get load_ids from run_id
-        run_ids = app_json.get("run_ids", [])
+        run_ids = app_json.get("run_ids", {})
         if run_ids:
             for run_id, load_ids in reversed(run_ids.items()):
                 load_ids = app_json["run_ids"][run_id]
@@ -436,9 +437,8 @@ class AppData:
             latest_load_id, app_detail_json = self._fetch_valid_load_id(app_dir, load_ids)
             return latest_load_id, app_detail_json
 
-
     @staticmethod
-    def _fetch_valid_load_id(app_dir, load_ids, run_id=None):
+    def _fetch_valid_load_id(app_dir: str, load_ids: list[uuid], run_id: uuid = None):
         try:
             logger.debug(f"Run ID: {run_id}, Load ID's : {load_ids}")
 
