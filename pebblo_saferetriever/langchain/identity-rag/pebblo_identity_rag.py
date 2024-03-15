@@ -57,9 +57,8 @@ class PebbloIdentityRAG:
         vectordb = Chroma.from_documents(docs, embeddings)
         return vectordb
 
-    def ask(self, question: str, auth_identifiers: dict):
+    def ask(self, question: str, auth: dict):
         # Prepare retriever QA chain
-        auth = {"$in": auth_identifiers}
         retriever = PebbloRetrievalQA.from_chain_type(
             llm=self.llm,
             chain_type="stuff",
@@ -77,6 +76,11 @@ if __name__ == "__main__":
     rag_app = PebbloIdentityRAG(folder_id)
     prompt = "What is adaptive pacing system?"
     print(f"Query:\n{prompt}")
-    auth_context = {"authorized_identities": ["joe@acme.io", "sam@acme.io"]}
-    response = rag_app.ask(prompt, auth_context)
+    auth = {
+        "authorized_groups": [
+            "joe@acme.io",
+            "hr-group@acme.io",
+            "us-employees-group@acme.io",
+    ]}
+    response = rag_app.ask(prompt, auth)
     print(f"Response:\n{response}")
