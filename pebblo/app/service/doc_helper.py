@@ -4,8 +4,8 @@ Doc helper module for loader doc related task
 
 import ast
 import os.path
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
 from pebblo.app.libs.logger import logger
@@ -31,7 +31,9 @@ class LoaderHelper:
     Class for loader doc related task
     """
 
-    def __init__(self, app_details: dict, data: dict, load_id: uuid, run_id: uuid = None):
+    def __init__(
+        self, app_details: dict, data: dict, load_id: uuid, run_id: uuid = None
+    ):
         self.app_details = app_details
         self.data = data
         self.run_id = run_id
@@ -233,7 +235,10 @@ class LoaderHelper:
         # Updating app_details doc list and loader source files
         loader_details = self.app_details.get("loaders", {})
         for loader in loader_details:
-            if loader.get("name") == loader_name and loader.get("sourcePath") == source_path:
+            if (
+                loader.get("name") == loader_name
+                and loader.get("sourcePath") == source_path
+            ):
                 for source_file in loader.get("sourceFiles", []):
                     name = source_file["name"]
                     if name not in loader_source_snippets.keys():
@@ -428,7 +433,7 @@ class LoaderHelper:
 
         if current_run_id:
             # list of run_ids
-            load_ids = list(app_metadata.get('run_ids', {}).keys())
+            load_ids = list(app_metadata.get("run_ids", {}).keys())
         else:
             # list of load_ids, This is to support backward compatibility
             load_ids = app_metadata.get("load_ids", [])
@@ -452,8 +457,10 @@ class LoaderHelper:
                 run_loads_ids = app_metadata.get("run_ids").get(load_id)
                 # loop all loadId & fetch last generated load report.
                 for run_load_id in reversed(run_loads_ids):
-                    report, report_name = self._is_pdf_file_present(app_name, run_load_id)
-                    if not report: # if no valid file found in the load_ids, we will look for next load_id
+                    report, report_name = self._is_pdf_file_present(
+                        app_name, run_load_id
+                    )
+                    if not report:  # if no valid file found in the load_ids, we will look for next load_id
                         continue
                     break
                 # if no valid file found the run, we will look for next run_id

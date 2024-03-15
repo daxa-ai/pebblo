@@ -126,7 +126,7 @@ def test_get_doc_report_metadata(loader_helper):
                 "fileOwner": "fileOwner",
                 "loader_name": "CSVLoader",
                 "sourceSize": 1000,
-                "source_path": "/home/ubuntu/sens_data.csv"
+                "source_path": "/home/ubuntu/sens_data.csv",
             }
         },
         "file_count": 1,
@@ -272,12 +272,12 @@ def test_update_app_details(loader_helper):
     loader_helper.app_details["loaders"] = [
         {
             "name": "CSVLoader",
-            'sourceFiles': [
+            "sourceFiles": [
                 {
-                    'findings': 3,
-                    'findings_entities': 2,
-                    'findings_topics': 1,
-                    'name': '/home/ubuntu/sens_data.csv',
+                    "findings": 3,
+                    "findings_entities": 2,
+                    "findings_topics": 1,
+                    "name": "/home/ubuntu/sens_data.csv",
                 },
             ],
             "sourcePath": "sourcePath",
