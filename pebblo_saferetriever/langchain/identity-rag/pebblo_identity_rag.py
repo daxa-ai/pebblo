@@ -71,8 +71,7 @@ class PebbloIdentityRAG:
 
 if __name__ == "__main__":
     # TODO: pass the actual GoogleDrive folder id
-    # folder_id = "1sd0RqMMJKidf9Pb4YRCI2-NH4Udj885k"
-    folder_id = ""
+    folder_id = "1sRvP0j6L6M_Ll0y_8Qp7cFWUOlpdbfN5"
     collection_name = "identity-enabled-rag"
     rag_app = PebbloIdentityRAG(folder_id, collection_name)
     prompt = "What is adaptive pacing system?"

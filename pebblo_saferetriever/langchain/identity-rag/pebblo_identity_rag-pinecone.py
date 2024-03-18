@@ -78,7 +78,7 @@ if __name__ == "__main__":
     # TODO: pass the actual GoogleDrive folder id
     # folder_id = "1sd0RqMMJKidf9Pb4YRCI2-NH4Udj885k"
 
-    folder_id = ""
+    folder_id = "1sRvP0j6L6M_Ll0y_8Qp7cFWUOlpdbfN5"
     index_name = "identity-enabled-rag"
     pinecone_api_key = os.environ.get("PINECONE_API_KEY")
     rag_app = PebbloIdentityRAG(folder_id, index_name, pinecone_api_key)
