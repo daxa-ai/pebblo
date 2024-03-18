@@ -1,9 +1,11 @@
 langchain>=0.1.7
 langchain-community
 langchain-openai
-chromadb==0.4.7
 python-dotenv==1.0.0
 tiktoken
 requests==2.31.0
 Markdown==3.5
 unstructured[all-docs]
+google-api-python-client
+qdrant-client==1.8.0 # for Qdrant VectorStore
+pinecone-client==3.1.0 # for Pinecone VectorStore

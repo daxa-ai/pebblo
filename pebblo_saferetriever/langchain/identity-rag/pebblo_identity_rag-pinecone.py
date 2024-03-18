@@ -1,3 +1,5 @@
+import os
+
 # Fill-in OPENAI_API_KEY in .env file
 # in this directory before proceeding
 from dotenv import load_dotenv
@@ -7,17 +9,20 @@ from langchain_community.document_loaders import (
     UnstructuredFileIOLoader,
 )
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
-from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
+
+from google_auth import get_authorized_identities
+from pinecone_data_loader import create_pinecone_index
 
 load_dotenv()
 
 
 class PebbloIdentityRAG:
-    def __init__(self, folder_id: str, collection_name: str):
+    def __init__(self, folder_id: str, index_name: str, pinecone_api_key: str):
         self.app_name = "pebblo-identity-rag-1"
-        self.collection_name = collection_name
+        self.index_name = index_name
+        self.pinecone_api_key = pinecone_api_key
 
         # Load documents
         print("Loading RAG documents ...")
@@ -35,11 +40,11 @@ class PebbloIdentityRAG:
             description="Identity enabled SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
         )
         self.documents = self.loader.load()
+
         print(self.documents[-1].metadata.get("authorized_identities"))
         print(f"Loaded {len(self.documents)} documents ...\n")
 
         # Load documents into VectorDB
-
         print("Hydrating Vector DB ...")
         self.vectordb = self.embeddings()
         print("Finished hydrating Vector DB ...\n")
@@ -48,12 +53,12 @@ class PebbloIdentityRAG:
         self.llm = OpenAI()
 
     def embeddings(self):
+        """
+        Create embeddings from documents
+        """
         embeddings = OpenAIEmbeddings()
-        vectordb = Qdrant.from_documents(
-            self.documents,
-            embeddings,
-            location=":memory:",
-            collection_name=self.collection_name,
+        vectordb = create_pinecone_index(
+            self.pinecone_api_key, self.index_name, embeddings, self.documents
         )
         return vectordb
 
@@ -72,17 +77,18 @@ class PebbloIdentityRAG:
 if __name__ == "__main__":
     # TODO: pass the actual GoogleDrive folder id
     # folder_id = "1sd0RqMMJKidf9Pb4YRCI2-NH4Udj885k"
+
     folder_id = ""
-    collection_name = "identity-enabled-rag"
-    rag_app = PebbloIdentityRAG(folder_id, collection_name)
-    prompt = "What is adaptive pacing system?"
+    index_name = "identity-enabled-rag"
+    pinecone_api_key = os.environ.get("PINECONE_API_KEY")
+    rag_app = PebbloIdentityRAG(folder_id, index_name, pinecone_api_key)
+
+    prompt = "What criteria are used to evaluate employee performance during performance reviews?"
     print(f"Query:\n{prompt}")
+
+    user_1 = "user@clouddefense.io"
     auth = {
-        "authorized_identities": [
-            "joe@acme.io",
-            "hr-group@acme.io",
-            "us-employees-group@acme.io",
-        ]
+        "authorized_identities": get_authorized_identities(user_1),
     }
     response = rag_app.ask(prompt, auth)
     print(f"Response:\n{response}")
