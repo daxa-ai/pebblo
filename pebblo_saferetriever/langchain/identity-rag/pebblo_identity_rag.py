@@ -11,6 +11,8 @@ from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
 
+from google_auth import get_authorized_identities
+
 load_dotenv()
 
 
@@ -70,18 +72,31 @@ class PebbloIdentityRAG:
 
 
 if __name__ == "__main__":
-    # TODO: pass the actual GoogleDrive folder id
-    folder_id = "1sRvP0j6L6M_Ll0y_8Qp7cFWUOlpdbfN5"
-    collection_name = "identity-enabled-rag"
-    rag_app = PebbloIdentityRAG(folder_id, collection_name)
-    prompt = "What is adaptive pacing system?"
-    print(f"Query:\n{prompt}")
-    auth = {
-        "authorized_identities": [
-            "joe@acme.io",
-            "hr-group@acme.io",
-            "us-employees-group@acme.io",
-        ]
-    }
-    response = rag_app.ask(prompt, auth)
-    print(f"Response:\n{response}")
+    input_folder_id = "1sRvP0j6L6M_Ll0y_8Qp7cFWUOlpdbfN5"
+    input_collection_name = "identity-enabled-rag"
+    rag_app = PebbloIdentityRAG(
+        folder_id=input_folder_id,
+        collection_name=input_collection_name)
+
+    prompts = [
+        (
+            "What criteria are used to evaluate employee performance during performance reviews?",
+            "shreyas@clouddefense.io"
+        ),
+        (
+            "What are John Smith's ley achievement for year 2023?",
+            "shreyas@clouddefense.io"
+        ),
+        (
+            "What are John Smith's ley achievement for year 2023?",
+            "john@clouddefense.io"
+        ),
+    ]
+
+    for prompt, input_user in prompts:
+        print(f"User: {input_user}.\nQuery:{prompt}\n")
+        auth = {
+            "authorized_identities": get_authorized_identities(input_user)
+        }
+        response = rag_app.ask(prompt, auth)
+        print(f"Response:\n{response}")

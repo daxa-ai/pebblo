@@ -15,10 +15,10 @@ def get_authorized_identities(user_email) -> List[str]:
             "https://www.googleapis.com/auth/admin.directory.group.readonly",
             "https://www.googleapis.com/auth/admin.directory.group",
         ],
+        subject="arpit@clouddefense.io"
     )
-    delegated_credentials = credentials.with_subject(user_email)
     directory_service = build(
-        "admin", "directory_v1", credentials=delegated_credentials
+        "admin", "directory_v1", credentials=credentials
     )
 
     try:
