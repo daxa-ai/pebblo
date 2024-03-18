@@ -5,9 +5,8 @@ from googleapiclient.discovery import build
 
 
 def get_authorized_identities(
-        admin_user_email_address: str,
-        credentials_file_path: str,
-        user_email: str) -> List[str]:
+    admin_user_email_address: str, credentials_file_path: str, user_email: str
+) -> List[str]:
     """
     Get authorized identities from Google Directory API
     """
@@ -18,11 +17,9 @@ def get_authorized_identities(
             "https://www.googleapis.com/auth/admin.directory.group.readonly",
             "https://www.googleapis.com/auth/admin.directory.group",
         ],
-        subject=admin_user_email_address
+        subject=admin_user_email_address,
     )
-    directory_service = build(
-        "admin", "directory_v1", credentials=credentials
-    )
+    directory_service = build("admin", "directory_v1", credentials=credentials)
 
     try:
         groups = directory_service.groups().list(userKey=user_email).execute()

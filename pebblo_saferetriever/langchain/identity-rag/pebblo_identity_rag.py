@@ -80,8 +80,8 @@ if __name__ == "__main__":
     input_folder_id = input("Folder id : ")
 
     rag_app = PebbloIdentityRAG(
-        folder_id=input_folder_id,
-        collection_name=input_collection_name)
+        folder_id=input_folder_id, collection_name=input_collection_name
+    )
 
     while True:
         print("Please enter end user details below")
@@ -93,7 +93,7 @@ if __name__ == "__main__":
             "authorized_identities": get_authorized_identities(
                 admin_user_email_address=ingestion_user_email_address,
                 credentials_file_path=ingestion_user_service_account_path,
-                user_email=end_user_email_address
+                user_email=end_user_email_address,
             )
         }
         response = rag_app.ask(prompt, auth)
