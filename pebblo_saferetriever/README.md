@@ -67,22 +67,28 @@ https://github.com/langchain-ai/langchain/pull/18812
 
 ### How to run?
 
+#### Pre-requisite:
+Download and save credentials.json for your GCP project at `~/.credentials/credentials.json`
+
+
+#### Steps to run:
 1. Setup virtual env and install `langchain/identity-rag/requirements.txt`.
 ```
 pip install -r langchain/identity-rag/requirements.txt
 ```
-
-2. Download and save credentials.json for your GCP project at `~/.credentials/credentials.json`
-
-3. Run the application
+2Run the application
 ```
 python3 langchain/identity-rag/pebblo_identity_rag.py
 ```
 
-4. It will need following inputs:
+3. It will need following inputs:
    1. For the ingestion user:
       1. Admin email address : For listing groups to know the identity.
       2. service-account.json path : Service account credentials file for your google account with enough permissions.
       3. Folder Id : Folder id where the documents to be loaded are stored.
    2. End user email address, against which the identity would be matched.
    3. Prompt by the end user.
+
+Based on all the inputs, it will load the data from given Google Drive folder and
+based on the input prompt and it will respond according to
+the user level permissions for that user.
