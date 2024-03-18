@@ -4,18 +4,21 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
 
-def get_authorized_identities(user_email) -> List[str]:
+def get_authorized_identities(
+        admin_user_email_address: str,
+        credentials_file_path: str,
+        user_email: str) -> List[str]:
     """
     Get authorized identities from Google Directory API
     """
     _authorized_identities = [user_email]
     credentials = service_account.Credentials.from_service_account_file(
-        "credentials/service-account.json",  # path of credentials file
+        credentials_file_path,
         scopes=[
             "https://www.googleapis.com/auth/admin.directory.group.readonly",
             "https://www.googleapis.com/auth/admin.directory.group",
         ],
-        subject="arpit@clouddefense.io"
+        subject=admin_user_email_address
     )
     directory_service = build(
         "admin", "directory_v1", credentials=credentials
