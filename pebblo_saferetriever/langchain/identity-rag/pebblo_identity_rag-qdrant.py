@@ -1,7 +1,10 @@
+from typing import List
+
 # Fill-in OPENAI_API_KEY in .env file
 # in this directory before proceeding
 from dotenv import load_dotenv
 from langchain.chains import PebbloRetrievalQA
+from langchain.schema import Document
 from langchain_community.document_loaders import (
     GoogleDriveLoader,
     UnstructuredFileIOLoader,
@@ -10,6 +13,8 @@ from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
+
+from google_auth import get_authorized_identities
 
 load_dotenv()
 
@@ -35,22 +40,21 @@ class PebbloIdentityRAG:
             description="Identity enabled SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
         )
         self.documents = self.loader.load()
+
         print(self.documents[-1].metadata.get("authorized_identities"))
         print(f"Loaded {len(self.documents)} documents ...\n")
-
         # Load documents into VectorDB
-
         print("Hydrating Vector DB ...")
-        self.vectordb = self.embeddings()
+        self.vectordb = self.embeddings(self.documents)
         print("Finished hydrating Vector DB ...\n")
 
         # Prepare LLM
         self.llm = OpenAI()
 
-    def embeddings(self):
+    def embeddings(self, docs: List[Document]):
         embeddings = OpenAIEmbeddings()
         vectordb = Qdrant.from_documents(
-            self.documents,
+            docs,
             embeddings,
             location=":memory:",
             collection_name=self.collection_name,
@@ -75,14 +79,14 @@ if __name__ == "__main__":
     folder_id = ""
     collection_name = "identity-enabled-rag"
     rag_app = PebbloIdentityRAG(folder_id, collection_name)
-    prompt = "What is adaptive pacing system?"
+
+    prompt = "What criteria are used to evaluate employee performance during performance reviews?"
     print(f"Query:\n{prompt}")
+
+    user_1 = "user@clouddefense.io"
     auth = {
-        "authorized_identities": [
-            "joe@acme.io",
-            "hr-group@acme.io",
-            "us-employees-group@acme.io",
-        ]
+        "authorized_identities": get_authorized_identities(user_1),
     }
+
     response = rag_app.ask(prompt, auth)
     print(f"Response:\n{response}")
