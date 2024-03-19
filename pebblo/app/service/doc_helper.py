@@ -125,6 +125,7 @@ class LoaderHelper:
             entities=doc_info.entities,
             topicCount=doc_info.topicCount,
             topics=doc_info.topics,
+            authorizedIdentities=doc.get("authorized_identities", [])
         )
         return doc_model.dict()
 
@@ -137,7 +138,8 @@ class LoaderHelper:
         loader_source_snippets = raw_data["loader_source_snippets"]
         top_n_findings_list = sorted(
             loader_source_snippets.items(), key=lambda x: x[1]["findings"], reverse=True
-        )[: ReportConstants.TOP_FINDINGS_LIMIT.value]
+        )
+        # [: ReportConstants.TOP_FINDINGS_LIMIT.value] Removed Limit of n findings
         top_n_findings = [
             {
                 "fileName": key,
@@ -150,6 +152,7 @@ class LoaderHelper:
                 "findingsEntities": value["findings_entities"],
                 "findingsTopics": value["findings_topics"],
                 "findings": value["findings"],
+                "authorizedIdentities": value["authorized_identities"]
             }
             for key, value in top_n_findings_list
         ]
@@ -239,6 +242,7 @@ class LoaderHelper:
             snippet=doc["doc"],
             sourcePath=source_path,
             fileOwner=doc.get("fileOwner", "-"),
+            authorizedIdentities=doc.get("authorizedIdentities", [])
         )
         for label_name, value in doc[entity_type].items():
             if label_name in data_source_findings.keys():
@@ -483,6 +487,7 @@ class LoaderHelper:
                 "findings_entities": doc["entityCount"],
                 "findings_topics": doc["topicCount"],
                 "findings": findings,
+                "authorized_identities": doc["authorizedIdentities"]
             }
             findings_entities += doc["entityCount"]
             findings_topics += doc["topicCount"]
