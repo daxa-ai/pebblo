@@ -4,6 +4,7 @@ This module handles business logic for local UI
 
 import json
 import os
+import uuid
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
@@ -66,18 +67,9 @@ class AppData:
                         )
                         continue
 
-                    load_ids = app_json.get("load_ids", [])
-
-                    if not load_ids:
-                        logger.debug(f"No valid loadIds found for app: {app_dir}.")
-                        logger.warning(
-                            f"Skipping app '{app_dir}' due to missing or invalid file"
-                        )
-                        continue
-
                     # Fetching latest loadId
                     latest_load_id, app_detail_json = self.get_latest_load_id(
-                        load_ids, app_dir
+                        app_json, app_dir
                     )
 
                     if not latest_load_id:
@@ -149,7 +141,7 @@ class AppData:
                     if report_summary.get("findings", 0) > 0:
                         apps_at_risk += 1
 
-                    all_apps.append(app_details.dict())
+                    all_apps.append(app_details)
 
                 except Exception as err:
                     logger.warning(f"Error processing app {app_dir}: {err}")
@@ -193,18 +185,8 @@ class AppData:
                 )
                 return json.dumps({})
 
-            load_ids = app_json.get("load_ids", [])
-
-            if not load_ids:
-                # Unable to fetch loadId details
-                logger.debug(f"Error: Details not found for app {app_path}")
-                logger.warning(
-                    f"Skipping app '{app_dir}' due to missing or invalid file"
-                )
-                return json.dumps({})
-
             # Fetching latest loadId
-            latest_load_id, app_detail_json = self.get_latest_load_id(load_ids, app_dir)
+            latest_load_id, app_detail_json = self.get_latest_load_id(app_json, app_dir)
 
             if not latest_load_id:
                 logger.debug(f"No valid loadIds found for app {app_path}.")
@@ -221,19 +203,53 @@ class AppData:
         except Exception as ex:
             logger.error(f"Error in app detail. Error: {ex}")
 
-    @staticmethod
-    def get_latest_load_id(load_ids, app_dir):
+    def get_latest_load_id(self, app_json: dict, app_dir: str):
         """
         Returns app latestLoadId for an app.
         """
-        for load_id in reversed(load_ids):
-            # Path to report.json
-            app_detail_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
-            logger.debug(f"Report File path: {app_detail_path}")
-            app_detail_json = read_json_file(app_detail_path)
-            if app_detail_json:
-                # If report is found, proceed with this load_id
-                latest_load_id = load_id
+        # Get load_ids from run_id
+        run_ids = app_json.get("run_ids", {})
+        if run_ids:
+            for run_id, load_ids in reversed(run_ids.items()):
+                load_ids = app_json["run_ids"][run_id]
+                latest_load_id, app_detail_json = self._fetch_valid_load_id(
+                    app_dir, load_ids, run_id
+                )
+                if latest_load_id is None:
+                    continue
                 return latest_load_id, app_detail_json
 
-        return None, None
+        # If not run_id then use load_id. Backward compatibility of multiple data source support.
+        else:
+            load_ids = app_json.get("load_ids", [])
+            latest_load_id, app_detail_json = self._fetch_valid_load_id(
+                app_dir, load_ids
+            )
+            return latest_load_id, app_detail_json
+
+    @staticmethod
+    def _fetch_valid_load_id(app_dir: str, load_ids: list[uuid], run_id: uuid = None):
+        try:
+            logger.debug(f"Run ID: {run_id}, Load ID's : {load_ids}")
+
+            if not load_ids:
+                app_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
+                # Unable to fetch loadId details
+                logger.debug(f"Error: Details not found for app {app_path}")
+                logger.warning(
+                    f"Skipping app '{app_dir}' due to missing or invalid file"
+                )
+                return None, None
+
+            for load_id in reversed(load_ids):
+                app_detail_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
+                logger.debug(f"Report File path: {app_detail_path}")
+                app_detail_json = read_json_file(app_detail_path)
+                if app_detail_json:
+                    # If report is found, proceed with this load_id
+                    latest_load_id = load_id
+                    return latest_load_id, app_detail_json
+            return None, None
+        except Exception as err:
+            logger.error(f"Unable to fetch valid load id: Error: {err}")
+            return None, None

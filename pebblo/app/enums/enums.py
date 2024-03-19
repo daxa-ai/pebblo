@@ -12,8 +12,9 @@ class CacheDir(Enum):
     Enums for cache directory
     """
 
-    METADATA_FOLDER = "/metadata"
+    METADATA_FOLDER = "metadata"
     METADATA_FILE_PATH = f"{METADATA_FOLDER}/metadata.json"
+    METADATA_LOCK_FILE_PATH = f"{METADATA_FOLDER}/metadata.json.lock"
     REPORT_DATA_FILE_NAME = "report.json"
     REPORT_FILE_NAME = (
         f"pebblo_report.{config_details.get('reports', {}).get('format')}"

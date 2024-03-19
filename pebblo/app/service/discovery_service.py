@@ -10,7 +10,12 @@ from pydantic import ValidationError
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import AiApp, InstanceDetails, Metadata
-from pebblo.app.utils.utils import read_json_file, write_json_to_file
+from pebblo.app.utils.utils import (
+    acquire_lock,
+    read_json_file,
+    release_lock,
+    write_json_to_file,
+)
 
 
 class AppDiscover:
@@ -20,7 +25,8 @@ class AppDiscover:
 
     def __init__(self, data: dict):
         self.data = data
-        self.load_id = data.get("load_id")
+        self.load_id = data.get("load_id", None)
+        self.run_id = data.get("run_id", None)
         self.application_name = self.data.get("name")
 
     def _create_ai_apps_model(self, instance_details):
@@ -33,7 +39,7 @@ class AppDiscover:
         metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
         ai_apps_model = AiApp(
             metadata=metadata,
-            name=self.data.get("name"),
+            name=self.data.get("name", ""),
             description=self.data.get("description", "-"),
             owner=self.data.get("owner", ""),
             pluginVersion=self.data.get("plugin_version"),
@@ -68,8 +74,9 @@ class AppDiscover:
         )
         return instance_details_model
 
+    # Below method are needed for unit test.
     @staticmethod
-    def _write_file_content_to_path(file_content, file_path):
+    def _write_file_content_to_path(file_content: dict, file_path: str):
         """
         Write content to the specified file path
         """
@@ -77,8 +84,9 @@ class AppDiscover:
         # Writing file content to given file path
         write_json_to_file(file_content, file_path)
 
+    # Below method are needed for unit test.
     @staticmethod
-    def _read_file(file_path):
+    def _read_file(file_path: str):
         """
         Retrieve the content of the specified file.
         """
@@ -91,28 +99,61 @@ class AppDiscover:
         Update/Create app metadata file and write metadata for current run
         """
         # Read metadata file & get current app metadata
-        app_metadata_file_path = (
+        app_metadata_lock_file_path = (
             f"{CacheDir.HOME_DIR.value}/"
-            f"{self.application_name}/{CacheDir.METADATA_FILE_PATH.value}"
+            f"{self.application_name}/{CacheDir.METADATA_LOCK_FILE_PATH.value}"
         )
-        app_metadata = self._read_file(app_metadata_file_path)
+        try:
+            acquire_lock(app_metadata_lock_file_path)
+            app_metadata_file_path = (
+                f"{CacheDir.HOME_DIR.value}/"
+                f"{self.application_name}/{CacheDir.METADATA_FILE_PATH.value}"
+            )
+            app_metadata = self._read_file(app_metadata_file_path)
 
-        # write metadata file if it is not present
-        if not app_metadata:
-            # Writing app metadata to metadata file
-            app_metadata = {"name": self.application_name, "load_ids": [self.load_id]}
-        else:
-            if "load_ids" in app_metadata.keys():
-                # Metadata file is already present,
-                # Appending the current metadata details
-                app_metadata.get("load_ids").append(self.load_id)
+            # write metadata file if it is not present
+            if not app_metadata:
+                # Writing app metadata to metadata file
+                if self.run_id:
+                    app_metadata = {
+                        "name": self.application_name,
+                        "run_ids": {self.run_id: [self.load_id]},
+                    }
+                # Backward compatibility of multiple data source support.
+                else:
+                    app_metadata = {
+                        "name": self.application_name,
+                        "load_ids": [self.load_id],
+                    }
             else:
-                # metadata file is present, but load_ids is not,
-                # This is to support backward compatibility
-                app_metadata["load_ids"] = [self.load_id]
+                # For multiple loaders support
+                if self.run_id:
+                    # Already run_id is present
+                    if "run_ids" in app_metadata.keys():
+                        if self.run_id in app_metadata["run_ids"].keys():
+                            app_metadata["run_ids"][self.run_id].append(self.load_id)
+                        else:
+                            app_metadata["run_ids"][self.run_id] = [self.load_id]
 
-        # Writing metadata file
-        self._write_file_content_to_path(app_metadata, app_metadata_file_path)
+                    # This is first load of this run_id
+                    else:
+                        app_metadata["run_ids"] = {self.run_id: [self.load_id]}
+
+                # Backward compatibility of multiple data source support.
+                else:
+                    if "load_ids" in app_metadata.keys():
+                        # Metadata file is already present,
+                        # Appending the current metadata details
+                        app_metadata.get("load_ids").append(self.load_id)
+                    else:
+                        # metadata file is present, but load_ids is not,
+                        # This is to support backward compatibility
+                        app_metadata["load_ids"] = [self.load_id]
+
+            # Writing metadata file
+            self._write_file_content_to_path(app_metadata, app_metadata_file_path)
+        finally:
+            release_lock(app_metadata_lock_file_path)
 
     def process_request(self):
         """
@@ -132,12 +173,33 @@ class AppDiscover:
             # create AiApps Model
             ai_apps = self._create_ai_apps_model(instance_details)
 
-            # Write file to metadata location
-            file_path = (
+            # Write file to load metadata location - this is backward compatibility after multiple data sources feature.
+            load_dir_file_path = (
                 f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.load_id}"
                 f"/{CacheDir.METADATA_FILE_PATH.value}"
             )
-            self._write_file_content_to_path(ai_apps.dict(), file_path)
+            self._write_file_content_to_path(ai_apps.dict(), load_dir_file_path)
+
+            # When run_id is present, write metadata to run metadata file by acquiring lock
+            if self.run_id:
+                run_dir_lock_file_path = (
+                    f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.run_id}"
+                    f"/{CacheDir.METADATA_LOCK_FILE_PATH.value}"
+                )
+                try:
+                    acquire_lock(run_dir_lock_file_path)
+                    run_dir_file_path = (
+                        f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.run_id}"
+                        f"/{CacheDir.METADATA_FILE_PATH.value}"
+                    )
+                    existing_ai_app_details = self._read_file(run_dir_file_path)
+                    # Check if file is not present, then write details, otherwise skip writing file again.
+                    if not existing_ai_app_details:
+                        self._write_file_content_to_path(
+                            ai_apps.dict(), run_dir_file_path
+                        )
+                finally:
+                    release_lock(run_dir_lock_file_path)
 
             logger.debug("AiApp discovery request completed successfully")
             return {"message": "App Discover Request Processed Successfully"}

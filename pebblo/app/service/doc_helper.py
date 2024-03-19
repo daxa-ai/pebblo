@@ -4,6 +4,7 @@ Doc helper module for loader doc related task
 
 import ast
 import os.path
+import uuid
 from datetime import datetime
 
 from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
@@ -30,9 +31,12 @@ class LoaderHelper:
     Class for loader doc related task
     """
 
-    def __init__(self, app_details, data, load_id):
+    def __init__(
+        self, app_details: dict, data: dict, load_id: uuid, run_id: uuid = None
+    ):
         self.app_details = app_details
         self.data = data
+        self.run_id = run_id
         self.load_id = load_id
         self.loader_mapper = {}
         self.entity_classifier_obj = EntityClassifier()
@@ -42,7 +46,32 @@ class LoaderHelper:
         """
         Initializing raw data and return as dict object
         """
+        # If report_metadata is already present, that means this is one of multiple data sources.
         if "report_metadata" in self.app_details.keys():
+            if self.run_id:
+                raw_data = self.app_details["report_metadata"]
+                loader_details = self.data.get("loader_details", {})
+                loader_name = loader_details.get("loader", None)
+                source_path = loader_details.get("sourcePath", None)
+                for loader in self.app_details.get("loaders", []):
+                    if (
+                        loader["name"] == loader_name
+                        and loader["sourcePath"] == source_path
+                        and "data_source_findings" in loader.keys()
+                    ):
+                        raw_data["data_source_findings"] = loader[
+                            "data_source_findings"
+                        ]
+                        raw_data["total_snippet_counter"] = loader[
+                            "total_snippet_counter"
+                        ]
+                        raw_data["snippet_counter"] = loader["snippet_counter"]
+                    else:
+                        raw_data["data_source_findings"] = {}
+                        raw_data["total_snippet_counter"] = 0
+                        raw_data["snippet_counter"] = 0
+
+                return raw_data
             return self.app_details["report_metadata"]
 
         raw_data = {
@@ -187,7 +216,6 @@ class LoaderHelper:
                 doc_info.topicCount = topic_count
                 doc_info.entityCount = entity_count
                 doc_info.data = anonymized_doc
-                logger.debug(f"Anonymized Doc: {anonymized_doc}")
             return doc_info
         except Exception as e:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
@@ -198,27 +226,51 @@ class LoaderHelper:
         Updating ai app details loader source files
         """
         logger.debug("Updating app details")
+        loader_details = self.data.get("loader_details", {})
+        loader_name = loader_details.get("loader", None)
+        source_path = loader_details.get("source_path", None)
         self.app_details["docs"] = ai_app_docs
         loader_source_snippets = raw_data["loader_source_snippets"]
+
         # Updating app_details doc list and loader source files
         loader_details = self.app_details.get("loaders", {})
         for loader in loader_details:
-            for source_file in loader.get("sourceFiles", []):
-                name = source_file["name"]
-                if name not in loader_source_snippets:
-                    loader_source_snippets[name] = source_file
+            new_source_files = []
+            if (
+                    loader.get("name") == loader_name
+                    and loader.get("sourcePath") == source_path
+            ):
 
-            new_source_files = [
-                {
-                    "name": key,
-                    "findings_entities": value["findings_entities"],
-                    "findings_topics": value["findings_topics"],
-                    "findings": value["findings"],
-                }
-                for key, value in loader_source_snippets.items()
-            ]
+                processed_files = []
+                # Update Existing Files
+                for source_file in loader.get("sourceFiles", []):
+                    file_name = source_file["name"]
+                    if file_name in loader_source_snippets.keys():
+                        source_file["findings_entities"] += loader_source_snippets[file_name].get("findings_entities",
+                                                                                                  0)
+                        source_file["findings_topics"] += loader_source_snippets[file_name].get("findings_topics ", 0)
+                        source_file["findings"] = source_file["findings_entities"] + source_file["findings_topics"]
+                        new_source_files.append(source_file)
+                    else:
+                        new_source_files.append(source_file)
+                    processed_files.append(file_name)
 
-            loader["sourceFiles"] = new_source_files
+                 # Check for files which is not present in loader.
+                for file_name in loader_source_snippets.keys():
+                    if file_name not in processed_files and loader_source_snippets[file_name]["loader_name"] == loader_name:
+                        if loader_name != "DirectoryLoader" and loader_source_snippets[file_name]["file_level_source_path"] != source_path:
+                            continue
+                        dict_file = {"name": file_name,
+                                     "findings_entities": loader_source_snippets[file_name]["findings_entities"],
+                                     "findings_topics": loader_source_snippets[file_name]["findings_topics"],
+                                     "findings": loader_source_snippets[file_name]["findings"]}
+                        new_source_files.append(dict_file)
+
+                loader["sourceFiles"] = new_source_files
+                loader["data_source_findings"] = raw_data["data_source_findings"]
+                loader["total_snippet_counter"] = raw_data["total_snippet_counter"]
+                loader["snippet_counter"] = raw_data["snippet_counter"]
+
         self.app_details["report_metadata"] = raw_data
 
     @staticmethod
@@ -226,15 +278,13 @@ class LoaderHelper:
         """
         Retrieve finding details from data source
         """
-        logger.debug(
-            f"Fetching finding details from data source for entity type: {entity_type}"
-        )
         source_path = doc.get("sourcePath")
         snippet = Snippets(
             snippet=doc["doc"],
             sourcePath=source_path,
             fileOwner=doc.get("fileOwner", "-"),
         )
+
         for label_name, value in doc[entity_type].items():
             if label_name in data_source_findings.keys():
                 data_source_findings[label_name]["snippetCount"] += 1
@@ -297,15 +347,17 @@ class LoaderHelper:
             source_path = loader.get("sourcePath")
             source_type = loader.get("sourceType")
             source_size = loader.get("sourceSize")
-            total_snippet_count = raw_data["total_snippet_counter"]
-            displayed_snippet_count = raw_data["snippet_counter"]
+            # need to modify, Current at total level, now need to set at loader ds level
+            total_snippet_count = loader["total_snippet_counter"]
+            displayed_snippet_count = loader["snippet_counter"]
+
             data_source_findings = [
                 {
                     key: value[key]
                     for key in value
                     if key not in (value[key], "unique_snippets")
                 }
-                for value in raw_data["data_source_findings"].values()
+                for value in loader["data_source_findings"].values()
             ]
 
             # Create data source findings summary from data source findings
@@ -324,6 +376,8 @@ class LoaderHelper:
                 findingsDetails=data_source_findings,
             )
             data_source_obj_list.append(data_source_obj)
+
+        raw_data["data_source_count"] = len(data_source_obj_list)
         return data_source_obj_list
 
     @staticmethod
@@ -378,6 +432,9 @@ class LoaderHelper:
         # Reading metadata file & get load details
         app_name = self.data.get("name")
         current_load_id = self.load_id
+        current_run_id = self.run_id
+        report = False
+        report_name = None
         app_metadata_file_path = (
             f"{CacheDir.HOME_DIR.value}/{app_name}/{CacheDir.METADATA_FILE_PATH.value}"
         )
@@ -385,7 +442,13 @@ class LoaderHelper:
         if not app_metadata:
             # No app metadata is present
             return load_history
-        load_ids = app_metadata.get("load_ids", [])
+
+        if current_run_id:
+            # list of run_ids
+            load_ids = list(app_metadata.get("run_ids", {}).keys())
+        else:
+            # list of load_ids, This is to support backward compatibility
+            load_ids = app_metadata.get("load_ids", [])
 
         # Retrieving load id report file
         # LoadHistory will be considered up to the specified load history limit.
@@ -400,23 +463,27 @@ class LoaderHelper:
         top_n_latest_loader_id.reverse()
 
         for load_id in top_n_latest_loader_id:
-            if load_id == current_load_id:
+            if load_id == current_run_id or load_id == current_load_id:
                 continue
-            load_report_file_path = (
-                f"{CacheDir.HOME_DIR.value}/{app_name}/"
-                f"{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
-            )
-            report = read_json_file(load_report_file_path)
-            if report:
-                pdf_report_path = (
-                    f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/"
-                    f"{CacheDir.REPORT_FILE_NAME.value}"
-                )
-                report_name = get_full_path(pdf_report_path)
-                if not os.path.exists(report_name):
-                    # Pdf file is not present, Skipping it
+            if self.run_id:
+                run_loads_ids = app_metadata.get("run_ids").get(load_id)
+                # loop all loadId & fetch last generated load report.
+                for run_load_id in reversed(run_loads_ids):
+                    report, report_name = self._is_pdf_file_present(
+                        app_name, run_load_id
+                    )
+                    if not report:  # if no valid file found in the load_ids, we will look for next load_id
+                        continue
+                    break
+                # if no valid file found the run, we will look for next run_id
+                if not report:
                     continue
-                # create loader history object
+            else:
+                report, report_name = self._is_pdf_file_present(app_name, load_id)
+                if not report:
+                    continue
+
+            if report:
                 report_summary = report.get("reportSummary")
                 load_history_model_obj = LoadHistory(
                     loadId=load_id,
@@ -434,6 +501,25 @@ class LoaderHelper:
             more_report_full_path = get_full_path(more_reports)
             load_history["moreReportsPath"] = more_report_full_path
         return load_history
+
+    @staticmethod
+    def _is_pdf_file_present(app_name, load_id):
+        load_report_file_path = (
+            f"{CacheDir.HOME_DIR.value}/{app_name}/"
+            f"{load_id}/{CacheDir.REPORT_DATA_FILE_NAME.value}"
+        )
+        report = read_json_file(load_report_file_path)
+        if report:
+            pdf_report_path = (
+                f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/"
+                f"{CacheDir.REPORT_FILE_NAME.value}"
+            )
+            report_name = get_full_path(pdf_report_path)
+            if not os.path.exists(report_name):
+                # Pdf file is not present, Skipping it
+                return False, False
+            return report, report_name
+        return False, False
 
     def _get_doc_report_metadata(self, doc, raw_data):
         """
@@ -473,8 +559,13 @@ class LoaderHelper:
 
         # If source path is not present, then initialize values
         else:
+            loader_details = self.data.get("loader_details", {})
+            loader_name = loader_details.get("loader", None)
+            loader_source_path = source_path
             total_findings += findings
             loader_source_snippets[source_path] = {
+                "loader_name": loader_name,
+                "file_level_source_path": loader_source_path,
                 "findings_entities": doc["entityCount"],
                 "findings_topics": doc["topicCount"],
                 "findings": findings,
@@ -513,6 +604,9 @@ class LoaderHelper:
         # get count of files that have associated findings.
         files_with_findings_count = self._count_files_with_findings()
 
+        # Generating DataSource
+        data_source_obj_list = self._get_data_source_details(raw_data)
+
         # Create report summary
         report_summary = self._create_report_summary(
             raw_data, files_with_findings_count
@@ -520,9 +614,6 @@ class LoaderHelper:
 
         # get top N findings
         top_n_findings = self._get_top_n_findings(raw_data)
-
-        # Generating DataSource
-        data_source_obj_list = self._get_data_source_details(raw_data)
 
         # Retrieve LoadHistory From previous executions
         load_history = self._get_load_history()
@@ -560,7 +651,7 @@ class LoaderHelper:
                 doc_obj = self._create_doc_model(doc, doc_info)
                 ai_app_docs.append(doc_obj)
                 raw_data = self._get_doc_report_metadata(doc_obj, raw_data)
-        logger.debug(f"ai_app_docs: {ai_app_docs}")
+
         # Updating ai apps details
         self._update_app_details(raw_data, ai_app_docs)
 
