@@ -82,6 +82,7 @@
             Top Documents With Most Findings
           </div>
           <div class="mt-3 inter">
+            {% if data.topFindings|length > 0 %}
             <table class="fixed">
               <thead class="font-12">
                 <tr>
@@ -109,16 +110,31 @@
                 {% endfor %}
               </tbody>
             </table>
+            {% else %}
+            <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
+              <img
+                class="mt-1 mb-1 img-no-files"
+                src="../assets/no-files.png"
+                alt="CSV logo"
+              />
+              <div class="w-100 font-13 surface-10">
+                We scanned all your files and didn’t discover any findings
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
         <div class="mt-12">
           <div class="inter flex items-center">
             <div class="surface-10 font-14 medium">Load History</div>
+            {% if loadHistoryItemsToDisplay|length > 0 %}
             <div class="surface-10-opacity ml-2 font-12">
               Last {{loadHistoryItemsToDisplay|length}} Reports
             </div>
+            {% endif %}
           </div>
           <div class="mt-3 inter">
+            {% if loadHistoryItemsToDisplay|length > 0 %}
             <table class="fixed">
               <thead class="font-12">
                 <tr>
@@ -140,9 +156,21 @@
                 {% endfor %}
               </tbody>
             </table>
+            {% else %}
+            <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
+              <img
+                class="mt-1 mb-1 img-no-report-history"
+                src="../assets/no-report-history.png"
+                alt="CSV logo"
+              />
+              <div class="w-100 font-13 surface-10">
+                Looks like it’s your first report
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
-        {% if data.loadHistory.moreReportsPath != '-' %}
+        {% if data.loadHistory and data.loadHistory.moreReportsPath != '-' %}
         <div class="mt-2 inter surface-10-opacity font-11">
           Find more reports on: {{ data.loadHistory.moreReportsPath }}
         </div>
@@ -244,6 +272,7 @@
           <!-- <img class="ml-1" src="../assets/csv-icon.svg" alt="CSV logo" /> -->
           <div class="ml-1">{{ datastores.name }}</div>
         </div>
+        {% if datastores %}
         <div class="surface-10-opacity inter font-12 flex">
           <div class="max-w-70 break-word">
             Source: {{ datastores.sourcePath }}
@@ -252,7 +281,8 @@
           <div class="ml-2">Size: {{ getFileSize(datastores.sourceSize) }}</div>
         </div>
       </div>
-
+      {% endif %} {% if datastores and datastores.findingsSummary and
+      datastores.findingsSummary|length > 0 %}
       <table class="mt-4 fixed">
         <thead class="font-12 inter">
           <tr>
@@ -273,44 +303,77 @@
           {% endfor %}
         </tbody>
       </table>
+      {% else %}
+      <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
+        <img
+          class="mt-1 mb-1 img-datastores"
+          src="../assets/no-data-stores.png"
+          alt="CSV logo"
+        />
+        <div class="w-100 font-13 surface-10">
+          We scanned all your applications and didn’t discover any data source
+        </div>
+      </div>
+      {% endif %}
     </section>
     <section>
       <div>
         <div class="inter flex items-center">
           <div class="font-14 surface-10">Snippets</div>
+          {% if datastores and datastores.findingsDetails and
+          datastores.findingsDetails|length > 0 %}
           <div class="font-12 surface-10-opacity ml-2">
             Showing {{ datastores.displayedSnippetCount }} out of {{
             datastores.totalSnippetCount }}
           </div>
+          {% endif %}
         </div>
-        {% for item in findingDetails %}
-        <div class="mt-4">
-          <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
-            <div class="surface-10 font-13">{{ item.labelName }}</div>
-            <div class="sub-heading ml-2 surface-50 font-12">
-              Showing {{ item.snippets|length }} snippets out of {{
-              item.snippetCount }}
+        {% if findingDetails and findingDetails|length > 0 %}
+        <div>
+          {% for item in findingDetails %}
+          <div class="mt-4">
+            <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
+              <div class="surface-10 font-13">{{ item.labelName }}</div>
+              <div class="sub-heading ml-2 surface-50 font-12">
+                Showing {{ item.snippets|length }} snippets out of {{
+                item.snippetCount }}
+              </div>
             </div>
-          </div>
-          {% for snippet in item.snippets %}
-          <div class="key-value">
-            <div class="surface-50 font-12">Snippet</div>
-            <div class="surface-10 font-13 mt-2">{{ snippet.snippet }}</div>
-          </div>
-          <div class="key-value">
-            <div class="surface-50 font-12">Retrieved From</div>
-            <div class="surface-10 font-13 mt-2">{{ snippet.sourcePath }}</div>
-          </div>
-          <!-- <div class="key-value">
+            {% for snippet in item.snippets %}
+            <div class="key-value">
+              <div class="surface-50 font-12">Snippet</div>
+              <div class="surface-10 font-13 mt-2">{{ snippet.snippet }}</div>
+            </div>
+            <div class="key-value">
+              <div class="surface-50 font-12">Retrieved From</div>
+              <div class="surface-10 font-13 mt-2">
+                {{ snippet.sourcePath }}
+              </div>
+            </div>
+            <!-- <div class="key-value">
             <div class="surface-50 font-12">Finding</div>
             <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
           </div> -->
-          <div
-            class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"
-          ></div>
+            <div
+              class="divider-horizontal bg-surface-10-opacity-20 mt-4 mb-4"
+            ></div>
+            {% endfor %}
+          </div>
           {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
+          <img
+            class="mt-1 mb-1 img-no-snippets"
+            src="../assets/no-snippets.png"
+            alt="CSV logo"
+          />
+          <div class="w-100 font-13 surface-10">
+            We scanned all your documents and didn’t discover any snippets with
+            findings
+          </div>
+        </div>
+        {% endif %}
       </div>
     </section>
   </body>

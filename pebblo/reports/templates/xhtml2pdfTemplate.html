@@ -71,7 +71,9 @@
       .inline-flex {
         display: inline-flex;
       }
-
+      .text-center {
+        text-align: center;
+      }
       /* FONT WEIGHT PROPERTY */
       .font-thin {
         font-weight: 200;
@@ -97,6 +99,9 @@
       }
       .bg-surface-60 {
         background: #b5b8ca;
+      }
+      .bg-surface-50 {
+        background: #f9f9fb;
       }
       .bg-surface-20 {
         background: #3b3e52;
@@ -338,6 +343,16 @@
       .p-0 {
         padding: 0 !important;
       }
+      .px-8 {
+        padding-left: 32px;
+        padding-right: 32px;
+      }
+
+      .py-8 {
+        padding-top: 32px;
+        padding-bottom: 32px;
+      }
+
       .pt-0 {
         padding-top: 0 !important;
       }
@@ -512,6 +527,23 @@
         page-break-after: always;
       }
 
+      .img-no-files {
+        height: 94px;
+        width: 110px;
+      }
+      .img-no-report-history {
+        height: 100px;
+        width: 110px;
+      }
+      .img-no-snippets {
+        height: 189px;
+        width: 236px;
+      }
+      .img-datastores {
+        width: 205px;
+        height: 78px;
+      }
+
       /* CARD */
       .card {
         border-radius: 2px;
@@ -599,7 +631,7 @@
   </head>
   <body>
     <section class="pl-23 pr-23 pt-42 align-cell-left">
-      <div class="pl-8">
+      <div class="ml-8">
         <div class="surface-10 inter font-48 font-thin">Data Report</div>
         <div class="mt-2">
           <div
@@ -677,6 +709,7 @@
             Top Documents With Most Findings
           </div>
           <div class="mt-3 inter">
+            {% if data.topFindings|length > 0 %}
             <table class="fixed table-border">
               <thead class="font-12">
                 <tr>
@@ -709,15 +742,26 @@
                 {% endfor %}
               </tbody>
             </table>
+            {% else %}
+            <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
+              <div class="w-100 font-13 surface-10">
+                We scanned all your files and didn’t discover any findings
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
         <div class="mt-8">
           <span class="surface-10 font-14 inter medium">Load History</span>
-          <span class="surface-10-opacity ml-2 font-12">
-            (Last {{loadHistoryItemsToDisplay|length}} Reports)
+          <span>
+            {% if loadHistoryItemsToDisplay|length > 0 %}
+            <span class="surface-10-opacity ml-2 font-12">
+              (Last {{loadHistoryItemsToDisplay|length}} Reports)
+            </span>
+            {% endif %}
           </span>
-          {% if loadHistoryItemsToDisplay|length > 0 %}
           <div class="mt-3 inter table-border">
+            {% if loadHistoryItemsToDisplay|length > 0 %}
             <table class="fixed">
               <thead class="font-12">
                 <tr>
@@ -753,12 +797,19 @@
                 {% endfor %}
               </tbody>
             </table>
+            {% else %}
+            <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
+              <div class="w-100 font-13 surface-10">
+                Looks like it’s your first report
+              </div>
+            </div>
+            {% endif %}
           </div>
-          {% if data.loadHistory.moreReportsPath != '-' %}
+          {% if data.loadHistory and data.loadHistory.moreReportsPath != '-' %}
           <div class="mt-2 inter surface-10-opacity font-11">
             Find more reports on: {{ data.loadHistory.moreReportsPath }}
           </div>
-          {% endif %} {% endif %}
+          {% endif %}
         </div>
         <div class="mt-8">
           <div class="surface-10 font-14 inter medium">Instance Details</div>
@@ -834,18 +885,22 @@
     </section>
     <pdf:nextpage />
     <section class="p-0">
-      <div class="pl-8 pr-8">
+      <div class="ml-8 mr-8">
         <div>
           <div class="surface-10 inter font-14 medium">
             <div>Data Source 1: {{ datastores.name }}</div>
           </div>
+          {% if datastores %}
           <div class="surface-0 inter font-12">
             <div class="max-w-70 break-word">
               Source: {{ datastores.sourcePath }}
             </div>
             <div>Size: {{ getFileSize(datastores.sourceSize) }}</div>
           </div>
+          {% endif %}
         </div>
+        {% if datastores and datastores.findingsSummary and
+        datastores.findingsSummary|length > 0 %}
         <table class="mt-4 fixed table-border">
           <thead class="font-12 inter">
             <tr>
@@ -880,6 +935,13 @@
             {% endfor %}
           </tbody>
         </table>
+        {% else %}
+        <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
+          <div class="w-100 font-13 surface-10">
+            We scanned all your applications and didn’t discover any data source
+          </div>
+        </div>
+        {% endif %}
       </div>
     </section>
     <pdf:nextpage />
@@ -887,44 +949,57 @@
       <div class="ml-8 mr-8">
         <div class="inter normal">
           <div class="font-14 surface-10 medium">
-            Snippets
+            Snippets {% if datastores and datastores.findingsDetails and
+            datastores.findingsDetails|length > 0 %}
             <span class="font-12 surface-50 pl-2 normal"
               >(Showing {{ datastores.displayedSnippetCount }} out of {{
               datastores.totalSnippetCount }})</span
             >
+            {% endif %}
           </div>
         </div>
-        {% for item in findingDetails %}
-        <div class="mt-4 inter">
-          <div class="bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
-            <span class="surface-10 font-13 medium">
-              {{ item.labelName }}
-              <span class="sub-heading surface-50 normal font-12"
-                >(Showing {{ item.snippets|length }} snippets out of {{
-                item.snippetCount }})</span
-              >
-            </span>
-          </div>
-          {% for snippet in item.snippets %}
-          <div class="key-value inter">
-            <div class="surface-50 font-12 medium">Snippet</div>
-            <div class="surface-10 font-13 mt-2">{{ snippet.snippet }}</div>
-          </div>
-          <div class="key-value">
-            <div class="surface-50 font-12 medium">Retrieved From</div>
-            <div
-              class="surface-10 font-13 mt-2 break-all normal td-border pb-2"
-            >
-              {{ snippet.sourcePath }}
+        {% if findingDetails and findingDetails|length > 0 %}
+        <div>
+          {% for item in findingDetails %}
+          <div class="mt-4 inter">
+            <div class="bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
+              <span class="surface-10 font-13 medium">
+                {{ item.labelName }}
+                <span class="sub-heading surface-50 normal font-12"
+                  >(Showing {{ item.snippets|length }} snippets out of {{
+                  item.snippetCount }})</span
+                >
+              </span>
             </div>
-          </div>
-          <!-- <div class="key-value">
+            {% for snippet in item.snippets %}
+            <div class="key-value inter">
+              <div class="surface-50 font-12 medium">Snippet</div>
+              <div class="surface-10 font-13 mt-2">{{ snippet.snippet }}</div>
+            </div>
+            <div class="key-value">
+              <div class="surface-50 font-12 medium">Retrieved From</div>
+              <div
+                class="surface-10 font-13 mt-2 break-all normal td-border pb-2"
+              >
+                {{ snippet.sourcePath }}
+              </div>
+            </div>
+            <!-- <div class="key-value">
             <div class="surface-50 font-12">Finding</div>
             <div class="surface-10 font-13 chip mt-2 inline-block">-</div>
           </div> -->
+            {% endfor %}
+          </div>
           {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
+          <div class="w-100 font-13 surface-10">
+            We scanned all your documents and didn’t discover any snippets with
+            findings
+          </div>
+        </div>
+        {% endif %}
       </div>
     </section>
   </body>
