@@ -12,6 +12,7 @@ This configuration file specifies settings for various components of the Pebblo.
 - `host`: Specifies the host address on which the Pebblo server to run.
 
 Notes:
+
 1. By default `Pebblo Server` runs at `localhost:8000`. When we change values of `port` and/or `host` , the `Pebblo Safe DataLoader` env variable `PEBBLO_CLASSIFIER_URL` needs to set to the correct URL.
 2. By default `Pebblo UI` runs at `localhost:8000/pebblo`. When we change values of `port` and/or `host`, the Pebblo UI would be running on the respective `host:port/pebblo`.
 
@@ -23,7 +24,12 @@ Notes:
 
 - `format`: Specifies the format of generated reports. Available options include 'pdf'.
 - `renderer`: Specifies the rendering engine for generating reports. Options include 'weasyprint', 'xhtml2pdf'.
-Note: If you put renderer as `weasyprint`, then you need to install Pango. Follow [these instructions](./installation.md#pre-requisites) for the same.
+
+  > **Note**  
+  >  Note: Using xhtml2pdf gives a report with basic UI elements, but WeasyPrint renderer creates a sleeker, better-aligned interface for your PDFs. See image below. If you put renderer as `weasyprint`, then you need to install Pango. Follow [these instructions](./installation.md#pre-requisites) for the same.
+
+  ![Pebblo Reports](../static/img/report-comparision.png)
+
 - `outputDir`: Defines the directory where generated reports will be saved.
 
 ### Classifier
@@ -37,7 +43,6 @@ daemon:
   port: 8000
   host: localhost
 logging:
-
   level: info
 reports:
   format: pdf
@@ -54,4 +59,5 @@ Users have the option to maintain any section or even a single field within a se
 logging:
   level: info
 ```
+
 This flexibility empowers users to tailor configurations to their specific needs while retaining default values for other sections or fields.
