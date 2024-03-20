@@ -51,10 +51,29 @@ Here is the sample code for `Pebblo SafeRetriever` with `authorized_groups` from
 
 ## LangChain
 
-This solution uses the following two private LangChain packages:
+This solution requires the following two private LangChain packages:
 
-* langchain-0.1.12-pebbloretriever
-* langchain-community-0.1.12-pebbloretriever
+* langchain
+* langchain-community
+
+### Installation
+
+The above two packages with `GoogleDriveLoader` with authorized identities and `PebbloRetrievalQA` chain with identity enforcement can be installed using the following steps.
+
+```
+$ git clone -b pebblo_identity_saferetriever https://github.com/daxa-ai/langchain.git
+$ cd langchain
+
+# Install updated langchain-community package that has all document loaders,
+# including GoogleDriveLoader with authorized-identities feature
+$ (cd libs/community; pip install .)
+
+# Install updated langchain package that has the new PebbloRetreivalQA chain
+$ (cd libs/langchain; pip install .)
+```
+
+
+### Pull requests
 
 Here are the two corresponding PRs in the LangChain for this feature:
 
