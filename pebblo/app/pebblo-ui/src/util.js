@@ -1,5 +1,3 @@
-import { DASHBOARD_ROUTE } from "./constants/routesConstant.js";
-
 const MONTHS = [
   "Jan",
   "Feb",
@@ -15,10 +13,36 @@ const MONTHS = [
   "Dec",
 ];
 
-export const get_Formatted_Date = (date) => {
-  const newDate = new Date(date);
-  return `${newDate.getDate()} ${MONTHS[newDate.getMonth()]
-    } ${newDate.getFullYear()}`;
+export const get_Formatted_Date = (
+  date,
+  showTime = false,
+  showTimeZone = false
+) => {
+  if (date) {
+    const newDate = new Date(date);
+    const dateOptions = { day: "2-digit", month: "short", year: "numeric" };
+    if (showTime) {
+      dateOptions.hour = "numeric";
+      dateOptions.minute = "numeric";
+    }
+    if (showTimeZone) {
+      dateOptions.timeZoneName = "long";
+    }
+    // Format the date
+    const formatter = new Intl.DateTimeFormat("en-US", dateOptions);
+    const formattedDate = formatter.format(newDate);
+    return formattedDate;
+  } else return "";
+};
+
+export const extract_Timezone = (date) => {
+  const dateTimeString = date.toString();
+  // Regular expression to match the timezone part
+  const timezonePattern = /(?:AM|PM)\s(.+?)(?:\.|$)/;
+  // Extracting the timezone using the regular expression
+  const match = dateTimeString.match(timezonePattern);
+  const timezone = match ? match[1] : "";
+  return timezone;
 };
 
 export const add_Zero = (number) => {
