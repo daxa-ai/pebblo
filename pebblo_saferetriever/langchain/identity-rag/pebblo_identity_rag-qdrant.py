@@ -1,12 +1,5 @@
-import os
-
 from dotenv import load_dotenv
 from langchain.chains import PebbloRetrievalQA
-from langchain_community.document_loaders import (
-    GoogleDriveLoader,
-    UnstructuredFileIOLoader,
-)
-from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
@@ -16,16 +9,10 @@ from google_auth import get_authorized_identities
 
 load_dotenv()
 
-# Get Qdrant API key from environment
-QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY", "your-qdrant-api-key")
-#  Qdrant URL
-QDRANT_URL = os.environ.get("QDRANT_URL")
+#  Qdrant DB path
+QDRANT_PATH = "qdrant.db"
 #  Qdrant DB collection name
 DEFAULT_COLLECTION_NAME = "identity-enabled-rag"
-
-print(
-    f"QDRANT Config: \n\tKey: {QDRANT_API_KEY[:10]}{'x' * len(QDRANT_API_KEY[10:])}, \n\tUrl: {QDRANT_URL}\n"
-)
 
 
 class PebbloIdentityRAG:
@@ -38,11 +25,10 @@ class PebbloIdentityRAG:
 
     def init_vector_db(self):
         """
-        Load Vector DB
+        Load Vector DB from file
         """
         client = QdrantClient(
-            url=QDRANT_URL,
-            api_key=QDRANT_API_KEY,
+            path=QDRANT_PATH,
         )
         vectordb = Qdrant(
             client=client,
@@ -50,41 +36,6 @@ class PebbloIdentityRAG:
             embeddings=self.embeddings,
         )
         return vectordb
-
-    def load_documents_to_vector_db(self, folder_id: str):
-        """
-        Load documents to Qdrant Vector DB
-        """
-        print("Loading documents...")
-
-        loader = PebbloSafeLoader(
-            GoogleDriveLoader(
-                folder_id=folder_id,
-                token_path="./google_token.json",
-                recursive=True,
-                file_loader_cls=UnstructuredFileIOLoader,
-                file_loader_kwargs={"mode": "elements"},
-                load_auth=True,
-            ),
-            name=self.app_name,  # App name (Mandatory)
-            owner="Joe Smith",  # Owner (Optional)
-            description="Identity enabled SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
-        )
-        documents = loader.load()
-        print(f"Loaded {len(documents)} documents ...\n")
-        print(f"First document: {documents[0]}")
-
-        # Load documents into VectorDB
-        print("Hydrating Vector DB ...")
-
-        _vectordb = Qdrant.from_documents(
-            documents,
-            self.embeddings,
-            url=QDRANT_URL,
-            api_key=QDRANT_API_KEY,
-            collection_name=self.qdrant_collection_name,
-        )
-        print("Finished hydrating Vector DB ...\n")
 
     def ask(self, question: str, auth_context: dict):
         # Prepare retriever QA chain
@@ -100,9 +51,8 @@ class PebbloIdentityRAG:
 
 if __name__ == "__main__":
     # TODO: pass the actual GoogleDrive folder id
-    def_folder_id = "1sRvP0j6L6M_Ll0y_8Qp7cFWUOlpdbfN5"
     def_service_acc_path = "credentials/service-account.json"
-    def_ingestion_user_email_address = "user@clouddefense.io"
+    def_ingestion_user_email_address = "admin@clouddefense.io"
     input_collection_name = "identity-enabled-rag"
 
     rag_app = PebbloIdentityRAG(input_collection_name)
@@ -116,14 +66,14 @@ if __name__ == "__main__":
         input(f"service-account.json path ({def_service_acc_path}) : ")
         or def_service_acc_path
     )
-    input_folder_id = input(f"Folder id ({def_folder_id}): ") or def_folder_id
 
-    # Load documents to Qdrant Vector DB
-    rag_app.load_documents_to_vector_db(input_folder_id)
+    def_end_user = "demo-user-hr@daxa.ai"
 
     while True:
         print("Please enter end user details below")
-        end_user_email_address = input("User email address : ")
+        end_user_email_address = (
+            input(f"User email address ({def_end_user}): ") or def_end_user
+        )
         prompt = input("Please provide the prompt : ")
         print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")
 
