@@ -35,7 +35,7 @@ Here is the sample code for `Pebblo SafeRetriever` with `authorized_groups` from
 
 ```python
     auth = {
-        "authorized_groups": [
+        "authorized_identities": [
             "joe@acme.io",
             "hr-group@acme.io",
             "us-employees-group@acme.io",
@@ -106,7 +106,9 @@ Download and save credentials.json for your GCP project at `~/.credentials/crede
 ```
 pip install -r langchain/identity-rag/requirements.txt
 ```
-2Run the application
+
+2. Run the application
+
 ```
 python3 langchain/identity-rag/pebblo_identity_rag.py
 ```
