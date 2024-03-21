@@ -2,7 +2,7 @@ import { ApplicationsList, SnippetDetails } from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
-import { get_Formatted_Date } from "../util.js";
+import { extractTimezone, getFormattedDate } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
 const SCRIPT_ELEMENT = document.getElementById("main_script");
@@ -86,7 +86,7 @@ export const APP_DETAILS = [
   },
   {
     label: "Created At",
-    value: get_Formatted_Date(APP_DATA?.instanceDetails?.createdAt),
+    value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt, false, true),
   },
   {
     label: "Path",
@@ -517,6 +517,16 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
   },
 ];
 
+export const TIMEZONE_FOR_LOAD_HISTORY = extractTimezone(
+  getFormattedDate(
+    APP_DATA?.loadHistory?.history?.length
+      ? APP_DATA?.loadHistory?.history[0]?.generatedOn
+      : null,
+    true,
+    true
+  )
+);
+
 export const LOAD_HISTORY_TABLE_COL = [
   {
     label: "Report Name",
@@ -535,9 +545,18 @@ export const LOAD_HISTORY_TABLE_COL = [
     align: "end",
   },
   {
-    label: "Generated On",
+    label: `Generated On (${TIMEZONE_FOR_LOAD_HISTORY})`,
     field: "generatedOn",
   },
 ];
 
-export const LOAD_HISTORY_TABLE_DATA = APP_DATA?.loadHistory?.history;
+/**
+ * Iterated over LOAD_HISTORY_TABLE_DATA and modified date to match format (DD MM YYYY HH:MM, A)
+ * 2024-03-14 16:24:06.797429 => Mar 14, 2024, 4:24 PM India Standard Time
+ */
+export const LOAD_HISTORY_TABLE_DATA = APP_DATA?.loadHistory?.history?.map(
+  (loadHistoryItem) => ({
+    ...loadHistoryItem,
+    generatedOn: getFormattedDate(loadHistoryItem?.generatedOn, true, false),
+  })
+);
