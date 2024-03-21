@@ -1,6 +1,7 @@
 """
 Unit test cases for reports/html_to_pdf_generator/report_generator.py file
 """
+
 import datetime
 import unittest
 import time
@@ -14,6 +15,7 @@ from pebblo.reports.html_to_pdf_generator.report_generator import (
 
 class TestReportGenerator(unittest.TestCase):
     """Class to hold report_generator UT cases"""
+
     def setUp(self):
         """Setup mock data"""
         self.date_obj = datetime.datetime.strptime(
