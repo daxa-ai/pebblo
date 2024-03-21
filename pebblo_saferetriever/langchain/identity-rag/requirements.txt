@@ -10,4 +10,4 @@ google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
 qdrant-client==1.8.0 # for Qdrant VectorStore
-pinecone-client==3.1.0 # for Pinecone VectorStore
+PyPDF2
