@@ -44,10 +44,3 @@ $ python3 pebblo_identity_rag.py
 ```
 
 5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-identity-rag-1/pebblo_report.pdf` file path on the system where `Pebblo Server` is running.
-
-
-## Note:
-GoogleDriveLoader comes with some prerequisites. Please follow [this](https://python.langchain.com/docs/integrations/document_loaders/google_drive#prerequisites) section to:
-1. generate your credentials.json,
-2.  enabling googledrive api for your google cloud project,
-3.  and to fetch all the required libraries.
