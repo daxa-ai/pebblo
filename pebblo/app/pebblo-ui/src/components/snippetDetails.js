@@ -21,7 +21,7 @@ export function SnippetDetails(props) {
   function onChange(evt) {
     let filteredData;
     if (evt.target.value) {
-      filteredData = data?.filter((item) =>
+      filteredData = data?.snippets?.filter((item) =>
         eval(
           searchField
             ?.map((sch) =>
@@ -33,7 +33,7 @@ export function SnippetDetails(props) {
         )
       );
     } else {
-      filteredData = data;
+      filteredData = data?.snippets;
     }
     const snippet_body = document.getElementById("snippet_body");
     snippet_body.innerHTML = "";
@@ -70,7 +70,12 @@ export function SnippetDetails(props) {
   return /*html*/ `
       <div class="snippet-details-container flex flex-col gap-4">
       <div class="flex justify-between">
-        <div class="inter surface-10 font-16 medium">${title}</div>
+        <div class="inter flex gap-2 items-center">
+        <div class="surface-10 font-16 medium">${title}</div>
+        <div class="surface-10-opacity-50 font-12">Showing ${
+          data?.snippetCount
+        } out of ${data?.totalSnippetCount}</div>
+        </div>
         <div class="flex">
           <div class="search">
             <input type="text" id="snippet_search" placeholder="${inputPlaceholder}" autocomplete="off" />
@@ -82,8 +87,8 @@ export function SnippetDetails(props) {
         !error
           ? `<div id="snippet_body" class="flex flex-col gap-10 h-full">
       ${
-        data?.length
-          ? data?.myMap(
+        data?.snippets?.length
+          ? data?.snippets?.myMap(
               (item) => /*html*/ `        
          <div class="flex flex-col gap-1">
            <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">

@@ -446,22 +446,17 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
     label: "Data Source",
     critical: APP_DATA?.reportSummary?.dataSources || 0,
     value: 2,
-    isCritical: IS_CRITICAL_COUNT,
+    isCritical: false,
   },
   {
     label: "Snippets",
     critical: NO_FINDINGS_FOR_APP
       ? "-"
       : APP_DATA?.dataSources
-      ? APP_DATA?.dataSources[0]?.displayedSnippetCount
-      : 0,
-    outOf: NO_FINDINGS_FOR_APP
-      ? ""
-      : APP_DATA?.dataSources
       ? APP_DATA?.dataSources[0]?.totalSnippetCount
       : 0,
     value: 3,
-    isCritical: IS_CRITICAL_COUNT,
+    isCritical: false,
   },
 ];
 
@@ -506,9 +501,13 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
   {
     value: {
       title: "Snippets",
-      data: APP_DATA?.dataSources
-        ? APP_DATA?.dataSources[0]?.findingsDetails
-        : [],
+      data: {
+        snippetCount: APP_DATA?.dataSources[0]?.displayedSnippetCount,
+        totalSnippetCount: APP_DATA?.dataSources[0]?.totalSnippetCount,
+        snippets: APP_DATA?.dataSources
+          ? APP_DATA?.dataSources[0]?.findingsDetails
+          : [],
+      },
       searchField: ["labelName"],
       inputPlaceholder: "Search",
       error: NO_FINDINGS_FOR_APP ? "NO_FINDINGS_EMPTY_STATE" : null,
