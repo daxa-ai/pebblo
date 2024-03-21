@@ -1,5 +1,7 @@
-import pytest
+"""Unit test cases for reports module"""
+
 from pathlib import Path
+import pytest
 from pebblo.reports.enums.report_libraries import ReportLibraries
 from pebblo.reports.reports import Reports
 
@@ -15,6 +17,9 @@ def convert_html_to_pdf(mocker):
 
 
 def test_generate_report(convert_html_to_pdf):
+    """
+    Test the generate_report function
+    """
     # Get the template path
     template_path = (
         str(Path(__file__).parent.parent.parent.absolute())
@@ -40,6 +45,9 @@ def test_generate_report(convert_html_to_pdf):
 
 
 def test_generate_report_with_wrong_format_string(convert_html_to_pdf):
+    """
+    Test the report generation function with invalid format string
+    """
     # Call the generate_report method with wrong format_string
     Reports.generate_report(
         data={},
@@ -53,6 +61,9 @@ def test_generate_report_with_wrong_format_string(convert_html_to_pdf):
 
 
 def test_generate_report_with_wrong_renderer(convert_html_to_pdf):
+    """
+    Test the report generation function with invalid renderer string
+    """
     # Call the generate_report method with wrong renderer
     Reports.generate_report(
         data={},
