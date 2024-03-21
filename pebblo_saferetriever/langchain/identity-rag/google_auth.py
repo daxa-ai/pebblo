@@ -30,8 +30,3 @@ def get_authorized_identities(
         print(f"Error in : {e}")
     print(f"User: {user_email}, \nAuthorized Identities: {_authorized_identities}\n")
     return _authorized_identities
-
-
-if __name__ == "__main__":
-    email = "user@daxa.ai"
-    authorized_identities = get_authorized_identities(email)

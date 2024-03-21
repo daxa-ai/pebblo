@@ -1,7 +1,6 @@
-from dotenv import load_dotenv
-
 from typing import List
 
+from dotenv import load_dotenv
 from langchain.schema import Document
 from langchain_community.document_loaders import (
     GoogleDriveLoader,
@@ -68,8 +67,7 @@ class IdentityBasedDataLoader:
 
 if __name__ == "__main__":
     print("Loading documents to Qdrant ...")
-    # def_folder_id = "1FQ-LrarHhWBJRGHc8yiH2ZtirpUXERYP"
-    def_folder_id = "15CyFIWOPJOR5BxDID7G6tUisfHU1szrg"
+    def_folder_id = "<google_drive_folder_id>"
     input_collection_name = "identity-enabled-rag"
 
     qloader = IdentityBasedDataLoader(def_folder_id, input_collection_name)
