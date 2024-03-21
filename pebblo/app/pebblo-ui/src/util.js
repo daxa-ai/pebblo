@@ -13,7 +13,7 @@ const MONTHS = [
   "Dec",
 ];
 
-export const get_Formatted_Date = (
+export const getFormattedDate = (
   date,
   showTime = false,
   showTimeZone = false
@@ -35,7 +35,7 @@ export const get_Formatted_Date = (
   } else return "";
 };
 
-export const extract_Timezone = (date) => {
+export const extractTimezone = (date) => {
   const dateTimeString = date.toString();
   // Regular expression to match the timezone part
   const timezonePattern = /(?:AM|PM)\s(.+?)(?:\.|$)/;
@@ -45,12 +45,12 @@ export const extract_Timezone = (date) => {
   return timezone;
 };
 
-export const add_Zero = (number) => {
+export const addZero = (number) => {
   if (number < 10) return `0${number}`;
   return number;
 };
 
-export const get_Text_Orientation = (align) => {
+export const getTextOrientation = (align) => {
   switch (align) {
     case "start":
       return "text-start";

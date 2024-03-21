@@ -1,4 +1,4 @@
-import { get_Formatted_Date } from "../util.js";
+import { getFormattedDate } from "../util.js";
 import {
   AccordionSummary,
   AccordionDetails,
@@ -118,7 +118,7 @@ export function AppDetailsPage() {
            <div class="font-16">Report Summary</div>
            <div class="font-12">Current Load By ${
              APP_DATA?.reportSummary.owner
-           }, ${get_Formatted_Date(
+           }, ${getFormattedDate(
     APP_DATA?.reportSummary.createdAt,
     false,
     true

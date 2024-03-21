@@ -2,7 +2,7 @@ import { ApplicationsList, SnippetDetails } from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
-import { extract_Timezone, get_Formatted_Date } from "../util.js";
+import { extractTimezone, getFormattedDate } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
 const SCRIPT_ELEMENT = document.getElementById("main_script");
@@ -86,11 +86,7 @@ export const APP_DETAILS = [
   },
   {
     label: "Created At",
-    value: get_Formatted_Date(
-      APP_DATA?.instanceDetails?.createdAt,
-      false,
-      true
-    ),
+    value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt, false, true),
   },
   {
     label: "Path",
@@ -521,8 +517,8 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
   },
 ];
 
-export const TIMEZONE_FOR_LOAD_HISTORY = extract_Timezone(
-  get_Formatted_Date(
+export const TIMEZONE_FOR_LOAD_HISTORY = extractTimezone(
+  getFormattedDate(
     APP_DATA?.loadHistory?.history?.length
       ? APP_DATA?.loadHistory?.history[0]?.generatedOn
       : null,
@@ -561,6 +557,6 @@ export const LOAD_HISTORY_TABLE_COL = [
 export const LOAD_HISTORY_TABLE_DATA = APP_DATA?.loadHistory?.history?.map(
   (loadHistoryItem) => ({
     ...loadHistoryItem,
-    generatedOn: get_Formatted_Date(loadHistoryItem?.generatedOn, true, false),
+    generatedOn: getFormattedDate(loadHistoryItem?.generatedOn, true, false),
   })
 );
