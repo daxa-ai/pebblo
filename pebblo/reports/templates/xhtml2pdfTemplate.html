@@ -681,7 +681,7 @@
               <tr>
                 <td>
                   <div class="critical font-64 normal">
-                    {{ data.reportSummary.findings|default('0') }}
+                    {{ findings_count }}
                   </div>
                   <div class="surface-10 font-13">Findings</div>
                 </td>
@@ -709,7 +709,7 @@
             Top Documents With Most Findings
           </div>
           <div class="mt-3 inter">
-            {% if data.topFindings|length > 0 %}
+            {% if findings_count > 0 %}
             <table class="fixed table-border">
               <thead class="font-12">
                 <tr>
@@ -899,8 +899,7 @@
           </div>
           {% endif %}
         </div>
-        {% if datastores and datastores.findingsSummary and
-        datastores.findingsSummary|length > 0 %}
+        {% if datastores %}
         <table class="mt-4 fixed table-border">
           <thead class="font-12 inter">
             <tr>
@@ -935,12 +934,6 @@
             {% endfor %}
           </tbody>
         </table>
-        {% else %}
-        <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
-          <div class="w-100 font-13 surface-10">
-            We scanned all your applications and didn’t discover any data source
-          </div>
-        </div>
         {% endif %}
       </div>
     </section>
@@ -949,8 +942,7 @@
       <div class="ml-8 mr-8">
         <div class="inter normal">
           <div class="font-14 surface-10 medium">
-            Snippets {% if datastores and datastores.findingsDetails and
-            datastores.findingsDetails|length > 0 %}
+            Snippets {% if findings_count > 0 %}
             <span class="font-12 surface-50 pl-2 normal"
               >(Showing {{ datastores.displayedSnippetCount }} out of {{
               datastores.totalSnippetCount }})</span
@@ -958,7 +950,7 @@
             {% endif %}
           </div>
         </div>
-        {% if findingDetails and findingDetails|length > 0 %}
+        {% if findings_count > 0 %}
         <div>
           {% for item in findingDetails %}
           <div class="mt-4 inter">

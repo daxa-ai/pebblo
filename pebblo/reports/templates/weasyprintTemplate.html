@@ -55,7 +55,7 @@
         <div class="flex inter">
           <div>
             <div class="critical font-64 manrope font-thin">
-              {{ data.reportSummary.findings|default('0') }}
+              {{ findings_count }}
             </div>
             <div class="surface-10 font-13">Findings</div>
           </div>
@@ -82,7 +82,7 @@
             Top Documents With Most Findings
           </div>
           <div class="mt-3 inter">
-            {% if data.topFindings|length > 0 %}
+            {% if findings_count > 0 %}
             <table class="fixed">
               <thead class="font-12">
                 <tr>
@@ -281,8 +281,7 @@
           <div class="ml-2">Size: {{ getFileSize(datastores.sourceSize) }}</div>
         </div>
       </div>
-      {% endif %} {% if datastores and datastores.findingsSummary and
-      datastores.findingsSummary|length > 0 %}
+      {% endif %} {% if datastores %}
       <table class="mt-4 fixed">
         <thead class="font-12 inter">
           <tr>
@@ -303,32 +302,20 @@
           {% endfor %}
         </tbody>
       </table>
-      {% else %}
-      <div class="w-100 text-center mt-3 bg-surface-50 inter py-8">
-        <img
-          class="mt-1 mb-1 img-datastores"
-          src="../assets/no-data-stores.png"
-          alt="CSV logo"
-        />
-        <div class="w-100 font-13 surface-10">
-          We scanned all your applications and didn’t discover any data source
-        </div>
-      </div>
       {% endif %}
     </section>
     <section>
       <div>
         <div class="inter flex items-center">
           <div class="font-14 surface-10">Snippets</div>
-          {% if datastores and datastores.findingsDetails and
-          datastores.findingsDetails|length > 0 %}
+          {% if findings_count > 0 %}
           <div class="font-12 surface-10-opacity ml-2">
             Showing {{ datastores.displayedSnippetCount }} out of {{
             datastores.totalSnippetCount }}
           </div>
           {% endif %}
         </div>
-        {% if findingDetails and findingDetails|length > 0 %}
+        {% if findings_count > 0 %}
         <div>
           {% for item in findingDetails %}
           <div class="mt-4">
