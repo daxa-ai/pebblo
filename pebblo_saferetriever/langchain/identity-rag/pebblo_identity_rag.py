@@ -1,17 +1,13 @@
-from typing import List
-
-# Fill-in OPENAI_API_KEY in .env file
-# in this directory before proceeding
+# Fill-in OPENAI_API_KEY in .env file in this directory before proceeding
 from dotenv import load_dotenv
+from google_auth import get_authorized_identities
 from langchain.chains import PebbloRetrievalQA
-from langchain.schema import Document
 from langchain_community.document_loaders import (
     GoogleDriveLoader,
     UnstructuredFileIOLoader,
 )
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
-from langchain_community.vectorstores import Chroma
-from langchain_community.vectorstores.utils import filter_complex_metadata
+from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
 
@@ -19,11 +15,12 @@ load_dotenv()
 
 
 class PebbloIdentityRAG:
-    def __init__(self, folder_id: str):
+    def __init__(self, folder_id: str, collection_name: str):
         self.app_name = "pebblo-identity-rag-1"
+        self.collection_name = collection_name
 
         # Load documents
-        print("Loading RAG documents ...")
+        print("\nLoading RAG documents ...")
         self.loader = PebbloSafeLoader(
             GoogleDriveLoader(
                 folder_id=folder_id,
@@ -39,22 +36,25 @@ class PebbloIdentityRAG:
         )
         self.documents = self.loader.load()
         print(self.documents[-1].metadata.get("authorized_identities"))
-        self.filtered_docs = filter_complex_metadata(self.documents)
         print(f"Loaded {len(self.documents)} documents ...\n")
 
         # Load documents into VectorDB
 
         print("Hydrating Vector DB ...")
-        self.vectordb = self.embeddings(self.filtered_docs)
+        self.vectordb = self.embeddings()
         print("Finished hydrating Vector DB ...\n")
 
         # Prepare LLM
         self.llm = OpenAI()
 
-    @staticmethod
-    def embeddings(docs: List[Document]):
+    def embeddings(self):
         embeddings = OpenAIEmbeddings()
-        vectordb = Chroma.from_documents(docs, embeddings)
+        vectordb = Qdrant.from_documents(
+            self.documents,
+            embeddings,
+            location=":memory:",
+            collection_name=self.collection_name,
+        )
         return vectordb
 
     def ask(self, question: str, auth: dict):
@@ -70,17 +70,39 @@ class PebbloIdentityRAG:
 
 
 if __name__ == "__main__":
-    # TODO: pass the actual GoogleDrive folder id
-    # folder_id = "1sd0RqMMJKidf9Pb4YRCI2-NH4Udj885k"
-    folder_id = ""
-    rag_app = PebbloIdentityRAG(folder_id)
-    prompt = "What is adaptive pacing system?"
-    print(f"Query:\n{prompt}")
-    auth = {
-        "authorized_groups": [
-            "joe@acme.io",
-            "hr-group@acme.io",
-            "us-employees-group@acme.io",
-    ]}
-    response = rag_app.ask(prompt, auth)
-    print(f"Response:\n{response}")
+    input_collection_name = "identity-enabled-rag"
+
+    print("Please enter ingestion user details for loading data...")
+    ingestion_user_email_address = input("email address : ")
+    ingestion_user_service_account_path = input("service-account.json path : ")
+    input_folder_id = input("Folder id : ")
+
+    rag_app = PebbloIdentityRAG(
+        folder_id=input_folder_id, collection_name=input_collection_name
+    )
+
+    while True:
+        print("Please enter end user details below")
+        end_user_email_address = input("User email address : ")
+        prompt = input("Please provide the prompt : ")
+        print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")
+
+        auth = {
+            "authorized_identities": get_authorized_identities(
+                admin_user_email_address=ingestion_user_email_address,
+                credentials_file_path=ingestion_user_service_account_path,
+                user_email=end_user_email_address,
+            )
+        }
+        response = rag_app.ask(prompt, auth)
+        print(f"Response:\n{response}")
+        try:
+            continue_or_exist = int(input("\n\nType 1 to continue and 0 to exit : "))
+        except ValueError:
+            print("Please provide valid input")
+            continue
+
+        if not continue_or_exist:
+            exit(0)
+
+        print("\n\n")
