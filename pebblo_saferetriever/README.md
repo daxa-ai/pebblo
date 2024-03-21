@@ -94,3 +94,31 @@ To authenticate end users and access user data in your app, you need to create o
  - Click Create. The OAuth client created screen appears, showing your new Client ID and Client secret.
  - Click OK. The newly created credential appears under OAuth 2.0 Client IDs.
  - Save the downloaded JSON file as credentials.json, and move the file `~/.credentials/credentials.json` path.
+
+### How to run?
+
+#### Pre-requisite:
+Download and save credentials.json for your GCP project at `~/.credentials/credentials.json`
+
+
+#### Steps to run:
+1. Setup virtual env and install `langchain/identity-rag/requirements.txt`.
+```
+pip install -r langchain/identity-rag/requirements.txt
+```
+2Run the application
+```
+python3 langchain/identity-rag/pebblo_identity_rag.py
+```
+
+3. It will need following inputs:
+   1. For the ingestion user:
+      1. Admin email address : For listing groups to know the identity.
+      2. service-account.json path : Service account credentials file for your google account with enough permissions.
+      3. Folder Id : Folder id where the documents to be loaded are stored.
+   2. End user email address, against which the identity would be matched.
+   3. Prompt by the end user.
+
+Based on all the inputs, it will load the data from given Google Drive folder and
+based on the input prompt and it will respond according to
+the user level permissions for that user.

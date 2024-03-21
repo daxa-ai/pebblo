@@ -11,6 +11,8 @@ from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
 
+from google_auth import get_authorized_identities
+
 load_dotenv()
 
 
@@ -20,7 +22,7 @@ class PebbloIdentityRAG:
         self.collection_name = collection_name
 
         # Load documents
-        print("Loading RAG documents ...")
+        print("\nLoading RAG documents ...")
         self.loader = PebbloSafeLoader(
             GoogleDriveLoader(
                 folder_id=folder_id,
@@ -70,18 +72,39 @@ class PebbloIdentityRAG:
 
 
 if __name__ == "__main__":
-    # TODO: pass the actual GoogleDrive folder id
-    folder_id = "1sRvP0j6L6M_Ll0y_8Qp7cFWUOlpdbfN5"
-    collection_name = "identity-enabled-rag"
-    rag_app = PebbloIdentityRAG(folder_id, collection_name)
-    prompt = "What is adaptive pacing system?"
-    print(f"Query:\n{prompt}")
-    auth = {
-        "authorized_identities": [
-            "joe@acme.io",
-            "hr-group@acme.io",
-            "us-employees-group@acme.io",
-        ]
-    }
-    response = rag_app.ask(prompt, auth)
-    print(f"Response:\n{response}")
+    input_collection_name = "identity-enabled-rag"
+
+    print("Please enter ingestion user details for loading data...")
+    ingestion_user_email_address = input("email address : ")
+    ingestion_user_service_account_path = input("service-account.json path : ")
+    input_folder_id = input("Folder id : ")
+
+    rag_app = PebbloIdentityRAG(
+        folder_id=input_folder_id, collection_name=input_collection_name
+    )
+
+    while True:
+        print("Please enter end user details below")
+        end_user_email_address = input("User email address : ")
+        prompt = input("Please provide the prompt : ")
+        print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")
+
+        auth = {
+            "authorized_identities": get_authorized_identities(
+                admin_user_email_address=ingestion_user_email_address,
+                credentials_file_path=ingestion_user_service_account_path,
+                user_email=end_user_email_address,
+            )
+        }
+        response = rag_app.ask(prompt, auth)
+        print(f"Response:\n{response}")
+        try:
+            continue_or_exist = int(input("\n\nType 1 to continue and 0 to exit : "))
+        except ValueError:
+            print("Please provide valid input")
+            continue
+
+        if not continue_or_exist:
+            exit(0)
+
+        print("\n\n")
