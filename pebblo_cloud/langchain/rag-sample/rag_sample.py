@@ -40,7 +40,7 @@ class DataLoader:
             name=self.app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
-            api_key=os.environ.get("PEBBLO_API_KEY"), #Pebblo cloud API key
+            api_key=os.environ.get("PEBBLO_API_KEY"),  # Pebblo cloud API key
         )
         documents = loader.load()
         unique_identities = set()

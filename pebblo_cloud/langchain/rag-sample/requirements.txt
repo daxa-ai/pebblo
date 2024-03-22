@@ -1,0 +1,10 @@
+langchain>=0.1.7
+langchain-community
+langchain-openai
+python-dotenv==1.0.0
+requests==2.31.0
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+unstructured[all-docs]
+qdrant-client
