@@ -31,8 +31,8 @@ def get_file_size(size):
 
 
 def convert_html_to_pdf(data, output_path, template_name, search_path, renderer):
+    """Convert HTML Template to PDF by embedding JSON data"""
     try:
-        """Convert HTML Template to PDF by embedding JSON data"""
         template_loader = jinja2.FileSystemLoader(searchpath=search_path)
         template_env = jinja2.Environment(loader=template_loader)
         template = template_env.get_template(template_name)
@@ -41,14 +41,25 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
             + " "
             + time.localtime().tm_zone
         )
+        load_history_items = []
+        findings_details = []
+        datastores = []
+        if "dataSources" in data and data["dataSources"]:
+            datastores = data["dataSources"][0]
+            if "findingsDetails" in datastores:
+                findings_details = datastores["findingsDetails"]
+        if "loadHistory" in data and "history" in data["loadHistory"]:
+            load_history_items = data["loadHistory"]["history"]
+        findings_count = data["reportSummary"].get("findings", 0)
         source_html = template.render(
             data=data,
             date=current_date,
-            datastores=data["dataSources"][0],
-            findingDetails=data["dataSources"][0]["findingsDetails"],
-            loadHistoryItemsToDisplay=data["loadHistory"]["history"],
+            datastores=datastores,
+            findingDetails=findings_details,
+            loadHistoryItemsToDisplay=load_history_items,
             dateFormatter=date_formatter,
             getFileSize=get_file_size,
+            findings_count=findings_count,
         )
         pdf_converter = library_function_mapping[renderer]
         status, result = pdf_converter(source_html, output_path, search_path)
