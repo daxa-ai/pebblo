@@ -117,9 +117,9 @@ export function AppDetailsPage() {
         <div class="flex gap-2 surface-10 inter items-center">
            <div class="font-16">Report Summary</div>
            <div class="font-12">Current Load By ${
-             APP_DATA?.reportSummary.owner
+             APP_DATA?.reportSummary?.owner
            }, ${getFormattedDate(
-    APP_DATA?.reportSummary.createdAt,
+    APP_DATA?.reportSummary?.createdAt,
     false,
     true
   )} </div>
