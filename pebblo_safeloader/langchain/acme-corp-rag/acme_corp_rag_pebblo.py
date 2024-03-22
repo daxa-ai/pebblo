@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 # Fill-in OPENAI_API_KEY in .env file
@@ -28,6 +29,7 @@ class AcmeCorpRAG:
             name="acme-corp-rag-1",  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Support productivity RAG application",  # Description (Optional)
+            api_key=os.getenv("CD_API_KEY", None),  # CD API KEY (Optional)
         )
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
