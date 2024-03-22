@@ -44,15 +44,13 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         load_history_items = []
         findings_details = []
         datastores = []
-        findings_count = 0
         if "dataSources" in data and data["dataSources"]:
             datastores = data["dataSources"][0]
             if "findingsDetails" in datastores:
                 findings_details = datastores["findingsDetails"]
         if "loadHistory" in data and "history" in data["loadHistory"]:
             load_history_items = data["loadHistory"]["history"]
-        if "reportSummary" in data:
-            findings_count = data["reportSummary"]["findings"]
+        findings_count = data["reportSummary"].get("findings", 0)
         source_html = template.render(
             data=data,
             date=current_date,
