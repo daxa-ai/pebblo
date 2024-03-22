@@ -424,6 +424,11 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
 
 const IS_CRITICAL_COUNT = NO_FINDINGS_FOR_APP ? false : true;
 
+const dataSourceObject =
+  APP_DATA?.dataSources && APP_DATA?.dataSources?.length
+    ? APP_DATA?.dataSources[0]
+    : null;
+
 export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
     label: "Findings",
@@ -502,11 +507,13 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
     value: {
       title: "Snippets",
       data: {
-        snippetCount: APP_DATA?.dataSources[0]?.displayedSnippetCount,
-        totalSnippetCount: APP_DATA?.dataSources[0]?.totalSnippetCount,
-        snippets: APP_DATA?.dataSources
-          ? APP_DATA?.dataSources[0]?.findingsDetails
-          : [],
+        snippetCount: dataSourceObject
+          ? dataSourceObject?.displayedSnippetCount
+          : 0,
+        totalSnippetCount: dataSourceObject
+          ? dataSourceObject?.totalSnippetCount
+          : 0,
+        snippets: dataSourceObject ? dataSourceObject?.findingsDetails : [],
       },
       searchField: ["labelName"],
       inputPlaceholder: "Search",
