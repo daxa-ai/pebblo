@@ -29,7 +29,7 @@ class AcmeCorpRAG:
             name="acme-corp-rag-1",  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Support productivity RAG application",  # Description (Optional)
-            api_key=os.getenv("DAXA_API_KEY", None),  # CD API KEY (Optional)
+            api_key=os.getenv("DAXA_API_KEY", None),  # DAXA API KEY (Optional)
         )
         self.documents = self.loader.load()
         self.filtered_docs = filter_complex_metadata(self.documents)
