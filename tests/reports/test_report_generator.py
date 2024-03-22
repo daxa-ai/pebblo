@@ -39,6 +39,7 @@ class TestReportGenerator(unittest.TestCase):
         """Test the convert_html_to_pdf function"""
         # Arrange
         data = {
+            "reportSummary": {"findings": "findings"},
             "dataSources": [{"findingsDetails": "details"}],
             "loadHistory": {"history": "history"},
         }
