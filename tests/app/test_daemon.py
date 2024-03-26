@@ -1,3 +1,4 @@
+import json
 from unittest.mock import Mock, patch
 
 import pytest
@@ -180,6 +181,7 @@ def test_loader_doc_success(
     }
     response = client.post("/v1/loader/doc", json=loader_doc)
     assert response.status_code == 200
-    assert response.json() == {
-        "message": "Loader Doc API Request processed successfully"
+    assert json.loads(response.text) == {
+        "docs": [],
+        "message": "Loader Doc API Request processed successfully",
     }
