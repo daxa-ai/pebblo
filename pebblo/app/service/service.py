@@ -9,7 +9,8 @@ from pydantic import ValidationError
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.models.models import LoaderMetadata
+from pebblo.app.libs.responses import PebbloJsonResponse
+from pebblo.app.models.models import LoaderMetadata, LoaderDocResponseModel, AiDocs
 from pebblo.app.service.doc_helper import LoaderHelper
 from pebblo.app.utils.utils import get_full_path, read_json_file, write_json_to_file
 from pebblo.reports.reports import Reports
@@ -180,8 +181,27 @@ class AppLoaderDoc:
                 # Writing report in pdf format
                 self._write_pdf_report(final_report)
 
-            logger.debug("Loader Doc request Request processed successfully.")
-            return {"message": "Loader Doc API Request processed successfully"}
+            message = "Loader Doc request Request processed successfully."
+            logger.debug(message)
+            docs = app_details.get("docs", [])
+            docs_out = []
+            for doc in docs:
+                doc_obj = AiDocs(
+                    doc=doc['doc'],
+                    sourceSize=doc['sourceSize'],
+                    fileOwner=doc['fileOwner'],
+                    sourcePath=doc['sourcePath'],
+                    loaderSourcePath=doc['loaderSourcePath'],
+                    lastModified=doc['lastModified'],
+                    entityCount=doc.get('entityCount') if doc.get('entityCount') > 0 else None,
+                    entities=None if doc.get('entities') == {} else doc.get('entities'),
+                    topicCount=doc.get('topicCount', 0) if doc.get('topicCount') > 0 else None,
+                    topics=None if doc.get('topics') == {} else doc.get('topics')
+                )
+                docs_out.append(doc_obj.dict(exclude_none=True))
+
+            response = LoaderDocResponseModel(docs=docs_out, message=message)
+            return PebbloJsonResponse.build(body=response.dict(), status_code=200)
         except ValidationError as ex:
             logger.error(f"AI_LOADER_DOC Failed. Error:{ex}")
             raise HTTPException(status_code=400, detail=str(ex))

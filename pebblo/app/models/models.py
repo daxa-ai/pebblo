@@ -37,10 +37,10 @@ class AiDocs(BaseModel):
     sourcePath: str
     loaderSourcePath: str
     lastModified: Optional[datetime]
-    entityCount: int
-    entities: dict
-    topicCount: int
-    topics: dict
+    entityCount: Optional[int]
+    entities: Optional[dict]
+    topicCount: Optional[int]
+    topics: Optional[dict]
 
 
 class FrameworkInfo(BaseModel):
@@ -147,3 +147,8 @@ class AppModel(BaseModel):
     findings: list
     documentsWithFindings: list
     dataSource: list
+
+
+class LoaderDocResponseModel(BaseModel):
+    docs: List[AiDocs] = []
+    message: Optional[str] = None
