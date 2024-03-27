@@ -9,7 +9,7 @@ from pydantic import ValidationError
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
 from pebblo.app.libs.responses import PebbloJsonResponse
-from pebblo.app.models.models import AiDocs, LoaderDocResponseModel, LoaderMetadata
+from pebblo.app.models.models import LoaderDocResponseModel, LoaderDocs, LoaderMetadata
 from pebblo.app.service.doc_helper import LoaderHelper
 from pebblo.app.utils.utils import get_full_path, read_json_file, write_json_to_file
 from pebblo.reports.reports import Reports
@@ -185,18 +185,19 @@ class AppLoaderDoc:
             docs = app_details.get("docs", [])
             docs_out = []
             for doc in docs:
-                doc_obj = AiDocs(
+                doc_obj = LoaderDocs(
+                    id=doc["id"],
                     doc=doc["doc"],
-                    sourceSize=doc["sourceSize"],
-                    fileOwner=doc["fileOwner"],
-                    sourcePath=doc["sourcePath"],
-                    loaderSourcePath=doc["loaderSourcePath"],
-                    lastModified=doc["lastModified"],
-                    entityCount=doc.get("entityCount")
+                    source_size=doc["sourceSize"],
+                    file_owner=doc["fileOwner"],
+                    source_path=doc["sourcePath"],
+                    loader_source_path=doc["loaderSourcePath"],
+                    last_modified=doc["lastModified"],
+                    entity_count=doc.get("entityCount")
                     if doc.get("entityCount") > 0
                     else None,
                     entities=None if doc.get("entities") == {} else doc.get("entities"),
-                    topicCount=doc.get("topicCount", 0)
+                    topic_count=doc.get("topicCount", 0)
                     if doc.get("topicCount") > 0
                     else None,
                     topics=None if doc.get("topics") == {} else doc.get("topics"),

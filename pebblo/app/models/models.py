@@ -31,6 +31,7 @@ class AiDataModel(BaseModel):
 
 
 class AiDocs(BaseModel):
+    id: Optional[str]
     doc: str
     sourceSize: int
     fileOwner: str
@@ -149,6 +150,20 @@ class AppModel(BaseModel):
     dataSource: list
 
 
+class LoaderDocs(BaseModel):
+    id: Optional[str]
+    doc: str
+    source_size: int
+    file_owner: str
+    source_path: str
+    loader_source_path: str
+    last_modified: Optional[datetime]
+    entity_count: Optional[int]
+    entities: Optional[dict]
+    topic_count: Optional[int]
+    topics: Optional[dict]
+
+
 class LoaderDocResponseModel(BaseModel):
-    docs: List[AiDocs] = []
+    docs: List[LoaderDocs] = []
     message: Optional[str] = None
