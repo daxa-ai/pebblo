@@ -29,7 +29,7 @@ Pebblo has two components.
 
 
 ```bash
-pip install pebblo
+pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
 ```
 
 ### Run Pebblo Server
