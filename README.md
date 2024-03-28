@@ -27,7 +27,8 @@ Pebblo has two components.
 
 ### Installation
  
-#### Using pip
+#### Using `pip`
+
 ```bash
 pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
 ```
@@ -55,25 +56,9 @@ docker run -p 8000:8000 docker.daxa.ai/daxaai/pebblo
 
 Local UI can be accessed by pointing the browser to `https://localhost:8000`.
 
-To pass a specific configuration file and to access PDF reports iin the host machine outside the docker container, use the following command with mounted volumes for config.yaml and the report folder.
+See [installation](docs/gh_pages/docs/installation.md) guide for details on how to pass custom config.yaml and accessing PDF reports in the host machine.
 
-```bash
-docker run \
-    -v /path/to/pebblo/config.yaml:/opt/pebblo/config/config.yaml \
-    -v /path/to/pebblo_reports:/root/.pebblo \
-    -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest \
-        --config /opt/pebblo/config/config.yaml
-```
-
-```bash
-docker run -v /path/to/pebblo/config.yaml:/opt/pebblo/config/config.yaml \
--v /path/to/pebblo_reports:/root/.pebblo -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest \
---config /opt/pebblo/config/config.yaml
-```
-
-See [config.yaml](https://github.com/siddheshwar-more/pebblo/blob/main/docs/gh_pages/docs/config.md#default-configuration) for reference. 
-
-#### Troubleshooting
+### Troubleshooting
 
 Refer to [troubleshooting](docs/gh_pages/docs/troubleshooting.md) guide.
 

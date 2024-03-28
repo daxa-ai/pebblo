@@ -3,33 +3,28 @@
 > **Note**  
 > Please note that Pebblo requires Python version 3.9 or above to function optimally.
 
-### Pre-requisites
+## Using `pip`
 
-Install the following prerequisites. This is needed for PDF report generation,
-if you have put `weasyprint` as renderer in the config.yaml
-
-#### Mac OSX
-
-```
-brew install pango
+```bash
+pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
 ```
 
-#### Linux (debian/ubuntu)
+## Using Docker 
 
-```
-sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
-```
-
-### Install weasyprint library
-
-```sh
-pip install weasyprint
+```bash
+docker run -p 8000:8000 docker.daxa.ai/daxaai/pebblo
 ```
 
-### Pebblo Server
+Local UI can be accessed by pointing the browser to `https://localhost:8000`.
 
-```
-pip install pebblo
+To pass a specific configuration file and to access PDF reports iin the host machine outside the docker container, use the following command with mounted volumes for config.yaml and the report folder.
+
+```bash
+docker run \
+    -v /path/to/pebblo/config.yaml:/opt/pebblo/config/config.yaml \
+    -v /path/to/pebblo_reports:/root/.pebblo \
+    -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest \
+        --config /opt/pebblo/config/config.yaml
 ```
 
 # Run Pebblo server
@@ -50,3 +45,35 @@ see [troubleshooting](troubleshooting.md) if you face any issues.
 ```bash
 pebblo --config [PATH TO CONFIG FILE]
 ```
+
+# Enhanced PDF reporting
+
+Pebblo supports two PDF rendering options:
+
+1. `xhtml2pdf` (default)
+1. `weasyprint`
+
+This is selected using `renderer` setting in the config.yaml
+
+`weasyprint` produces an enhanced visual look and feel. This renderer option requires the following additional prerequisites. This is needed for PDF report generation,
+
+### Install weasyprint library
+
+```sh
+pip install weasyprint
+```
+
+### Install Pango library
+
+#### Mac OSX
+
+```
+brew install pango
+```
+
+#### Linux (debian/ubuntu)
+
+```
+sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
+```
+
