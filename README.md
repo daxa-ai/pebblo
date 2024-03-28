@@ -26,13 +26,13 @@ Pebblo has two components.
 ## Pebblo Server
 
 ### Installation
-
-
+ 
+#### Using Python 
 ```bash
 pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
 ```
 
-### Run Pebblo Server
+##### Run Pebblo Server
 
 ```bash
 pebblo
@@ -40,12 +40,26 @@ pebblo
 
 Pebblo Server now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
 
-#### Pebblo Optional Flags
+##### Pebblo Optional Flags
 
 - `--config <file>`: specify a configuration file in yaml format.
 
 
 See [configuration](docs/gh_pages/docs/config.md) guide for knobs to control Pebblo Server behavior like enabling snippet anonymization, selecting specific report renderer, etc.
+
+#### Using Docker 
+
+```bash
+# run on your local environment
+docker run -p 8000:8000 docker.daxa.ai/daxaai/pebblo
+
+# run on your local with mounted volume config.yaml and report folder 
+docker run -v /Users/<user_name>/pebblo/config.yaml:/opt/pebblo/config/config.yaml \
+-v /Users/<user_name>/.pebblo:/opt/pebblo/ -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest \
+--config /opt/pebblo/config/config.yaml
+```
+
+See [config.yaml](https://github.com/siddheshwar-more/pebblo/blob/main/docs/gh_pages/docs/config.md#default-configuration) for reference. 
 
 #### Troubleshooting
 
