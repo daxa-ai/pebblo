@@ -11,7 +11,7 @@ dir_path = pathlib.Path().absolute()
 
 # Port BaseModel
 class PortConfig(BaseSettings):
-    host: str = Field(default="localhost")
+    host: str = Field(default="0.0.0.0")
     port: int = Field(default=8000)
 
 
