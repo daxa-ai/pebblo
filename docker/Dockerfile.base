@@ -1,0 +1,35 @@
+ARG build_image
+ARG base_image
+ARG pebblo_version
+
+FROM $build_image AS base
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    git
+
+
+RUN mkdir /opt/pebblo
+WORKDIR /opt/pebblo
+
+RUN git clone  https://github.com/daxa-ai/pebblo.git /opt/pebblo
+RUN git checkout $pebblo_version
+
+RUN pip install build
+RUN python -m build --wheel
+
+RUN pip install dist/*.whl
+
+# Stage 2
+FROM $base_image
+
+RUN mkdir /opt/pebblo /opt/pebblo/log /opt/pebblo/config 
+
+WORKDIR /opt/pebblo
+
+COPY --from=base /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+
+COPY --from=base /usr/local/bin/pebblo /usr/local/bin/pebblo
+
+ENTRYPOINT ["pebblo"]
