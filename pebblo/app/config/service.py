@@ -42,7 +42,7 @@ class Service:
         # Fetching Details from Config File
         self.config_details = config_details
         self.port = self.config_details.get("daemon", {}).get("port", 8000)
-        self.host = self.config_details.get("daemon", {}).get("host", "localhost")
+        self.host = self.config_details.get("daemon", {}).get("host", "0.0.0.0")
         self.log_level = self.config_details.get("logging", {}).get("level", "info")
 
     async def create_main_api_server(self):
