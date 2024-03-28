@@ -11,7 +11,7 @@ dir_path = pathlib.Path().absolute()
 
 # Port BaseModel
 class PortConfig(BaseSettings):
-    host: str = Field(default="0.0.0.0")
+    host: str = Field(default="localhost")
     port: int = Field(default=8000)
 
 
@@ -43,7 +43,7 @@ def load_config(path) -> dict:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
-            daemon=PortConfig(host="localhost", port=8000),
+            daemon=PortConfig(host="0.0.0.0", port=8000),
             reports=ReportConfig(
                 format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
             ),
