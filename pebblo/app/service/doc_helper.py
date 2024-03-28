@@ -110,6 +110,7 @@ class LoaderHelper:
         loader_details = self.data.get("loader_details", {})
         last_used = datetime.now()
         doc_model = AiDocs(
+            id=doc.get("id"),
             doc=doc_info.data,
             sourceSize=doc.get("source_path_size", 0),
             fileOwner=doc.get("file_owner", "-"),

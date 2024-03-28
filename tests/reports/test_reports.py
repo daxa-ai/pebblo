@@ -1,7 +1,9 @@
 """Unit test cases for reports module"""
 
 from pathlib import Path
+
 import pytest
+
 from pebblo.reports.enums.report_libraries import ReportLibraries
 from pebblo.reports.reports import Reports
 
