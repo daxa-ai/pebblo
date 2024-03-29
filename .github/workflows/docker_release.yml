@@ -2,35 +2,18 @@ name: Docker image release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v[0-9].[0-9]+.[0-9]+*"
-
-env:
-  DOCKER_REPO_NAME: "daxa-ai/pebblo"
-
 jobs:
   build-and-push:
     name: Build base image
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11.x"
-
-      - name: Install pypa/build
-        run: |
-          pip install build
-          python -m build --wheel
-          
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -38,26 +21,18 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: $DOCKER_REPO_NAME
-
-      - name: Print Docker Meta
+      - name: Get Release Tag
         run: |
-
-          echo "output version"
-          echo ${{ steps.meta.outputs.version }}
+          TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+          echo "VERSION=$(echo $TAG | sed 's/v//')" >> $GITHUB_ENV
           
       - name: Build base images
         uses: docker/bake-action@v4
         env:
-          IMAGE_TAG_SUFFIX: ${{ steps.meta.outputs.version }}
-          PEBBLO_VERSION: 'v0.1.12'
+          IMAGE_TAG_SUFFIX: ${{ env.VERSION }}
+          PEBBLO_VERSION: ${{ env.VERSION }}
         with:
           workdir: docker
           targets: base
           push: true
-
      
