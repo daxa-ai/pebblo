@@ -22,10 +22,10 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Get Release Tag
         run: |
-          TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
-          VERSION=$(echo $TAG | sed 's/v//')
-          echo "::set-env name=VERSION::$VERSION"
-    
+          #TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+          #echo "VERSION=$(echo $TAG | sed 's/v//')" >> $GITHUB_ENV
+          echo "VERSION=$(echo "v0.1.13")" >> $GITHUB_ENV
+         
       - name: Build base images
         uses: docker/bake-action@v4
         env:
