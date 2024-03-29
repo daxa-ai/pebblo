@@ -3,13 +3,14 @@ Unit test cases for reports/html_to_pdf_generator/report_generator.py file
 """
 
 import datetime
-import unittest
 import time
+import unittest
 from unittest.mock import Mock, patch
+
 from pebblo.reports.html_to_pdf_generator.report_generator import (
+    convert_html_to_pdf,
     date_formatter,
     get_file_size,
-    convert_html_to_pdf,
 )
 
 
