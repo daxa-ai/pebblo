@@ -11,8 +11,6 @@ RUN mkdir /opt/pebblo && apt-get update && \
 
 WORKDIR /opt/pebblo
 
-COPY config.yaml /opt/pebblo/config.yaml
-
 RUN git clone  https://github.com/daxa-ai/pebblo.git /opt/pebblo && git checkout $pebblo_version
 
 RUN pip install build && python -m build --wheel && pip install dist/*.whl
@@ -28,6 +26,8 @@ COPY --from=base /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.
 
 COPY --from=base /usr/local/bin/pebblo /usr/local/bin/pebblo
 
-COPY --from=base /opt/pebblo/config.yaml /opt/pebblo/config/config.yaml
+COPY config.yaml /opt/pebblo/config/config.yaml
 
-ENTRYPOINT ["pebblo --config /opt/pebblo/config/config.yaml"]
+ENTRYPOINT ["pebblo"]
+
+CMD ["--config", "/opt/pebblo/config/config.yaml"]
