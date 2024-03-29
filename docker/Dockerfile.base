@@ -4,22 +4,16 @@ ARG pebblo_version
 
 FROM $build_image AS base
 
-RUN apt-get update && \
+RUN mkdir /opt/pebblo && apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
     git
 
-
-RUN mkdir /opt/pebblo
 WORKDIR /opt/pebblo
 
-RUN git clone  https://github.com/daxa-ai/pebblo.git /opt/pebblo
-RUN git checkout $pebblo_version
+RUN git clone  https://github.com/daxa-ai/pebblo.git /opt/pebblo && git checkout $pebblo_version
 
-RUN pip install build
-RUN python -m build --wheel
-
-RUN pip install dist/*.whl
+RUN pip install build && python -m build --wheel && pip install dist/*.whl
 
 # Stage 2
 FROM $base_image
@@ -32,4 +26,8 @@ COPY --from=base /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.
 
 COPY --from=base /usr/local/bin/pebblo /usr/local/bin/pebblo
 
+COPY config.yaml /opt/pebblo/config/config.yaml
+
 ENTRYPOINT ["pebblo"]
+
+CMD ["--config", "/opt/pebblo/config/config.yaml"]
