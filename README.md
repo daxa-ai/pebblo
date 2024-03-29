@@ -33,6 +33,16 @@ Pebblo has two components.
 pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
 ```
 
+#### Using `*.whl` python package
+Download the Pebblo python *.whl package from URL https://packages.daxa.ai/pebblo/{version}/pebblo-{version}-py3-none-any.whl
+
+Note: replace {version} with pebblo version.
+
+Example:
+```bash
+curl -LO "https://packages.daxa.ai/pebblo/0.1.13/pebblo-0.1.13-py3-none-any.whl" 
+pip install pebblo-0.1.13-py3-none-any.whl
+```
 ##### Run Pebblo Server
 
 ```bash
