@@ -1,0 +1,11 @@
+daemon:
+  port: 8080
+  host: 0.0.0.0
+logging:
+  level: debug
+reports:
+  format: pdf
+  renderer: xhtml2pdf
+  outputDir: /opt/pebblo
+classifier:
+  anonymizeSnippets: False
