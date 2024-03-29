@@ -25,6 +25,7 @@ jobs:
           #TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
           #echo "VERSION=$(echo $TAG | sed 's/v//')" >> $GITHUB_ENV
           echo "VERSION=$(echo "v0.1.13")" >> $GITHUB_ENV
+          whoami
          
       - name: Build base images
         uses: docker/bake-action@v4
