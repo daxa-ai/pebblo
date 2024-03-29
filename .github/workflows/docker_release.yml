@@ -30,8 +30,8 @@ jobs:
       - name: Build base images
         uses: docker/bake-action@v4
         env:
-          IMAGE_TAG_SUFFIX: $VERSION
-          PEBBLO_VERSION: $VERSION
+          IMAGE_TAG_SUFFIX: ${{ env.VERSION }}
+          PEBBLO_VERSION: ${{ env.VERSION }}
         with:
           workdir: docker
           targets: base
