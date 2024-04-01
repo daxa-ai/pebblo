@@ -46,7 +46,7 @@ class DataLoader:
         documents = loader.load()
         unique_identities = set()
         for doc in documents:
-            unique_identities.update(doc.metadata.get("authorized_identities"))
+            unique_identities.update(doc.metadata.get("authorized_identities", []))
 
         print(f"Authorized Identities: {list(unique_identities)}")
         print(f"Loaded {len(documents)} documents ...\n")
