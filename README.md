@@ -33,7 +33,15 @@ Pebblo has two components.
 pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
 ```
 
-##### Run Pebblo Server
+#### Download python package
+Alternatively, download and install the latest Pebblo python `.whl` package from URL https://packages.daxa.ai/pebblo/0.1.13/pebblo-0.1.13-py3-none-any.whl
+
+Example:
+```bash
+curl -LO "https://packages.daxa.ai/pebblo/0.1.13/pebblo-0.1.13-py3-none-any.whl" 
+pip install pebblo-0.1.13-py3-none-any.whl
+```
+### Run Pebblo Server
 
 ```bash
 pebblo
@@ -48,7 +56,7 @@ Pebblo Server now listens to `localhost:8000` to accept Gen-AI application data 
 
 See [configuration](docs/gh_pages/docs/config.md) guide for knobs to control Pebblo Server behavior like enabling snippet anonymization, selecting specific report renderer, etc.
 
-#### Using Docker 
+### Using Docker
 
 ```bash
 docker run -p 8000:8000 docker.daxa.ai/daxaai/pebblo
