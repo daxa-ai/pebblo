@@ -6,8 +6,8 @@ from typing import Any
 
 import uvicorn
 from fastapi import FastAPI, Response
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from pebblo.app.exceptions.exception_handler import exception_handlers
 from pebblo.app.routers.local_ui_routers import local_ui_router_instance
