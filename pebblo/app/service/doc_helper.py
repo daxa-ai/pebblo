@@ -17,7 +17,11 @@ from pebblo.app.models.models import (
     Snippets,
     Summary,
 )
-from pebblo.app.utils.utils import get_full_path, read_json_file
+from pebblo.app.utils.utils import (
+    get_full_path,
+    get_pebblo_server_version,
+    read_json_file,
+)
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
@@ -537,6 +541,8 @@ class LoaderHelper:
             loadHistory=load_history,
             topFindings=top_n_findings,
             dataSources=data_source_obj_list,
+            pebbloServerVersion=get_pebblo_server_version(),
+            pebbloClientVersion=self.app_details.get("pluginVersion", ""),
         )
         return report_dict.dict()
 

@@ -72,6 +72,8 @@ class AiApp(BaseModel):
     instanceDetails: Optional[InstanceDetails]
     framework: Optional[FrameworkInfo]
     lastUsed: datetime
+    pebbloServerVersion: Optional[str]
+    pebbloClientVersion: Optional[str]
 
 
 class Summary(BaseModel):
@@ -129,6 +131,8 @@ class ReportModel(BaseModel):
     topFindings: Optional[List[TopFindings]]
     instanceDetails: Optional[InstanceDetails]
     dataSources: Optional[List[DataSource]]
+    pebbloServerVersion: Optional[str]
+    pebbloClientVersion: Optional[str]
 
 
 class AppListDetails(BaseModel):
@@ -148,6 +152,7 @@ class AppModel(BaseModel):
     findings: list
     documentsWithFindings: list
     dataSource: list
+    pebbloServerVersion: Optional[str]
 
 
 class LoaderDocs(BaseModel):

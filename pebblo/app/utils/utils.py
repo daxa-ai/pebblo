@@ -192,3 +192,11 @@ def get_document_with_findings_data(data):
         # Handle any exceptions and print the error message
         logger.warning(f"Error occurred: {str(err)}")
     return loader_data_list  # Return the list of document data
+
+
+def get_pebblo_server_version():
+    """Fetch local pebblo server version"""
+    import importlib.metadata
+
+    __version__ = importlib.metadata.version("pebblo")
+    return __version__
