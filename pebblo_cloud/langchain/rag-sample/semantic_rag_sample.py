@@ -46,7 +46,10 @@ class DataLoader:
         documents = loader.load()
         unique_identities = set()
         for doc in documents:
-            unique_identities.update(doc.metadata.get("authorized_identities", []))
+            if not doc.metadata.get("authorized_identities"):
+                continue
+
+            unique_identities.update(doc.metadata.get("authorized_identities"))
 
         print(f"Authorized Identities: {list(unique_identities)}")
         print(f"Loaded {len(documents)} documents ...\n")
@@ -57,6 +60,7 @@ class DataLoader:
         Load documents into Qdrant
         """
         print("\nAdding documents to Qdrant ...")
+        print(f"Documents : {documents}")
         embeddings = OpenAIEmbeddings()
         vectordb = Qdrant.from_documents(
             documents,
@@ -70,7 +74,8 @@ class DataLoader:
 
 if __name__ == "__main__":
     print("Loading documents to Qdrant ...")
-    def_folder_id = "<google_drive_folder_id>"
+    # def_folder_id = "15CyFIWOPJOR5BxDID7G6tUisfHU1szrg" # hr-knowledge-base
+    def_folder_id = "1sR3wRgX9hGCdjtD1Vkl-b3hZuzGUP2EU" # Patent Documents
     input_collection_name = "identity-semantic-enforcement-rag"
 
     qloader = DataLoader(def_folder_id, input_collection_name)
