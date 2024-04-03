@@ -6,6 +6,7 @@ from typing import Any
 
 import uvicorn
 from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from pebblo.app.exceptions.exception_handler import exception_handlers
@@ -39,6 +40,14 @@ class Service:
         self.app.include_router(router_instance.router)
         self.app.include_router(local_ui_router_instance.router)
         self.app.include_router(redirect_router_instance.router)
+        # Adding cors
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
         # Fetching Details from Config File
         self.config_details = config_details
         self.port = self.config_details.get("daemon", {}).get("port", 8000)
