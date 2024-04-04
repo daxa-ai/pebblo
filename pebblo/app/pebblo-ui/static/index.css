@@ -110,6 +110,9 @@ svg.icon-success {
 .w-90 {
   width: 90%;
 }
+.w-70 {
+  width: 70%;
+}
 
 /* <----------- FONT FAMILY -----------> */
 .inter {
@@ -1220,7 +1223,7 @@ dialog::backdrop {
   font-size: 12px;
 }
 
-.tooltip-content {
+.tooltip-body {
   color: var(--main);
   font-weight: 200;
   font-size: 12px;
