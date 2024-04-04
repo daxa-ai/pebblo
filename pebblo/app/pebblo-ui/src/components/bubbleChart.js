@@ -6,7 +6,7 @@ export const BubbleChart = (props) => {
   waitForElement("#bubbleChart", 5000).then(function () {
     const data = props.chartData;
     // Set the dimensions and margins of the graph
-    const width = 1000;
+    const width = 950;
     const height = 250;
     const margin = 1;
 
