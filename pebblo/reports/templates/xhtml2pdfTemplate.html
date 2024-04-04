@@ -627,6 +627,12 @@
         border-radius: 2px;
         border: 1px solid #ebebeb;
       }
+
+      .footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
     </style>
   </head>
   <body>
@@ -635,11 +641,11 @@
         <div class="surface-10 inter font-48 font-thin">Data Report</div>
         <div class="mt-2">
           <div
-            class="break-all surface-purple inter font-32 font-thin break-word"
+            class="break-all surface-purple inter font-48 font-thin break-word"
           >
             {{data.name}}
           </div>
-          <div class="surface-10 inter font-28 mt-2">
+          <div class="surface-10 inter font-28">
             {{data.framework.name|capitalize}} {{data.framework.version}}
           </div>
         </div>
@@ -651,10 +657,12 @@
             Report Generated On {{ date }}
           </div>
         </div>
-        <div class="">
-          <div>Server {{data.pebbloServerVersion|default(" ")}}</div>
-          <div class="divider bg-surface-30 mr-1 ml-1"></div>
-          <div>Client {{data.pebbloClientVersion|default(" ")}}</div>
+        <div class="mt-11 surface-40 font-thin">
+          <span class="font-12">Pebblo By Daxa.ai | </span>
+          <span class="font-12 mr-2">
+            <span>Server {{data.pebbloServerVersion|default(" ")}}</span> |
+            <span>Client {{data.pebbloClientVersion|default(" ")}}</span>
+          </span>
         </div>
       </div>
     </section>
