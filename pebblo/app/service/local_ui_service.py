@@ -11,6 +11,7 @@ from pebblo.app.models.models import AppListDetails, AppModel
 from pebblo.app.utils.utils import (
     get_document_with_findings_data,
     get_full_path,
+    get_pebblo_server_version,
     read_json_file,
     update_data_source,
     update_findings_summary,
@@ -164,6 +165,7 @@ class AppData:
                 findings=findings_list,
                 documentsWithFindings=document_with_findings_list,
                 dataSource=data_source_list,
+                pebbloServerVersion=get_pebblo_server_version(),
             )
 
             return json.dumps(data.dict(), indent=4)

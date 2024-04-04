@@ -10,7 +10,11 @@ from pydantic import ValidationError
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import AiApp, InstanceDetails, Metadata
-from pebblo.app.utils.utils import read_json_file, write_json_to_file
+from pebblo.app.utils.utils import (
+    get_pebblo_server_version,
+    read_json_file,
+    write_json_to_file,
+)
 
 
 class AppDiscover:
@@ -40,6 +44,8 @@ class AppDiscover:
             instanceDetails=instance_details,
             framework=self.data.get("framework"),
             lastUsed=last_used,
+            pebbloServerVersion=get_pebblo_server_version(),
+            pebbloClientVersion=self.data.get("pebblo_client_version", ""),
         )
         return ai_apps_model
 
