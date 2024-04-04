@@ -12,22 +12,42 @@
     <title>Pebblo Report</title>
   </head>
   <body>
-    <section class="cover-page pl-23 pr-23 pt-42">
-      <div class="surface-60 inter font-48 font-thin">Data Report</div>
-      <div class="mt-9">
-        <div class="surface-60 inter font-48 font-thin break-word">
-          {{data.name}}
+    <section class="cover-page w-100 relative">
+      <div class="pl-23 pr-23 pt-42">
+        <div class="surface-60 inter font-48 font-thin">Data Report</div>
+        <div class="mt-9">
+          <div class="surface-60 inter font-48 font-thin break-word">
+            {{data.name}}
+          </div>
+          <div class="purple-10 inter font-28 mt-2">
+            {{data.framework.name|capitalize}} {{data.framework.version}}
+          </div>
         </div>
-        <div class="purple-10 inter font-28 mt-2">
-          {{data.framework.name|capitalize}} {{data.framework.version}}
+        <div class="mt-11">
+          <div class="purple-10 font-13 inter font-thin">
+            Application Owner: {{ data.reportSummary.owner }}
+          </div>
+          <div class="purple-10 font-13 inter font-thin mt-2">
+            Report Generated On {{ date }}
+          </div>
         </div>
       </div>
-      <div class="mt-11">
-        <div class="purple-10 font-13 inter font-thin">
-          Application Owner: {{ data.reportSummary.owner }}
+      <div
+        class="footer font-300 pl-6 pr-6 inter w-70 flex items-center surface-main"
+      >
+        <div class="mr-2">
+          <img
+            class="logo mt-1 mb-1 img-no-files"
+            src="../assets/pebblo-logo-with-text.svg"
+            alt="Pebblo"
+          />
         </div>
-        <div class="purple-10 font-13 inter font-thin mt-2">
-          Report Generated On {{ date }}
+        <div class="font-11">By Daxa.ai</div>
+        <div class="h-1px flex flex-1 bg-surface-30 ml-2 mr-2"></div>
+        <div class="font-12 flex">
+          <div>Server {{data.pebbloServerVersion|default(" ")}}</div>
+          <div class="divider bg-surface-30 mr-1 ml-1"></div>
+          <div>Client {{data.pebbloClientVersion|default(" ")}}</div>
         </div>
       </div>
     </section>

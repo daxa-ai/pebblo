@@ -320,6 +320,9 @@ svg.icon-success {
 }
 
 /* <----------- COLOR -----------> */
+.surface-white {
+  color: var(--white);
+}
 .surface-10 {
   color: var(--surface-10);
 }

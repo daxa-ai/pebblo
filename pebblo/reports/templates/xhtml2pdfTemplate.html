@@ -651,6 +651,11 @@
             Report Generated On {{ date }}
           </div>
         </div>
+        <div class="">
+          <div>Server {{data.pebbloServerVersion|default(" ")}}</div>
+          <div class="divider bg-surface-30 mr-1 ml-1"></div>
+          <div>Client {{data.pebbloClientVersion|default(" ")}}</div>
+        </div>
       </div>
     </section>
     <pdf:nextpage />
