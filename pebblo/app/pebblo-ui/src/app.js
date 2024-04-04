@@ -12,12 +12,12 @@ export function App() {
   const button =
     window.location.pathname === APP_DETAILS_ROUTE
       ? Button({
-        variant: "text",
-        btnText: "Back",
-        startIcon: LeftArrowIcon({ color: "white" }),
-        href: DASHBOARD_ROUTE,
-        color: "white"
-      })
+          variant: "text",
+          btnText: "Back",
+          startIcon: LeftArrowIcon({ color: "white" }),
+          href: DASHBOARD_ROUTE,
+          color: "white",
+        })
       : "";
 
   return /*html*/ `

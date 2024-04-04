@@ -95,7 +95,7 @@ export function ApplicationsList(props) {
   }
 
   return /*html*/ `
-    <div>
+    <div class="tab_panel">
       <div class="application-container flex flex-col gap-4">
         <div class="flex justify-between">
           <div class="inter surface-10 font-16 medium">${title}</div>

@@ -68,7 +68,7 @@ export function SnippetDetails(props) {
   }
 
   return /*html*/ `
-      <div class="snippet-details-container flex flex-col gap-4">
+      <div class="tab_panel snippet-details-container flex flex-col gap-4">
       <div class="flex justify-between">
         <div class="inter flex gap-2 items-center">
         <div class="surface-10 font-16 medium">${title}</div>

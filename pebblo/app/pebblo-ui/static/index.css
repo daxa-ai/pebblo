@@ -3,6 +3,7 @@
   --white: #fff;
   --main: #f5f5f9;
   --surface-10: #191c2d;
+  --surface-40: #63698b;
   --surface-50: #787d9e;
   --surface-60: #7e83a5;
   --surface-70: #ced0dc;
@@ -781,7 +782,7 @@ svg.icon-success {
   transition: all 0.3s;
   z-index: -1;
 }
-#tab_panel {
+.tab_panel {
   padding: 24px;
   border-radius: 4px;
   border: 1px solid rgba(216, 217, 227, 0.5);
@@ -1180,4 +1181,47 @@ dialog::backdrop {
   border-width: 5px;
   border-style: solid;
   border-color: transparent transparent black transparent;
+}
+
+.graph-container {
+  height: 100%;
+  width: 100%;
+}
+
+.hide-node {
+  opacity: 0;
+}
+
+.show-node {
+  opacity: 1;
+}
+
+.bubble-count {
+  font-size: 12px;
+}
+
+.legend-badge {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #a8b7ff;
+}
+
+.tooltip {
+  font-family: "Inter";
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-heading {
+  color: var(--main);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.tooltip-content {
+  color: var(--main);
+  font-weight: 200;
+  font-size: 12px;
 }
