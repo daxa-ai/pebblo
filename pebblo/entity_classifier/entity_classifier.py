@@ -78,11 +78,11 @@ class EntityClassifier:
         ITIN number 993-77 0690
         And AWS Access Key is: AKIAQIPT4PDORIRTV6PH."
         response:
-        entities = {'AWS Access Key': 1, 'US ITIN': 1, 'US SSN': 1}
+        entities = {'aws-access-key': 1, 'us-itin': 1, 'us-ssn': 1}
         total_count = 3
-        anonymized_text = "My SSN is <US_SSN>.
-            ITIN number <US_ITIN>
-            And AWS Access Key is: <AWS_ACCESS_KEY>"
+        anonymized_text = "My SSN is &lt;US_SSN&gt;.
+        ITIN number &lt;US_ITIN&gt;
+        And AWS Access Key is: &lt;AWS_ACCESS_KEY&gt;."
         """
         entities = {}
         total_count = 0
