@@ -1,4 +1,5 @@
 # Fill-in OPENAI_API_KEY in .env file in this directory before proceeding
+import os
 from typing import Optional, List
 
 from dotenv import load_dotenv
@@ -38,9 +39,24 @@ class PebbloIdentityRAG:
             name=self.app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Identity enabled SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
+            api_key=os.environ.get("PEBBLO_API_KEY"),  # Pebblo cloud API key
+            load_semantic=True,
         )
         self.documents = self.loader.load()
-        print(self.documents[-1].metadata.get("authorized_identities"))
+        unique_identities = set()
+        unique_topics = set()
+        unique_entities = set()
+        for doc in self.documents:
+            if doc.metadata.get("authorized_identities"):
+                unique_identities.update(doc.metadata.get("authorized_identities"))
+            if doc.metadata.get("pebblo_semantic_topics"):
+                unique_topics.update(doc.metadata.get("pebblo_semantic_topics"))
+            if doc.metadata.get("pebblo_semantic_entities"):
+                unique_entities.update(doc.metadata.get("pebblo_semantic_entities"))
+
+        print(f"Authorized Identities: {list(unique_identities)}")
+        print(f"Semantic Topics: {list(unique_topics)}")
+        print(f"Semantic Entities: {list(unique_entities)}")
         print(f"Loaded {len(self.documents)} documents ...\n")
 
         # Load documents into VectorDB
