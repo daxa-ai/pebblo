@@ -34,6 +34,7 @@ def classifier_init(p_bar):
     p_bar.write("Downloading topic, entity classifier models ...")
     from pebblo.entity_classifier.entity_classifier import EntityClassifier
     from pebblo.topic_classifier.topic_classifier import TopicClassifier
+
     p_bar.update(3)
     p_bar.write("Initializing topic classifier ...")
     p_bar.update(1)
@@ -42,10 +43,10 @@ def classifier_init(p_bar):
     _ = TopicClassifier()
     p_bar.write("Initializing topic classifier ... done")
     p_bar.update(1)
-    
+
     p_bar.write("Initializing entity classifier ...")
     p_bar.update(1)
-    
+
     # Init EntityClassifier(This step downloads all necessary training models)
     _ = EntityClassifier()
     p_bar.write("Initializing entity classifier ... done")
@@ -57,6 +58,7 @@ def server_start(config: dict, p_bar: tqdm):
     p_bar.write("Pebblo server starting ...")
     # Starting Uvicorn Service Using config details
     from pebblo.app.config.service import Service
+
     p_bar.update(1)
     svc = Service(config_details=config)
     p_bar.update(2)
