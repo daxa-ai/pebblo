@@ -4,7 +4,9 @@ Defines the TopicClassifier class with methods for predicting topics and extract
 """
 
 import os
-
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 from huggingface_hub import login
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 
@@ -19,6 +21,7 @@ from pebblo.topic_classifier.enums.constants import topic_display_names
 from pebblo.topic_classifier.libs.logger import logger
 
 
+
 class TopicClassifier:
     """
     Class for topic classification
@@ -27,7 +30,6 @@ class TopicClassifier:
     def __init__(self):
         # Use os.environ.get() to retrieve the value of the environment variable
         huggingface_token = os.environ.get("HF_TOKEN")
-
         # Check if the environment variable exists
         if huggingface_token is not None:
             login(token=huggingface_token)
