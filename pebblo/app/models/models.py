@@ -44,6 +44,7 @@ class AiDocs(BaseModel):
     topics: Optional[dict]
     authorizedIdentities: list
 
+
 class FrameworkInfo(BaseModel):
     name: Optional[str]
     version: Optional[str]

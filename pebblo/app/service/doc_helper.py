@@ -125,7 +125,7 @@ class LoaderHelper:
             entities=doc_info.entities,
             topicCount=doc_info.topicCount,
             topics=doc_info.topics,
-            authorizedIdentities=doc.get("authorized_identities", [])
+            authorizedIdentities=doc.get("authorized_identities", []),
         )
         return doc_model.dict()
 
@@ -151,7 +151,7 @@ class LoaderHelper:
                 "findingsEntities": value["findings_entities"],
                 "findingsTopics": value["findings_topics"],
                 "findings": value["findings"],
-                "authorizedIdentities": value["authorized_identities"]
+                "authorizedIdentities": value["authorized_identities"],
             }
             for key, value in top_n_findings_list
         ]
@@ -221,7 +221,7 @@ class LoaderHelper:
                     "findings_entities": value["findings_entities"],
                     "findings_topics": value["findings_topics"],
                     "findings": value["findings"],
-                    "authorized_identities": value["authorized_identities"]
+                    "authorized_identities": value["authorized_identities"],
                 }
                 for key, value in loader_source_snippets.items()
             ]
@@ -242,7 +242,7 @@ class LoaderHelper:
             snippet=doc["doc"],
             sourcePath=source_path,
             fileOwner=doc.get("fileOwner", "-"),
-            authorizedIdentities=doc.get("authorizedIdentities", [])
+            authorizedIdentities=doc.get("authorizedIdentities", []),
         )
         for label_name, value in doc[entity_type].items():
             if label_name in data_source_findings.keys():
@@ -487,7 +487,7 @@ class LoaderHelper:
                 "findings_entities": doc["entityCount"],
                 "findings_topics": doc["topicCount"],
                 "findings": findings,
-                "authorized_identities": doc["authorizedIdentities"]
+                "authorized_identities": doc["authorizedIdentities"],
             }
             findings_entities += doc["entityCount"]
             findings_topics += doc["topicCount"]
