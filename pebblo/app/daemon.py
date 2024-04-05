@@ -3,7 +3,6 @@ This is entry point for Pebblo(Pebblo Server and Local UI)
 """
 
 import argparse
-import sys
 from tqdm import tqdm
 
 from pebblo.app.config.config import load_config
