@@ -1,4 +1,3 @@
-import os
 from typing import List
 
 from dotenv import load_dotenv
@@ -20,17 +19,29 @@ COLLECTION_NAME = "identity-semantic-enforcement-rag"
 
 
 class DataLoader:
+    """
+    A sample app for loading Identity and Semantic metadata into a vector database
+    using the PebbloSafeLoader.
+
+    Attributes:
+        folder_id (str): The ID of the gdrive folder where the documents are located.
+        collection_name (str, optional): The name of the collection in the Qdrant database.
+        Defaults to "identity-semantic-enforcement-rag".
+    """
+
     def __init__(self, folder_id: str, collection_name: str = COLLECTION_NAME):
         self.app_name = "pebblo-cloud-sample-app"
         self.folder_id = folder_id
         self.qdrant_collection_name = collection_name
 
     def load_documents(self):
+        """
+        Load documents from the specified folder using PebbloSafeLoader.
+        """
         print("\nLoading RAG documents ...")
         loader = PebbloSafeLoader(
             GoogleDriveLoader(
                 folder_id=self.folder_id,
-                # credentials_path="credentials/credentials.json",
                 token_path="./google_token.json",
                 recursive=True,
                 file_loader_cls=UnstructuredFileIOLoader,
@@ -39,8 +50,7 @@ class DataLoader:
             ),
             name=self.app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
-            description="SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
-            api_key=os.environ.get("PEBBLO_API_KEY"),  # Pebblo cloud API key
+            description="SafeLoader app using Pebblo",  # Description (Optional)
             load_semantic=True,
         )
         documents = loader.load()
@@ -57,10 +67,9 @@ class DataLoader:
 
     def add_docs_to_qdrant(self, documents: List[Document]):
         """
-        Load documents into Qdrant
+        Initialize Qdrant vectorStore from documents and embeddings
         """
         print("\nAdding documents to Qdrant ...")
-        print(f"Documents : {documents}")
         embeddings = OpenAIEmbeddings()
         vectordb = Qdrant.from_documents(
             documents,
@@ -74,8 +83,7 @@ class DataLoader:
 
 if __name__ == "__main__":
     print("Loading documents to Qdrant ...")
-    # def_folder_id = "15CyFIWOPJOR5BxDID7G6tUisfHU1szrg" # hr-knowledge-base
-    def_folder_id = "1sR3wRgX9hGCdjtD1Vkl-b3hZuzGUP2EU" # Patent Documents
+    def_folder_id = "<google_drive_folder_id>"
     input_collection_name = "identity-semantic-enforcement-rag"
 
     qloader = DataLoader(def_folder_id, input_collection_name)
