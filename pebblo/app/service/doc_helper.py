@@ -138,8 +138,7 @@ class LoaderHelper:
         loader_source_snippets = raw_data["loader_source_snippets"]
         top_n_findings_list = sorted(
             loader_source_snippets.items(), key=lambda x: x[1]["findings"], reverse=True
-        )
-        # [: ReportConstants.TOP_FINDINGS_LIMIT.value] Removed Limit of n findings
+        )[: ReportConstants.TOP_FINDINGS_LIMIT.value]
         top_n_findings = [
             {
                 "fileName": key,
@@ -222,6 +221,7 @@ class LoaderHelper:
                     "findings_entities": value["findings_entities"],
                     "findings_topics": value["findings_topics"],
                     "findings": value["findings"],
+                    "authorized_identities": value["authorized_identities"]
                 }
                 for key, value in loader_source_snippets.items()
             ]

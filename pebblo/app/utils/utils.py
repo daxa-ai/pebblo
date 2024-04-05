@@ -181,6 +181,9 @@ def get_document_with_findings_data(data):
                             "findingsTopics": source_file_details.get(
                                 "findings_topics", 0
                             ),  # Get findings topics
+                            "authorizedIdentities": source_file_details.get(
+                                "authorized_identities", []
+                            ),  # Get authorized identities
                             "lastModified": loader_data.get(
                                 "lastModified"
                             ),  # Get the last modified timestamp
