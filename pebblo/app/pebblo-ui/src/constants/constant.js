@@ -1,3 +1,4 @@
+import { FindingsPanel } from "../components/findingsPanel.js";
 import { ApplicationsList, SnippetDetails } from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
@@ -369,6 +370,30 @@ export const TABS_ARR_FOR_APPLICATIONS = [
   },
 ];
 
+const aggregatedFindingsForAllApps = APP_DATA?.findings
+  ? APP_DATA?.findings?.reduce((acc, cur, i) => {
+      const item =
+        i > 0 && acc.find(({ labelName }) => labelName === cur.labelName);
+      if (item) item.snippetCount += cur.snippetCount;
+      else
+        acc.push({
+          label: cur.labelName,
+          value: cur.snippetCount,
+          type: cur.findingsType,
+        });
+      return acc;
+    }, [])
+  : [];
+
+const topicsCountAllApps = APP_DATA?.findings
+  ? APP_DATA?.findings?.filter((finding) => finding.findingsType === "topics")
+      ?.length
+  : 0;
+
+const entitiesCountAllApps = APP_DATA?.findings
+  ? APP_DATA?.findings?.length - topicsCountAllApps
+  : 0;
+
 export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
   {
     value: {
@@ -386,16 +411,37 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
   },
   {
     value: {
+      findingsMap: {
+        title: "Findings Map",
+        chartData: aggregatedFindingsForAllApps,
+        chartLegends: [
+          {
+            label: "Topics",
+            value: topicsCountAllApps,
+            color: "#A8B7FF",
+          },
+          {
+            label: "Entities",
+            value: entitiesCountAllApps,
+            color: "#96D7FC",
+          },
+        ],
+        error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
+      },
+      findingsTable: {
+        title: "Findings",
+        tableCol: TABLE_DATA_FOR_FINDINGS,
+        tableData: APP_DATA?.findings,
+        isDownloadReport: false,
+        error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
+        searchField: ["findingsType", "labelName", "appName"],
+        isSorting: true,
+        inputPlaceholder: "Search by Finding, Type & Application",
+      },
       title: "Findings",
-      tableCol: TABLE_DATA_FOR_FINDINGS,
-      tableData: APP_DATA?.findings,
-      isDownloadReport: false,
       error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
-      searchField: ["findingsType", "labelName", "appName"],
-      isSorting: true,
-      inputPlaceholder: "Search by Finding, Type & Application",
     },
-    component: ApplicationsList,
+    component: FindingsPanel,
   },
   {
     value: {
@@ -431,6 +477,31 @@ const dataSourceObject =
   APP_DATA?.dataSources && APP_DATA?.dataSources?.length
     ? APP_DATA?.dataSources[0]
     : null;
+
+const aggregatedFindings = dataSourceObject
+  ? dataSourceObject?.findingsSummary?.reduce((acc, cur, i) => {
+      const item =
+        i > 0 && acc.find(({ labelName }) => labelName === cur.labelName);
+      if (item) item.snippetCount += cur.snippetCount;
+      else
+        acc.push({
+          label: cur.labelName,
+          value: cur.snippetCount,
+          type: cur.findingsType,
+        });
+      return acc;
+    }, [])
+  : [];
+
+const topicsCount = dataSourceObject
+  ? dataSourceObject?.findingsSummary?.filter(
+      (finding) => finding.findingsType === "topics"
+    )?.length
+  : 0;
+
+const entitiesCount = dataSourceObject
+  ? dataSourceObject?.findingsSummary?.length - topicsCount
+  : 0;
 
 export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
@@ -471,17 +542,38 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
 export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
   {
     value: {
+      findingsMap: {
+        title: "Snippet Distribution By Topics & Entities",
+        chartData: aggregatedFindings,
+        chartLegends: [
+          {
+            label: "Topics",
+            value: topicsCount,
+            color: "#A8B7FF",
+          },
+          {
+            label: "Entities",
+            value: entitiesCount,
+            color: "#96D7FC",
+          },
+        ],
+        error: NO_FINDINGS_FOR_APP ? "NO_FINDINGS_EMPTY_STATE" : null,
+      },
+      findingsTable: {
+        title: "Findings",
+        tableCol: APP_DETAILS_FINDINGS_TABLE,
+        tableData: APP_DATA?.dataSources
+          ? APP_DATA?.dataSources[0]?.findingsSummary
+          : [],
+        searchField: ["labelName", "findingsType"],
+        isSorting: true,
+        inputPlaceholder: "Search by Finding & Type",
+        error: NO_FINDINGS_FOR_APP ? "NO_FINDINGS_EMPTY_STATE" : null,
+      },
       title: "Findings",
-      tableCol: APP_DETAILS_FINDINGS_TABLE,
-      tableData: APP_DATA?.dataSources
-        ? APP_DATA?.dataSources[0]?.findingsSummary
-        : [],
-      searchField: ["labelName", "findingsType"],
-      isSorting: true,
-      inputPlaceholder: "Search by Finding & Type",
       error: NO_FINDINGS_FOR_APP ? "NO_FINDINGS_EMPTY_STATE" : null,
     },
-    component: ApplicationsList,
+    component: FindingsPanel,
   },
   {
     value: {

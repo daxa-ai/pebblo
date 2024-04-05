@@ -9,6 +9,9 @@ import { SnippetDetails } from "./snippetDetails.js";
 import { Tabs, Tab } from "./tab.js";
 import { Table, Tbody, Thead, Td } from "./table.js";
 import Dialog from "./Dialog.js";
+import { ChartCard } from "./chartCard.js";
+import { BubbleChart } from "./bubbleChart.js";
+import { LegendBadge } from "./legendBadge.js";
 
 export {
   AccordionDetails,
@@ -27,4 +30,7 @@ export {
   Thead,
   Td,
   Dialog,
+  ChartCard,
+  LegendBadge,
+  BubbleChart,
 };
