@@ -6,6 +6,10 @@ import argparse
 from tqdm import tqdm
 
 from pebblo.app.config.config import load_config
+import warnings
+
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 config_details = {}
 

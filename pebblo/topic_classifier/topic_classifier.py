@@ -4,9 +4,6 @@ Defines the TopicClassifier class with methods for predicting topics and extract
 """
 
 import os
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 from huggingface_hub import login
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 
@@ -33,7 +30,7 @@ class TopicClassifier:
         # Check if the environment variable exists
         if huggingface_token is not None:
             login(token=huggingface_token)
-            
+
         # Load the model and tokenizer from the specified paths and revision
         _tokenizer = AutoTokenizer.from_pretrained(
             TOKENIZER_PATH, revision=MODEL_REVISION
