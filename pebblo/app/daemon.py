@@ -43,14 +43,12 @@ def classifier_init(p_bar):
     p_bar.write("Initializing topic classifier ... done")
     p_bar.update(1)
     
-
     p_bar.write("Initializing entity classifier ...")
     p_bar.update(1)
     
     # Init EntityClassifier(This step downloads all necessary training models)
     _ = EntityClassifier()
     p_bar.write("Initializing entity classifier ... done")
-
     p_bar.update(1)
 
 
