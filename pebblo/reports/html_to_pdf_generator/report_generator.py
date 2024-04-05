@@ -30,6 +30,13 @@ def get_file_size(size):
     return size_str
 
 
+def identity_comma_separated(identity_list):
+    """Returns comma separated list of identities"""
+    if identity_list:
+        return ", ".join(identity_list)
+    return "-"
+
+
 def convert_html_to_pdf(data, output_path, template_name, search_path, renderer):
     """Convert HTML Template to PDF by embedding JSON data"""
     try:
@@ -60,6 +67,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
             dateFormatter=date_formatter,
             getFileSize=get_file_size,
             findings_count=findings_count,
+            identity_comma_separated=identity_comma_separated,
         )
         pdf_converter = library_function_mapping[renderer]
         status, result = pdf_converter(source_html, output_path, search_path)

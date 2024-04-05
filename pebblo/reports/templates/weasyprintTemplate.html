@@ -111,6 +111,7 @@
                   <th class="medium text-end">Findings - Topics</th>
                   <th class="medium text-end">Findings - Entities</th>
                   <th class="medium">Owner</th>
+                  <th class="medium">Identity</th>
                 </tr>
               </thead>
               <tbody class="surface-10 font-13">
@@ -126,6 +127,9 @@
                     {{ item.findingsEntities|default('-') }}
                   </td>
                   <td>{{ item.fileOwner|default('-') }}</td>
+                  <td>
+                    {{ identity_comma_separated(item.authorizedIdentities) }}
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -355,6 +359,12 @@
               <div class="surface-50 font-12">Retrieved From</div>
               <div class="surface-10 font-13 mt-2">
                 {{ snippet.sourcePath }}
+              </div>
+            </div>
+            <div class="key-value">
+              <div class="surface-50 font-12">Identity</div>
+              <div class="surface-10 font-13 mt-2">
+                {{ identity_comma_separated(snippet.authorizedIdentities) }}
               </div>
             </div>
             <!-- <div class="key-value">

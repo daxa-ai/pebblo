@@ -1,5 +1,9 @@
 import { FindingsPanel } from "../components/findingsPanel.js";
-import { ApplicationsList, SnippetDetails } from "../components/index.js";
+import {
+  ApplicationsList,
+  Chips,
+  SnippetDetails,
+} from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
@@ -123,14 +127,43 @@ export const FILES_WITH_FINDINGS_TABLE = [
     align: "start",
   },
   {
-    label: "Findings-Topics",
-    field: "findingsTopics",
+    label: "Size",
+    field: "sourceSize",
     align: "end",
   },
   {
-    label: "Findings-Entities",
-    field: "findingsEntities",
+    label: "Findings",
+    field: "findingsTopics",
+    render: (item) => item.findingsEntities + item.findingsTopics,
+    isTooltip: true,
+    tooltipTitle: (item) => `
+      <div class="surface-main flex flex-col gap-1 inter font-12 font-300 w-10">
+        <div class="flex justify-between">
+        <div>Topics</div>
+        <div>${item.findingsTopics}</div>
+        </div>
+        <div class="flex justify-between">
+        <div>Entities</div>
+        <div>${item.findingsEntities}</div>
+        </div>
+      </div>`,
+    tooltipWidth: "fit",
     align: "end",
+  },
+  {
+    label: "Identities",
+    field: "authorizedIdentities",
+    render: (item) =>
+      Chips({
+        list: item?.authorizedIdentities,
+        showCount: 1,
+        fileName: item?.fileName,
+        dialogTitle: `<div class="flex gap-4 items-center">
+        <div>Identities (${item?.authorizedIdentities?.length})</div>
+        <div class="font-12 surface-10-opacity-50">Document: ${item?.fileName}</div>
+      </div>`,
+      }),
+    align: "start",
   },
   {
     label: "Data Source",
@@ -168,12 +201,20 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     align: "start",
   },
   {
-    label: "Findings - Topics",
+    label: "Findings - Total",
+    field: "total",
+    render: (item) => {
+      return item.topics + item.entities;
+    },
+    align: "end",
+  },
+  {
+    label: "Topics",
     field: "topics",
     align: "end",
   },
   {
-    label: "Findings - Entities",
+    label: "Entities",
     field: "entities",
     align: "end",
   },
@@ -249,23 +290,52 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     tooltipTitle: (item) => item.sourceFilePath,
   },
   {
-    label: "Findings-Topics",
+    label: "Size",
+    field: "sourceSize",
+    align: "end",
+  },
+  {
+    label: "Findings",
     field: "findingsTopics",
+    render: (item) => item.findingsEntities + item.findingsTopics,
+    isTooltip: true,
+    tooltipTitle: (item) => `
+      <div class="surface-main flex flex-col gap-1 inter font-12 font-300 w-10">
+        <div class="flex justify-between">
+        <div>Topics</div>
+        <div>${item.findingsTopics}</div>
+        </div>
+        <div class="flex justify-between">
+        <div>Entities</div>
+        <div>${item.findingsEntities}</div>
+        </div>
+      </div>`,
+    tooltipWidth: "fit",
     align: "end",
   },
   {
-    label: "Findings-Entities",
-    field: "findingsEntities",
-    align: "end",
-  },
-  {
-    label: "Data Source",
-    field: "sourceName",
+    label: "Identities",
+    field: "authorizedIdentities ",
+    render: (item) =>
+      Chips({
+        list: item?.authorizedIdentities,
+        showCount: 1,
+        fileName: item?.sourceFilePath,
+        dialogTitle: `<div class="flex gap-4 items-center">
+        <div>Identities (${item?.authorizedIdentities?.length})</div>
+        <div class="font-12 surface-10-opacity-50">Document: ${item?.sourceFilePath}</div>
+      </div>`,
+      }),
     align: "start",
   },
   {
     label: "Application",
     field: "appName",
+    align: "start",
+  },
+  {
+    label: "Data Source",
+    field: "sourceName",
     align: "start",
   },
 ];
@@ -661,3 +731,11 @@ export const LOAD_HISTORY_TABLE_DATA = APP_DATA?.loadHistory?.history?.map(
     generatedOn: getFormattedDate(loadHistoryItem?.generatedOn, true, false),
   })
 );
+
+export const IDENTITY_TABLE_COL = [
+  {
+    label: "Identity",
+    field: "identity",
+    align: "start",
+  },
+];

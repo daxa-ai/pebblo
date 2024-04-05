@@ -1,8 +1,9 @@
 import { CLICK, LOAD } from "../constants/enums.js";
 import CloseIcon from "../icons/closeIcon.js";
+import { waitForElement } from "../util.js";
 import { IconButton } from "./IconButton.js";
 
-// PROPS { 
+// PROPS {
 //   dialogBody: HTMLElement,
 //   fullWidth?:boolean,
 //   maxWidth?: string,
@@ -21,27 +22,28 @@ const Dialog = (props) => {
     dialogId,
   } = props;
 
-  window.addEventListener(LOAD, function () {
+  waitForElement(`#${dialogId}`, 100).then(function () {
     const DIALOG__BTN = document.getElementById(btnId);
     const DIALOG = document.getElementById(dialogId);
     const CLOSE__DIALOG__BUTTON = document.getElementById(
       `${dialogId}_close_modal`
     );
-    DIALOG__BTN.addEventListener(CLICK, () => DIALOG.showModal());
+    DIALOG__BTN.addEventListener(CLICK, () => {
+      DIALOG.showModal();
+    });
     CLOSE__DIALOG__BUTTON.addEventListener(CLICK, () => DIALOG.close());
   });
 
   return /*html*/ `
-    <dialog id="${dialogId}" class="flex flex-col gap-3 pt-4 pb-4 pr-4 pl-4 ${fullWidth ? "dialog-full" : ""
-    } ${maxWidth ? `dialog-${maxWidth}` : ""}">
+    <dialog id="${dialogId}" class="flex flex-col gap-3 pt-4 pb-4 pr-4 pl-4 ${
+    fullWidth ? "dialog-full" : ""
+  } ${maxWidth ? `dialog-${maxWidth}` : ""}">
         <div class="flex justify-between items-center">
           <div class="font-16 inter medium surface-10">${title}</div>
           ${IconButton({
-      id: `${dialogId}_close_modal`,
-      children:
-        CloseIcon({ class: "cursor-pointer" })
-      ,
-    })}
+            id: `${dialogId}_close_modal`,
+            children: CloseIcon({ class: "cursor-pointer" }),
+          })}
         </div>
         <div class="dialog-body">${dialogBody}</div>
     </dialog>`;

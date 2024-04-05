@@ -11,6 +11,7 @@ from pebblo.reports.html_to_pdf_generator.report_generator import (
     convert_html_to_pdf,
     date_formatter,
     get_file_size,
+    identity_comma_separated,
 )
 
 
@@ -23,6 +24,7 @@ class TestReportGenerator(unittest.TestCase):
             "2024-02-02 16:25:07.531509", "%Y-%m-%d %H:%M:%S.%f"
         )
         self.file_size = 2092
+        self.authorizedIdentities = ["demo-user-hr", "demo-user-engg"]
 
     def test_date_formatter(self):
         """Test if date formatter returns correct string"""
@@ -33,6 +35,11 @@ class TestReportGenerator(unittest.TestCase):
         """Test file size conversion"""
         output_size = get_file_size(self.file_size)
         assert output_size == "2.04 KB"
+
+    def test_identity_comma_separated(self):
+        """Test comma separated identities"""
+        output_str = identity_comma_separated(self.authorizedIdentities)
+        assert output_str == "demo-user-hr, demo-user-engg"
 
     @patch("jinja2.Environment", return_value=Mock(get_template=Mock()))
     @patch("jinja2.FileSystemLoader")

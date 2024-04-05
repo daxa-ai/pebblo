@@ -57,6 +57,10 @@ export function SnippetDetails(props) {
                  key: "Retrieved From",
                  value: snipp?.sourcePath,
                })}
+               ${KeyValue({
+                 key: "Identity",
+                 value: snipp?.authorizedIdentities.join(", "),
+               })}
               <div class="divider-horizontal"></div>
              </div>
            `
@@ -107,6 +111,10 @@ export function SnippetDetails(props) {
                    key: "Retrieved From",
                    value: snipp?.sourcePath,
                  })}
+                ${KeyValue({
+                  key: "Identity",
+                  value: snipp?.authorizedIdentities.join(", "),
+                })}
                 <div class="divider-horizontal"></div>
                </div>
              `
