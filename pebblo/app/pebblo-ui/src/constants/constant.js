@@ -12,6 +12,9 @@ export const MEDIA_URL = SCRIPT_ELEMENT.dataset["static"];
 export const APP_DATA = JSON.parse(SCRIPT_ELEMENT.dataset["appdata"] || "");
 export const PORT = window.location.port;
 
+export const SERVER_VERSION = APP_DATA?.pebbloServerVersion || "";
+export const CLIENT_VERSION = APP_DATA?.pebbloClientVersion || "";
+
 export const NO_APPLICATIONS_FOUND = Object.keys(APP_DATA)?.length === 0;
 export const NO_FINDINGS_FOR_APP =
   APP_DATA && APP_DATA?.reportSummary
