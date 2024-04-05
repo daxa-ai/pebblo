@@ -151,7 +151,7 @@ class LoaderHelper:
                 "findingsEntities": value["findings_entities"],
                 "findingsTopics": value["findings_topics"],
                 "findings": value["findings"],
-                "authorizedIdentities": value["authorized_identities"],
+                "authorizedIdentities": value.get("authorized_identities", []),
             }
             for key, value in top_n_findings_list
         ]
@@ -221,7 +221,7 @@ class LoaderHelper:
                     "findings_entities": value["findings_entities"],
                     "findings_topics": value["findings_topics"],
                     "findings": value["findings"],
-                    "authorized_identities": value["authorized_identities"],
+                    "authorized_identities": value.get("authorized_identities", []),
                 }
                 for key, value in loader_source_snippets.items()
             ]
