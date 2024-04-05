@@ -1,0 +1,5 @@
+llama_index==0.10.27
+langchain==0.1.14
+shortuuid==1.0.13
+docx2txt==0.8
+llama-index-readers-pebblo
