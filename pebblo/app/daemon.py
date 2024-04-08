@@ -4,6 +4,8 @@ This is entry point for Pebblo(Pebblo Server and Local UI)
 
 import argparse
 import warnings
+from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
 
 from tqdm import tqdm
 
@@ -33,7 +35,8 @@ def start():
 def classifier_init(p_bar):
     """Initialize topic and entity classifier."""
     p_bar.write("Downloading topic, entity classifier models ...")
-    from pebblo.entity_classifier.entity_classifier import EntityClassifier
+    with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
+        from pebblo.entity_classifier.entity_classifier import EntityClassifier
     from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
     p_bar.update(3)
