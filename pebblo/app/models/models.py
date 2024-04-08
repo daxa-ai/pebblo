@@ -172,3 +172,19 @@ class LoaderDocs(BaseModel):
 class LoaderDocResponseModel(BaseModel):
     docs: List[LoaderDocs] = []
     message: Optional[str] = None
+
+
+class DiscoverAIApps(BaseModel):
+    name: str
+    description: Optional[str]
+    owner: str
+    instanceDetails: Optional[InstanceDetails]
+    framework: Optional[FrameworkInfo]
+    lastUsed: datetime
+    pebbloServerVersion: Optional[str]
+    pebbloClientVersion: Optional[str]
+
+
+class DiscoverAIAppsResponseModel(BaseModel):
+    docs: DiscoverAIApps = None
+    message: Optional[str] = None
