@@ -4,6 +4,7 @@ Defines the TopicClassifier class with methods for predicting topics and extract
 """
 
 import os
+
 from huggingface_hub import login
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 

@@ -3,10 +3,11 @@ This is entry point for Pebblo(Pebblo Server and Local UI)
 """
 
 import argparse
+import warnings
+
 from tqdm import tqdm
 
 from pebblo.app.config.config import load_config
-import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
