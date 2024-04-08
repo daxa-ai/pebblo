@@ -2,7 +2,7 @@ daemon:
   port: 8000
   host: 0.0.0.0
 logging:
-  level: debug
+  level: info
 reports:
   format: pdf
   renderer: xhtml2pdf
