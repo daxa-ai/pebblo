@@ -78,10 +78,9 @@ $ (cd libs/langchain; pip install .)
 Here are the two corresponding PRs in the LangChain for this feature:
 
 1. community: add authorization identities to GoogleDriveLoader #18813
-https://github.com/langchain-ai/langchain/pull/18813
-
-1. langchain: add PebbloRetrievalQA chain with Identity & Semantic enforcement #18812
-https://github.com/langchain-ai/langchain/pull/18812
+   https://github.com/langchain-ai/langchain/pull/18813
+2. langchain: add PebbloRetrievalQA chain with Identity & Semantic enforcement #19991
+   https://github.com/langchain-ai/langchain/pull/19991
 
 ## Note:
 GoogleDriveLoader comes with some prerequisites. Please refer [this](https://python.langchain.com/docs/integrations/document_loaders/google_drive#prerequisites) section or follow below steps:
