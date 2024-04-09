@@ -3,12 +3,11 @@
 
 This solution uses the following two proposed PRs to LangChain:
 
-1. community: add authorization identities to GoogleDriveLoader #18813
-https://github.com/langchain-ai/langchain/pull/18813
+1. community: add authorization identities to GoogleDriveLoader #18813
+   https://github.com/langchain-ai/langchain/pull/18813
 
-2. langchain: add PebbloRetrievalQA chain with Identity & Semantic enforcement #18812
-https://github.com/langchain-ai/langchain/pull/18812
-
+2. langchain: add PebbloRetrievalQA chain with Identity & Semantic enforcement #19991
+   https://github.com/langchain-ai/langchain/pull/19991
 
 ### Instructions
 
