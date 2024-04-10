@@ -186,5 +186,5 @@ class DiscoverAIApps(BaseModel):
 
 
 class DiscoverAIAppsResponseModel(BaseModel):
-    ai_apps_data: DiscoverAIApps = None
+    ai_apps_data: DiscoverAIApps | None
     message: Optional[str] = None

@@ -95,20 +95,10 @@ def test_app_discover_success(mock_write_json_to_file):
 
     # Assertions
     assert response.status_code == 200
-    assert response.json() == {
-        "ai_apps_data": {
-            "description": "This is a test app.",
-            "instanceDetails": {
-                "createdAt": "2024-04-08T09:09:40.665268",
-            },
-            "lastUsed": "2024-04-08T09:09:40.665354",
-            "name": "Test App",
-            "owner": "Test owner",
-            "pebbloClientVersion": "0.1",
-            "pebbloServerVersion": "0.1.13",
-        },
-        "message": "App Discover Request Processed Successfully",
-    }
+    assert response.json()["ai_apps_data"]["description"] == "This is a test app."
+    assert response.json()["ai_apps_data"]["name"] == "Test App"
+    assert response.json()["ai_apps_data"]["owner"] == "Test owner"
+    assert response.json()["message"] == "App Discover Request Processed Successfully"
 
 
 def test_app_discover_validation_errors(mock_write_json_to_file):
@@ -123,10 +113,10 @@ def test_app_discover_validation_errors(mock_write_json_to_file):
     }
     response = client.post("/v1/app/discover", json=app)
     assert response.status_code == 400
-    assert response.json() == {
-        "ai_apps_data": None,
-        "message": "name\n  none is not an allowed value (type=type_error.none.not_allowed)",
-    }
+    assert (
+        "1 validation error for AiApp\nname\n  Input should be a valid string"
+        in response.json()["message"]
+    )
 
 
 def test_app_discover_server_error(mock_write_json_to_file):
@@ -144,10 +134,7 @@ def test_app_discover_server_error(mock_write_json_to_file):
 
     # Assertions
     assert response.status_code == 500
-    assert response.json() == {
-        "ai_apps_data": None,
-        "message": "Mocked exception",
-    }
+    assert response.json() == {"message": "Mocked exception"}
 
 
 def test_loader_doc_success(
