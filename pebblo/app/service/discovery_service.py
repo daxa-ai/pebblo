@@ -151,31 +151,33 @@ class AppDiscover:
             )
             self._write_file_content_to_path(ai_apps.dict(), file_path)
 
-            docs = ai_apps.dict()
-            doc_obj = DiscoverAIApps(
-                name=docs["name"],
-                description=docs["description"],
-                owner=docs["owner"],
-                instanceDetails=docs["instanceDetails"],
-                framework=docs["framework"],
-                lastUsed=docs["lastUsed"],
-                pebbloServerVersion=docs["pebbloServerVersion"],
-                pebbloClientVersion=docs["pebbloClientVersion"],
+            ai_apps_data = ai_apps.dict()
+            ai_apps_obj = DiscoverAIApps(
+                name=ai_apps_data["name"],
+                description=ai_apps_data["description"],
+                owner=ai_apps_data["owner"],
+                instanceDetails=ai_apps_data["instanceDetails"],
+                framework=ai_apps_data["framework"],
+                lastUsed=ai_apps_data["lastUsed"],
+                pebbloServerVersion=ai_apps_data["pebbloServerVersion"],
+                pebbloClientVersion=ai_apps_data["pebbloClientVersion"],
             )
             message = "App Discover Request Processed Successfully"
             logger.debug(message)
-            response = DiscoverAIAppsResponseModel(docs=doc_obj, message=message)
+            response = DiscoverAIAppsResponseModel(
+                ai_apps_data=ai_apps_obj, message=message
+            )
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=200
             )
         except ValidationError as ex:
-            response = DiscoverAIAppsResponseModel(docs=None, message=str(ex))
+            response = DiscoverAIAppsResponseModel(ai_apps_data=None, message=str(ex))
             logger.error(f"Error in Discovery API process_request. Error:{ex}")
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=400
             )
         except Exception as ex:
-            response = DiscoverAIAppsResponseModel(docs=None, message=str(ex))
+            response = DiscoverAIAppsResponseModel(ai_apps_data=None, message=str(ex))
             logger.error(f"Error in Discovery API process_request. Error:{ex}")
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=500
