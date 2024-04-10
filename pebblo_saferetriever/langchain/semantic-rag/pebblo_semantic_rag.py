@@ -11,7 +11,6 @@ from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
-
 from utils import format_text, get_input_as_list
 
 load_dotenv()
