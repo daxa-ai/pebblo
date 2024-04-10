@@ -22,16 +22,21 @@ const Dialog = (props) => {
     dialogId,
   } = props;
 
-  waitForElement(`#${dialogId}`, 100).then(function () {
+  waitForElement(`#${dialogId}`, 500).then(function () {
     const DIALOG__BTN = document.getElementById(btnId);
     const DIALOG = document.getElementById(dialogId);
+    DIALOG.style.display = "none";
     const CLOSE__DIALOG__BUTTON = document.getElementById(
       `${dialogId}_close_modal`
     );
     DIALOG__BTN.addEventListener(CLICK, () => {
+      DIALOG.style.display = "block";
       DIALOG.showModal();
     });
-    CLOSE__DIALOG__BUTTON.addEventListener(CLICK, () => DIALOG.close());
+    CLOSE__DIALOG__BUTTON.addEventListener(CLICK, () => {
+      DIALOG.style.display = "none";
+      DIALOG.close();
+    });
   });
 
   return /*html*/ `

@@ -254,7 +254,9 @@ svg.icon-success {
 .capitalize {
   text-transform: capitalize;
 }
-
+.text-none {
+  text-transform: none;
+}
 /* ELLIPSE TEXT  */
 .text-ellipsis {
   max-width: 0;

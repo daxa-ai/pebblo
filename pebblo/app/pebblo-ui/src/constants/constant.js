@@ -159,6 +159,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
         list: item?.authorizedIdentities,
         showCount: 1,
         fileName: item?.fileName,
+        id: item.id,
         dialogTitle: `<div class="flex gap-4 items-center">
         <div>Identities (${item?.authorizedIdentities?.length})</div>
         <div class="font-12 surface-10-opacity-50">Document: ${item?.fileName}</div>
@@ -323,10 +324,11 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
         list: item?.authorizedIdentities,
         showCount: 1,
         fileName: item?.sourceFilePath,
+        id: item.id,
         dialogTitle: `<div class="flex gap-4 items-center">
-        <div>Identities (${item?.authorizedIdentities?.length})</div>
-        <div class="font-12 surface-10-opacity-50">Document: ${item?.sourceFilePath}</div>
-      </div>`,
+      <div>Identities (${item?.authorizedIdentities?.length})</div>
+      <div class="font-12 surface-10-opacity-50">Document: ${item?.sourceFilePath}</div>
+    </div>`,
       }),
     align: "start",
   },
@@ -380,9 +382,9 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
-      item.sourcePath
-    }</div>
+         <div class="surface-10-opacity-50 font-12">${
+           item.sourceSize ? getFileSize(item.sourceSize) : ""
+         } | ${item.sourcePath}</div>
       </div>
    `,
     align: "start",
@@ -519,7 +521,10 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
     value: {
       title: "Documents With Findings",
       tableCol: TABLE_DATA_FOR_FILES_WITH_FINDINGS,
-      tableData: APP_DATA?.documentsWithFindings,
+      tableData: APP_DATA?.documentsWithFindings?.map((finding, index) => ({
+        ...finding,
+        id: index,
+      })),
       isDownloadReport: false,
       error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
       searchField: ["sourceFilePath", "appName"],
@@ -651,7 +656,10 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
     value: {
       title: "Documents With Findings",
       tableCol: FILES_WITH_FINDINGS_TABLE,
-      tableData: APP_DATA?.topFindings,
+      tableData: APP_DATA?.topFindings?.map((finding, index) => ({
+        ...finding,
+        id: index,
+      })),
       searchField: ["fileName"],
       isSorting: true,
       inputPlaceholder: "Search by File",
