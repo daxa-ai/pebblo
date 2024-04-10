@@ -68,7 +68,7 @@ export const BubbleChart = (props) => {
         .html(
           /*html*/ `<div class="tooltip">
             <div class="tooltip-heading">${d.data.label}</div>
-            <div class="tooltip-body">Snippets: ${d.data.value}</div>
+            <div class="tooltip-body">Snippet Count: ${d.data.value}</div>
         <div>`
         )
         .style("left", xPos + 15 + "px")
