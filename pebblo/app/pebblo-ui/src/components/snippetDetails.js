@@ -59,7 +59,10 @@ export function SnippetDetails(props) {
                })}
                ${KeyValue({
                  key: "Identity",
-                 value: snipp?.authorizedIdentities.join(", "),
+                 value:
+                   snipp?.authorizedIdentities?.length > 0
+                     ? snipp?.authorizedIdentities.join(", ")
+                     : "-",
                })}
               <div class="divider-horizontal"></div>
              </div>
@@ -113,7 +116,10 @@ export function SnippetDetails(props) {
                  })}
                 ${KeyValue({
                   key: "Identity",
-                  value: snipp?.authorizedIdentities.join(", "),
+                  value:
+                    snipp?.authorizedIdentities?.length > 0
+                      ? snipp?.authorizedIdentities.join(", ")
+                      : "-",
                 })}
                 <div class="divider-horizontal"></div>
                </div>

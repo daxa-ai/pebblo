@@ -7,7 +7,7 @@ import {
 import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
-import { extractTimezone, getFormattedDate } from "../util.js";
+import { extractTimezone, getFileSize, getFormattedDate } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
 const SCRIPT_ELEMENT = document.getElementById("main_script");
@@ -120,7 +120,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
     <div class="flex flex-col inter">
        <div class="surface-10 font-13">${item.fileName || "-"}</div>
        <div class="surface-10-opacity-50 font-12 flex">
-         <div>${item?.sourceSize || "-"} | ${item?.fileOwner || "-"}</div>
+         <div>${item?.fileOwner || "-"}</div>
        </div>
     </div>
  `,
@@ -130,6 +130,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
     label: "Size",
     field: "sourceSize",
     align: "end",
+    render: (item) => getFileSize(item?.sourceSize),
   },
   {
     label: "Findings",
@@ -293,6 +294,7 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     label: "Size",
     field: "sourceSize",
     align: "end",
+    render: (item) => getFileSize(item?.sourceSize),
   },
   {
     label: "Findings",
@@ -347,9 +349,9 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
-      item.sourcePath
-    }</div>
+         <div class="surface-10-opacity-50 font-12">${
+           item?.sourceSize ? getFileSize(item.sourceSize) : "-"
+         } | ${item.sourcePath}</div>
       </div>
    `,
     align: "start",
