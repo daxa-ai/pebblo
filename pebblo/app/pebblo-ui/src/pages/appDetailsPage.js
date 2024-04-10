@@ -106,7 +106,7 @@ export function AppDetailsPage() {
              KeyValue({
                key: item.label,
                value: item?.render ? item.render : item.value,
-               className: item?.label === PATH ? "col-4" : "",
+               className: item?.label === PATH ? "col-3" : "",
              })
            )}
         </div>`,

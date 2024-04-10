@@ -1,8 +1,9 @@
 import {
-  CLIENT_VERSION,
+  DOCUMENTATION_URL,
   MEDIA_URL,
   SERVER_VERSION,
 } from "../constants/constant.js";
+import { HelpIcon } from "../icons/index.js";
 
 export function Header() {
   return /*html*/ ` 
@@ -12,10 +13,15 @@ export function Header() {
     <div class="surface-white font-12 inter flex gap-2 ml-auto">
       ${
         SERVER_VERSION
-          ? `<div>Server ${SERVER_VERSION}</div><div class="divider bg-main"></div>`
+          ? `<div>Server Version ${SERVER_VERSION}</div><div class="divider bg-main"></div>`
           : ""
-      }  
-      ${CLIENT_VERSION ? `<div>Client ${CLIENT_VERSION}</div>` : ""}
+      }
+      <a href="${DOCUMENTATION_URL}/pebblo_ui" target="_blank" class="cursor-pointer" >${HelpIcon(
+    {
+      color: "white",
+      size: "sm",
+    }
+  )}</a>
     </div>
   </div>`;
 }
