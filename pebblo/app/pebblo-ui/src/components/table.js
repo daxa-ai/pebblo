@@ -93,7 +93,14 @@ function Tbody(props) {
 // }
 
 function Td(props) {
-  const { children, align = "start", link, isTooltip, tooltipTitle } = props;
+  const {
+    children,
+    align = "start",
+    link,
+    isTooltip,
+    tooltipTitle,
+    tooltipWidth,
+  } = props;
   const TEXT__ALIGN = getTextOrientation(align);
   let td;
   if (link) {
@@ -112,7 +119,9 @@ function Td(props) {
   }
   if (isTooltip) {
     return /*html*/ `
-    <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 text-ellipsis">
+    <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 ${
+      tooltipWidth ? tooltipWidth : "text-ellipsis"
+    }">
        ${Tooltip({
          children: children || "-",
          title: tooltipTitle,
@@ -142,6 +151,7 @@ const TABLE_BODY = (props) => {
          col?.field !== ACTIONS && link ? `${link}?app_name=${item?.name}` : "",
        isTooltip: col?.isTooltip,
        tooltipTitle: col?.tooltipTitle ? col?.tooltipTitle(item) : "",
+       tooltipWidth: col?.tooltipWidth,
      })
    )}
      </tr>`

@@ -98,3 +98,20 @@ export const SORT_DATA = (array, order, key) => {
   }
   return array.sort((a, b) => b[key] - a[key]);
 };
+
+export const getFileSize = (size) => {
+  // Returns file size in KB, MB, GB as applicable
+  if (size && size !== "-") {
+    const power = 2 ** 10;
+    let n = 0;
+    const powerLabels = { 0: "Bytes", 1: "KB", 2: "MB", 3: "GB", 4: "TB" };
+    while (size > power) {
+      size /= power;
+      n++;
+    }
+    const sizeNum = parseFloat(size.toFixed(2));
+    const sizeStr = sizeNum.toString() + " " + (powerLabels[n] || "");
+    return sizeStr;
+  }
+  return "-";
+};

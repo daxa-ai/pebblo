@@ -1,9 +1,13 @@
 import { FindingsPanel } from "../components/findingsPanel.js";
-import { ApplicationsList, SnippetDetails } from "../components/index.js";
+import {
+  ApplicationsList,
+  Chips,
+  SnippetDetails,
+} from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
-import { extractTimezone, getFormattedDate } from "../util.js";
+import { extractTimezone, getFileSize, getFormattedDate } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
 const SCRIPT_ELEMENT = document.getElementById("main_script");
@@ -116,21 +120,52 @@ export const FILES_WITH_FINDINGS_TABLE = [
     <div class="flex flex-col inter">
        <div class="surface-10 font-13">${item.fileName || "-"}</div>
        <div class="surface-10-opacity-50 font-12 flex">
-         <div>${item?.sourceSize || "-"} | ${item?.fileOwner || "-"}</div>
+         <div>${item?.fileOwner || "-"}</div>
        </div>
     </div>
  `,
     align: "start",
   },
   {
-    label: "Findings-Topics",
+    label: "Size",
+    field: "sourceSize",
+    align: "end",
+    render: (item) => getFileSize(item?.sourceSize),
+  },
+  {
+    label: "Findings",
     field: "findingsTopics",
+    render: (item) => item.findingsEntities + item.findingsTopics,
+    isTooltip: true,
+    tooltipTitle: (item) => `
+      <div class="surface-main flex flex-col gap-1 inter font-12 font-300 w-10">
+        <div class="flex justify-between">
+        <div>Topics</div>
+        <div>${item.findingsTopics}</div>
+        </div>
+        <div class="flex justify-between">
+        <div>Entities</div>
+        <div>${item.findingsEntities}</div>
+        </div>
+      </div>`,
+    tooltipWidth: "fit",
     align: "end",
   },
   {
-    label: "Findings-Entities",
-    field: "findingsEntities",
-    align: "end",
+    label: "Identities",
+    field: "authorizedIdentities",
+    render: (item) =>
+      Chips({
+        list: item?.authorizedIdentities,
+        showCount: 1,
+        fileName: item?.fileName,
+        id: item.id,
+        dialogTitle: `<div class="flex gap-4 items-center">
+        <div>Identities (${item?.authorizedIdentities?.length})</div>
+        <div class="font-12 surface-10-opacity-50">Document: ${item?.fileName}</div>
+      </div>`,
+      }),
+    align: "start",
   },
   {
     label: "Data Source",
@@ -168,12 +203,20 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     align: "start",
   },
   {
-    label: "Findings - Topics",
+    label: "Findings - Total",
+    field: "total",
+    render: (item) => {
+      return item.topics + item.entities;
+    },
+    align: "end",
+  },
+  {
+    label: "Topics",
     field: "topics",
     align: "end",
   },
   {
-    label: "Findings - Entities",
+    label: "Entities",
     field: "entities",
     align: "end",
   },
@@ -249,23 +292,54 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     tooltipTitle: (item) => item.sourceFilePath,
   },
   {
-    label: "Findings-Topics",
+    label: "Size",
+    field: "sourceSize",
+    align: "end",
+    render: (item) => getFileSize(item?.sourceSize),
+  },
+  {
+    label: "Findings",
     field: "findingsTopics",
+    render: (item) => item.findingsEntities + item.findingsTopics,
+    isTooltip: true,
+    tooltipTitle: (item) => `
+      <div class="surface-main flex flex-col gap-1 inter font-12 font-300 w-10">
+        <div class="flex justify-between">
+        <div>Topics</div>
+        <div>${item.findingsTopics}</div>
+        </div>
+        <div class="flex justify-between">
+        <div>Entities</div>
+        <div>${item.findingsEntities}</div>
+        </div>
+      </div>`,
+    tooltipWidth: "fit",
     align: "end",
   },
   {
-    label: "Findings-Entities",
-    field: "findingsEntities",
-    align: "end",
-  },
-  {
-    label: "Data Source",
-    field: "sourceName",
+    label: "Identities",
+    field: "authorizedIdentities ",
+    render: (item) =>
+      Chips({
+        list: item?.authorizedIdentities,
+        showCount: 1,
+        fileName: item?.sourceFilePath,
+        id: item.id,
+        dialogTitle: `<div class="flex gap-4 items-center">
+      <div>Identities (${item?.authorizedIdentities?.length})</div>
+      <div class="font-12 surface-10-opacity-50">Document: ${item?.sourceFilePath}</div>
+    </div>`,
+      }),
     align: "start",
   },
   {
     label: "Application",
     field: "appName",
+    align: "start",
+  },
+  {
+    label: "Data Source",
+    field: "sourceName",
     align: "start",
   },
 ];
@@ -277,9 +351,9 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
-      item.sourcePath
-    }</div>
+         <div class="surface-10-opacity-50 font-12">${
+           item?.sourceSize ? getFileSize(item.sourceSize) : "-"
+         } | ${item.sourcePath}</div>
       </div>
    `,
     align: "start",
@@ -308,9 +382,9 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${item.sourceSize} | ${
-      item.sourcePath
-    }</div>
+         <div class="surface-10-opacity-50 font-12">${
+           item.sourceSize ? getFileSize(item.sourceSize) : ""
+         } | ${item.sourcePath}</div>
       </div>
    `,
     align: "start",
@@ -447,7 +521,10 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS = [
     value: {
       title: "Documents With Findings",
       tableCol: TABLE_DATA_FOR_FILES_WITH_FINDINGS,
-      tableData: APP_DATA?.documentsWithFindings,
+      tableData: APP_DATA?.documentsWithFindings?.map((finding, index) => ({
+        ...finding,
+        id: index,
+      })),
       isDownloadReport: false,
       error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
       searchField: ["sourceFilePath", "appName"],
@@ -579,7 +656,10 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
     value: {
       title: "Documents With Findings",
       tableCol: FILES_WITH_FINDINGS_TABLE,
-      tableData: APP_DATA?.topFindings,
+      tableData: APP_DATA?.topFindings?.map((finding, index) => ({
+        ...finding,
+        id: index,
+      })),
       searchField: ["fileName"],
       isSorting: true,
       inputPlaceholder: "Search by File",
@@ -661,3 +741,12 @@ export const LOAD_HISTORY_TABLE_DATA = APP_DATA?.loadHistory?.history?.map(
     generatedOn: getFormattedDate(loadHistoryItem?.generatedOn, true, false),
   })
 );
+
+export const IDENTITY_TABLE_COL = [
+  {
+    label: "Identity",
+    field: "identity",
+    align: "start",
+    render: (item) => `<div class="text-none">${item?.identity || "-"}</div>`,
+  },
+];

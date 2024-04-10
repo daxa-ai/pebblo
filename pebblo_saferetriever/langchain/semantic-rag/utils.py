@@ -1,5 +1,5 @@
 import textwrap
-from typing import Optional, List
+from typing import List, Optional
 
 
 def format_text(text: str, width: int = 120):

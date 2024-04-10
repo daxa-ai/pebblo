@@ -113,6 +113,15 @@ svg.icon-success {
 .w-70 {
   width: 70%;
 }
+.w-10 {
+  width: 100px;
+}
+.w-auto {
+  width: auto;
+}
+.w-fit {
+  width: fit-content;
+}
 
 /* <----------- FONT FAMILY -----------> */
 .inter {
@@ -245,7 +254,9 @@ svg.icon-success {
 .capitalize {
   text-transform: capitalize;
 }
-
+.text-none {
+  text-transform: none;
+}
 /* ELLIPSE TEXT  */
 .text-ellipsis {
   max-width: 0;
@@ -326,6 +337,9 @@ svg.icon-success {
 /* <----------- COLOR -----------> */
 .surface-white {
   color: var(--white);
+}
+.surface-main {
+  color: var(--main);
 }
 .surface-10 {
   color: var(--surface-10);
@@ -1100,7 +1114,7 @@ dialog::backdrop {
 }
 .tooltip:hover .tooltip-wrapper-top {
   visibility: visible;
-  top: -24px;
+  top: -30px;
   left: 0;
 }
 

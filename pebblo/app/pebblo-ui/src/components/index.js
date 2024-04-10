@@ -12,16 +12,22 @@ import Dialog from "./Dialog.js";
 import { ChartCard } from "./chartCard.js";
 import { BubbleChart } from "./bubbleChart.js";
 import { LegendBadge } from "./legendBadge.js";
+import { Chips } from "./chips.js";
 
 export {
   AccordionDetails,
   AccordionSummary,
   ApplicationsList,
+  BubbleChart,
   Button,
   Card,
+  ChartCard,
+  Chips,
+  Dialog,
   Header,
   IconButton,
   KeyValue,
+  LegendBadge,
   SnippetDetails,
   Tabs,
   Tab,
@@ -29,8 +35,4 @@ export {
   Tbody,
   Thead,
   Td,
-  Dialog,
-  ChartCard,
-  LegendBadge,
-  BubbleChart,
 };

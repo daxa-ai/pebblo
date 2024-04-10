@@ -729,13 +729,14 @@
                   <th class="th-colored normal align-cell-left">
                     Document Name
                   </th>
-                  <th class="th-colored normal text-end w-120 align-cell-right">
+                  <th class="th-colored normal text-end align-cell-right">
                     Findings - Topics
                   </th>
-                  <th class="th-colored normal text-end w-120 align-cell-right">
+                  <th class="th-colored normal text-end align-cell-right">
                     Findings - Entities
                   </th>
-                  <th class="th-colored normal w-120 align-cell-left">Owner</th>
+                  <th class="th-colored normal align-cell-left">Owner</th>
+                  <th class="th-colored normal align-cell-left">Identity</th>
                 </tr>
               </thead>
               <tbody class="surface-10 normal font-13">
@@ -750,6 +751,9 @@
                   </td>
                   <td class="text-end w-120 align-cell-center">
                     {{ item.fileOwner|default('-') }}
+                  </td>
+                  <td>
+                    {{ identity_comma_separated(item.authorizedIdentities) }}
                   </td>
                 </tr>
                 {% endfor %}
@@ -983,10 +987,16 @@
             </div>
             <div class="key-value">
               <div class="surface-50 font-12 medium">Retrieved From</div>
+              <div class="surface-10 font-13 mt-2 break-all normal pb-2">
+                {{ snippet.sourcePath }}
+              </div>
+            </div>
+            <div class="key-value">
+              <div class="surface-50 font-12 medium">Identity</div>
               <div
                 class="surface-10 font-13 mt-2 break-all normal td-border pb-2"
               >
-                {{ snippet.sourcePath }}
+                {{ identity_comma_separated(snippet.authorizedIdentities) }}
               </div>
             </div>
             <!-- <div class="key-value">

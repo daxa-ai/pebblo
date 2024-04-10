@@ -2,7 +2,6 @@ import { waitForElement } from "../util.js";
 
 export const BubbleChart = (props) => {
   //const { types, data: chartData } = props;
-  console.log({ props });
   waitForElement("#bubbleChart", 5000).then(function () {
     const data = props.chartData;
     // Set the dimensions and margins of the graph
@@ -60,7 +59,6 @@ export const BubbleChart = (props) => {
       .style("position", "absolute");
 
     var showTooltip = function (event, d) {
-      console.log({ event, d });
       const xPos = event.clientX;
       const yPos = event.clientY;
       tooltip.transition().duration(200);
