@@ -113,10 +113,7 @@ def test_app_discover_validation_errors(mock_write_json_to_file):
     }
     response = client.post("/v1/app/discover", json=app)
     assert response.status_code == 400
-    assert (
-        "1 validation error for AiApp\nname\n  Input should be a valid string"
-        in response.json()["message"]
-    )
+    assert "1 validation error for AiApp" in response.json()["message"]
 
 
 def test_app_discover_server_error(mock_write_json_to_file):

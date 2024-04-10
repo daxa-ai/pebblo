@@ -153,14 +153,14 @@ class AppDiscover:
 
             ai_apps_data = ai_apps.dict()
             ai_apps_obj = DiscoverAIApps(
-                name=ai_apps_data["name"],
-                description=ai_apps_data["description"],
-                owner=ai_apps_data["owner"],
-                instanceDetails=ai_apps_data["instanceDetails"],
-                framework=ai_apps_data["framework"],
-                lastUsed=ai_apps_data["lastUsed"],
-                pebbloServerVersion=ai_apps_data["pebbloServerVersion"],
-                pebbloClientVersion=ai_apps_data["pebbloClientVersion"],
+                name=ai_apps_data.get("name"),
+                description=ai_apps_data.get("description"),
+                owner=ai_apps_data.get("owner"),
+                instanceDetails=ai_apps_data.get("instanceDetails"),
+                framework=ai_apps_data.get("framework"),
+                lastUsed=ai_apps_data.get("lastUsed"),
+                pebbloServerVersion=ai_apps_data.get("pebbloServerVersion"),
+                pebbloClientVersion=ai_apps_data.get("pebbloClientVersion"),
             )
             message = "App Discover Request Processed Successfully"
             logger.debug(message)
