@@ -11,7 +11,7 @@ import { extractTimezone, getFileSize, getFormattedDate } from "../util.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
 const SCRIPT_ELEMENT = document.getElementById("main_script");
-const DOCUMENTATION_URL = "https://daxa-ai.github.io/pebblo";
+export const DOCUMENTATION_URL = "https://daxa-ai.github.io/pebblo";
 
 export const MEDIA_URL = SCRIPT_ELEMENT.dataset["static"];
 export const APP_DATA = JSON.parse(SCRIPT_ELEMENT.dataset["appdata"] || "");
@@ -95,6 +95,10 @@ export const APP_DETAILS = [
   {
     label: "Created At",
     value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt, false, true),
+  },
+  {
+    label: "Pebblo Client Version",
+    value: CLIENT_VERSION,
   },
   {
     label: "Path",
