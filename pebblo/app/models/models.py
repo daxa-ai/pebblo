@@ -42,6 +42,7 @@ class AiDocs(BaseModel):
     entities: Optional[dict]
     topicCount: Optional[int]
     topics: Optional[dict]
+    authorizedIdentities: list
 
 
 class FrameworkInfo(BaseModel):
@@ -94,12 +95,14 @@ class TopFindings(BaseModel):
     findingsEntities: int
     findingsTopics: int
     findings: int
+    authorizedIdentities: list
 
 
 class Snippets(BaseModel):
     snippet: str
     sourcePath: str
     fileOwner: str
+    authorizedIdentities: list
 
 
 class DataSource(BaseModel):

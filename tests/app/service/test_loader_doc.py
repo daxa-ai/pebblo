@@ -16,6 +16,7 @@ data = {
             "last_modified": datetime.datetime.now(),
             "file_owner": "FileOwner",
             "source_path_size": 1000,
+            "authorizedIdentities": [],
         }
     ],
     "plugin_version": "0.1.0",
@@ -109,6 +110,7 @@ def test_get_doc_report_metadata(loader_helper):
         "fileOwner": "fileOwner",
         "sourceSize": 1000,
         "sourcePath": "/home/ubuntu/sens_data.csv",
+        "authorizedIdentities": [],
     }
 
     output = loader_helper._get_doc_report_metadata(doc, raw_data)
@@ -120,6 +122,7 @@ def test_get_doc_report_metadata(loader_helper):
         "data_source_snippets": [],
         "loader_source_snippets": {
             "/home/ubuntu/sens_data.csv": {
+                "authorized_identities": [],
                 "findings_entities": 2,
                 "findings_topics": 1,
                 "findings": 3,
@@ -139,6 +142,7 @@ def test_get_doc_report_metadata(loader_helper):
                 "unique_snippets": {"/home/ubuntu/sens_data.csv"},
                 "snippets": [
                     {
+                        "authorizedIdentities": [],
                         "snippet": "sample doc",
                         "sourcePath": "/home/ubuntu/sens_data.csv",
                         "fileOwner": "fileOwner",
@@ -154,6 +158,7 @@ def test_get_doc_report_metadata(loader_helper):
                 "unique_snippets": {"/home/ubuntu/sens_data.csv"},
                 "snippets": [
                     {
+                        "authorizedIdentities": [],
                         "snippet": "sample doc",
                         "sourcePath": "/home/ubuntu/sens_data.csv",
                         "fileOwner": "fileOwner",
@@ -169,6 +174,7 @@ def test_get_doc_report_metadata(loader_helper):
                 "unique_snippets": {"/home/ubuntu/sens_data.csv"},
                 "snippets": [
                     {
+                        "authorizedIdentities": [],
                         "snippet": "sample doc",
                         "sourcePath": "/home/ubuntu/sens_data.csv",
                         "fileOwner": "fileOwner",
@@ -213,6 +219,7 @@ def test_get_finding_details(loader_helper):
             "unique_snippets": {"/home/ubuntu/sens_data.csv"},
             "snippets": [
                 {
+                    "authorizedIdentities": [],
                     "snippet": "Sample Doc",
                     "sourcePath": "/home/ubuntu/sens_data.csv",
                     "fileOwner": "fileOwner",
@@ -228,6 +235,7 @@ def test_get_finding_details(loader_helper):
             "unique_snippets": {"/home/ubuntu/sens_data.csv"},
             "snippets": [
                 {
+                    "authorizedIdentities": [],
                     "snippet": "Sample Doc",
                     "sourcePath": "/home/ubuntu/sens_data.csv",
                     "fileOwner": "fileOwner",
@@ -243,6 +251,7 @@ def test_get_finding_details(loader_helper):
             "unique_snippets": {"/home/ubuntu/sens_data.csv"},
             "snippets": [
                 {
+                    "authorizedIdentities": [],
                     "snippet": "Sample Doc",
                     "sourcePath": "/home/ubuntu/sens_data.csv",
                     "fileOwner": "fileOwner",
@@ -313,6 +322,7 @@ def test_update_app_details(loader_helper):
                         "findings_entities": 2,
                         "findings_topics": 1,
                         "findings": 3,
+                        "authorized_identities": [],
                     }
                 ],
             }
@@ -369,6 +379,7 @@ def test_get_top_n_findings(loader_helper):
             "findingsEntities": 2,
             "findingsTopics": 1,
             "findings": 3,
+            "authorizedIdentities": [],
         }
     ]
 
