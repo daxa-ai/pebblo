@@ -747,5 +747,6 @@ export const IDENTITY_TABLE_COL = [
     label: "Identity",
     field: "identity",
     align: "start",
+    render: (item) => `<div class="text-none">${item?.identity || "-"}</div>`,
   },
 ];
