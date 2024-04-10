@@ -1,8 +1,7 @@
 import pathlib
 
 import yaml
-from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic import BaseSettings, Field
 
 from pebblo.app.config.config_validation import validate_config
 
