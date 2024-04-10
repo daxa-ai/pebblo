@@ -1,12 +1,13 @@
 import { waitForElement } from "../util.js";
 
 export const BubbleChart = (props) => {
-  //const { types, data: chartData } = props;
   waitForElement("#bubbleChart", 5000).then(function () {
-    const data = props.chartData;
+    const { showTitlesForValues, chartData: data } = props;
     // Set the dimensions and margins of the graph
-    const width = 950;
-    const height = 250;
+    const width =
+      document.getElementById("graph-container").offsetWidth || 1000;
+    const height =
+      document.getElementById("graph-container").offsetHeight || 250;
     const margin = 1;
 
     const color = d3
@@ -67,7 +68,7 @@ export const BubbleChart = (props) => {
         .html(
           /*html*/ `<div class="tooltip">
             <div class="tooltip-heading">${d.data.label}</div>
-            <div class="tooltip-body">Snippets: ${d.data.value}</div>
+            <div class="tooltip-body">Snippet Count: ${d.data.value}</div>
         <div>`
         )
         .style("left", xPos + 15 + "px")
@@ -97,7 +98,7 @@ export const BubbleChart = (props) => {
       .append("text")
       .attr("clip-path", (d) => `circle(${d.r})`)
       .attr("class", (d) => {
-        if (d.data.value > 0) {
+        if (showTitlesForValues.includes(d.data.value)) {
           return "show-node";
         } else {
           return "hide-node";
@@ -129,7 +130,7 @@ export const BubbleChart = (props) => {
   });
 
   return /*html*/ `
-  <div class="graph-container">
+  <div class="graph-container" id="graph-container">
     <div id="bubbleChart"></div>
   </div>
   `;

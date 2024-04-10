@@ -1205,7 +1205,9 @@ dialog::backdrop {
 
 .graph-container {
   height: 100%;
-  width: 80%;
+  width: 100%;
+  min-width: 100%;
+  min-height: 250px;
 }
 
 .hide-node {
