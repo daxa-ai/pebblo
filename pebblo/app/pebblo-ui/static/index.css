@@ -104,6 +104,9 @@ svg.icon-success {
 .w-full {
   width: 100%;
 }
+.w-half {
+  width: 50%;
+}
 .w-50 {
   width: 200px;
 }
@@ -115,6 +118,9 @@ svg.icon-success {
 }
 .w-10 {
   width: 100px;
+}
+.w-400px {
+  width: 400px;
 }
 .w-auto {
   width: auto;
@@ -260,6 +266,9 @@ svg.icon-success {
 /* ELLIPSE TEXT  */
 .text-ellipsis {
   max-width: 0;
+  text-overflow: ellipsis;
+}
+.overflow-ellipsis {
   text-overflow: ellipsis;
 }
 
@@ -916,7 +925,7 @@ tbody {
 td {
   border-bottom: 0.5px solid rgba(25, 28, 46, 0.2);
   position: relative;
-  z-index: 0;
+  /*z-index: 0;*/
 }
 td > #link {
   text-decoration: none;
@@ -1098,6 +1107,13 @@ dialog::backdrop {
 
 /* TOOLTIP */
 
+.tooltip-wrapper {
+  word-break: break-all;
+  white-space: normal;
+  width: 90%;
+  z-index: 1;
+}
+
 .tooltip-content {
   min-width: 100%;
   width: 100%;
@@ -1110,12 +1126,16 @@ dialog::backdrop {
 .tooltip-wrapper-bottom,
 .tooltip-wrapper-left {
   position: absolute;
-  visibility: hidden;
+  display: none;
 }
 .tooltip:hover .tooltip-wrapper-top {
-  visibility: visible;
-  top: -30px;
+  display: block;
+  bottom: -50%;
   left: 0;
+}
+
+.tooltip:hover .tooltip-wrapper-bottom {
+  display: block;
 }
 
 .tooltip-title-top {
@@ -1132,21 +1152,19 @@ dialog::backdrop {
 .tooltip-title-top:after {
   content: "";
   position: absolute;
-  top: 100%;
+  top: -10px;
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
   border-color: black transparent transparent transparent;
+  transform: rotate(180deg);
 }
 
 .tooltip:hover .tooltip-wrapper-bottom {
-  visibility: visible;
-  top: 0;
-  left: 0;
+  display: block;
   height: fit-content;
-  width: 100%;
-  margin: auto;
+  width: fit-content;
   bottom: 0;
 }
 
@@ -1189,7 +1207,7 @@ dialog::backdrop {
   z-index: 1;
   top: 150%;
   margin-left: -24px;
-  visibility: hidden;
+  display: none;
 }
 
 .copy-text-tooltip::after {

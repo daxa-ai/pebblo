@@ -9,6 +9,6 @@ export function Tooltip(props) {
   return /*html*/ `
   <div class="tooltip">
   <div class="tooltip-content">${children}</div>
-  <span class="tooltip-wrapper-${variant}"><span class="tooltip-title-${variant}">${title}</span></span></div>
+  <span class="tooltip-wrapper tooltip-wrapper-${variant}"><span class="tooltip-title-${variant}">${title}</span></span></div>
    `;
 }
