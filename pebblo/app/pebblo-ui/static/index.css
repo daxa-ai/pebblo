@@ -1130,7 +1130,7 @@ dialog::backdrop {
 }
 .tooltip:hover .tooltip-wrapper-top {
   display: block;
-  bottom: -50%;
+  top: 20px;
   left: 0;
 }
 
@@ -1252,6 +1252,7 @@ dialog::backdrop {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  position: relative;
 }
 
 .tooltip-heading {
