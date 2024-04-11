@@ -95,7 +95,10 @@ def test_app_discover_success(mock_write_json_to_file):
 
     # Assertions
     assert response.status_code == 200
-    assert response.json() == {"message": "App Discover Request Processed Successfully"}
+    assert response.json()["ai_apps_data"]["description"] == "This is a test app."
+    assert response.json()["ai_apps_data"]["name"] == "Test App"
+    assert response.json()["ai_apps_data"]["owner"] == "Test owner"
+    assert response.json()["message"] == "App Discover Request Processed Successfully"
 
 
 def test_app_discover_validation_errors(mock_write_json_to_file):
@@ -110,11 +113,7 @@ def test_app_discover_validation_errors(mock_write_json_to_file):
     }
     response = client.post("/v1/app/discover", json=app)
     assert response.status_code == 400
-    detail = response.json()["detail"]
-    assert (
-        "name\n  none is not an allowed value (type=type_error.none.not_allowed)"
-        in detail
-    )
+    assert "1 validation error for AiApp" in response.json()["message"]
 
 
 def test_app_discover_server_error(mock_write_json_to_file):
@@ -132,7 +131,7 @@ def test_app_discover_server_error(mock_write_json_to_file):
 
     # Assertions
     assert response.status_code == 500
-    assert response.json() == {"detail": "Mocked exception"}
+    assert response.json() == {"message": "Mocked exception"}
 
 
 def test_loader_doc_success(
