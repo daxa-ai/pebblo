@@ -6,8 +6,7 @@ export const BubbleChart = (props) => {
     // Set the dimensions and margins of the graph
     const width =
       document.getElementById("graph-container").offsetWidth || 1000;
-    const height =
-      document.getElementById("graph-container").offsetHeight || 250;
+    let height = document.getElementById("graph-container").offsetHeight || 250;
     const margin = 1;
 
     const color = d3
@@ -15,20 +14,15 @@ export const BubbleChart = (props) => {
       .domain(["entity", "topic"])
       .range(["#BAC5FA", "#B2DDF6"]);
 
+    height = data.length * 10 + 200;
     const names = (d) => d?.label?.split(" ");
-
-    const yMax = d3.max(data, (d) => d.value);
-
-    const radius = d3.scaleLinear().domain([0, yMax]).range([0, 1550]);
 
     const pack = d3
       .pack()
-      .size([width - margin * 2, height - margin * 2])
+      .size([width - margin * 2, height])
       .padding(1);
 
-    const root = pack(
-      d3.hierarchy({ children: data }).sum((d) => radius(d.value))
-    );
+    const root = pack(d3.hierarchy({ children: data }).sum((d) => d.value));
 
     // Create the SVG container.
     const svg = d3
