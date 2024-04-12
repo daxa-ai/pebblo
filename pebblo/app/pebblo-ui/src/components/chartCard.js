@@ -8,7 +8,11 @@ export const ChartCard = (props) => {
   let showTitlesForValues = [];
   if (chartData?.length > 0) {
     sortedData = SORT_DATA([...chartData], "desc", "value");
-    showTitlesForValues = [sortedData[0].value, sortedData[1].value];
+    if (sortedData?.length > 1) {
+      showTitlesForValues = [sortedData[0]?.value, sortedData[1]?.value];
+    } else if (sortedData?.length === 1) {
+      showTitlesForValues = [sortedData[0]?.value];
+    }
   }
   return /*html*/ `
     <div class="flex flex-col w-100 gap-4">
