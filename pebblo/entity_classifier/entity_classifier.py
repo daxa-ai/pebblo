@@ -20,6 +20,7 @@ class EntityClassifier:
         self.anonymizer = AnonymizerEngine()
         self.entities = list(Entities.__members__.keys())
         self.entities.extend(list(SecretEntities.__members__.keys()))
+        self.custom_analyze()
 
     def custom_analyze(self):
         # Adding custom analyzer
@@ -91,7 +92,6 @@ class EntityClassifier:
             logger.debug("Presidio Entity Classifier and Anonymizer Started.")
             logger.debug(f"Data Input: {input_text}")
 
-            self.custom_analyze()
             analyzer_results = self.analyze_response(input_text)
             anonymized_response, anonymized_text = self.anonymize_response(
                 analyzer_results, input_text
