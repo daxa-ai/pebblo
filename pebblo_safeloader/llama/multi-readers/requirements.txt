@@ -2,4 +2,6 @@ llama_index==0.10.27
 langchain==0.1.14
 shortuuid==1.0.13
 docx2txt==0.8
-llama-index-readers-pebblo
+# Installing llama-index-readers-pebblo using git branch until it get release in PyPI
+# llama-index-readers-pebblo
+git+https://github.com/yograjopcito/llama_index.git@ys-llama-pebblo-integration#subdirectory=llama-index-integrations/readers/llama-index-readers-pebblo
