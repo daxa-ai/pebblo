@@ -69,7 +69,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
             getFileSize=get_file_size,
             findings_count=findings_count,
             identity_comma_separated=identity_comma_separated,
-            topic_entity_mapping=topic_entity_mapping
+            topic_entity_mapping=topic_entity_mapping,
         )
         pdf_converter = library_function_mapping[renderer]
         status, result = pdf_converter(source_html, output_path, search_path)
