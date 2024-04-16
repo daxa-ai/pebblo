@@ -81,7 +81,7 @@ class VectorDB(BaseModel):
     pkgInfo: Optional[PackageInfo]
 
 
-class AppModel(BaseModel):
+class AiModel(BaseModel):
     name: str
     vendor: Optional[str]
 
@@ -89,7 +89,7 @@ class AppModel(BaseModel):
 class Chain(BaseModel):
     name: Optional[str]
     vectorDbs: Optional[List[VectorDB]] = []
-    model: Optional[AppModel]
+    model: Optional[AiModel]
 
 
 class AiApp(BaseModel):

@@ -115,9 +115,9 @@ class AppDiscover:
                         installedVia=package_info.get("installed_via"),
                         location=package_info.get("location"),
                     )
-                    vector_db_obj.packageInfo = pkg_info_obj.dict()
+                    vector_db_obj.pkgInfo = pkg_info_obj
 
-                vector_db_details.append(vector_db_obj.dict())
+                vector_db_details.append(vector_db_obj)
             chain_obj = Chain(name=name, model=model, vectorDbs=vector_db_details)
             chains.append(chain_obj.dict())
 
