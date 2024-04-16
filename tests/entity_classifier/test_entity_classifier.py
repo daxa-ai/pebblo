@@ -27,7 +27,7 @@ def mocked_objects():
         yield mock_analyzer, mock_anomyzer, mock_custom_registry
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_entity_classifier_response(mocker):
     """
     Mocking entity classifier response
@@ -153,10 +153,10 @@ def test_presidio_entity_classifier_and_anonymizer(
         anonymized_text,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(input_text1)
     assert entities == {
-        "Github Token": 1,
-        "AWS Access Key": 1,
-        "US ITIN": 1,
-        "US SSN": 1,
+        "github-token": 1,
+        "aws-access-key": 1,
+        "us-itin": 1,
+        "us-ssn": 1,
     }
     assert total_count == 4
     assert anonymized_text == input_text1
@@ -169,10 +169,10 @@ def test_presidio_entity_classifier_and_anonymizer(
         input_text1, anonymize_snippets=True
     )
     assert entities == {
-        "Github Token": 1,
-        "AWS Access Key": 1,
-        "US ITIN": 1,
-        "US SSN": 1,
+        "github-token": 1,
+        "aws-access-key": 1,
+        "us-itin": 1,
+        "us-ssn": 1,
     }
     assert total_count == 4
     assert anonymized_text == mock_input_text1_anonymize_snippet_true
@@ -183,14 +183,14 @@ def test_presidio_entity_classifier_and_anonymizer(
         anonymized_text,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(input_text2)
     assert entities == {
-        "Slack Token": 2,
-        "Github Token": 1,
-        "AWS Access Key": 1,
-        "AWS Secret Key": 1,
-        "US ITIN": 1,
-        "IBAN code": 1,
-        "Credit card number": 1,
-        "US SSN": 1,
+        "slack-token": 2,
+        "github-token": 1,
+        "aws-access-key": 1,
+        "aws-secret-key": 1,
+        "us-itin": 1,
+        "iban-code": 1,
+        "credit-card-number": 1,
+        "us-ssn": 1,
     }
 
     assert total_count == 9
@@ -204,14 +204,14 @@ def test_presidio_entity_classifier_and_anonymizer(
         input_text1, anonymize_snippets=True
     )
     assert entities == {
-        "Slack Token": 2,
-        "Github Token": 1,
-        "AWS Access Key": 1,
-        "AWS Secret Key": 1,
-        "US ITIN": 1,
-        "IBAN code": 1,
-        "Credit card number": 1,
-        "US SSN": 1,
+        "slack-token": 2,
+        "github-token": 1,
+        "aws-access-key": 1,
+        "aws-secret-key": 1,
+        "us-itin": 1,
+        "iban-code": 1,
+        "credit-card-number": 1,
+        "us-ssn": 1,
     }
     assert total_count == 9
     assert anonymized_text == mock_input_text2_anonymize_snippet_true

@@ -11,8 +11,8 @@ import pytest
 
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
-HARMFUL_ADVICE = "Harmful Advice"
-MEDICAL_ADVICE = "Medical Advice"
+HARMFUL_ADVICE = "harmful-advice"
+MEDICAL_ADVICE = "medical-advice"
 
 
 @pytest.fixture
