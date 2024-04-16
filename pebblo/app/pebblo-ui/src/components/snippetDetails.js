@@ -1,4 +1,5 @@
 import { KEYUP } from "../constants/enums.js";
+import { KEYWORD_MAPPING } from "../constants/keywordMapping.js";
 import { SearchIcon } from "../icons/index.js";
 import { waitForElement } from "../util.js";
 import { EmptyState } from "./emptyState.js";
@@ -43,7 +44,7 @@ export function SnippetDetails(props) {
        <div class="flex flex-col gap-1">
          <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
            <div class="surface-10-opacity-65 font-14 medium">${
-             item?.labelName
+             KEYWORD_MAPPING[item?.labelName] || item?.labelName
            }</div>
            <div class="surface-10-opacity-50 font-12">Showing ${
              item?.snippetCount
@@ -100,7 +101,7 @@ export function SnippetDetails(props) {
          <div class="flex flex-col gap-1">
            <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
              <div class="surface-10-opacity-65 font-14 medium">${
-               item?.labelName
+               KEYWORD_MAPPING[item?.labelName] || item?.labelName
              }</div>
              <div class="surface-10-opacity-50 font-12">Showing ${
                item?.snippets?.length

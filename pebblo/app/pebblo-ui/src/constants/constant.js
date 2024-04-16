@@ -8,6 +8,7 @@ import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
 import { extractTimezone, getFileSize, getFormattedDate } from "../util.js";
+import { KEYWORD_MAPPING } from "./keywordMapping.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
 const SCRIPT_ELEMENT = document.getElementById("main_script");
@@ -58,6 +59,7 @@ export const APP_DETAILS_FINDINGS_TABLE = [
     label: "Finding",
     field: "labelName",
     align: "start",
+    render: (item) => KEYWORD_MAPPING[item?.labelName] || item?.labelName,
   },
   {
     label: "Source Files",
@@ -267,6 +269,7 @@ export const TABLE_DATA_FOR_FINDINGS = [
     label: "Finding",
     field: "labelName",
     align: "start",
+    render: (item) => KEYWORD_MAPPING[item?.labelName] || item?.labelName,
   },
   {
     label: "Source Files",
@@ -451,17 +454,22 @@ export const TABS_ARR_FOR_APPLICATIONS = [
 ];
 
 const aggregatedFindingsForAllApps = APP_DATA?.findings
-  ? APP_DATA?.findings?.reduce((acc, cur, i) => {
+  ? APP_DATA?.findings?.reduce((findings, currentFinding, i) => {
       const item =
-        i > 0 && acc.find(({ labelName }) => labelName === cur.labelName);
-      if (item) item.snippetCount += cur.snippetCount;
+        i > 0 &&
+        findings.find(
+          ({ labelName }) => labelName === currentFinding.labelName
+        );
+      if (item) item.snippetCount += currentFinding.snippetCount;
       else
-        acc.push({
-          label: cur.labelName,
-          value: cur.snippetCount,
-          type: cur.findingsType,
+        findings.push({
+          label:
+            KEYWORD_MAPPING[currentFinding?.labelName] ||
+            currentFinding?.labelName,
+          value: currentFinding.snippetCount,
+          type: currentFinding.findingsType,
         });
-      return acc;
+      return findings;
     }, [])
   : [];
 
@@ -562,17 +570,22 @@ const dataSourceObject =
     : null;
 
 const aggregatedFindings = dataSourceObject
-  ? dataSourceObject?.findingsSummary?.reduce((acc, cur, i) => {
+  ? dataSourceObject?.findingsSummary?.reduce((findings, currentFinding, i) => {
       const item =
-        i > 0 && acc.find(({ labelName }) => labelName === cur.labelName);
-      if (item) item.snippetCount += cur.snippetCount;
+        i > 0 &&
+        findings.find(
+          ({ labelName }) => labelName === currentFinding.labelName
+        );
+      if (item) item.snippetCount += currentFinding.snippetCount;
       else
-        acc.push({
-          label: cur.labelName,
-          value: cur.snippetCount,
-          type: cur.findingsType,
+        findings.push({
+          label:
+            KEYWORD_MAPPING[currentFinding?.labelName] ||
+            currentFinding?.labelName,
+          value: currentFinding.snippetCount,
+          type: currentFinding.findingsType,
         });
-      return acc;
+      return findings;
     }, [])
   : [];
 

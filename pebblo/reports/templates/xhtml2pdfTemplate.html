@@ -940,7 +940,9 @@
               <td class="text-end w-120 align-cell-left">
                 {{ item.findingsType|capitalize }}
               </td>
-              <td class="text-end align-cell-left">{{item.labelName}}</td>
+              <td class="text-end align-cell-left">
+                {{topic_entity_mapping.get(item.labelName) or item.labelName}}
+              </td>
               <td class="text-end w-120 align-cell-right">
                 {{item.fileCount}}
               </td>
@@ -973,7 +975,7 @@
           <div class="mt-4 inter">
             <div class="bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
               <span class="surface-10 font-13 medium">
-                {{ item.labelName }}
+                {{topic_entity_mapping.get(item.labelName) or item.labelName}}
                 <span class="sub-heading surface-50 normal font-12"
                   >(Showing {{ item.snippets|length }} snippets out of {{
                   item.snippetCount }})</span
