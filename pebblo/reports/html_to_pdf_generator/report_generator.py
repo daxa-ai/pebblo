@@ -8,8 +8,8 @@ from decimal import Decimal
 
 import jinja2
 
-from pebblo.reports.enums.report_libraries import library_function_mapping
 from pebblo.reports.enums.keyword_mapping import topic_entity_mapping
+from pebblo.reports.enums.report_libraries import library_function_mapping
 from pebblo.reports.libs.logger import logger
 
 
