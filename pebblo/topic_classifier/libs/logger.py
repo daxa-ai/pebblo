@@ -18,6 +18,8 @@ def get_logger():
     logger_obj.propagate = False
     if not logger_obj.handlers:
         logger_obj.addHandler(console_handle)
+    package_logger = logging.getLogger("transformers")
+    package_logger.setLevel(logging.ERROR)
     return logger_obj
 
 

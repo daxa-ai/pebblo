@@ -3,12 +3,14 @@ This is entry point for Pebblo(Pebblo Server and Local UI)
 """
 
 import argparse
-from contextlib import redirect_stderr, redirect_stdout
-from io import StringIO
+import warnings
 
 from tqdm import tqdm
 
 from pebblo.app.config.config import load_config
+
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 config_details = {}
 
@@ -31,16 +33,15 @@ def start():
 def classifier_init(p_bar):
     """Initialize topic and entity classifier."""
     p_bar.write("Downloading topic, entity classifier models ...")
-    with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
-        from pebblo.entity_classifier.entity_classifier import EntityClassifier
-        from pebblo.topic_classifier.topic_classifier import TopicClassifier
+    from pebblo.entity_classifier.entity_classifier import EntityClassifier
+    from pebblo.topic_classifier.topic_classifier import TopicClassifier
+
     p_bar.update(3)
     p_bar.write("Initializing topic classifier ...")
     p_bar.update(1)
 
     # Init TopicClassifier(This step downloads the models and put in cache)
-    with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
-        _ = TopicClassifier()
+    _ = TopicClassifier()
     p_bar.write("Initializing topic classifier ... done")
     p_bar.update(1)
 
@@ -48,8 +49,7 @@ def classifier_init(p_bar):
     p_bar.update(1)
 
     # Init EntityClassifier(This step downloads all necessary training models)
-    with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
-        _ = EntityClassifier()
+    _ = EntityClassifier()
     p_bar.write("Initializing entity classifier ... done")
     p_bar.update(1)
 

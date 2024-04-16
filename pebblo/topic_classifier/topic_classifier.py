@@ -26,6 +26,7 @@ class TopicClassifier:
 
     def __init__(self):
         # Use os.environ.get() to retrieve the value of the environment variable
+
         huggingface_token = os.environ.get("HF_TOKEN")
 
         # Check if the environment variable exists
