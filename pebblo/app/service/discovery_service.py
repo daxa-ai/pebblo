@@ -86,7 +86,12 @@ class AppDiscover:
         )
         return instance_details_model
 
-    def _fetch_chain_details(self, app_metadata: dict):
+    def _fetch_chain_details(self):
+        # TODO: Discussion on the uniqueness of chains is not done yet,
+        #  so for now we are appending chain to existing chains in the file for this app.
+        app_metadata = self._read_file(
+            CacheDir.APPLICATION_METADATA_FILE_PATH.value
+        )
         chains = list()
 
         if app_metadata:
@@ -167,36 +172,60 @@ class AppDiscover:
                 # This is to support backward compatibility
                 app_metadata["load_ids"] = [self.load_id]
 
+        app_metadata["app_type"] = "loader"
         # Writing metadata file
-        # Lock Implementation
-        try:
-            acquire_lock(CacheDir.METADATA_LOCK_FILE_PATH.value)
-            self._write_file_content_to_path(app_metadata, app_metadata_file_path)
-        finally:
-            release_lock(CacheDir.METADATA_LOCK_FILE_PATH.value)
+        self._write_file_content_to_path(app_metadata, app_metadata_file_path)
+
+    def _upsert_metadata_file(self):
+        app_metadata_file_path = (
+            f"{CacheDir.HOME_DIR.value}/"
+            f"{self.application_name}/{CacheDir.METADATA_FILE_PATH.value}"
+        )
+        app_metadata = self._read_file(app_metadata_file_path)
+
+        # write metadata file if it is not present
+        if not app_metadata:
+            # Writing app metadata to metadata file
+            app_metadata = {"name": self.application_name, "app_type": "retrieval"}
+        else:
+            app_metadata["app_type"] = "retrieval"
+
+        # Writing metadata file
+        self._write_file_content_to_path(app_metadata, app_metadata_file_path)
 
     def process_request(self):
         """
         Process App discovery Request
         """
+        app_metadata_lock_file = (
+            f"{CacheDir.HOME_DIR.value}/"
+            f"{self.application_name}/"
+            f"{CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value}"
+        )
+        metadata_lock_file = (
+            f"{CacheDir.HOME_DIR.value}/"
+            f"{self.application_name}/"
+            f"{CacheDir.METADATA_LOCK_FILE_PATH.value}"
+        )
+        lock_file_path = ""
         try:
             logger.debug("AI App discovery request processing started")
             # Input Data
             logger.debug(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
 
-            acquire_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
-            app_metadata = self._read_file(
-                CacheDir.APPLICATION_METADATA_FILE_PATH.value
-            )
-
-            # Upset metadata file
             if self.load_id:
+                lock_file_path = metadata_lock_file
+                acquire_lock(lock_file_path)
                 self._upsert_app_metadata_file()
+            else:
+                lock_file_path = app_metadata_lock_file
+                acquire_lock(lock_file_path)
+                self._upsert_metadata_file()
 
             # getting instance details
             instance_details = self._fetch_runtime_instance_details()
 
-            chain_details = self._fetch_chain_details(app_metadata)
+            chain_details = self._fetch_chain_details()
 
             # create AiApps Model
             ai_apps = self._create_ai_apps_model(instance_details, chain_details)
@@ -216,9 +245,9 @@ class AppDiscover:
                     f"/{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
                 )
 
-            # Lock Implementation
             self._write_file_content_to_path(ai_apps.dict(), file_path)
 
+            # update metadata file
             ai_apps_data = ai_apps.dict()
             ai_apps_obj = DiscoverAIApps(
                 name=ai_apps_data.get("name"),
@@ -251,4 +280,4 @@ class AppDiscover:
                 body=response.dict(exclude_none=True), status_code=500
             )
         finally:
-            release_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
+            release_lock(lock_file_path)
