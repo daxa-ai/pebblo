@@ -7,7 +7,7 @@ variable "GITHUB_REF" {
 }
 
 variable "IMAGE_NAME" {
-  default = "pebblo"
+  default = "daxaai/pebblo"
 }
 
 variable "IMAGE_TAG_SUFFIX" {
