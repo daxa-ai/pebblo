@@ -454,17 +454,22 @@ export const TABS_ARR_FOR_APPLICATIONS = [
 ];
 
 const aggregatedFindingsForAllApps = APP_DATA?.findings
-  ? APP_DATA?.findings?.reduce((acc, cur, i) => {
+  ? APP_DATA?.findings?.reduce((findings, currentFinding, i) => {
       const item =
-        i > 0 && acc.find(({ labelName }) => labelName === cur.labelName);
-      if (item) item.snippetCount += cur.snippetCount;
+        i > 0 &&
+        findings.find(
+          ({ labelName }) => labelName === currentFinding.labelName
+        );
+      if (item) item.snippetCount += currentFinding.snippetCount;
       else
-        acc.push({
-          label: KEYWORD_MAPPING[cur?.labelName] || cur?.labelName,
-          value: cur.snippetCount,
-          type: cur.findingsType,
+        findings.push({
+          label:
+            KEYWORD_MAPPING[currentFinding?.labelName] ||
+            currentFinding?.labelName,
+          value: currentFinding.snippetCount,
+          type: currentFinding.findingsType,
         });
-      return acc;
+      return findings;
     }, [])
   : [];
 
@@ -565,17 +570,22 @@ const dataSourceObject =
     : null;
 
 const aggregatedFindings = dataSourceObject
-  ? dataSourceObject?.findingsSummary?.reduce((acc, cur, i) => {
+  ? dataSourceObject?.findingsSummary?.reduce((findings, currentFinding, i) => {
       const item =
-        i > 0 && acc.find(({ labelName }) => labelName === cur.labelName);
-      if (item) item.snippetCount += cur.snippetCount;
+        i > 0 &&
+        findings.find(
+          ({ labelName }) => labelName === currentFinding.labelName
+        );
+      if (item) item.snippetCount += currentFinding.snippetCount;
       else
-        acc.push({
-          label: KEYWORD_MAPPING[cur?.labelName] || cur?.labelName,
-          value: cur.snippetCount,
-          type: cur.findingsType,
+        findings.push({
+          label:
+            KEYWORD_MAPPING[currentFinding?.labelName] ||
+            currentFinding?.labelName,
+          value: currentFinding.snippetCount,
+          type: currentFinding.findingsType,
         });
-      return acc;
+      return findings;
     }, [])
   : [];
 
