@@ -4,12 +4,18 @@ This module handles app discovery business logic.
 
 from datetime import datetime
 
-from fastapi import HTTPException
 from pydantic import ValidationError
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.models.models import AiApp, InstanceDetails, Metadata
+from pebblo.app.libs.responses import PebbloJsonResponse
+from pebblo.app.models.models import (
+    AiApp,
+    DiscoverAIApps,
+    DiscoverAIAppsResponseModel,
+    InstanceDetails,
+    Metadata,
+)
 from pebblo.app.utils.utils import (
     get_pebblo_server_version,
     read_json_file,
@@ -45,7 +51,7 @@ class AppDiscover:
             framework=self.data.get("framework"),
             lastUsed=last_used,
             pebbloServerVersion=get_pebblo_server_version(),
-            pebbloClientVersion=self.data.get("pebblo_client_version", ""),
+            pebbloClientVersion=self.data.get("plugin_version", ""),
         )
         return ai_apps_model
 
@@ -145,11 +151,34 @@ class AppDiscover:
             )
             self._write_file_content_to_path(ai_apps.dict(), file_path)
 
-            logger.debug("AiApp discovery request completed successfully")
-            return {"message": "App Discover Request Processed Successfully"}
+            ai_apps_data = ai_apps.dict()
+            ai_apps_obj = DiscoverAIApps(
+                name=ai_apps_data.get("name"),
+                description=ai_apps_data.get("description"),
+                owner=ai_apps_data.get("owner"),
+                instanceDetails=ai_apps_data.get("instanceDetails"),
+                framework=ai_apps_data.get("framework"),
+                lastUsed=ai_apps_data.get("lastUsed"),
+                pebbloServerVersion=ai_apps_data.get("pebbloServerVersion"),
+                pebbloClientVersion=ai_apps_data.get("pebbloClientVersion"),
+            )
+            message = "App Discover Request Processed Successfully"
+            logger.debug(message)
+            response = DiscoverAIAppsResponseModel(
+                ai_apps_data=ai_apps_obj, message=message
+            )
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=200
+            )
         except ValidationError as ex:
-            logger.error(f"Error in process_request. Error:{ex}")
-            raise HTTPException(status_code=400, detail=str(ex))
+            response = DiscoverAIAppsResponseModel(ai_apps_data=None, message=str(ex))
+            logger.error(f"Error in Discovery API process_request. Error:{ex}")
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=400
+            )
         except Exception as ex:
-            logger.error(f"Error in process_request. Error:{ex}")
-            raise HTTPException(status_code=500, detail=str(ex))
+            response = DiscoverAIAppsResponseModel(ai_apps_data=None, message=str(ex))
+            logger.error(f"Error in Discovery API process_request. Error:{ex}")
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=500
+            )
