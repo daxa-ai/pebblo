@@ -122,7 +122,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
     field: "fileName",
     render: (item) => /*html*/ `
     <div class="flex flex-col inter">
-       <div class="surface-10 font-13">${item.fileName || "-"}</div>
+       <div class="surface-10 font-13 text-none">${item.fileName || "-"}</div>
        <div class="surface-10-opacity-50 font-12 flex">
          <div>${item?.fileOwner || "-"}</div>
        </div>
@@ -291,7 +291,7 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     field: "sourceFilePath",
     align: "start",
     render: (item) => /*html*/ `
-     <div>${item?.sourceFilePath}</div>
+     <div class="text-none">${item?.sourceFilePath}</div>
      <div class="inter font-12 surface-10-opacity-50">By ${item?.owner}</div>
     `,
     isTooltip: true,
