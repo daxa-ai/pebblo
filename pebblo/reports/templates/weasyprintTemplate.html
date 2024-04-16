@@ -319,7 +319,9 @@
           {% for item in datastores.findingsSummary %}
           <tr>
             <td>{{ item.findingsType|capitalize }}</td>
-            <td>{{item.labelName}}</td>
+            <td>
+              {{topic_entity_mapping.get(item.labelName) or item.labelName}}
+            </td>
             <td class="text-end">{{item.fileCount}}</td>
             <td class="text-end">{{item.snippetCount}}</td>
           </tr>
@@ -344,7 +346,9 @@
           {% for item in findingDetails %}
           <div class="mt-4">
             <div class="flex bg-main pt-2 pb-2 pl-3 pr-3 inter items-center">
-              <div class="surface-10 font-13">{{ item.labelName }}</div>
+              <div class="surface-10 font-13">
+                {{topic_entity_mapping.get(item.labelName) or item.labelName}}
+              </div>
               <div class="sub-heading ml-2 surface-50 font-12">
                 Showing {{ item.snippets|length }} snippets out of {{
                 item.snippetCount }}

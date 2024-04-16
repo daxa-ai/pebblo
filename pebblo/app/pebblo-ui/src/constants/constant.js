@@ -8,6 +8,7 @@ import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
 import { extractTimezone, getFileSize, getFormattedDate } from "../util.js";
+import { KEYWORD_MAPPING } from "./keywordMapping.js";
 import { APP_DETAILS_ROUTE } from "./routesConstant.js";
 
 const SCRIPT_ELEMENT = document.getElementById("main_script");
@@ -58,6 +59,7 @@ export const APP_DETAILS_FINDINGS_TABLE = [
     label: "Finding",
     field: "labelName",
     align: "start",
+    render: (item) => KEYWORD_MAPPING[item?.labelName] || item?.labelName,
   },
   {
     label: "Source Files",
@@ -267,6 +269,7 @@ export const TABLE_DATA_FOR_FINDINGS = [
     label: "Finding",
     field: "labelName",
     align: "start",
+    render: (item) => KEYWORD_MAPPING[item?.labelName] || item?.labelName,
   },
   {
     label: "Source Files",
@@ -457,7 +460,7 @@ const aggregatedFindingsForAllApps = APP_DATA?.findings
       if (item) item.snippetCount += cur.snippetCount;
       else
         acc.push({
-          label: cur.labelName,
+          label: KEYWORD_MAPPING[cur?.labelName] || cur?.labelName,
           value: cur.snippetCount,
           type: cur.findingsType,
         });
@@ -568,7 +571,7 @@ const aggregatedFindings = dataSourceObject
       if (item) item.snippetCount += cur.snippetCount;
       else
         acc.push({
-          label: cur.labelName,
+          label: KEYWORD_MAPPING[cur?.labelName] || cur?.labelName,
           value: cur.snippetCount,
           type: cur.findingsType,
         });
