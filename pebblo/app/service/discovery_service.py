@@ -11,15 +11,20 @@ from pebblo.app.libs.logger import logger
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import (
     AiApp,
+    Chain,
     DiscoverAIApps,
     DiscoverAIAppsResponseModel,
     InstanceDetails,
     Metadata,
+    PackageInfo,
+    VectorDB
 )
 from pebblo.app.utils.utils import (
     get_pebblo_server_version,
     read_json_file,
     write_json_to_file,
+    acquire_lock,
+    release_lock
 )
 
 
@@ -33,7 +38,7 @@ class AppDiscover:
         self.load_id = data.get("load_id")
         self.application_name = self.data.get("name")
 
-    def _create_ai_apps_model(self, instance_details):
+    def _create_ai_apps_model(self, instance_details, chain_details):
         """
         Create an AI App Model and return the corresponding model object
         """
@@ -52,6 +57,7 @@ class AppDiscover:
             lastUsed=last_used,
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=self.data.get("plugin_version", ""),
+            chains=chain_details,
         )
         return ai_apps_model
 
@@ -79,6 +85,37 @@ class AppDiscover:
             f"AI_APPS [{self.application_name}]: Instance Details: {instance_details_model.dict()}"
         )
         return instance_details_model
+
+    def _fetch_chain_details(self):
+        # get chain details
+        chains = list()
+        for chain in self.data.get('chains', []):
+            name = chain["name"]
+            model = chain['model']
+            # vector db details
+            vector_db_details = []
+            for vector_db in chain.get('vector_dbs', []):
+                vector_db_obj = VectorDb(name=vector_db.get("name"),
+                                         version=vector_db.get("version"),
+                                         location=vector_db.get("location"),
+                                         embeddingModel=vector_db.get("embedding_model"))
+
+                package_info = vector_db.get("pkg_info")
+                if package_info:
+                    pkg_info_obj = PackageInfo(projectHomePage=package_info.get("project_home_page"),
+                                               documentationUrl=package_info.get("documentation_url"),
+                                               pypiUrl=package_info.get("pypi_url"),
+                                               licenceType=package_info.get("licence_type"),
+                                               installedVia=package_info.get("installed_via"),
+                                               location=package_info.get("location"))
+                    vector_db_obj.packageInfo = pkg_info_obj.dict()
+
+                vector_db_details.append(vector_db_obj.dict())
+            chain_obj = Chain(name=name, model=model, vectorDbs=vector_db_details)
+            chains.append(chain_obj.dict())
+
+        logger.debug(f"Application Name [{self.application_name}]: Chains: {chains}")
+        return chains
 
     @staticmethod
     def _write_file_content_to_path(file_content, file_path):
@@ -136,20 +173,38 @@ class AppDiscover:
             logger.debug(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
 
             # Upset metadata file
-            self._upsert_app_metadata_file()
+            if self.load_id:
+                self._upsert_app_metadata_file()
 
             # getting instance details
             instance_details = self._fetch_runtime_instance_details()
 
+            chain_details = self._fetch_chain_details()
+
             # create AiApps Model
-            ai_apps = self._create_ai_apps_model(instance_details)
+            ai_apps = self._create_ai_apps_model(instance_details, chain_details)
 
             # Write file to metadata location
-            file_path = (
-                f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.load_id}"
-                f"/{CacheDir.METADATA_FILE_PATH.value}"
-            )
-            self._write_file_content_to_path(ai_apps.dict(), file_path)
+            # loader type application, if load_id is present
+            if self.load_id:
+                file_path = (
+                    f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.load_id}"
+                    f"/{CacheDir.METADATA_FILE_PATH.value}"
+                )
+
+            # retrieval type application, if load_id is not present
+            else:
+                file_path = (
+                    f"{CacheDir.HOME_DIR.value}/{self.application_name}/"
+                    f"/{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
+                )
+
+            # Lock Implementation
+            try:
+                acquire_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH)
+                self._write_file_content_to_path(ai_apps.dict(), file_path)
+            finally:
+                release_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH)
 
             ai_apps_data = ai_apps.dict()
             ai_apps_obj = DiscoverAIApps(
@@ -182,3 +237,7 @@ class AppDiscover:
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=500
             )
+        finally:
+            # TODO : Implement release lock
+            # Really it is required here ??
+            pass
