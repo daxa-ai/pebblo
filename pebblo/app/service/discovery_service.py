@@ -87,15 +87,25 @@ class AppDiscover:
         return instance_details_model
 
     def _fetch_chain_details(self):
-        # get chain details
         chains = list()
+        # get existing chain details if present
+        # Lock Implementation
+        try:
+            acquire_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
+            app_metadata = self._read_file(CacheDir.APPLICATION_METADATA_FILE_PATH.value)
+        finally:
+            release_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
+
+        if app_metadata:
+            chains = app_metadata.get("chains", [])
+
         for chain in self.data.get('chains', []):
             name = chain["name"]
             model = chain['model']
             # vector db details
             vector_db_details = []
             for vector_db in chain.get('vector_dbs', []):
-                vector_db_obj = VectorDb(name=vector_db.get("name"),
+                vector_db_obj = VectorDB(name=vector_db.get("name"),
                                          version=vector_db.get("version"),
                                          location=vector_db.get("location"),
                                          embeddingModel=vector_db.get("embedding_model"))
@@ -161,7 +171,12 @@ class AppDiscover:
                 app_metadata["load_ids"] = [self.load_id]
 
         # Writing metadata file
-        self._write_file_content_to_path(app_metadata, app_metadata_file_path)
+        # Lock Implementation
+        try:
+            acquire_lock(CacheDir.METADATA_LOCK_FILE_PATH.value)
+            self._write_file_content_to_path(app_metadata, app_metadata_file_path)
+        finally:
+            release_lock(CacheDir.METADATA_LOCK_FILE_PATH.value)
 
     def process_request(self):
         """
@@ -201,10 +216,10 @@ class AppDiscover:
 
             # Lock Implementation
             try:
-                acquire_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH)
+                acquire_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
                 self._write_file_content_to_path(ai_apps.dict(), file_path)
             finally:
-                release_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH)
+                release_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
 
             ai_apps_data = ai_apps.dict()
             ai_apps_obj = DiscoverAIApps(
@@ -239,5 +254,6 @@ class AppDiscover:
             )
         finally:
             # TODO : Implement release lock
-            # Really it is required here ??
+            # If we put lock at start of process request then it will process request in sequencial order,
+            # It would be better to implement lock only when we are writing file.
             pass

@@ -16,13 +16,14 @@ class CacheDir(Enum):
     METADATA_FILE_PATH = f"{METADATA_FOLDER}/metadata.json"
     APPLICATION_METADATA_FILE_PATH = f"{METADATA_FOLDER}/app_metadata.json"
     APPLICATION_METADATA_LOCK_FILE_PATH = f"{METADATA_FOLDER}/app_metadata_lock_file"
+    METADATA_LOCK_FILE_PATH = f"{METADATA_FOLDER}/metadata_lock_file"
     REPORT_DATA_FILE_NAME = "report.json"
     REPORT_FILE_NAME = (
-        f"pebblo_report.{config_details.get('reports', {}).get('format')}"
+        f"pebblo_report.{config_details.get('reports', {}).get('format', 'pdf')}"
     )
     HOME_DIR = config_details.get("reports", {}).get("outputDir", "~/.pebblo")
-    RENDERER = config_details.get("reports", {}).get("renderer")
-    FORMAT = config_details.get("reports", {}).get("format")
+    RENDERER = config_details.get("reports", {}).get("renderer", "xhtml2pdf")
+    FORMAT = config_details.get("reports", {}).get("format", "pdf")
     PROXY = (
         f"http://{config_details.get('daemon', {}).get('host')}:"
         f"{config_details.get('daemon', {}).get('port')}"
