@@ -17,14 +17,14 @@ from pebblo.app.models.models import (
     InstanceDetails,
     Metadata,
     PackageInfo,
-    VectorDB
+    VectorDB,
 )
 from pebblo.app.utils.utils import (
+    acquire_lock,
     get_pebblo_server_version,
     read_json_file,
+    release_lock,
     write_json_to_file,
-    acquire_lock,
-    release_lock
 )
 
 
@@ -48,7 +48,7 @@ class AppDiscover:
         metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
         ai_apps_model = AiApp(
             metadata=metadata,
-            name=self.data.get("name"),
+            name=self.data.get("name", ""),
             description=self.data.get("description", "-"),
             owner=self.data.get("owner", ""),
             pluginVersion=self.data.get("plugin_version"),
@@ -86,38 +86,35 @@ class AppDiscover:
         )
         return instance_details_model
 
-    def _fetch_chain_details(self):
+    def _fetch_chain_details(self, app_metadata: dict):
         chains = list()
-        # get existing chain details if present
-        # Lock Implementation
-        try:
-            acquire_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
-            app_metadata = self._read_file(CacheDir.APPLICATION_METADATA_FILE_PATH.value)
-        finally:
-            release_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
 
         if app_metadata:
             chains = app_metadata.get("chains", [])
 
-        for chain in self.data.get('chains', []):
+        for chain in self.data.get("chains", []):
             name = chain["name"]
-            model = chain['model']
+            model = chain["model"]
             # vector db details
             vector_db_details = []
-            for vector_db in chain.get('vector_dbs', []):
-                vector_db_obj = VectorDB(name=vector_db.get("name"),
-                                         version=vector_db.get("version"),
-                                         location=vector_db.get("location"),
-                                         embeddingModel=vector_db.get("embedding_model"))
+            for vector_db in chain.get("vector_dbs", []):
+                vector_db_obj = VectorDB(
+                    name=vector_db.get("name"),
+                    version=vector_db.get("version"),
+                    location=vector_db.get("location"),
+                    embeddingModel=vector_db.get("embedding_model"),
+                )
 
                 package_info = vector_db.get("pkg_info")
                 if package_info:
-                    pkg_info_obj = PackageInfo(projectHomePage=package_info.get("project_home_page"),
-                                               documentationUrl=package_info.get("documentation_url"),
-                                               pypiUrl=package_info.get("pypi_url"),
-                                               licenceType=package_info.get("licence_type"),
-                                               installedVia=package_info.get("installed_via"),
-                                               location=package_info.get("location"))
+                    pkg_info_obj = PackageInfo(
+                        projectHomePage=package_info.get("project_home_page"),
+                        documentationUrl=package_info.get("documentation_url"),
+                        pypiUrl=package_info.get("pypi_url"),
+                        licenceType=package_info.get("licence_type"),
+                        installedVia=package_info.get("installed_via"),
+                        location=package_info.get("location"),
+                    )
                     vector_db_obj.packageInfo = pkg_info_obj.dict()
 
                 vector_db_details.append(vector_db_obj.dict())
@@ -187,6 +184,11 @@ class AppDiscover:
             # Input Data
             logger.debug(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
 
+            acquire_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
+            app_metadata = self._read_file(
+                CacheDir.APPLICATION_METADATA_FILE_PATH.value
+            )
+
             # Upset metadata file
             if self.load_id:
                 self._upsert_app_metadata_file()
@@ -194,7 +196,7 @@ class AppDiscover:
             # getting instance details
             instance_details = self._fetch_runtime_instance_details()
 
-            chain_details = self._fetch_chain_details()
+            chain_details = self._fetch_chain_details(app_metadata)
 
             # create AiApps Model
             ai_apps = self._create_ai_apps_model(instance_details, chain_details)
@@ -215,11 +217,7 @@ class AppDiscover:
                 )
 
             # Lock Implementation
-            try:
-                acquire_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
-                self._write_file_content_to_path(ai_apps.dict(), file_path)
-            finally:
-                release_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)
+            self._write_file_content_to_path(ai_apps.dict(), file_path)
 
             ai_apps_data = ai_apps.dict()
             ai_apps_obj = DiscoverAIApps(
@@ -253,7 +251,4 @@ class AppDiscover:
                 body=response.dict(exclude_none=True), status_code=500
             )
         finally:
-            # TODO : Implement release lock
-            # If we put lock at start of process request then it will process request in sequencial order,
-            # It would be better to implement lock only when we are writing file.
-            pass
+            release_lock(CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value)

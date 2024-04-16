@@ -65,11 +65,11 @@ class InstanceDetails(BaseModel):
 
 
 class PackageInfo(BaseModel):
-    project_home_page: Optional[str]
-    documentation_url: Optional[str]
-    pypi_url: Optional[str]
-    liscence_type: Optional[str]
-    installed_via: Optional[str]
+    projectHomePage: Optional[str]
+    documentationUrl: Optional[str]
+    pypiUrl: Optional[str]
+    licenceType: Optional[str]
+    installedVia: Optional[str]
     location: Optional[str]
 
 
@@ -77,8 +77,8 @@ class VectorDB(BaseModel):
     name: Optional[str] = None
     version: Optional[str] = None
     location: Optional[str] = None
-    embedding_model: Optional[str] = None
-    pkg_info: Optional[PackageInfo]
+    embeddingModel: Optional[str] = None
+    pkgInfo: Optional[PackageInfo]
 
 
 class AppModel(BaseModel):
