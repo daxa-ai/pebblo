@@ -24,7 +24,7 @@ variable "PEBBLO_EXTRAS" {
 
 target "base" {
   dockerfile = "Dockerfile.base"
-  tags = ["${IMAGE_NAME}:base-${IMAGE_TAG_SUFFIX}"]
+  tags = ["${IMAGE_NAME}:${IMAGE_TAG_SUFFIX}"]
   args = {
     build_image = "python:3.11"
     base_image = "python:3.11"
