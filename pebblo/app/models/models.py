@@ -64,6 +64,34 @@ class InstanceDetails(BaseModel):
     createdAt: datetime
 
 
+class PackageInfo(BaseModel):
+    projectHomePage: Optional[str]
+    documentationUrl: Optional[str]
+    pypiUrl: Optional[str]
+    licenceType: Optional[str]
+    installedVia: Optional[str]
+    location: Optional[str]
+
+
+class VectorDB(BaseModel):
+    name: Optional[str] = None
+    version: Optional[str] = None
+    location: Optional[str] = None
+    embeddingModel: Optional[str] = None
+    pkgInfo: Optional[PackageInfo]
+
+
+class AiModel(BaseModel):
+    name: str
+    vendor: Optional[str]
+
+
+class Chain(BaseModel):
+    name: Optional[str]
+    vectorDbs: Optional[List[VectorDB]] = []
+    model: Optional[AiModel]
+
+
 class AiApp(BaseModel):
     metadata: Metadata
     name: str
@@ -75,6 +103,7 @@ class AiApp(BaseModel):
     lastUsed: datetime
     pebbloServerVersion: Optional[str]
     pebbloClientVersion: Optional[str]
+    chains: Optional[List[Chain]]
 
 
 class Summary(BaseModel):
