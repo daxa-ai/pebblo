@@ -14,6 +14,9 @@ class CacheDir(Enum):
 
     METADATA_FOLDER = "/metadata"
     METADATA_FILE_PATH = f"{METADATA_FOLDER}/metadata.json"
+    APPLICATION_METADATA_FILE_PATH = f"{METADATA_FOLDER}/app_metadata.json"
+    APPLICATION_METADATA_LOCK_FILE_PATH = f"{METADATA_FOLDER}/app_metadata_lock_file"
+    METADATA_LOCK_FILE_PATH = f"{METADATA_FOLDER}/metadata_lock_file"
     REPORT_DATA_FILE_NAME = "report.json"
     REPORT_FILE_NAME = (
         f"pebblo_report.{config_details.get('reports', {}).get('format')}"
@@ -39,3 +42,8 @@ class ReportConstants(Enum):
 
 class ClassifierConstants(Enum):
     anonymize_snippets = config_details.get("classifier", {}).get("anonymizeSnippets")
+
+
+class ApplicationTypes(Enum):
+    LOADER = "loader"
+    RETRIEVAL = "retrieval"
