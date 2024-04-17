@@ -42,3 +42,8 @@ class ReportConstants(Enum):
 
 class ClassifierConstants(Enum):
     anonymize_snippets = config_details.get("classifier", {}).get("anonymizeSnippets")
+
+
+class ApplicationTypes(Enum):
+    LOADER = "loader"
+    RETRIEVAL = "retrieval"

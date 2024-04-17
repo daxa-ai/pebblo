@@ -6,7 +6,7 @@ from datetime import datetime
 
 from pydantic import ValidationError
 
-from pebblo.app.enums.enums import CacheDir
+from pebblo.app.enums.enums import ApplicationTypes, CacheDir
 from pebblo.app.libs.logger import logger
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import (
@@ -59,9 +59,12 @@ class AppDiscover:
             pebbloClientVersion=self.data.get("plugin_version", ""),
             chains=chain_details,
         )
+        logger.debug(
+            f"AI_APPS [{self.application_name}]: AiApps Details: {ai_apps_model.dict()}"
+        )
         return ai_apps_model
 
-    def _fetch_runtime_instance_details(self):
+    def _fetch_runtime_instance_details(self) -> InstanceDetails:
         """
         Retrieve instance details from input data and return its corresponding model object.
         """
@@ -86,17 +89,24 @@ class AppDiscover:
         )
         return instance_details_model
 
-    def _fetch_chain_details(self):
+    def _fetch_chain_details(self) -> list[Chain]:
+        """
+        Retrieve chain details from input data and return its corresponding model object.
+        """
         # TODO: Discussion on the uniqueness of chains is not done yet,
         #  so for now we are appending chain to existing chains in the file for this app.
         app_metadata = self._read_file(
-            CacheDir.APPLICATION_METADATA_FILE_PATH.value
+            f"{CacheDir.HOME_DIR.value}/"
+            f"{self.application_name}"
+            f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
         )
         chains = list()
 
         if app_metadata:
             chains = app_metadata.get("chains", [])
+            logger.debug(f"Existing Chains : {chains}")
 
+        logger.debug(f"Input chains : {self.data.get('chains', [])}")
         for chain in self.data.get("chains", []):
             name = chain["name"]
             model = chain["model"]
@@ -172,7 +182,7 @@ class AppDiscover:
                 # This is to support backward compatibility
                 app_metadata["load_ids"] = [self.load_id]
 
-        app_metadata["app_type"] = "loader"
+        app_metadata["app_type"] = ApplicationTypes.LOADER.value
         # Writing metadata file
         self._write_file_content_to_path(app_metadata, app_metadata_file_path)
 
@@ -186,68 +196,65 @@ class AppDiscover:
         # write metadata file if it is not present
         if not app_metadata:
             # Writing app metadata to metadata file
-            app_metadata = {"name": self.application_name, "app_type": "retrieval"}
+            app_metadata = {
+                "name": self.application_name,
+                "app_type": ApplicationTypes.RETRIEVAL.value,
+            }
         else:
-            app_metadata["app_type"] = "retrieval"
+            app_metadata["app_type"] = ApplicationTypes.RETRIEVAL.value
 
         # Writing metadata file
         self._write_file_content_to_path(app_metadata, app_metadata_file_path)
 
     def process_request(self):
         """
-        Process App discovery Request
+        Process App discovery Request. This handles discovery for loader as well as retrieval type applications.
         """
-        app_metadata_lock_file = (
-            f"{CacheDir.HOME_DIR.value}/"
-            f"{self.application_name}/"
-            f"{CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value}"
-        )
-        metadata_lock_file = (
-            f"{CacheDir.HOME_DIR.value}/"
-            f"{self.application_name}/"
-            f"{CacheDir.METADATA_LOCK_FILE_PATH.value}"
-        )
         lock_file_path = ""
         try:
             logger.debug("AI App discovery request processing started")
-            # Input Data
             logger.debug(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
 
+            # Handle loader type application.
             if self.load_id:
-                lock_file_path = metadata_lock_file
-                acquire_lock(lock_file_path)
-                self._upsert_app_metadata_file()
-            else:
-                lock_file_path = app_metadata_lock_file
-                acquire_lock(lock_file_path)
-                self._upsert_metadata_file()
-
-            # getting instance details
-            instance_details = self._fetch_runtime_instance_details()
-
-            chain_details = self._fetch_chain_details()
-
-            # create AiApps Model
-            ai_apps = self._create_ai_apps_model(instance_details, chain_details)
-
-            # Write file to metadata location
-            # loader type application, if load_id is present
-            if self.load_id:
+                lock_file_path = (
+                    f"{CacheDir.HOME_DIR.value}/"
+                    f"{self.application_name}/"
+                    f"{CacheDir.METADATA_LOCK_FILE_PATH.value}"
+                )
                 file_path = (
                     f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.load_id}"
                     f"/{CacheDir.METADATA_FILE_PATH.value}"
                 )
+                self._upsert_app_metadata_file()
 
-            # retrieval type application, if load_id is not present
+            # Handle retrieval type application.
             else:
+                lock_file_path = (
+                    f"{CacheDir.HOME_DIR.value}/"
+                    f"{self.application_name}/"
+                    f"{CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value}"
+                )
                 file_path = (
                     f"{CacheDir.HOME_DIR.value}/{self.application_name}/"
                     f"/{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
                 )
+                self._upsert_metadata_file()
 
+            acquire_lock(lock_file_path)
+            # Get instance details
+            instance_details = self._fetch_runtime_instance_details()
+
+            # Get chain details
+            chain_details = self._fetch_chain_details()
+
+            # Create AiApps Model
+            ai_apps = self._create_ai_apps_model(instance_details, chain_details)
+
+            # Write file to metadata location
             self._write_file_content_to_path(ai_apps.dict(), file_path)
 
-            # update metadata file
+            # Prepare response
             ai_apps_data = ai_apps.dict()
             ai_apps_obj = DiscoverAIApps(
                 name=ai_apps_data.get("name"),
@@ -260,7 +267,6 @@ class AppDiscover:
                 pebbloClientVersion=ai_apps_data.get("pebbloClientVersion"),
             )
             message = "App Discover Request Processed Successfully"
-            logger.debug(message)
             response = DiscoverAIAppsResponseModel(
                 ai_apps_data=ai_apps_obj, message=message
             )

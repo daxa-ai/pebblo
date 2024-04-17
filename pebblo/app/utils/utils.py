@@ -207,6 +207,9 @@ def get_pebblo_server_version():
 
 
 def acquire_lock(lock_file_path: str):
+    """
+    Acquire lock using given lock file. It will be busy wait, polling after every 2 seconds.
+    """
     sleep_time = 2
     while True:
         try:
@@ -232,6 +235,9 @@ def acquire_lock(lock_file_path: str):
 
 
 def release_lock(lock_file_path: str):
+    """
+    Release lock for given lock file.
+    """
     # Simply delete the lock file to release the lock
     try:
         full_lock_file_path = get_full_path(lock_file_path)
