@@ -15,7 +15,7 @@ client = TestClient(app)
 @pytest.fixture
 def mock_write_json_to_file():
     with patch(
-        "pebblo.app.service.prompt_service.AppPrompt._write_file_content_to_path"
+        "pebblo.app.service.prompt_service.Prompt._write_file_content_to_path"
     ) as mock_write_json_to_file:
         yield mock_write_json_to_file
 
@@ -38,7 +38,7 @@ def test_app_prompt_success(mock_write_json_to_file):
         "user": "Test Owner",
     }
 
-    response = client.post("/v1/app/prompt", json=test_payload)
+    response = client.post("/v1/prompt", json=test_payload)
 
     assert response.status_code == 200
     assert response.json()["message"] == "AiApp Prompt Processed Successfully"
@@ -53,7 +53,7 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
         "name": "Test App",
         "context": {"retrieved_from": ["test_data.pdf"]},
     }
-    response = client.post("/v1/app/prompt", json=test_payload)
+    response = client.post("/v1/prompt", json=test_payload)
     assert response.status_code == 400
     assert "2 validation errors for RetrievalContext" in response.json()["detail"]
 
@@ -75,7 +75,7 @@ def test_app_prompt_server_error(mock_write_json_to_file):
         "prompt_time": "Wed 17 Apr, 2024, 15:03 PM",
         "user": "Test Owner",
     }
-    response = client.post("/v1/app/prompt", json=test_payload)
+    response = client.post("/v1/prompt", json=test_payload)
 
     # Assertions
     assert response.status_code == 500

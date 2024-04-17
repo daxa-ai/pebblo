@@ -19,7 +19,7 @@ router_instance.router.add_api_route(
     response_model_exclude_none=True,
 )
 router_instance.router.add_api_route(
-    "/app/prompt",
+    "/prompt",
     App.prompt,
     methods=["POST"],
     response_model=dict,

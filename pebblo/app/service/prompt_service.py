@@ -16,9 +16,9 @@ from pebblo.app.utils.utils import (
 )
 
 
-class AppPrompt:
+class Prompt:
     """
-    This class handles app prompt API business logic.
+    This class handles prompt API business logic.
     """
 
     def __init__(self, data: dict):
@@ -162,7 +162,7 @@ class AppPrompt:
 
     def process_request(self):
         """
-        Process App Prompt Request
+        Process Prompt Request
         """
         try:
             logger.debug("AI App prompt request processing started")
