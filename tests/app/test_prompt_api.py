@@ -54,8 +54,8 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
         "context": {"retrieved_from": ["test_data.pdf"]},
     }
     response = client.post("/v1/prompt", json=test_payload)
-    assert response.status_code == 400
-    assert "2 validation errors for RetrievalContext" in response.json()["detail"]
+    assert response.status_code == 500
+    assert response.json()["detail"] == "doc is a mandatory field"
 
 
 def test_app_prompt_server_error(mock_write_json_to_file):

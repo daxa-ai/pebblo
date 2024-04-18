@@ -10,6 +10,7 @@ from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import AiDataModel, RetrievalContext, RetrievalData
 from pebblo.app.utils.utils import (
     acquire_lock,
+    fields_validator,
     read_json_file,
     release_lock,
     write_json_to_file,
@@ -33,6 +34,7 @@ class Prompt:
         # Fetching retrieval context details
         retrieval_context = {}
         context_data = self.data.get("context")
+        fields_validator(context_data, ["retrieved_from", "doc", "vector_db"])
         if context_data:
             retrieval_context = RetrievalContext(
                 retrieved_from=context_data.get("retrieved_from"),
@@ -97,7 +99,8 @@ class Prompt:
     @staticmethod
     def _write_file_content_to_path(file_content, file_path):
         """
-        Write content to the specified file path
+        Write content to the specified file path.
+        This function is just written for UT mocking.
         """
         logger.debug(f"Writing content to file path: {file_content}")
         # Writing file content to given file path
@@ -107,6 +110,7 @@ class Prompt:
     def _read_file(file_path):
         """
         Retrieve the content of the specified file.
+        This function is just written for UT mocking.
         """
         logger.debug(f"Reading content from file: {file_path}")
         file_content = read_json_file(file_path)
@@ -129,30 +133,28 @@ class Prompt:
         logger.debug(
             f"AI_APP [{self.application_name}]: app metadata file path: {app_metadata_file_path}"
         )
-
-        acquire_lock(app_metadata_lock_file)
-
-        # Read app_metadata file & get current app_metadata
-        app_metadata_content = self._read_file(app_metadata_file_path)
-
-        logger.debug(
-            f"AI_APP [{self.application_name}]: app metadata content: {app_metadata_content}"
-        )
-
-        # write app_metadata file if it is not present
-        if not app_metadata_content:
-            app_metadata_content = {
-                "name": self.application_name,
-                "retrieval": [retrieval_data],
-            }
-        else:  # Updating retrieval data to file
-            if "retrieval" in app_metadata_content.keys():
-                app_metadata_content.get("retrieval").append(retrieval_data)
-            else:
-                app_metadata_content["retrieval"] = [retrieval_data]
-
-        # Lock Implementation
         try:
+            acquire_lock(app_metadata_lock_file)
+
+            # Read app_metadata file & get current app_metadata
+            app_metadata_content = self._read_file(app_metadata_file_path)
+
+            logger.debug(
+                f"AI_APP [{self.application_name}]: app metadata content: {app_metadata_content}"
+            )
+
+            # write app_metadata file if it is not present
+            if not app_metadata_content:
+                app_metadata_content = {
+                    "name": self.application_name,
+                    "retrieval": [retrieval_data],
+                }
+            else:  # Updating retrieval data to file
+                if "retrieval" in app_metadata_content.keys():
+                    app_metadata_content.get("retrieval").append(retrieval_data)
+                else:
+                    app_metadata_content["retrieval"] = [retrieval_data]
+
             # Writing to app_metadata file
             self._write_file_content_to_path(
                 app_metadata_content, app_metadata_file_path
