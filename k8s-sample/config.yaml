@@ -1,0 +1,19 @@
+---
+# Source: k8s/templates/config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pebblo-api-config
+data:
+  config.yaml: |
+    daemon:
+      port: 8000
+      host: 0.0.0.0
+    logging:
+      level: info
+    reports:
+      format: pdf
+      renderer: xhtml2pdf
+      outputDir: /opt/pebblo
+    classifier:
+      anonymizeSnippets: False
