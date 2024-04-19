@@ -252,3 +252,19 @@ def fields_validator(data, mandatory_fields):
     for field in mandatory_fields:
         if field not in data.keys() or data[field] is None:
             raise FieldValidationException(field)
+
+
+def get_active_users(retrieval_data):
+    """This function returns active users per app"""
+    active_user = []
+    for data in retrieval_data:
+        active_user.append(data.get("user"))
+    return list(set(active_user))
+
+
+def get_vector_dbs(chains):
+    """This function returns vector dbs per app"""
+    vector_dbs = []
+    for data in chains:
+        vector_dbs.extend([db["name"] for db in data["vectorDbs"]])
+    return list(set(vector_dbs))
