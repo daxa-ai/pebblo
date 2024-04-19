@@ -27,23 +27,15 @@ def test_app_prompt_success(mock_write_json_to_file):
     mock_write_json_to_file.return_value = None
     test_payload = {
         "name": "Test App",
-        "context": [
-            {
-                "retrieved_from": "test_data.pdf",
-                "doc": "This is test doc.",
-                "vector_db": "ChromaDB",
-            },
-            {
-                "retrieved_from": "test_data1.pdf",
-                "doc": "This is test1 doc.",
-                "vector_db": "ChromaDB",
-            },
-        ],
+        "context": {
+            "retrieved_from": ["test_data.pdf"],
+            "doc": "This is test doc.",
+            "vector_db": "ChromaDB",
+        },
         "prompt": {"data": "What is Sachin's Passport ID?"},
         "response": {"data": "His passport ID is 5484880UA."},
         "prompt_time": "Wed 17 Apr, 2024, 15:03 PM",
         "user": "Test Owner",
-        "user_identities": ["test_group@test.com"],
     }
 
     response = client.post("/v1/prompt", json=test_payload)
@@ -59,7 +51,7 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
     mock_write_json_to_file.return_value = None
     test_payload = {
         "name": "Test App",
-        "context": [{"retrieved_from": "test_data.pdf"}],
+        "context": {"retrieved_from": ["test_data.pdf"]},
     }
     response = client.post("/v1/prompt", json=test_payload)
     assert response.status_code == 500
@@ -73,23 +65,15 @@ def test_app_prompt_server_error(mock_write_json_to_file):
     mock_write_json_to_file.side_effect = Exception("Mocked exception")
     test_payload = {
         "name": "Test App",
-        "context": [
-            {
-                "retrieved_from": "test_data.pdf",
-                "doc": "This is test doc.",
-                "vector_db": "ChromaDB",
-            },
-            {
-                "retrieved_from": "test_data1.pdf",
-                "doc": "This is test1 doc.",
-                "vector_db": "ChromaDB",
-            },
-        ],
+        "context": {
+            "retrieved_from": ["test_data.pdf"],
+            "doc": "This is test doc.",
+            "vector_db": "ChromaDB",
+        },
         "prompt": {"data": "What is Sachin's Passport ID?"},
         "response": {"data": "His passport ID is 5484880UA."},
         "prompt_time": "Wed 17 Apr, 2024, 15:03 PM",
         "user": "Test Owner",
-        "user_identities": ["test_group@test.com"],
     }
     response = client.post("/v1/prompt", json=test_payload)
 

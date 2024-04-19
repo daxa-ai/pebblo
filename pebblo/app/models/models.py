@@ -248,3 +248,17 @@ class DiscoverAIApps(BaseModel):
 class DiscoverAIAppsResponseModel(BaseModel):
     ai_apps_data: Union[DiscoverAIApps, None] = None
     message: Optional[str] = None
+
+
+class RetrievalContext(BaseModel):
+    retrieved_from: list[str]
+    doc: str
+    vector_db: str
+
+
+class RetrievalData(BaseModel):
+    context: RetrievalContext
+    prompt: AiDataModel
+    response: AiDataModel
+    prompt_time: str
+    user: str

@@ -32,22 +32,20 @@ class Prompt:
         """
         logger.debug("Retrieving retrieval context details from input data")
         # Fetching retrieval context details
-        retrieval_context_output = []
+        retrieval_context = {}
         context_data = self.data.get("context")
+        fields_validator(context_data, ["retrieved_from", "doc", "vector_db"])
         if context_data:
-            for data in context_data:
-                fields_validator(data, ["retrieved_from", "doc", "vector_db"])
-                retrieval_context = RetrievalContext(
-                    retrieved_from=data.get("retrieved_from"),
-                    doc=data.get("doc"),
-                    vector_db=data.get("vector_db"),
-                )
-                retrieval_context_output.append(retrieval_context.dict())
+            retrieval_context = RetrievalContext(
+                retrieved_from=context_data.get("retrieved_from"),
+                doc=context_data.get("doc"),
+                vector_db=context_data.get("vector_db"),
+            )
 
         logger.debug(
-            f"AI_APPS [{self.application_name}]: Retrieval Context Details: {retrieval_context_output}"
+            f"AI_APPS [{self.application_name}]: Retrieval Context Details: {retrieval_context.dict()}"
         )
-        return retrieval_context_output
+        return retrieval_context
 
     def _fetch_context_data(self, param):
         """
@@ -55,10 +53,9 @@ class Prompt:
         """
         logger.debug(f"Retrieving {param} details from input data")
 
-        data: dict = {}
+        data = {}
         context_data = self.data.get(param)
         if context_data:
-            fields_validator(context_data, ["data"])
             data = AiDataModel(
                 data=context_data.get("data"),
                 entityCount=context_data.get("entityCount")
@@ -85,14 +82,12 @@ class Prompt:
         Create an RetrievalData Model and return the corresponding model object
         """
         logger.debug("Creating RetrievalData model")
-        fields_validator(self.data, ["prompt_time", "user"])
         retrieval_data_model = RetrievalData(
             context=retrieval_context_data,
             prompt=prompt_data,
             response=response_data,
             prompt_time=self.data.get("prompt_time"),
             user=self.data.get("user"),
-            linked_groups=self.data.get("user_identities"),
         )
 
         logger.debug(
@@ -126,12 +121,12 @@ class Prompt:
         """
         # Read app_metadata file & get current app_metadata
         app_metadata_file_path = (
-            f"{CacheDir.HOME_DIR.value}/{self.application_name}"
-            f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
+            f"{CacheDir.HOME_DIR.value}/{self.application_name}/"
+            f"/{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
         )
         app_metadata_lock_file = (
             f"{CacheDir.HOME_DIR.value}/"
-            f"{self.application_name}"
+            f"{self.application_name})/"
             f"{CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value}"
         )
         logger.debug(
@@ -151,13 +146,13 @@ class Prompt:
             if not app_metadata_content:
                 app_metadata_content = {
                     "name": self.application_name,
-                    "retrievals": [retrieval_data],
+                    "retrieval": [retrieval_data],
                 }
             else:  # Updating retrieval data to file
-                if "retrievals" in app_metadata_content.keys():
-                    app_metadata_content.get("retrievals").append(retrieval_data)
+                if "retrieval" in app_metadata_content.keys():
+                    app_metadata_content.get("retrieval").append(retrieval_data)
                 else:
-                    app_metadata_content["retrievals"] = [retrieval_data]
+                    app_metadata_content["retrieval"] = [retrieval_data]
 
             # Writing to app_metadata file
             self._write_file_content_to_path(
