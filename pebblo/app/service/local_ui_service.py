@@ -39,7 +39,7 @@ class AppData:
         self.loader_findings_list = []
         self.loader_data_source_list = []
         self.loader_document_with_findings_list = []
-        self.retrieval_active_users = {}
+        self.retrieval_active_users = []
         self.retrieval_vectordbs = []
         self.total_retrievals = []
 
@@ -77,6 +77,10 @@ class AppData:
 
         # Skip app if data source details are not present for some reason.
         if not data_source_details:
+            logger.debug(
+                f"Error: Unable to fetch dataSources details for {app_dir} app"
+            )
+            logger.debug(f"App Detail Json : {app_detail_json}")
             logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
             return
 
@@ -117,7 +121,7 @@ class AppData:
         return app_details.dict()
 
     def prepare_retrieval_response(self, app_dir, app_json):
-        logger.debug("In prepare retrieval response")
+        logger.debug("In prepare loader response")
 
         app_metadata_path = (
             f"{CacheDir.HOME_DIR.value}/{app_dir}/"
@@ -135,29 +139,25 @@ class AppData:
             return
 
         # fetch total retrievals
-        for retrieval in app_metadata_content.get("retrievals", []):
+        for retrieval in app_metadata_content.get("retrieval"):
             retrieval_data = {"name": app_json.get("name")}
             retrieval_data.update(retrieval)
             self.total_retrievals.append(retrieval_data)
 
         # fetch active users per app
-        active_users = self.get_active_users(app_metadata_content.get("retrievals", []))
-        self.add_accumulate_active_users(active_users)
+        active_users = self.get_active_users(app_metadata_content["retrieval"])
+        self.retrieval_active_users.extend(active_users)
 
         # fetch vector dbs per app
-        vector_dbs = self.get_vector_dbs(app_metadata_content.get("chains", []))
+        vector_dbs = self.get_vector_dbs(app_metadata_content["chains"])
         self.retrieval_vectordbs.extend(vector_dbs)
-
-        # fetch documents name per app
-        documents = self.get_all_documents(app_metadata_content.get("retrievals", []))
 
         app_details = RetrievalAppListDetails(
             name=app_json.get("name"),
             owner=app_metadata_content.get("owner"),
-            retrievals=app_metadata_content.get("retrievals", []),
-            active_users=list(active_users.keys()),
+            retrievals=app_metadata_content.get("retrieval"),
+            active_users=active_users,
             vector_dbs=vector_dbs,
-            documents=list(documents.keys()),
         )
         return app_details.dict()
 
@@ -170,8 +170,8 @@ class AppData:
             # List all apps in the directory
             dir_path = os.listdir(dir_full_path)
 
-            all_loader_apps: list = []
-            all_retrieval_apps: list = []
+            all_loader_apps = []
+            all_retrieval_apps = []
 
             # Iterating through each app in the directory
             for app_dir in dir_path:
@@ -223,23 +223,22 @@ class AppData:
                 findings=self.loader_findings_list,
                 documentsWithFindings=self.loader_document_with_findings_list,
                 dataSource=self.loader_data_source_list,
+                pebbloServerVersion=get_pebblo_server_version(),
             )
 
             logger.debug("Preparing retrieval app response object")
             retrieval_response = RetrievalAppList(
                 appList=all_retrieval_apps,
                 retrievals=self.total_retrievals,
-                activeUsers=self.retrieval_active_users,
+                activeUsers=list(set(self.retrieval_active_users)),
                 violations=[],
             )
 
             response = {
-                "pebbloServerVersion": get_pebblo_server_version(),
                 "loaderApps": loader_response.dict(),
                 "retrievalApps": retrieval_response.dict(),
             }
-            logger.debug(f"App Listing Response : {response}")
-            return json.dumps(response, indent=4)
+            return response
         except Exception as ex:
             logger.error(f"Error in Dashboard app Listing. Error:{ex}")
             return json.dumps({})
@@ -289,9 +288,7 @@ class AppData:
                         f"Skipping app '{app_dir}' due to missing or invalid file"
                     )
                     return json.dumps({})
-                response = self.get_loader_app_details(app_dir, load_ids)
-                logger.debug(f"App Details: {response}")
-                return response
+                return self.get_loader_app_details(app_dir, load_ids)
             elif app_type == "retrieval":
                 app_metadata_path = (
                     f"{CacheDir.HOME_DIR.value}/{app_dir}/"
@@ -309,9 +306,7 @@ class AppData:
                         f"Skipping app '{app_dir}' due to missing or invalid file"
                     )
                     return json.dumps({})
-                response = self.get_retrieval_app_details(app_metadata_content)
-                logger.debug(f"Retrieval App Details for {app_dir} app: {response}")
-                return response
+                return self.get_retrieval_app_details(app_metadata_content)
 
         except Exception as ex:
             logger.error(f"Error in app detail. Error: {ex}")
@@ -333,171 +328,44 @@ class AppData:
 
         return None, None
 
-    def get_retrieval_app_details(self, app_content):
-        retrieval_data = app_content.get("retrievals", [])
+    @staticmethod
+    def get_retrieval_app_details(app_content):
+        retrieval_data = app_content["retrieval"]
+        active_users = []
+        vector_dbs = []
+        documents = []
 
-        active_users = self.get_active_users(retrieval_data)
-        documents = self.get_all_documents(retrieval_data)
-        vector_dbs = self.get_all_vector_dbs(retrieval_data)
+        # fetch active users, vector dbs and documents names for given app
+        for data in retrieval_data:
+            active_users.append(data["user"])
+            for context in data["context"]:
+                vector_dbs.append(context["vector_db"])
+                documents.append(context["retrieved_from"])
+        active_users = list(set(active_users))
+        vector_dbs = list(set(vector_dbs))
+        documents = list(set(documents))
 
         # prepare app response
         response = RetrievalAppDetails(
-            name=app_content["name"],
-            description=app_content.get("description"),
-            framework=app_content.get("framework"),
-            instanceDetails=app_content.get("instanceDetails"),
-            pebbloServerVersion=app_content.get("pebbloServerVersion"),
-            pebbloClientVersion=app_content.get("pebbloClientVersion"),
             retrievals=retrieval_data,
             activeUsers=active_users,
             vectorDbs=vector_dbs,
             documents=documents,
         )
-        return json.dumps(response.dict(), default=str, indent=4)
-
-    def add_accumulate_active_users(self, active_users):
-        """Adding retrieval data for app listing per users"""
-        for user_name, data in active_users.items():
-            if user_name in self.retrieval_active_users.keys():
-                self.retrieval_active_users[user_name].get("retrievals", []).extend(
-                    data.get("retrievals", [])
-                )
-            else:
-                self.retrieval_active_users[user_name] = data
+        return response.dict()
 
     @staticmethod
-    def fetch_last_accessed_time(accessed_time: list) -> str:
-        """Fetching last accessed time per user"""
-        try:
-            sorted_time = sorted(accessed_time, reverse=True)
-            last_accessed_time = sorted_time[0].isoformat()
-            return last_accessed_time
-        except Exception as ex:
-            logger.error(
-                f"Error in fetching last accessed time while returning app details response :{ex}"
-            )
-            return ""
-
-    @staticmethod
-    def get_sorted_users(retrieval_data: list) -> dict:
-        """
-        This function returns sorted active users per app in sorted descending order
-        based on number of times it appeared in retrievals.
-        """
-        sorted_active_users: dict = {}
-        active_users: dict = {}
-
-        # fetch active users wise retrievals
+    def get_active_users(retrieval_data):
+        """This function returns active users per app"""
+        active_user = []
         for data in retrieval_data:
-            user_name = data.get("user")
-            if user_name in active_users.keys():
-                active_users[user_name].append(data)
-            else:
-                active_users.update({user_name: [data]})
-
-        # sorting based on length on retrieval values per documents
-        all_sorted_users = sorted(
-            active_users.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
-        )
-
-        # converting sorted tuples to dictionary
-        for user_name, data in all_sorted_users:
-            if user_name in sorted_active_users.keys():
-                sorted_active_users[user_name].append(data)
-            else:
-                sorted_active_users.update({user_name: data})
-
-        return sorted_active_users
-
-    def get_active_users(self, retrieval_data: list) -> dict:
-        """
-        This function returns active users per app with its metadata in following format:
-        {
-            "retrievals": [sorted active users],
-            "last_accessed_time": "last accessed time",
-            "linked_groups": [user groups]
-        }
-        """
-        sorted_active_users = self.get_sorted_users(retrieval_data)
-        response = {}
-        for user_name, user_data in sorted_active_users.items():
-            accessed_time = []
-            user_groups = []
-            for data in user_data:
-                accessed_time.append(parser.parse(data.get("prompt_time")))
-                if data.get("linked_groups"):
-                    user_groups.extend(data.get("linked_groups"))
-            response[user_name] = {
-                "retrievals": user_data,
-                "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
-                "linked_groups": list(set(user_groups)),
-            }
-        return response
+            active_user.append(data.get("user"))
+        return list(set(active_user))
 
     @staticmethod
-    def get_vector_dbs(chains: dict) -> list:
+    def get_vector_dbs(chains):
         """This function returns vector dbs per app"""
         vector_dbs = []
         for data in chains:
             vector_dbs.extend([db["name"] for db in data["vectorDbs"]])
         return list(set(vector_dbs))
-
-    @staticmethod
-    def sort_retrievals(retrieval_data: list, search_key: str) -> dict:
-        """
-        This function returns data based on search key per app in sorted descending order
-        based on number of times it appeared in retrievals.
-        """
-        resp: dict = {}
-        sorted_resp: dict = {}
-        # fetch data wise retrievals
-        for data in retrieval_data:
-            data_context = data.get("context")
-            for context in data_context:
-                data_name = context[search_key]
-                if data_name in resp.keys():
-                    resp[data_name].extend([data])
-                else:
-                    resp[data_name] = [data]
-
-        # sorting based on length on retrieval values per search key
-        all_resp_data = sorted(
-            resp.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
-        )
-
-        # converting sorted tuples to dictionary
-        for key_name, data in all_resp_data:
-            if key_name in sorted_resp.keys():
-                sorted_resp[key_name].extend(data)
-            else:
-                sorted_resp.update({key_name: data})
-
-        return sorted_resp
-
-    def get_all_documents(self, retrieval_data: list) -> dict:
-        """
-        This function returns documents per app with its metadata in following format:
-        {
-            "retrievals": [sorted active users],
-            "last_accessed_time": "last accessed time",
-        }
-        """
-        sorted_document = self.sort_retrievals(retrieval_data, "retrieved_from")
-        response = {}
-        for user_name, user_data in sorted_document.items():
-            accessed_time = []
-            for data in user_data:
-                accessed_time.append(parser.parse(data.get("prompt_time")))
-            response[user_name] = {
-                "retrievals": user_data,
-                "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
-            }
-        return response
-
-    def get_all_vector_dbs(self, retrieval_data: list) -> dict:
-        """
-        This function returns vector dbs per app in sorted descending order
-        based on number of times it appeared in retrievals.
-        """
-        sorted_vector_dbs = self.sort_retrievals(retrieval_data, "vector_db")
-        return sorted_vector_dbs
