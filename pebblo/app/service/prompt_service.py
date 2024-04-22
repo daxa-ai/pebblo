@@ -125,12 +125,12 @@ class Prompt:
         """
         # Read app_metadata file & get current app_metadata
         app_metadata_file_path = (
-            f"{CacheDir.HOME_DIR.value}/{self.application_name}/"
-            f"/{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
+            f"{CacheDir.HOME_DIR.value}/{self.application_name}"
+            f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
         )
         app_metadata_lock_file = (
             f"{CacheDir.HOME_DIR.value}/"
-            f"{self.application_name})/"
+            f"{self.application_name}"
             f"{CacheDir.APPLICATION_METADATA_LOCK_FILE_PATH.value}"
         )
         logger.debug(
