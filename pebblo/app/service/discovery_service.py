@@ -38,14 +38,21 @@ class AppDiscover:
         self.load_id = data.get("load_id")
         self.application_name = self.data.get("name")
 
+    @staticmethod
+    def _get_current_datetime():
+        """
+            Return current datetime
+        """
+        return datetime.now()
+
     def _create_ai_apps_model(self, instance_details, chain_details):
         """
         Create an AI App Model and return the corresponding model object
         """
         logger.debug("Creating AI App model")
         # Initialize Variables
-        last_used = datetime.now()
-        metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
+        last_used = self._get_current_datetime()
+        metadata = Metadata(createdAt=self._get_current_datetime(), modifiedAt=self._get_current_datetime())
         ai_apps_model = AiApp(
             metadata=metadata,
             name=self.data.get("name"),
@@ -62,7 +69,7 @@ class AppDiscover:
         logger.debug(
             f"AI_APPS [{self.application_name}]: AiApps Details: {ai_apps_model.dict()}"
         )
-        return ai_apps_model
+        return ai_apps_model.dict()
 
     def _fetch_runtime_instance_details(self) -> InstanceDetails:
         """
@@ -82,7 +89,7 @@ class AppDiscover:
             platform=runtime_dict.get("platform"),
             os=runtime_dict.get("os"),
             osVersion=runtime_dict.get("os_version"),
-            createdAt=datetime.now(),
+            createdAt=self._get_current_datetime(),
         )
         logger.debug(
             f"AI_APPS [{self.application_name}]: Instance Details: {instance_details_model.dict()}"
@@ -159,7 +166,7 @@ class AppDiscover:
 
     def _upsert_app_metadata_file(self):
         """
-        Update/Create app metadata file and write metadata for current run
+        Update/Create app metadata file and write metadata for current run for loader type
         """
         # Read metadata file & get current app metadata
         app_metadata_file_path = (
@@ -187,6 +194,10 @@ class AppDiscover:
         self._write_file_content_to_path(app_metadata, app_metadata_file_path)
 
     def _upsert_metadata_file(self):
+        """
+        Update/Create app metadata file and write metadata for current run for retrieval type
+        :return:
+        """
         app_metadata_file_path = (
             f"{CacheDir.HOME_DIR.value}/"
             f"{self.application_name}/{CacheDir.METADATA_FILE_PATH.value}"
@@ -252,10 +263,10 @@ class AppDiscover:
             ai_apps = self._create_ai_apps_model(instance_details, chain_details)
 
             # Write file to metadata location
-            self._write_file_content_to_path(ai_apps.dict(), file_path)
+            self._write_file_content_to_path(ai_apps, file_path)
 
             # Prepare response
-            ai_apps_data = ai_apps.dict()
+            ai_apps_data = ai_apps
             ai_apps_obj = DiscoverAIApps(
                 name=ai_apps_data.get("name"),
                 description=ai_apps_data.get("description"),
