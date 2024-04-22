@@ -1,0 +1,6 @@
+google-api-python-client
+pinecone-client # for Pinecone VectorStore
+unstructured
+langchain-openai
+python-dotenv==1.0.0
+requests==2.31.0
