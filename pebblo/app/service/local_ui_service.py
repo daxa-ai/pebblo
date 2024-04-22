@@ -10,16 +10,14 @@ from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import (
     LoaderAppListDetails,
     LoaderAppModel,
+    RetrievalAppDetails,
+    RetrievalAppList,
     RetrievalAppListDetails,
-    RetrievalAppModel,
-    RetrievalAppResponse,
 )
 from pebblo.app.utils.utils import (
-    get_active_users,
     get_document_with_findings_data,
     get_full_path,
     get_pebblo_server_version,
-    get_vector_dbs,
     read_json_file,
     update_data_source,
     update_findings_summary,
@@ -145,11 +143,11 @@ class AppData:
             self.total_retrievals.append(retrieval_data)
 
         # fetch active users per app
-        active_users = get_active_users(app_metadata_content["retrieval"])
+        active_users = self.get_active_users(app_metadata_content["retrieval"])
         self.retrieval_active_users.extend(active_users)
 
         # fetch vector dbs per app
-        vector_dbs = get_vector_dbs(app_metadata_content["chains"])
+        vector_dbs = self.get_vector_dbs(app_metadata_content["chains"])
         self.retrieval_vectordbs.extend(vector_dbs)
 
         app_details = RetrievalAppListDetails(
@@ -227,7 +225,7 @@ class AppData:
             )
 
             logger.debug("Preparing retrieval app response object")
-            retrieval_response = RetrievalAppModel(
+            retrieval_response = RetrievalAppList(
                 appList=all_retrieval_apps,
                 retrievals=self.total_retrievals,
                 activeUsers=list(set(self.retrieval_active_users)),
@@ -346,10 +344,26 @@ class AppData:
         documents = list(set(documents))
 
         # prepare app response
-        response = RetrievalAppResponse(
+        response = RetrievalAppDetails(
             retrievals=retrieval_data,
             activeUsers=active_users,
             vectorDbs=vector_dbs,
             documents=documents,
         )
         return response.dict()
+
+    @staticmethod
+    def get_active_users(retrieval_data):
+        """This function returns active users per app"""
+        active_user = []
+        for data in retrieval_data:
+            active_user.append(data.get("user"))
+        return list(set(active_user))
+
+    @staticmethod
+    def get_vector_dbs(chains):
+        """This function returns vector dbs per app"""
+        vector_dbs = []
+        for data in chains:
+            vector_dbs.extend([db["name"] for db in data["vectorDbs"]])
+        return list(set(vector_dbs))

@@ -209,14 +209,14 @@ class RetrievalAppListDetails(BaseModel):
     vector_dbs: list[str] = []
 
 
-class RetrievalAppModel(BaseModel):
+class RetrievalAppList(BaseModel):
     appList: list = []
     retrievals: list = []
     activeUsers: list = []
     violations: list = []
 
 
-class RetrievalAppResponse(BaseModel):
+class RetrievalAppDetails(BaseModel):
     retrievals: list[RetrievalData] = []
     activeUsers: list = []
     vectorDbs: list = []
