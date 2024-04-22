@@ -55,7 +55,7 @@ class Prompt:
         """
         logger.debug(f"Retrieving {param} details from input data")
 
-        data = {}
+        data: AiDataModel = AiDataModel()
         context_data = self.data.get(param)
         if context_data:
             fields_validator(context_data, ["data"])
