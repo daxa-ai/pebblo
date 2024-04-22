@@ -7,10 +7,8 @@ from langchain.chains.pebblo_retrieval.models import (
     AuthContext,
     ChainInput,
 )
-from langchain_community.document_loaders import (
-    UnstructuredFileIOLoader,
-    GoogleDriveLoader,
-)
+from langchain_community.document_loaders import UnstructuredFileIOLoader
+from langchain_google_community import GoogleDriveLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
