@@ -251,13 +251,13 @@ class DiscoverAIAppsResponseModel(BaseModel):
 
 
 class RetrievalContext(BaseModel):
-    retrieved_from: list[str]
+    retrieved_from: str
     doc: str
     vector_db: str
 
 
 class RetrievalData(BaseModel):
-    context: RetrievalContext
+    context: list[RetrievalContext]
     prompt: AiDataModel
     response: AiDataModel
     prompt_time: str
