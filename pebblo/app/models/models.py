@@ -167,7 +167,7 @@ class ReportModel(BaseModel):
     pebbloClientVersion: Optional[str]
 
 
-class AppListDetails(BaseModel):
+class LoaderAppListDetails(BaseModel):
     name: str
     topics: int
     entities: int
@@ -175,16 +175,52 @@ class AppListDetails(BaseModel):
     loadId: Optional[str]
 
 
-class AppModel(BaseModel):
+class LoaderAppModel(BaseModel):
     applicationsAtRiskCount: int
     findingsCount: int
     documentsWithFindingsCount: int
     dataSourceCount: int
-    appList: List[AppListDetails]
+    appList: List[LoaderAppListDetails]
     findings: list
     documentsWithFindings: list
     dataSource: list
     pebbloServerVersion: Optional[str]
+
+
+class RetrievalContext(BaseModel):
+    retrieved_from: str
+    doc: str
+    vector_db: str
+
+
+class RetrievalData(BaseModel):
+    context: List[RetrievalContext]
+    prompt: AiDataModel
+    response: AiDataModel
+    prompt_time: str
+    user: str
+
+
+class RetrievalAppListDetails(BaseModel):
+    name: str = ""
+    owner: str = ""
+    retrievals: list[RetrievalData] = []
+    active_users: list[str] = []
+    vector_dbs: list[str] = []
+
+
+class RetrievalAppList(BaseModel):
+    appList: list = []
+    retrievals: list = []
+    activeUsers: list = []
+    violations: list = []
+
+
+class RetrievalAppDetails(BaseModel):
+    retrievals: list[RetrievalData] = []
+    activeUsers: list = []
+    vectorDbs: list = []
+    documents: list = []
 
 
 class LoaderDocs(BaseModel):
@@ -220,17 +256,3 @@ class DiscoverAIApps(BaseModel):
 class DiscoverAIAppsResponseModel(BaseModel):
     ai_apps_data: Union[DiscoverAIApps, None] = None
     message: Optional[str] = None
-
-
-class RetrievalContext(BaseModel):
-    retrieved_from: str
-    doc: str
-    vector_db: str
-
-
-class RetrievalData(BaseModel):
-    context: list[RetrievalContext]
-    prompt: AiDataModel
-    response: AiDataModel
-    prompt_time: str
-    user: str
