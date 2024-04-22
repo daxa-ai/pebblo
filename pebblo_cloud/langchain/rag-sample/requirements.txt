@@ -8,3 +8,4 @@ google-auth-httplib2
 google-auth-oauthlib
 unstructured[all-docs]
 qdrant-client
+langchain_google_community # For GoogleDriveLoader
