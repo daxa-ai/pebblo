@@ -3,10 +3,8 @@ from typing import List, Optional
 from dotenv import load_dotenv
 from langchain.chains import PebbloRetrievalQA
 from langchain.chains.pebblo_retrieval.models import SemanticContext
-from langchain_community.document_loaders import (
-    GoogleDriveLoader,
-    UnstructuredFileIOLoader,
-)
+from langchain_community.document_loaders import UnstructuredFileIOLoader
+from langchain_google_community import GoogleDriveLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
