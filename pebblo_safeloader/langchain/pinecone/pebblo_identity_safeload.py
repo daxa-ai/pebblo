@@ -2,20 +2,17 @@ import os
 import time
 
 from dotenv import load_dotenv
-from langchain_community.document_loaders import (
-    GoogleDriveLoader,
-    UnstructuredFileIOLoader,
-)
+from langchain_community.document_loaders import UnstructuredFileIOLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores import Pinecone as PineconeVectorStore
+from langchain_google_community import GoogleDriveLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from pinecone import Pinecone, PodSpec, ServerlessSpec
 
 load_dotenv()
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-
-INDEX_NAME = "identity-enabled-rag"
+INDEX_NAME = "identity-semantic-enforcement-rag"
 
 
 class IdentityBasedDataLoader:
@@ -44,7 +41,7 @@ class IdentityBasedDataLoader:
         documents = loader.load()
         unique_identities = set()
         for doc in documents:
-            unique_identities.update(doc.metadata.get("authorized_identities"))
+            unique_identities.update(doc.metadata.get("authorized_identities", []))
 
         print(f"Authorized Identities: {list(unique_identities)}")
         print(f"Loaded {len(documents)} documents ...\n")
@@ -59,7 +56,7 @@ class IdentityBasedDataLoader:
 
         use_serverless = True
         if use_serverless:
-            spec = ServerlessSpec(cloud="aws", region="us-west-2")
+            spec = ServerlessSpec(cloud="aws", region="us-west-1")
         else:
             environment = "gcp-starter"
             # if not using a starter index, you should specify a pod_type too
@@ -114,9 +111,8 @@ class IdentityBasedDataLoader:
 
 if __name__ == "__main__":
     print("Loading documents to Qdrant ...")
-    def_folder_id = "<google_drive_folder_id>"
-    input_index_name = "identity-enabled-rag"
 
+    input_index_name = "identity-semantic-enforcement-rag"
     pinecone_data_loader = IdentityBasedDataLoader(def_folder_id, input_index_name)
 
     result_documents = pinecone_data_loader.load_documents()
