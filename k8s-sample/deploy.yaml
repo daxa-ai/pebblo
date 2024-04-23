@@ -16,6 +16,22 @@ spec:
       labels:
         app: pebblo-api
     spec:
+      containers:
+      - name: pebblo-api
+        image: daxaai/pebblo:0.1.14
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        env:
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "1000Mi"
+        volumeMounts:
+        - name: pebblo-config
+          mountPath: "/opt/pebblo/config"
+        - name: pebblo-api
+          mountPath: /opt
       volumes:
       - name: pebblo-config
         configMap:
@@ -23,19 +39,6 @@ spec:
           items:
             - key: config.yaml
               path: config.yaml
-      containers:
       - name: pebblo-api
-        image: daxaai/pebblo:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8000
-        env:
-        resources:
-          requests:
-            cpu: "500m"
-            memory: "512Mi"
-        volumeMounts:
-        - name: pebblo-config
-          mountPath: "/opt/pebblo/config"
-          readOnly: true
-
+        persistentVolumeClaim:
+          claimName: pebblo-api
