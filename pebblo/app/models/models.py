@@ -218,9 +218,9 @@ class RetrievalAppList(BaseModel):
 
 class RetrievalAppDetails(BaseModel):
     retrievals: list[RetrievalData] = []
-    activeUsers: dict = []
-    vectorDbs: dict = []
-    documents: dict = []
+    activeUsers: dict = {}
+    vectorDbs: dict = {}
+    documents: dict = {}
 
 
 class LoaderDocs(BaseModel):
