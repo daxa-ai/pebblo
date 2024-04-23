@@ -2,6 +2,7 @@
 from dotenv import load_dotenv
 from google_auth import get_authorized_identities
 from langchain.chains import PebbloRetrievalQA
+from langchain.chains.pebblo_retrieval.models import AuthContext, ChainInput
 from langchain_community.document_loaders import UnstructuredFileIOLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
@@ -44,6 +45,19 @@ class PebbloIdentityRAG:
 
         # Prepare LLM
         self.llm = OpenAI()
+        print("Initializing PebbloRetrievalQA ...")
+        self.retrieval_chain = self.init_retrieval_chain()
+
+    def init_retrieval_chain(self):
+        """
+        Initialize PebbloRetrievalQA chain
+        """
+        return PebbloRetrievalQA.from_chain_type(
+            llm=self.llm,
+            chain_type="stuff",
+            retriever=self.vectordb.as_retriever(),
+            verbose=True,
+        )
 
     def embeddings(self):
         embeddings = OpenAIEmbeddings()
@@ -55,16 +69,14 @@ class PebbloIdentityRAG:
         )
         return vectordb
 
-    def ask(self, question: str, auth: dict):
-        # Prepare retriever QA chain
-        retriever = PebbloRetrievalQA.from_chain_type(
-            llm=self.llm,
-            chain_type="stuff",
-            retriever=self.vectordb.as_retriever(),
-            verbose=True,
-            auth_context=auth,
-        )
-        return retriever.invoke(question)
+    def ask(self, question: str, auth_identifiers: list):
+        auth_context = {
+            "authorized_identities": auth_identifiers,
+        }
+        auth_context = AuthContext(**auth_context)
+        chain_input = ChainInput(query=question, auth_context=auth_context)
+
+        return self.retrieval_chain.invoke(chain_input.dict())
 
 
 if __name__ == "__main__":
@@ -85,14 +97,12 @@ if __name__ == "__main__":
         prompt = input("Please provide the prompt : ")
         print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")
 
-        auth = {
-            "authorized_identities": get_authorized_identities(
-                admin_user_email_address=ingestion_user_email_address,
-                credentials_file_path=ingestion_user_service_account_path,
-                user_email=end_user_email_address,
-            )
-        }
-        response = rag_app.ask(prompt, auth)
+        authorized_identities = get_authorized_identities(
+            admin_user_email_address=ingestion_user_email_address,
+            credentials_file_path=ingestion_user_service_account_path,
+            user_email=end_user_email_address,
+        )
+        response = rag_app.ask(prompt, authorized_identities)
         print(f"Response:\n{response}")
         try:
             continue_or_exist = int(input("\n\nType 1 to continue and 0 to exit : "))

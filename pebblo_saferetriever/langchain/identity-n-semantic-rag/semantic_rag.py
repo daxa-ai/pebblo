@@ -1,8 +1,13 @@
 from typing import List, Optional
 
 from dotenv import load_dotenv
+from google_auth import get_authorized_identities
 from langchain.chains import PebbloRetrievalQA
-from langchain.chains.pebblo_retrieval.models import ChainInput, SemanticContext
+from langchain.chains.pebblo_retrieval.models import (
+    AuthContext,
+    ChainInput,
+    SemanticContext,
+)
 from langchain_community.document_loaders import UnstructuredFileIOLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
@@ -14,9 +19,9 @@ from utils import format_text, get_input_as_list
 load_dotenv()
 
 
-class PebbloSemanticRAG:
+class SafeRetrieverSemanticRAG:
     """
-    Sample app to demonstrate the usage of PebbloSafeLoader and PebbloRetrievalQA
+    Sample app to demonstrate the usage of PebbloSafeLoader, and PebbloRetrievalQA
     for semantic enforcement in RAG.
 
     Args:
@@ -37,10 +42,11 @@ class PebbloSemanticRAG:
                 recursive=True,
                 file_loader_cls=UnstructuredFileIOLoader,
                 file_loader_kwargs={"mode": "elements"},
+                load_auth=True,
             ),
             name=self.app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
-            description="Semantic filtering using PebbloSafeLoader and PebbloRetrievalQA ",  # Description (Optional)
+            description="Semantic filtering using PebbloSafeLoader, and PebbloRetrievalQA ",  # Description (Optional)
             load_semantic=True,
         )
         self.documents = self.loader.load()
@@ -56,6 +62,7 @@ class PebbloSemanticRAG:
         print(f"Semantic Topics: {list(unique_topics)}")
         print(f"Semantic Entities: {list(unique_entities)}")
         print(f"Loaded {len(self.documents)} documents ...\n")
+        print(self.documents[-1])
 
         # Load documents into VectorDB
         print("Hydrating Vector DB ...")
@@ -94,9 +101,17 @@ class PebbloSemanticRAG:
     def ask(
         self,
         question: str,
+        user_email: str,
+        auth_identifiers: List[str],
         topics_to_deny: Optional[List[str]] = None,
         entities_to_deny: Optional[List[str]] = None,
     ):
+        auth_context = {
+            "name": "Name here",
+            "username": user_email,
+            "authorized_identities": auth_identifiers,
+        }
+        auth_context = AuthContext(**auth_context)
         semantic_context = dict()
         if topics_to_deny:
             semantic_context["pebblo_semantic_topics"] = {"deny": topics_to_deny}
@@ -106,7 +121,10 @@ class PebbloSemanticRAG:
         semantic_context = (
             SemanticContext(**semantic_context) if semantic_context else None
         )
-        chain_input = ChainInput(query=question, semantic_context=semantic_context)
+
+        chain_input = ChainInput(
+            query=question, auth_context=auth_context, semantic_context=semantic_context
+        )
 
         return self.retrieval_chain.invoke(chain_input.dict())
 
@@ -126,11 +144,20 @@ if __name__ == "__main__":
     )
     input_folder_id = input(f"Folder id ({in_folder_id_def}): ") or in_folder_id_def
 
-    rag_app = PebbloSemanticRAG(
+    rag_app = SafeRetrieverSemanticRAG(
         folder_id=input_folder_id, collection_name=input_collection_name
     )
 
     while True:
+        print("Please enter end user details below")
+        end_user_email_address = input("User email address : ")
+
+        auth_identifiers = get_authorized_identities(
+            admin_user_email_address=ingestion_user_email_address,
+            credentials_file_path=ingestion_user_service_account_path,
+            user_email=end_user_email_address,
+        )
+
         print(
             "Please enter semantic filters below...\n"
             "(Leave these fields empty if you do not wish to enforce any semantic filters)"
@@ -142,13 +169,20 @@ if __name__ == "__main__":
             "Entities to deny, comma separated (Optional): "
         )
 
-        prompt = input("Please provide the prompt : ")
+        prompt = input("Please provide the prompt: ")
         print(
+            f"User: {end_user_email_address}.\n"
             f"\nTopics to deny: {topic_to_deny}\n"
             f"Entities to deny: {entity_to_deny}\n"
             f"Query: {format_text(prompt)}"
         )
-        response = rag_app.ask(prompt, topic_to_deny, entity_to_deny)
+        response = rag_app.ask(
+            prompt,
+            end_user_email_address,
+            auth_identifiers,
+            topic_to_deny,
+            entity_to_deny,
+        )
 
         print(f"Response:\n" f"{format_text(response['result'])}")
 

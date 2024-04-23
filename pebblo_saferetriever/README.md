@@ -34,19 +34,26 @@ Here is the sample code for `GoogleDriveLoader` with `load_auth` parameter set t
 Here is the sample code for `Pebblo SafeRetriever` with `authorized_groups` from the user accessing RAG application passed in `auth_context`
 
 ```python
-    auth = {
-        "authorized_identities": [
-            "joe@acme.io",
-            "hr-group@acme.io",
-            "us-employees-group@acme.io",
-    ]}
-    retriever = PebbloRetrievalQA.from_chain_type(
-        llm=self.llm,
-        chain_type="stuff",
-        retriever=self.vectordb.as_retriever(),
-        verbose=True,
-        auth_context=auth,
-    )
+        from langchain.chains.pebblo_retrieval.models import AuthContext, ChainInput
+        
+        retrieval_chain = PebbloRetrievalQA.from_chain_type(
+            llm=self.llm,
+            chain_type="stuff",
+            retriever=self.vectordb.as_retriever(),
+            verbose=True,
+        )
+        
+        auth_context = {
+            "authorized_identities": [
+                "joe@acme.io",
+                "hr-group@acme.io",
+                "us-employees-group@acme.io",
+            ]
+        }
+        auth_context = AuthContext(**auth_context)
+        chain_input = ChainInput(query=question, auth_context=auth_context)
+        
+        answer = retrieval_chain.invoke(chain_input.dict())
 ```
 
 ## LangChain
@@ -79,8 +86,8 @@ Here are the two corresponding PRs in the LangChain for this feature:
 
 1. community: add authorization identities to GoogleDriveLoader #18813
    https://github.com/langchain-ai/langchain/pull/18813
-2. langchain: add PebbloRetrievalQA chain with Identity & Semantic enforcement #19991
-   https://github.com/langchain-ai/langchain/pull/19991
+2. langchain: add PebbloRetrievalQA chain with Identity & Semantic enforcement #20641
+   https://github.com/langchain-ai/langchain/pull/20641
 
 ## Note:
 GoogleDriveLoader comes with some prerequisites. Please refer [this](https://python.langchain.com/docs/integrations/document_loaders/google_drive#prerequisites) section or follow below steps:
