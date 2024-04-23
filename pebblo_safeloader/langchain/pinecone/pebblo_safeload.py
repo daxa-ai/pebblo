@@ -37,6 +37,7 @@ class IdentityBasedDataLoader:
             name=self.app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Identity enabled SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
+            load_semantic=True,
         )
         documents = loader.load()
         unique_identities = set()
@@ -111,9 +112,9 @@ class IdentityBasedDataLoader:
 
 if __name__ == "__main__":
     print("Loading documents to Qdrant ...")
-
+    folder_id = "<google-drive-folder-id>"
     input_index_name = "identity-semantic-enforcement-rag"
-    pinecone_data_loader = IdentityBasedDataLoader(def_folder_id, input_index_name)
+    pinecone_data_loader = IdentityBasedDataLoader(folder_id, input_index_name)
 
     result_documents = pinecone_data_loader.load_documents()
 
