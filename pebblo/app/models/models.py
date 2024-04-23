@@ -184,7 +184,6 @@ class LoaderAppModel(BaseModel):
     findings: list
     documentsWithFindings: list
     dataSource: list
-    pebbloServerVersion: Optional[str]
 
 
 class RetrievalContext(BaseModel):
@@ -207,20 +206,21 @@ class RetrievalAppListDetails(BaseModel):
     retrievals: list[RetrievalData] = []
     active_users: list[str] = []
     vector_dbs: list[str] = []
+    documents: list[str] = []
 
 
 class RetrievalAppList(BaseModel):
     appList: list = []
     retrievals: list = []
-    activeUsers: list = []
+    activeUsers: dict = {}
     violations: list = []
 
 
 class RetrievalAppDetails(BaseModel):
     retrievals: list[RetrievalData] = []
-    activeUsers: list = []
-    vectorDbs: list = []
-    documents: list = []
+    activeUsers: dict = []
+    vectorDbs: dict = []
+    documents: dict = []
 
 
 class LoaderDocs(BaseModel):
