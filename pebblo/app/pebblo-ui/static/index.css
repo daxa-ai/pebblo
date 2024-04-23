@@ -1266,3 +1266,30 @@ dialog::backdrop {
   font-weight: 200;
   font-size: 12px;
 }
+
+.navbar {
+  overflow: hidden;
+  font-family: "Inter";
+  display: flex;
+  gap: 8px;
+}
+
+.navbar a {
+  float: left;
+  display: block;
+  color: var(--white);
+  text-align: center;
+  padding: 6px 10px;
+  text-decoration: none;
+  font-size: 12px;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar a:hover {
+  border-bottom: 2px solid var(--white);
+}
+
+.navbar .navlink-active {
+  font-weight: 600;
+  border-bottom: 2px solid var(--white);
+}

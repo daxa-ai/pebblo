@@ -100,14 +100,22 @@ function Td(props) {
     isTooltip,
     tooltipTitle,
     tooltipWidth,
+    id,
   } = props;
   const TEXT__ALIGN = getTextOrientation(align);
   let td;
   if (link) {
+    waitForElement(`#link-${id}`, 100).then(function () {
+      const TdID = document.getElementById(`link-${id}`);
+
+      TdID.addEventListener(CLICK, (event) => {
+        event.stopPropagation();
+        window.location = link;
+      });
+    });
     td = /*html*/ `
-      <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 fit">
+      <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 fit" id="link-${id}">
       ${children || "-"}
-          <a href="${link}" id="link"></a>
       </td>
    `;
   } else {
@@ -143,15 +151,16 @@ const TABLE_BODY = (props) => {
   return tableData?.length
     ? tableData?.myMap(
         (item) => /*html*/ `<tr class="table-row">
-   ${tableCol?.myMap((col) =>
+   ${tableCol?.myMap((col, index) =>
      Td({
        children: col?.render ? col?.render(item) : item[col?.field],
        align: col?.align,
        link:
          col?.field !== ACTIONS && link ? `${link}?app_name=${item?.name}` : "",
-       isTooltip: col?.isTooltip,
+       isTooltip: col?.tooltipTitle ? col?.tooltipTitle(item) : "",
        tooltipTitle: col?.tooltipTitle ? col?.tooltipTitle(item) : "",
        tooltipWidth: col?.tooltipWidth,
+       id: index,
      })
    )}
      </tr>`

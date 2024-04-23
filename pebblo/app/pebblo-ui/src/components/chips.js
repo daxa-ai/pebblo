@@ -16,17 +16,25 @@ export const Chips = (props) => {
     ? /*html*/ `
   <div class="flex items-center">
     <div class="text-none">${list[0]}</div>
-    ${Button({
-      btnText: `+${list.length - 1}`,
-      id: `identity-dialog-${id}-btn`,
-    })}
-    ${Dialog({
-      title: dialogTitle,
-      maxWidth: "md",
-      dialogBody: DialogBody(),
-      dialogId: `identity-dialog-${id}`,
-      btnId: `identity-dialog-${id}-btn`,
-    })}
+    ${
+      list.length > 1
+        ? Button({
+            btnText: `+${list.length - 1}`,
+            id: `identity-dialog-${id}-btn`,
+          })
+        : ""
+    }
+    ${
+      list?.length > 1
+        ? Dialog({
+            title: dialogTitle,
+            maxWidth: "md",
+            dialogBody: DialogBody(),
+            dialogId: `identity-dialog-${id}`,
+            btnId: `identity-dialog-${id}-btn`,
+          })
+        : ""
+    }
   </div>
 `
     : "-";

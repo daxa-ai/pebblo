@@ -10,7 +10,13 @@ local_ui_router_instance.router.add_api_route(
     "/", App.dashboard, methods=["GET"], response_class=HTMLResponse
 )
 local_ui_router_instance.router.add_api_route(
+    "/safe_retrieval", App.dashboard, methods=["GET"], response_class=HTMLResponse
+)
+local_ui_router_instance.router.add_api_route(
     "/app/", App.app_details, methods=["GET"], response_class=HTMLResponse
+)
+local_ui_router_instance.router.add_api_route(
+    "/safe_retrieval/app/", App.app_details, methods=["GET"], response_class=HTMLResponse
 )
 local_ui_router_instance.router.add_api_route(
     "/report/", App.get_report, methods=["GET"], response_class=FileResponse
