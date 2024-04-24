@@ -691,7 +691,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_LOADER = [
 export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
   {
     value: {
-      title: "Applications",
+      title: "Application Name",
       tableCol: TABLE_DATA_FOR_APPLICATIONS_SAFE_RETRIEVAL,
       tableData: APP_DATA?.appList,
       isDownloadReport: false,
