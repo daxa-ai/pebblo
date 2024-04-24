@@ -29,7 +29,8 @@ const Dialog = (props) => {
     const CLOSE__DIALOG__BUTTON = document.getElementById(
       `${dialogId}_close_modal`
     );
-    DIALOG__BTN.addEventListener(CLICK, () => {
+    DIALOG__BTN.addEventListener(CLICK, (event) => {
+      event.stopPropagation();
       DIALOG.style.display = "block";
       DIALOG.showModal();
     });

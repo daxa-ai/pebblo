@@ -749,6 +749,9 @@ svg.icon-success {
 .border-grey-10 {
   border-color: rgba(230, 231, 237, 0.8);
 }
+.border-grey-20 {
+  border: 1px solid #e6e7ed;
+}
 
 /* <----------- BORDER RADIUS -----------> */
 .rounded-sm {
@@ -1110,6 +1113,7 @@ dialog::backdrop {
 .tooltip-wrapper {
   word-break: break-all;
   white-space: normal;
+  text-transform: none;
   width: 90%;
   z-index: 1;
 }
@@ -1265,4 +1269,31 @@ dialog::backdrop {
   color: var(--main);
   font-weight: 200;
   font-size: 12px;
+}
+
+.navbar {
+  overflow: hidden;
+  font-family: "Inter";
+  display: flex;
+  gap: 8px;
+}
+
+.navbar a {
+  float: left;
+  display: block;
+  color: var(--white);
+  text-align: center;
+  padding: 6px 10px;
+  text-decoration: none;
+  font-size: 12px;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar a:hover {
+  border-bottom: 2px solid var(--white);
+}
+
+.navbar .navlink-active {
+  font-weight: 600;
+  border-bottom: 2px solid var(--white);
 }
