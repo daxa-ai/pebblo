@@ -186,35 +186,6 @@ class LoaderAppModel(BaseModel):
     dataSource: list
 
 
-class RetrievalAppListDetails(BaseModel):
-    name: str = ""
-    owner: str = ""
-    retrievals: list[RetrievalData] = []
-    active_users: list[str] = []
-    vector_dbs: list[str] = []
-    documents: list[str] = []
-
-
-class RetrievalAppList(BaseModel):
-    appList: list = []
-    retrievals: list = []
-    activeUsers: dict = {}
-    violations: list = []
-
-
-class RetrievalAppDetails(BaseModel):
-    name: str
-    description: Optional[str]
-    framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    instanceDetails: Optional[InstanceDetails]
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
-    retrievals: list[RetrievalData] = []
-    activeUsers: dict = {}
-    vectorDbs: dict = {}
-    documents: dict = {}
-
-
 class RetrievalContext(BaseModel):
     retrieved_from: str
     doc: str
@@ -235,20 +206,21 @@ class RetrievalAppListDetails(BaseModel):
     retrievals: list[RetrievalData] = []
     active_users: list[str] = []
     vector_dbs: list[str] = []
+    documents: list[str] = []
 
 
 class RetrievalAppList(BaseModel):
     appList: list = []
     retrievals: list = []
-    activeUsers: list = []
+    activeUsers: dict = {}
     violations: list = []
 
 
 class RetrievalAppDetails(BaseModel):
     retrievals: list[RetrievalData] = []
-    activeUsers: list = []
-    vectorDbs: list = []
-    documents: list = []
+    activeUsers: dict = {}
+    vectorDbs: dict = {}
+    documents: dict = {}
 
 
 class LoaderDocs(BaseModel):
