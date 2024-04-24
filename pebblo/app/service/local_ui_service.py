@@ -144,7 +144,7 @@ class AppData:
 
         # fetch active users per app
         active_users = self.get_active_users(app_metadata_content.get("retrieval", []))
-        self.retrieval_active_users.extend(active_users)
+        self.add_accumulate_active_users(active_users)
 
         # fetch vector dbs per app
         vector_dbs = self.get_vector_dbs(app_metadata_content.get("chains", []))
@@ -241,7 +241,7 @@ class AppData:
                 "retrievalApps": retrieval_response.dict(),
             }
             logger.debug(f"App Listing Response : {response}")
-            return response
+            return json.dumps(response, indent=4)
         except Exception as ex:
             logger.error(f"Error in Dashboard app Listing. Error:{ex}")
             return json.dumps({})
@@ -293,7 +293,7 @@ class AppData:
                     return json.dumps({})
                 response = self.get_loader_app_details(app_dir, load_ids)
                 logger.debug(f"App Details: {response}")
-                return
+                return response
             elif app_type == "retrieval":
                 app_metadata_path = (
                     f"{CacheDir.HOME_DIR.value}/{app_dir}/"
@@ -334,7 +334,7 @@ class AppData:
         return None, None
 
     def get_retrieval_app_details(self, app_content):
-        retrieval_data = app_content["retrieval"]
+        retrieval_data = app_content.get("retrieval", [])
 
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
@@ -342,12 +342,18 @@ class AppData:
 
         # prepare app response
         response = RetrievalAppDetails(
+            name=app_content["name"],
+            description=app_content.get("description"),
+            framework=app_content.get("framework"),
+            instanceDetails=app_content.get("instanceDetails"),
+            pebbloServerVersion=app_content.get("pebbloServerVersion"),
+            pebbloClientVersion=app_content.get("pebbloClientVersion"),
             retrievals=retrieval_data,
             activeUsers=active_users,
             vectorDbs=vector_dbs,
             documents=documents,
         )
-        return response.dict()
+        return json.dumps(response.dict(), default=str, indent=4)
 
     def add_accumulate_active_users(self, active_users):
         """Adding retrieval data for app listing per users"""
