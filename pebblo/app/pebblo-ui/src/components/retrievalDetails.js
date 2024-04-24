@@ -1,6 +1,7 @@
 import { SearchIcon } from "../icons/index.js";
 import { EmptyState } from "./index.js";
 import { KEYWORD_MAPPING } from "../constants/keywordMapping.js";
+import { getFormattedDate } from "../util.js";
 
 const KeyValueBlock = (props) => {
   const { label, content, subText } = props;
@@ -41,7 +42,7 @@ export function RetrievalDetails(props) {
     data?.length
       ? data?.myMap((item) => {
           const promptInfo = `By ${item?.user || "-"}, ${
-            item?.prompt_time || ""
+            getFormattedDate(item?.prompt_time, true, true) || ""
           }`;
           const contextInfo =
             item?.context && item?.context[0]

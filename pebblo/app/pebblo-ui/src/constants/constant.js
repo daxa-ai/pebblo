@@ -124,7 +124,7 @@ export const APP_DETAILS = [
   },
   {
     label: "Created At",
-    value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt, false, true),
+    value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt, false, false),
   },
   {
     label: "Pebblo Client Version",
@@ -293,7 +293,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
 
 export const TABLE_DATA_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
   {
-    label: "Application",
+    label: "Application Name",
     field: "name",
     align: "start",
     render: (item) => {
@@ -559,6 +559,7 @@ export const TABS_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
     critical: APP_DATA?.retrievals?.length || 0,
     value: 1,
     isCritical: false,
+    disable: true,
   },
   {
     label: "Active Users",
@@ -567,12 +568,14 @@ export const TABS_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
       : 0,
     value: 2,
     isCritical: false,
+    disable: true,
   },
   {
     label: "Violations",
     critical: APP_DATA?.violations?.length || 0,
     value: 3,
     isCritical: false,
+    disable: true,
   },
 ];
 
@@ -693,7 +696,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
       tableData: APP_DATA?.appList,
       isDownloadReport: false,
       searchField: ["name"],
-      isSorting: true,
+      isSorting: false,
       error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
       link: SAFE_RETRIEVAL_APP_ROUTE,
       inputPlaceholder: "Search By Application Name",
@@ -871,12 +874,14 @@ export const TABS_ARR_FOR_APP_DETAILS_RETRIEVAL = [
       : 0,
     value: 1,
     isCritical: true,
+    disable: true,
   },
   {
     label: "Vector Database",
     critical: APP_DATA?.vectorDbs ? Object.keys(APP_DATA.vectorDbs)?.length : 0,
     value: 2,
     isCritical: true,
+    disable: true,
   },
   {
     label: "Documents",
@@ -885,6 +890,7 @@ export const TABS_ARR_FOR_APP_DETAILS_RETRIEVAL = [
       : 0,
     value: 3,
     isCritical: true,
+    disable: true,
   },
 ];
 

@@ -1113,6 +1113,7 @@ dialog::backdrop {
 .tooltip-wrapper {
   word-break: break-all;
   white-space: normal;
+  text-transform: none;
   width: 90%;
   z-index: 1;
 }
