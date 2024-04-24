@@ -217,6 +217,12 @@ class RetrievalAppList(BaseModel):
 
 
 class RetrievalAppDetails(BaseModel):
+    name: str
+    description: Optional[str]
+    framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
+    instanceDetails: Optional[InstanceDetails]
+    pebbloServerVersion: Optional[str]
+    pebbloClientVersion: Optional[str]
     retrievals: list[RetrievalData] = []
     activeUsers: dict = {}
     vectorDbs: dict = {}
