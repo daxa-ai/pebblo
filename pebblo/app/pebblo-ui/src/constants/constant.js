@@ -611,7 +611,7 @@ const entitiesCountAllApps = APP_DATA?.findings
 export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_LOADER = [
   {
     value: {
-      title: "Applications",
+      title: "Application Name",
       tableCol: TABLE_DATA_FOR_APPLICATIONS,
       tableData: APP_DATA?.appList,
       isDownloadReport: false,
