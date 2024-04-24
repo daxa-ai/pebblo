@@ -351,30 +351,38 @@ class AppData:
         return response.dict()
 
     @staticmethod
-    def get_active_users(retrieval_data):
-        """This function returns active users per app"""
-        all_active_users = {}
+    def get_active_users(retrieval_data: dict) -> dict:
+        """
+        This function returns active users per app in sorted descending order
+        based on number of times it appeared in retrievals.
+        """
+        sorted_active_users = {}
         active_users = {}
 
+        # fetch active users wise retrievals
         for data in retrieval_data:
             user_name = data.get("user")
             if user_name in active_users.keys():
                 active_users[user_name].append(data)
             else:
                 active_users.update({user_name: [data]})
-        all_users = sorted(
+
+        # sorting based on length on retrieval values per documents
+        all_sorted_users = sorted(
             active_users.items(), key=lambda data: (len(data[1]), data[0]), reverse=True
         )
-        for user_name, data in all_users:
-            if user_name in all_active_users.keys():
-                all_active_users[user_name].append(data)
-            else:
-                all_active_users.update({user_name: data})
 
-        return all_active_users
+        # converting sorted tuples to dictionary
+        for user_name, data in all_sorted_users:
+            if user_name in sorted_active_users.keys():
+                sorted_active_users[user_name].append(data)
+            else:
+                sorted_active_users.update({user_name: data})
+
+        return sorted_active_users
 
     @staticmethod
-    def get_vector_dbs(chains):
+    def get_vector_dbs(chains: dict) -> list:
         """This function returns vector dbs per app"""
         vector_dbs = []
         for data in chains:
@@ -382,11 +390,15 @@ class AppData:
         return list(set(vector_dbs))
 
     @staticmethod
-    def get_all_documents(retrieval_data):
-        """This function returns documents per app"""
+    def get_all_documents(retrieval_data: dict) -> dict:
+        """
+        This function returns documents per app in sorted descending order
+        based on number of times it appeared in retrievals.
+        """
         documents = {}
         all_sorted_documents = {}
 
+        # fetch document wise retrievals
         for data in retrieval_data:
             data_context = data.get("context")
             for context in data_context:
@@ -396,10 +408,12 @@ class AppData:
                 else:
                     documents[document_name] = [data]
 
+        # sorting based on length on retrieval values per documents
         all_documents = sorted(
             documents.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
         )
 
+        # converting sorted tuples to dictionary
         for user_name, data in all_documents:
             if user_name in all_sorted_documents.keys():
                 all_sorted_documents[user_name].extend(data)
@@ -409,11 +423,15 @@ class AppData:
         return all_sorted_documents
 
     @staticmethod
-    def get_all_vector_dbs(retrieval_data):
-        """This function returns vector dbs per app"""
+    def get_all_vector_dbs(retrieval_data: dict) -> dict:
+        """
+        This function returns vector dbs per app in sorted descending order
+        based on number of times it appeared in retrievals.
+        """
         all_vector_dbs = {}
         all_sorted_vector_dbs = {}
 
+        # fetch vector dbs wise retrievals
         for data in retrieval_data:
             data_context = data.get("context")
             for context in data_context:
@@ -423,10 +441,12 @@ class AppData:
                 else:
                     all_vector_dbs[document_name] = [data]
 
+        # sorting based on length on retrieval values per vector dbs
         all_vector_dbs = sorted(
             all_vector_dbs.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
         )
 
+        # converting sorted tuples to dictionary
         for user_name, data in all_vector_dbs:
             if user_name in all_sorted_vector_dbs.keys():
                 all_sorted_vector_dbs[user_name].extend(data)
