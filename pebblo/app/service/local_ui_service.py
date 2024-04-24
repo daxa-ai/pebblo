@@ -37,7 +37,7 @@ class AppData:
         self.loader_findings_list = []
         self.loader_data_source_list = []
         self.loader_document_with_findings_list = []
-        self.retrieval_active_users = []
+        self.retrieval_active_users = {}
         self.retrieval_vectordbs = []
         self.total_retrievals = []
 
@@ -142,20 +142,24 @@ class AppData:
             retrieval_data.update(retrieval)
             self.total_retrievals.append(retrieval_data)
 
-        # fetch active users per app
+        # fetch active users names per app
         active_users = self.get_active_users(app_metadata_content["retrieval"])
-        self.retrieval_active_users.extend(active_users)
+        self.add_accumulate_active_users(active_users)
 
-        # fetch vector dbs per app
+        # fetch vector dbs names per app
         vector_dbs = self.get_vector_dbs(app_metadata_content["chains"])
         self.retrieval_vectordbs.extend(vector_dbs)
+
+        # fetch documents name per app
+        documents = self.get_all_documents(app_metadata_content["retrieval"])
 
         app_details = RetrievalAppListDetails(
             name=app_json.get("name"),
             owner=app_metadata_content.get("owner"),
             retrievals=app_metadata_content.get("retrieval"),
-            active_users=active_users,
+            active_users=list(active_users.keys()),
             vector_dbs=vector_dbs,
+            documents=list(documents.keys()),
         )
         return app_details.dict()
 
@@ -221,18 +225,18 @@ class AppData:
                 findings=self.loader_findings_list,
                 documentsWithFindings=self.loader_document_with_findings_list,
                 dataSource=self.loader_data_source_list,
-                pebbloServerVersion=get_pebblo_server_version(),
             )
 
             logger.debug("Preparing retrieval app response object")
             retrieval_response = RetrievalAppList(
                 appList=all_retrieval_apps,
                 retrievals=self.total_retrievals,
-                activeUsers=list(set(self.retrieval_active_users)),
+                activeUsers=self.retrieval_active_users,
                 violations=[],
             )
 
             response = {
+                "pebbloServerVersion": get_pebblo_server_version(),
                 "loaderApps": loader_response.dict(),
                 "retrievalApps": retrieval_response.dict(),
             }
@@ -326,22 +330,12 @@ class AppData:
 
         return None, None
 
-    @staticmethod
-    def get_retrieval_app_details(app_content):
+    def get_retrieval_app_details(self, app_content):
         retrieval_data = app_content["retrieval"]
-        active_users = []
-        vector_dbs = []
-        documents = []
 
-        # fetch active users, vector dbs and documents names for given app
-        for data in retrieval_data:
-            active_users.append(data["user"])
-            for context in data["context"]:
-                vector_dbs.append(context["vector_db"])
-                documents.append(context["retrieved_from"])
-        active_users = list(set(active_users))
-        vector_dbs = list(set(vector_dbs))
-        documents = list(set(documents))
+        active_users = self.get_active_users(retrieval_data)
+        documents = self.get_all_documents(retrieval_data)
+        vector_dbs = self.get_all_vector_dbs(retrieval_data)
 
         # prepare app response
         response = RetrievalAppDetails(
@@ -352,18 +346,115 @@ class AppData:
         )
         return response.dict()
 
-    @staticmethod
-    def get_active_users(retrieval_data):
-        """This function returns active users per app"""
-        active_user = []
-        for data in retrieval_data:
-            active_user.append(data.get("user"))
-        return list(set(active_user))
+    def add_accumulate_active_users(self, active_users):
+        """Adding retrieval data for app listing per users"""
+        for user_name, data in active_users.items():
+            if user_name in self.retrieval_active_users.keys():
+                self.retrieval_active_users[user_name].extend(data)
+            else:
+                self.retrieval_active_users[user_name] = data
 
     @staticmethod
-    def get_vector_dbs(chains):
+    def get_active_users(retrieval_data: dict) -> dict:
+        """
+        This function returns active users per app in sorted descending order
+        based on number of times it appeared in retrievals.
+        """
+        sorted_active_users = {}
+        active_users = {}
+
+        # fetch active users wise retrievals
+        for data in retrieval_data:
+            user_name = data.get("user")
+            if user_name in active_users.keys():
+                active_users[user_name].append(data)
+            else:
+                active_users.update({user_name: [data]})
+
+        # sorting based on length on retrieval values per documents
+        all_sorted_users = sorted(
+            active_users.items(), key=lambda data: (len(data[1]), data[0]), reverse=True
+        )
+
+        # converting sorted tuples to dictionary
+        for user_name, data in all_sorted_users:
+            if user_name in sorted_active_users.keys():
+                sorted_active_users[user_name].append(data)
+            else:
+                sorted_active_users.update({user_name: data})
+
+        return sorted_active_users
+
+    @staticmethod
+    def get_vector_dbs(chains: dict) -> list:
         """This function returns vector dbs per app"""
         vector_dbs = []
         for data in chains:
             vector_dbs.extend([db["name"] for db in data["vectorDbs"]])
         return list(set(vector_dbs))
+
+    @staticmethod
+    def get_all_documents(retrieval_data: dict) -> dict:
+        """
+        This function returns documents per app in sorted descending order
+        based on number of times it appeared in retrievals.
+        """
+        documents = {}
+        all_sorted_documents = {}
+
+        # fetch document wise retrievals
+        for data in retrieval_data:
+            data_context = data.get("context")
+            for context in data_context:
+                document_name = context["retrieved_from"]
+                if document_name in documents.keys():
+                    documents[document_name].extend([data])
+                else:
+                    documents[document_name] = [data]
+
+        # sorting based on length on retrieval values per documents
+        all_documents = sorted(
+            documents.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
+        )
+
+        # converting sorted tuples to dictionary
+        for user_name, data in all_documents:
+            if user_name in all_sorted_documents.keys():
+                all_sorted_documents[user_name].extend(data)
+            else:
+                all_sorted_documents.update({user_name: data})
+
+        return all_sorted_documents
+
+    @staticmethod
+    def get_all_vector_dbs(retrieval_data: dict) -> dict:
+        """
+        This function returns vector dbs per app in sorted descending order
+        based on number of times it appeared in retrievals.
+        """
+        all_vector_dbs = {}
+        all_sorted_vector_dbs = {}
+
+        # fetch vector dbs wise retrievals
+        for data in retrieval_data:
+            data_context = data.get("context")
+            for context in data_context:
+                document_name = context["vector_db"]
+                if document_name in all_vector_dbs.keys():
+                    all_vector_dbs[document_name].extend([data])
+                else:
+                    all_vector_dbs[document_name] = [data]
+
+        # sorting based on length on retrieval values per vector dbs
+        all_vector_dbs = sorted(
+            all_vector_dbs.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
+        )
+
+        # converting sorted tuples to dictionary
+        for user_name, data in all_vector_dbs:
+            if user_name in all_sorted_vector_dbs.keys():
+                all_sorted_vector_dbs[user_name].extend(data)
+            else:
+                all_sorted_vector_dbs.update({user_name: data})
+
+        return all_sorted_vector_dbs
