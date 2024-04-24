@@ -119,7 +119,7 @@ class AppData:
         return app_details.dict()
 
     def prepare_retrieval_response(self, app_dir, app_json):
-        logger.debug("In prepare loader response")
+        logger.debug("In prepare retrieval response")
 
         app_metadata_path = (
             f"{CacheDir.HOME_DIR.value}/{app_dir}/"
@@ -137,26 +137,26 @@ class AppData:
             return
 
         # fetch total retrievals
-        for retrieval in app_metadata_content.get("retrieval"):
+        for retrieval in app_metadata_content.get("retrieval", []):
             retrieval_data = {"name": app_json.get("name")}
             retrieval_data.update(retrieval)
             self.total_retrievals.append(retrieval_data)
 
-        # fetch active users names per app
-        active_users = self.get_active_users(app_metadata_content["retrieval"])
+        # fetch active users per app
+        active_users = self.get_active_users(app_metadata_content.get("retrieval", []))
         self.add_accumulate_active_users(active_users)
 
-        # fetch vector dbs names per app
-        vector_dbs = self.get_vector_dbs(app_metadata_content["chains"])
+        # fetch vector dbs per app
+        vector_dbs = self.get_vector_dbs(app_metadata_content.get("chains", []))
         self.retrieval_vectordbs.extend(vector_dbs)
 
         # fetch documents name per app
-        documents = self.get_all_documents(app_metadata_content["retrieval"])
+        documents = self.get_all_documents(app_metadata_content.get("retrieval", []))
 
         app_details = RetrievalAppListDetails(
             name=app_json.get("name"),
             owner=app_metadata_content.get("owner"),
-            retrievals=app_metadata_content.get("retrieval"),
+            retrievals=app_metadata_content.get("retrieval", []),
             active_users=list(active_users.keys()),
             vector_dbs=vector_dbs,
             documents=list(documents.keys()),
@@ -240,7 +240,8 @@ class AppData:
                 "loaderApps": loader_response.dict(),
                 "retrievalApps": retrieval_response.dict(),
             }
-            return response
+            logger.debug(f"App Listing Response : {response}")
+            return json.dumps(response, indent=4)
         except Exception as ex:
             logger.error(f"Error in Dashboard app Listing. Error:{ex}")
             return json.dumps({})
@@ -290,7 +291,9 @@ class AppData:
                         f"Skipping app '{app_dir}' due to missing or invalid file"
                     )
                     return json.dumps({})
-                return self.get_loader_app_details(app_dir, load_ids)
+                response = self.get_loader_app_details(app_dir, load_ids)
+                logger.debug(f"App Details: {response}")
+                return response
             elif app_type == "retrieval":
                 app_metadata_path = (
                     f"{CacheDir.HOME_DIR.value}/{app_dir}/"
@@ -331,7 +334,7 @@ class AppData:
         return None, None
 
     def get_retrieval_app_details(self, app_content):
-        retrieval_data = app_content["retrieval"]
+        retrieval_data = app_content.get("retrieval", [])
 
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
@@ -339,12 +342,18 @@ class AppData:
 
         # prepare app response
         response = RetrievalAppDetails(
+            name=app_content["name"],
+            description=app_content.get("description"),
+            framework=app_content.get("framework"),
+            instanceDetails=app_content.get("instanceDetails"),
+            pebbloServerVersion=app_content.get("pebbloServerVersion"),
+            pebbloClientVersion=app_content.get("pebbloClientVersion"),
             retrievals=retrieval_data,
             activeUsers=active_users,
             vectorDbs=vector_dbs,
             documents=documents,
         )
-        return response.dict()
+        return json.dumps(response.dict(), default=str, indent=4)
 
     def add_accumulate_active_users(self, active_users):
         """Adding retrieval data for app listing per users"""
