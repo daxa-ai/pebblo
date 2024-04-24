@@ -55,11 +55,11 @@ class Prompt:
         """
         logger.debug(f"Retrieving {param} details from input data")
 
-        data = {}
+        data = {}  # noqa
         context_data = self.data.get(param)
         if context_data:
             fields_validator(context_data, ["data"])
-            data = AiDataModel(
+            data = AiDataModel(  # noqa
                 data=context_data.get("data"),
                 entityCount=context_data.get("entityCount")
                 if context_data.get("entityCount")
@@ -74,7 +74,7 @@ class Prompt:
             )
 
         logger.debug(
-            f"AI_APPS [{self.application_name}]: {param} Details: {data.dict()}"
+            f"AI_APPS [{self.application_name}]: {param} Details: {data.dict()}"  # noqa
         )
         return data
 
@@ -90,8 +90,8 @@ class Prompt:
             context=retrieval_context_data,
             prompt=prompt_data,
             response=response_data,
-            prompt_time=self.data.get("prompt_time"),
-            user=self.data.get("user"),
+            prompt_time=self.data.get("prompt_time"),  # noqa
+            user=self.data.get("user"),  # noqa
         )
 
         logger.debug(
