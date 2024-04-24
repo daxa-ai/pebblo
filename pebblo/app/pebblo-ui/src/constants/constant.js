@@ -36,10 +36,12 @@ export const CURRENT_TAB = window.location.pathname?.includes(
 )
   ? RETRIEVER_STR
   : LOADER_STR;
-export const APP_DATA = APP_DATA_RESP[CURRENT_TAB] || {};
+export const APP_DATA =
+  window.location.pathname.includes(APP_DETAILS_ROUTE) ||
+  window.location.pathname.includes(SAFE_RETRIEVAL_APP_ROUTE)
+    ? APP_DATA_RESP
+    : APP_DATA_RESP[CURRENT_TAB] || {};
 
-export const LOADER_APPS = APP_DATA?.loaderApps || {};
-export const RETRIEVER_APPS = APP_DATA?.retrievalApps || {};
 export const PORT = window.location.port;
 
 export const SERVER_VERSION = APP_DATA_RESP?.pebbloServerVersion || "";
@@ -194,6 +196,10 @@ export const FILES_WITH_FINDINGS_TABLE = [
         showCount: 1,
         fileName: item?.fileName,
         id: item.id,
+        tableCol: IDENTITY_TABLE_COL,
+        tableData: item?.authorizedIdentities?.map((identityName) => ({
+          identity: identityName,
+        })),
         dialogTitle: `<div class="flex gap-4 items-center">
           <div>Identities (${item?.authorizedIdentities?.length})</div>
           <div class="font-12 surface-10-opacity-50 overflow-ellipsis w-400px overflow-hidden" title="${item.fileName}">Document: ${item?.fileName}</div>     
@@ -332,7 +338,12 @@ export const TABLE_DATA_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
         showCount: 1,
         fileName: item?.name,
         id: item?.name,
+        tableCol: VECTOR_DB_TABLE_COL,
+        tableData: item?.vector_dbs?.map((identityName) => ({
+          vector_db: identityName,
+        })),
         dialogTitle: "Vector DB",
+        showTooltip: true,
       }),
     align: "start",
   },
@@ -413,6 +424,10 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
         showCount: 1,
         fileName: item?.sourceFilePath,
         id: item.id,
+        tableCol: IDENTITY_TABLE_COL,
+        tableData: item?.authorizedIdentities?.map((identityName) => ({
+          identity: identityName,
+        })),
         dialogTitle: `<div class="flex gap-4 items-center">
       <div>Identities (${item?.authorizedIdentities?.length})</div>
       <div class="font-12 surface-10-opacity-50">Document: ${item?.sourceFilePath}</div>
@@ -845,25 +860,29 @@ export const TAB_PANEL_ARR_FOR_APPLICATION_DETAILS = [
 export const TABS_ARR_FOR_APP_DETAILS_RETRIEVAL = [
   {
     label: "Retrievals",
-    critical: 543,
+    critical: APP_DATA?.retrievals?.length || 0,
     value: 0,
     isCritical: true,
   },
   {
     label: "Active Users",
-    critical: 256,
+    critical: APP_DATA?.activeUsers
+      ? Object.keys(APP_DATA?.activeUsers)?.length
+      : 0,
     value: 1,
     isCritical: true,
   },
   {
     label: "Vector Database",
-    critical: 1,
+    critical: APP_DATA?.vectorDbs ? Object.keys(APP_DATA.vectorDbs)?.length : 0,
     value: 2,
     isCritical: true,
   },
   {
     label: "Documents",
-    critical: 12,
+    critical: APP_DATA?.documents
+      ? Object.keys(APP_DATA?.documents)?.length
+      : 0,
     value: 3,
     isCritical: true,
   },
@@ -872,54 +891,13 @@ export const TABS_ARR_FOR_APP_DETAILS_RETRIEVAL = [
 export const TAB_PANEL_ARR_APP_DETAILS_RETRIEVAL = [
   {
     value: {
-      title: "Retrieval Distribution By",
-      data: {
-        snippetCount: dataSourceObject
-          ? dataSourceObject?.displayedSnippetCount
-          : 0,
-        totalSnippetCount: dataSourceObject
-          ? dataSourceObject?.totalSnippetCount
-          : 0,
-        snippets: dataSourceObject ? dataSourceObject?.findingsDetails : [],
-      },
+      title: "",
+      data: APP_DATA?.retrievals,
       searchField: ["labelName"],
       inputPlaceholder: "Search",
-      error: NO_FINDINGS_FOR_APP ? "NO_FINDINGS_EMPTY_STATE" : null,
+      error: !APP_DATA?.retrievals?.length ? "NO_FINDINGS_EMPTY_STATE" : null,
     },
     component: RetrievalDetails,
-  },
-  {
-    value: {
-      title: "Data Source",
-      tableCol: TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS,
-      tableData: APP_DATA?.dataSources ? APP_DATA?.dataSources : [],
-      searchField: ["name"],
-      isSorting: true,
-      inputPlaceholder: "Search by Data Source",
-    },
-    component: ApplicationsList,
-  },
-  {
-    value: {
-      title: "Data Source",
-      tableCol: TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS,
-      tableData: APP_DATA?.dataSources ? APP_DATA?.dataSources : [],
-      searchField: ["name"],
-      isSorting: true,
-      inputPlaceholder: "Search by Data Source",
-    },
-    component: ApplicationsList,
-  },
-  {
-    value: {
-      title: "Data Source",
-      tableCol: TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS,
-      tableData: APP_DATA?.dataSources ? APP_DATA?.dataSources : [],
-      searchField: ["name"],
-      isSorting: true,
-      inputPlaceholder: "Search by Data Source",
-    },
-    component: ApplicationsList,
   },
 ];
 
@@ -973,6 +951,14 @@ export const IDENTITY_TABLE_COL = [
     field: "identity",
     align: "start",
     render: (item) => `<div class="text-none">${item?.identity || "-"}</div>`,
+  },
+];
+
+export const VECTOR_DB_TABLE_COL = [
+  {
+    label: "Vector DB",
+    field: "vector_db",
+    align: "start",
   },
 ];
 

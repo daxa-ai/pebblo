@@ -749,6 +749,9 @@ svg.icon-success {
 .border-grey-10 {
   border-color: rgba(230, 231, 237, 0.8);
 }
+.border-grey-20 {
+  border: 1px solid #e6e7ed;
+}
 
 /* <----------- BORDER RADIUS -----------> */
 .rounded-sm {

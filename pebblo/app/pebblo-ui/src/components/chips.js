@@ -2,12 +2,20 @@ import { Button, Dialog, Table } from "./index.js";
 import { IDENTITY_TABLE_COL } from "../constants/constant.js";
 
 export const Chips = (props) => {
-  const { list, showCount, fileName, dialogTitle, id } = props;
+  const {
+    list,
+    showCount,
+    fileName,
+    dialogTitle,
+    id,
+    showTooltip,
+    tableCol,
+    tableData,
+  } = props;
   const DialogBody = () => {
-    const TABLE_DATA = list.map((identityName) => ({ identity: identityName }));
     return /*html*/ `
   <div class="load-history-table pt-6 pb-6 pr-6 pl-6 rounded-md">
-   ${Table({ tableCol: IDENTITY_TABLE_COL, tableData: TABLE_DATA })}
+   ${Table({ tableCol: tableCol, tableData: tableData })}
   </div>
   `;
   };
