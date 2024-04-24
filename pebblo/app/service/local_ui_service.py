@@ -144,11 +144,7 @@ class AppData:
 
         # fetch active users names per app
         active_users = self.get_active_users(app_metadata_content["retrieval"])
-        for user_name, data in active_users.items():
-            if user_name in self.retrieval_active_users.keys():
-                self.retrieval_active_users[user_name].extend(data)
-            else:
-                self.retrieval_active_users[user_name] = data
+        self.add_accumulate_active_users(active_users)
 
         # fetch vector dbs names per app
         vector_dbs = self.get_vector_dbs(app_metadata_content["chains"])
@@ -349,6 +345,14 @@ class AppData:
             documents=documents,
         )
         return response.dict()
+
+    def add_accumulate_active_users(self, active_users):
+        """Adding retrieval data for app listing per users"""
+        for user_name, data in active_users.items():
+            if user_name in self.retrieval_active_users.keys():
+                self.retrieval_active_users[user_name].extend(data)
+            else:
+                self.retrieval_active_users[user_name] = data
 
     @staticmethod
     def get_active_users(retrieval_data: dict) -> dict:
