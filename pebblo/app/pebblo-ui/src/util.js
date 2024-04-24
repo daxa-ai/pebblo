@@ -115,3 +115,12 @@ export const getFileSize = (size) => {
   }
   return "-";
 };
+
+export const getStringOfNItems = (arr, count) => {
+  if (arr) {
+    if (arr?.length > count) {
+      return arr.splice(0, count).join(", ");
+    }
+    return arr?.join(", ");
+  }
+};

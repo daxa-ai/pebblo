@@ -69,9 +69,9 @@ export function ApplicationsList(props) {
     document.getElementsByTagName("tbody")[0].innerHTML = filteredData?.length
       ? `
         ${filteredData?.myMap(
-          (item) => /*html*/ `
+          (item, index) => /*html*/ `
             <tr class="table-row">
-              ${tableCol?.myMap((col) =>
+              ${tableCol?.myMap((col, itemIndex) =>
                 Td({
                   children: col?.actions
                     ? col?.actions(item)
@@ -79,6 +79,7 @@ export function ApplicationsList(props) {
                     ? col?.render(item)
                     : item[col?.field],
                   align: col?.align,
+                  id: `${index}-${itemIndex}`,
                   link:
                     col?.field !== ACTIONS && link
                       ? `${link}?app_name=${item?.name}`
