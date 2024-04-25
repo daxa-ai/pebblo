@@ -9,43 +9,46 @@ from pebblo.app.service.discovery_service import AppDiscover
 mocked_datetime = datetime.datetime(2024, 1, 1, 0, 0, 5)
 
 data = {
-    "metadata": {"createdAt": mocked_datetime, "modifiedAt": mocked_datetime},
-    "name": "RetrivalDiscoveryApp17thApr011",
-    "description": "",
+    "name": "pytest_app",
     "owner": "Shreyas Damle",
-    "pluginVersion": "0.1.0",
-    "instanceDetails": {
-        "type": None,
-        "host": "OPLPT118",
-        "path": "D:/OpcitoWorkDirectory/CloudDefense/pebblo-langchain/samples/medical-advice/testing_apps",
-        "runtime": None,
-        "ip": "172.17.128.1",
+    "description": "",
+    "load_id": "fcd41d2c-e1af-4e26-abe5-52e539c414b4",
+    "runtime": {
+        "type": "desktop",
+        "host": "OPLPT086.local",
+        "path": "/Users/shreyas-damle/Documents/Opcito/CD/pebblo-langchain/samples/medical-advice/testing_apps",
+        "ip": "127.0.0.1",
+        "platform": "macOS-14.4.1-arm64-arm-64bit",
+        "os": "Darwin",
+        "os_version": "Darwin Kernel Version 23.4.0: Fri Mar 15 00:19:22 PDT 2024; root:xnu-10063.101.17~1/RELEASE_ARM64_T8112",
         "language": "python",
-        "languageVersion": "3.11.8",
-        "platform": "Windows-10-10.0.19045-SP0",
-        "os": "Windows",
-        "osVersion": "10.0.19045",
-        "createdAt": mocked_datetime,
+        "language_version": "3.9.19",
+        "runtime": "Mac OSX",
     },
-    "framework": {"name": "langchain", "version": "0.1.37"},
-    "lastUsed": mocked_datetime,
-    "pebbloServerVersion": "0.1.13",
-    "pebbloClientVersion": "0.1.0",
     "chains": [
         {
             "name": "RetrievalQA",
-            "vectorDbs": [
+            "model": {"vendor": "openai", "name": "text-davinci-003"},
+            "vector_dbs": [
                 {
                     "name": "Chroma",
                     "version": "0.4.7",
-                    "location": None,
-                    "embeddingModel": "OpenAIEmbeddings",
-                    "pkgInfo": None,
+                    "location": "local",
+                    "embedding_model": "OpenAIEmbeddings",
+                    "pkg_info": {
+                        "project_home_page": "https://github.com/chroma-core/chroma",
+                        "documentation_url": "https://docs.trychroma.com",
+                        "pypi_url": "https://pypi.org/pypi/chromadb",
+                        "licence_type": "OSI Approved :: Apache Software License",
+                        "installed_via": "PIP Installation",
+                        "location": "/home/ubuntu/denali/rag/langchain/samples/basic-retrieval-qa/.ai_venv/lib/python3.10/site-packages/chromadb",
+                    },
                 }
             ],
-            "model": {"name": "text-davinci-003", "vendor": "openai"},
         }
     ],
+    "framework": {"name": "langchain", "version": "0.1.45"},
+    "plugin_version": "0.1.1",
 }
 
 
@@ -64,16 +67,16 @@ def test_fetch_runtime_instance_details(discovery):
     discovery._get_current_datetime = MagicMock(return_value=mocked_datetime)
 
     expected_output = {
-        "type": None,
-        "host": None,
-        "path": None,
-        "runtime": None,
-        "ip": None,
-        "language": None,
-        "languageVersion": None,
-        "platform": None,
-        "os": None,
-        "osVersion": None,
+        "type": "desktop",
+        "host": "OPLPT086.local",
+        "path": "/Users/shreyas.damle/Documents/Opcito/CD/pebblo-langchain/samples/medical-advice/testing_apps",
+        "ip": "127.0.0.1",
+        "platform": "macOS-14.4.1-arm64-arm-64bit",
+        "os": "Darwin",
+        "osVersion": "Darwin Kernel Version 23.4.0: Fri Mar 15 00:19:22 PDT 2024; root:xnu-10063.101.17~1/RELEASE_ARM64_T8112",
+        "language": "python",
+        "languageVersion": "3.9.19",
+        "runtime": "Mac OSX",
         "createdAt": mocked_datetime,
     }
     output = discovery._fetch_runtime_instance_details()
@@ -92,7 +95,22 @@ def test_fetch_chain_details(discovery):
     expected_output = [
         {
             "name": "RetrievalQA",
-            "vectorDbs": [],
+            "vectorDbs": [
+                {
+                    "name": "Chroma",
+                    "version": "0.4.7",
+                    "location": "local",
+                    "embeddingModel": "OpenAIEmbeddings",
+                    "pkgInfo": {
+                        "documentationUrl": "https://docs.trychroma.com",
+                        "projectHomePage": "https://github.com/chroma-core/chroma",
+                        "pypiUrl": "https://pypi.org/pypi/chromadb",
+                        "licenceType": "OSI Approved :: Apache Software License",
+                        "installedVia": "PIP Installation",
+                        "location": "/home/ubuntu/denali/rag/langchain/samples/basic-retrieval-qa/.ai_venv/lib/python3.10/site-packages/chromadb",
+                    },
+                }
+            ],
             "model": {"name": "text-davinci-003", "vendor": "openai"},
         }
     ]
@@ -111,52 +129,85 @@ def test_create_ai_apps_model(discovery):
     discovery._get_current_datetime = MagicMock(return_value=mocked_datetime)
 
     instance_details = {
-        "type": None,
-        "host": None,
-        "path": None,
-        "runtime": None,
-        "ip": None,
-        "language": None,
-        "languageVersion": None,
-        "platform": None,
-        "os": None,
-        "osVersion": None,
-        "createdAt": mocked_datetime,
+        "type": "desktop",
+        "host": "OPLPT086.local",
+        "path": "/Users/shreyas.damle/Documents/Opcito/CD/pebblo-langchain/samples/medical-advice/testing_apps",
+        "runtime": "Mac OSX",
+        "ip": "127.0.0.1",
+        "language": "python",
+        "languageVersion": "3.9.19",
+        "platform": "macOS-14.4.1-arm64-arm-64bit",
+        "os": "Darwin",
+        "osVersion": "Darwin Kernel Version 23.4.0: Fri Mar 15 00:19:22 PDT 2024; root:xnu-10063.101.17~1/RELEASE_ARM64_T8112",
+        "createdAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
     }
     chain_details = [
         {
             "name": "RetrievalQA",
-            "vectorDbs": [],
+            "vectorDbs": [
+                {
+                    "name": "Chroma",
+                    "version": "0.4.7",
+                    "location": "local",
+                    "embeddingModel": "OpenAIEmbeddings",
+                    "pkgInfo": {
+                        "projectHomePage": "https://github.com/chroma-core/chroma",
+                        "documentationUrl": "https://docs.trychroma.com",
+                        "pypiUrl": "https://pypi.org/pypi/chromadb",
+                        "licenceType": "OSI Approved :: Apache Software License",
+                        "installedVia": "PIP Installation",
+                        "location": "/home/ubuntu/denali/rag/langchain/samples/basic-retrieval-qa/.ai_venv/lib/python3.10/site-packages/chromadb",
+                    },
+                }
+            ],
             "model": {"name": "text-davinci-003", "vendor": "openai"},
         }
     ]
     expected_output = {
-        "metadata": {"createdAt": mocked_datetime, "modifiedAt": mocked_datetime},
-        "name": "RetrivalDiscoveryApp17thApr011",
+        "metadata": {
+            "createdAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
+            "modifiedAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
+        },
+        "name": "pytest_app",
         "description": "",
         "owner": "Shreyas Damle",
-        "pluginVersion": None,
+        "pluginVersion": "0.1.1",
         "instanceDetails": {
-            "type": None,
-            "host": None,
-            "path": None,
-            "runtime": None,
-            "ip": None,
-            "language": None,
-            "languageVersion": None,
-            "platform": None,
-            "os": None,
-            "osVersion": None,
+            "type": "desktop",
+            "host": "OPLPT086.local",
+            "path": "/Users/shreyas.damle/Documents/Opcito/CD/pebblo-langchain/samples/medical-advice/testing_apps",
+            "ip": "127.0.0.1",
+            "platform": "macOS-14.4.1-arm64-arm-64bit",
+            "os": "Darwin",
+            "osVersion": "Darwin Kernel Version 23.4.0: Fri Mar 15 00:19:22 PDT 2024; root:xnu-10063.101.17~1/RELEASE_ARM64_T8112",
+            "language": "python",
+            "languageVersion": "3.9.19",
+            "runtime": "Mac OSX",
             "createdAt": mocked_datetime,
         },
-        "framework": {"name": "langchain", "version": "0.1.37"},
-        "lastUsed": mocked_datetime,
+        "framework": {"name": "langchain", "version": "0.1.45"},
+        "lastUsed": datetime.datetime(2024, 1, 1, 0, 0, 5),
         "pebbloServerVersion": "0.1.14",
-        "pebbloClientVersion": "",
+        "pebbloClientVersion": "0.1.1",
         "chains": [
             {
                 "name": "RetrievalQA",
-                "vectorDbs": [],
+                "vectorDbs": [
+                    {
+                        "name": "Chroma",
+                        "version": "0.4.7",
+                        "location": "local",
+                        "embeddingModel": "OpenAIEmbeddings",
+                        "pkgInfo": {
+                            "projectHomePage": "https://github.com/chroma-core/chroma",
+                            "documentationUrl": "https://docs.trychroma.com",
+                            "pypiUrl": "https://pypi.org/pypi/chromadb",
+                            "licenceType": "OSI Approved :: Apache Software License",
+                            "installedVia": "PIP Installation",
+                            "location": "/home/ubuntu/denali/rag/langchain/samples/basic-retrieval-qa/.ai_venv/lib/python3.10/site-packages/chromadb",
+                        },
+                    }
+                ],
                 "model": {"name": "text-davinci-003", "vendor": "openai"},
             }
         ],
