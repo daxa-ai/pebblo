@@ -16,7 +16,7 @@ data = {
     "runtime": {
         "type": "desktop",
         "host": "OPLPT086.local",
-        "path": "/Users/shreyas-damle/Documents/Opcito/CD/pebblo-langchain/samples/medical-advice/testing_apps",
+        "path": "/Users/shreyas.damle/Documents/Opcito/CD/pebblo-langchain/samples/medical-advice/testing_apps",
         "ip": "127.0.0.1",
         "platform": "macOS-14.4.1-arm64-arm-64bit",
         "os": "Darwin",
