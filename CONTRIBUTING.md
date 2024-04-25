@@ -64,6 +64,27 @@ pebblo
 Pebblo daemon now listens to `localhost:8000` to accept Gen-AI application document snippets for inspection and reporting.
 
 
+## Code Formatting
+
+Run these locally before submitting a PR; the CI system will check also.
+
+Formatting for this project is done via [ruff](https://docs.astral.sh/ruff/).
+
+To run formatting for the entire project, run the following command from the root directory of the project:
+
+```bash
+make format
+```
+
+Additionally, you can run the formatter only on the files that have been modified in your current branch as compared to the main branch using the format_diff command:
+
+```bash
+make format_diff
+```
+
+This is especially useful when you have made changes to a subset of the project and want to ensure your changes are properly formatted without affecting the rest of the codebase.
+
+
 ## Creating a pull request
 
 See [these instructions](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
