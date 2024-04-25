@@ -36,6 +36,12 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
 
 A data report with all the findings, both Topics and Entities, will be generated and available for inspection in the `Pebblo Server`. See this [pebblo server](daemon.md) for further details.
 
+Note: By default Pebblo Server runs at localhost:8000. If your Pebblo Server is running at some other location for eg. a docker container etc, put the correct URL in `PEBBLO_CLASSIFIER_URL` env variable. ref: [server-configurations](config.md#server)
+
+```bash
+export PEBBLO_CLASSIFIER_URL="<pebblo-server-host:pebblo-server-port>"
+```
+
 ## Supported Document Loaders
 
 The following Langchain DocumentLoaders are currently supported.
