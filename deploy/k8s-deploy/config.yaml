@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pebblo-api-config
+  name: pebblo-server-config
 data:
   config.yaml: |
     daemon:
