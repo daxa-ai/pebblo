@@ -69,7 +69,7 @@
           <div class="surface-10 font-14">Report Summary</div>
           <div class="surface-10-opacity font-12 ml-2">
             Current Load By {{ data.reportSummary.owner }}, {{
-            dateFormatter(data.reportSummary.createdAt) }}
+            dateFormatter(data.reportSummary.createdAt, True) }}
           </div>
         </div>
         <div class="flex inter">
@@ -175,7 +175,7 @@
                   <td colspan="2" class="break-word">{{ item.reportName }}</td>
                   <td class="text-end">{{ item.findings }}</td>
                   <td class="text-end">{{ item.filesWithFindings }}</td>
-                  <td>{{ dateFormatter(item.generatedOn) }}</td>
+                  <td>{{ dateFormatter(item.generatedOn, True) }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -253,7 +253,8 @@
                       <div class="flex flex-col ml-2">
                         <div class="surface-40 font-12">Created At</div>
                         <div class="surface-10 mt-1">
-                          {{ dateFormatter(data.instanceDetails.createdAt) }}
+                          {{ dateFormatter(data.instanceDetails.createdAt, True)
+                          }}
                         </div>
                       </div>
                     </div>
@@ -276,7 +277,7 @@
                       <div class="divider bg-surface-70"></div>
                       <div class="flex flex-col ml-2">
                         <div class="surface-40 font-12">Path</div>
-                        <div class="surface-10 mt-1">
+                        <div class="surface-10 mt-1 max-w-70 break-all">
                           {{ data.instanceDetails.path }} &nbsp;
                         </div>
                       </div>
