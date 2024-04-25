@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pebblo-api
+  name: pebblo-server
 spec:
   accessModes:
   - ReadWriteOnce

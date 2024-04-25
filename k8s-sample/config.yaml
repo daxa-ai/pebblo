@@ -1,5 +1,6 @@
 ---
 # Source: k8s/templates/config.yaml
+# host: bind host for Pebblo Server
 apiVersion: v1
 kind: ConfigMap
 metadata:
