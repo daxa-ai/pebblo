@@ -80,7 +80,6 @@ def test_fetch_runtime_instance_details(discovery):
         "createdAt": mocked_datetime,
     }
     output = discovery._fetch_runtime_instance_details()
-    print(f"Output: {output.dict()}")
     assert expected_output == output.dict()
 
 
@@ -115,7 +114,6 @@ def test_fetch_chain_details(discovery):
         }
     ]
     output = discovery._fetch_chain_details()
-    print(f"Output: {output}")
     assert output == expected_output
 
 
@@ -213,5 +211,4 @@ def test_create_ai_apps_model(discovery):
         ],
     }
     output = discovery._create_ai_apps_model(instance_details, chain_details)
-    print(output)
     assert output == expected_output
