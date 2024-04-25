@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: pebblo-server
-        image: daxaai/pebblo:0.1.14
+        image: daxaai/pebblo:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
