@@ -41,7 +41,7 @@ class AppDiscover:
     @staticmethod
     def _get_current_datetime():
         """
-            Return current datetime
+        Return current datetime
         """
         return datetime.now()
 
@@ -52,7 +52,10 @@ class AppDiscover:
         logger.debug("Creating AI App model")
         # Initialize Variables
         last_used = self._get_current_datetime()
-        metadata = Metadata(createdAt=self._get_current_datetime(), modifiedAt=self._get_current_datetime())
+        metadata = Metadata(
+            createdAt=self._get_current_datetime(),
+            modifiedAt=self._get_current_datetime(),
+        )
         ai_apps_model = AiApp(
             metadata=metadata,
             name=self.data.get("name"),
