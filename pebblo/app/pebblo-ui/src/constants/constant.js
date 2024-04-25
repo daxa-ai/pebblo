@@ -202,7 +202,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
         })),
         dialogTitle: `<div class="flex gap-4 items-center">
           <div>Identities (${item?.authorizedIdentities?.length})</div>
-          <div class="font-12 surface-10-opacity-50 overflow-ellipsis w-400px overflow-hidden" title="${item.fileName}">Document: ${item?.fileName}</div>     
+          <div class="text-none font-12 surface-10-opacity-50 overflow-ellipsis w-400px overflow-hidden" title="${item.fileName}">Document: ${item?.fileName}</div>     
         </div>`,
       }),
     align: "start",

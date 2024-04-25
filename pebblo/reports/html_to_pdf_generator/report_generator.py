@@ -13,9 +13,13 @@ from pebblo.reports.enums.report_libraries import library_function_mapping
 from pebblo.reports.libs.logger import logger
 
 
-def date_formatter(date_obj):
+def date_formatter(date_obj, show_timezone=True):
     """Converts date string to object and returns formatted string for date (D M Y, H:M)"""
-    return date_obj.strftime("%d %B %Y , %H:%M") + " " + time.localtime().tm_zone
+    date_str = date_obj.strftime("%d %B %Y , %H:%M")
+    if show_timezone:
+        return date_str + " " + time.localtime().tm_zone
+    else:
+        return date_str
 
 
 def get_file_size(size):
@@ -44,11 +48,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         template_loader = jinja2.FileSystemLoader(searchpath=search_path)
         template_env = jinja2.Environment(loader=template_loader)
         template = template_env.get_template(template_name)
-        current_date = (
-            datetime.datetime.now().strftime("%B %d, %Y")
-            + " "
-            + time.localtime().tm_zone
-        )
+        current_date = datetime.datetime.now().strftime("%B %d, %Y")
         load_history_items = []
         findings_details = []
         datastores = []

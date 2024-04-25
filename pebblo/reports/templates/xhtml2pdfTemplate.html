@@ -686,7 +686,7 @@
             <span class="medium surface-10 font-13">Report Summary</span>
             <span class="surface-0 font-12 ml-2 normal">
               Current Load By {{ data.reportSummary.owner }}, {{
-              dateFormatter(data.reportSummary.createdAt) }}</span
+              dateFormatter(data.reportSummary.createdAt, True) }}</span
             >
           </div>
           <div class="pr-8 pl-8">
@@ -808,7 +808,7 @@
                     {{ item.filesWithFindings }}
                   </td>
                   <td class="text-end align-cell-left w-300">
-                    {{ dateFormatter(item.generatedOn) }}
+                    {{ dateFormatter(item.generatedOn, True) }}
                   </td>
                 </tr>
                 {% endfor %}
@@ -870,7 +870,7 @@
                   </td>
                   <td>
                     <div class="surface-10 mt-1">
-                      {{ dateFormatter(data.instanceDetails.createdAt) }}
+                      {{ dateFormatter(data.instanceDetails.createdAt, True) }}
                     </div>
                   </td>
                 </tr>
@@ -889,7 +889,7 @@
                     <div class="surface-40 font-12 medium">Path</div>
                   </td>
                   <td>
-                    <div class="surface-10 mt-1">
+                    <div class="surface-10 mt-1 w-70 break-all">
                       {{ data.instanceDetails.path }}
                     </div>
                   </td>

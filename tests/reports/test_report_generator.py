@@ -28,7 +28,7 @@ class TestReportGenerator(unittest.TestCase):
 
     def test_date_formatter(self):
         """Test if date formatter returns correct string"""
-        output_str = date_formatter(self.date_obj)
+        output_str = date_formatter(self.date_obj, True)
         assert output_str == "02 February 2024 , 16:25" + " " + time.localtime().tm_zone
 
     def test_file_size_conversion(self):
