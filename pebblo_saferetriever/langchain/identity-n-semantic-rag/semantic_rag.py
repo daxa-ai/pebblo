@@ -107,7 +107,6 @@ class SafeRetrieverSemanticRAG:
         entities_to_deny: Optional[List[str]] = None,
     ):
         auth_context = {
-            "name": "Name here",
             "username": user_email,
             "authorized_identities": auth_identifiers,
         }

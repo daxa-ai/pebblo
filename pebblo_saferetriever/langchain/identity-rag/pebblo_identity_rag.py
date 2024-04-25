@@ -69,8 +69,9 @@ class PebbloIdentityRAG:
         )
         return vectordb
 
-    def ask(self, question: str, auth_identifiers: list):
+    def ask(self, question: str, user_email: str, auth_identifiers: list):
         auth_context = {
+            "username": user_email,
             "authorized_identities": auth_identifiers,
         }
         auth_context = AuthContext(**auth_context)
@@ -102,7 +103,7 @@ if __name__ == "__main__":
             credentials_file_path=ingestion_user_service_account_path,
             user_email=end_user_email_address,
         )
-        response = rag_app.ask(prompt, authorized_identities)
+        response = rag_app.ask(prompt, end_user_email_address, authorized_identities)
         print(f"Response:\n{response}")
         try:
             continue_or_exist = int(input("\n\nType 1 to continue and 0 to exit : "))
