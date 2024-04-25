@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 from dotenv import load_dotenv
@@ -50,6 +51,7 @@ class DataLoader:
             owner="Joe Smith",  # Owner (Optional)
             description="SafeLoader app using Pebblo",  # Description (Optional)
             load_semantic=True,
+            api_key=os.environ.get("PEBBLO_API_KEY"),  # Pebblo cloud API key
         )
         documents = loader.load()
         unique_identities = set()

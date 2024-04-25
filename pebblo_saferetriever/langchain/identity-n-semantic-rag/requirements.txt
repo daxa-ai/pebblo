@@ -1,0 +1,13 @@
+langchain>=0.1.7
+langchain-community
+langchain-openai
+python-dotenv==1.0.0
+requests==2.31.0
+Markdown==3.5
+unstructured[all-docs]
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+qdrant-client==1.8.0 # for Qdrant VectorStore
+PyPDF2
+langchain_google_community # For GoogleDriveLoader
