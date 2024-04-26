@@ -118,7 +118,7 @@ def update_data_source(data, app_name, findings_entities, findings_topics):
     Update the 'appName' key in the given data dictionary with the provided app_name.
     """
     try:
-        updated_data = dict()
+        updated_data: dict = dict()
         if not data:
             return updated_data
 

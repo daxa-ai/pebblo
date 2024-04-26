@@ -271,7 +271,7 @@ class AppDiscover:
             # Prepare response
             ai_apps_data = ai_apps
             ai_apps_obj = DiscoverAIApps(
-                name=ai_apps_data.get("name"),
+                name=ai_apps_data["name"],
                 description=ai_apps_data.get("description"),
                 owner=ai_apps_data.get("owner"),
                 instanceDetails=ai_apps_data.get("instanceDetails"),

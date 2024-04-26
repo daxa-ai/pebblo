@@ -172,8 +172,8 @@ class AppData:
             # List all apps in the directory
             dir_path = os.listdir(dir_full_path)
 
-            all_loader_apps = []
-            all_retrieval_apps = []
+            all_loader_apps: list = []
+            all_retrieval_apps: list = []
 
             # Iterating through each app in the directory
             for app_dir in dir_path:
@@ -369,8 +369,8 @@ class AppData:
         This function returns active users per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        sorted_active_users = {}
-        active_users = {}
+        sorted_active_users: dict = {}
+        active_users: dict = {}
 
         # fetch active users wise retrievals
         for data in retrieval_data:
@@ -408,8 +408,8 @@ class AppData:
         This function returns documents per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        documents = {}
-        all_sorted_documents = {}
+        documents: dict = {}
+        all_sorted_documents: dict = {}
 
         # fetch document wise retrievals
         for data in retrieval_data:
@@ -441,8 +441,8 @@ class AppData:
         This function returns vector dbs per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        all_vector_dbs = {}
-        all_sorted_vector_dbs = {}
+        all_vector_dbs: dict = {}
+        all_sorted_vector_dbs: dict = {}
 
         # fetch vector dbs wise retrievals
         for data in retrieval_data:

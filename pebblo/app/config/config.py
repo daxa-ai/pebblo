@@ -72,3 +72,4 @@ def load_config(path) -> dict:
 
     except Exception as err:
         print(f"Error while loading config details, err: {err}")
+        return {}

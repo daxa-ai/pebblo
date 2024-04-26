@@ -383,7 +383,7 @@ class LoaderHelper:
         Retrieve previous runs details and create load history and return
         """
         logger.debug("Fetching previous execution details and creating loader history")
-        load_history = dict()
+        load_history: dict = dict()
         # Reading metadata file & get load details
         app_name = self.data.get("name")
         current_load_id = self.load_id
@@ -400,7 +400,7 @@ class LoaderHelper:
         # LoadHistory will be considered up to the specified load history limit.
         # if no of reports are greater than specified limit than,
         # we provide the dir path for all reports
-        load_history["history"] = []
+        load_history["history"] = list()
         load_history["moreReportsPath"] = "-"
         report_counts = len(load_ids)
         top_n_latest_loader_id = load_ids[
