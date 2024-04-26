@@ -1,6 +1,6 @@
-export const GET_FILE = (url) => {
-  var new_url = window.location.origin + url;
-  const data = fetch(new_url, { responseType: "arraybuffer" })
+export const GET_FILE = (apiEndpoint) => {
+  var url = window.location.origin + apiEndpoint;
+  const data = fetch(url, { responseType: "arraybuffer" })
     .then((res) => {
       return res.blob();
     })
