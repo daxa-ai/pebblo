@@ -1,0 +1,6 @@
+python-dotenv
+requests
+langchain
+o365
+pymupdf
+langchain_openai
