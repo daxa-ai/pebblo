@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from pebblo.app.enums.enums import CacheDir
 
@@ -11,5 +11,5 @@ class App:
         self.router = APIRouter()
 
     @staticmethod
-    def redirect():
-        return f"{CacheDir.PROXY.value}/pebblo/"
+    def redirect(request: Request):
+        return f"{request.base_url}/pebblo/"
