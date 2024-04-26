@@ -1,5 +1,6 @@
 export const GET_FILE = (url) => {
-  const data = fetch(url, { responseType: "arraybuffer" })
+  var new_url = window.location.origin + url;
+  const data = fetch(new_url, { responseType: "arraybuffer" })
     .then((res) => {
       return res.blob();
     })
