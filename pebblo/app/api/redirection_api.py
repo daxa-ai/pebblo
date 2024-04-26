@@ -10,4 +10,4 @@ class App:
 
     @staticmethod
     def redirect(request: Request):
-        return f"{request.base_url}/pebblo/"
+        return f"{request.base_url}pebblo/"
