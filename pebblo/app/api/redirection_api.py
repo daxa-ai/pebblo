@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Request
 
-from pebblo.app.enums.enums import CacheDir
-
 
 class App:
     """
