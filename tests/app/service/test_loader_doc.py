@@ -200,7 +200,7 @@ def test_get_finding_details(loader_helper):
         "topics": {"Medical Advice": 1},
     }
     raw_data_input = {"snippet_counter": 2, "total_snippet_counter": 2}
-    data_source_findings = {}
+    data_source_findings: dict = {}
     loader_helper._get_finding_details(
         doc, data_source_findings, "entities", raw_data_input
     )
@@ -284,7 +284,7 @@ def test_update_app_details(loader_helper):
             "sourceSize": 1000,
         }
     ]
-    ai_apps_doc = []
+    ai_apps_doc: list[dict] = []
     loader_helper._update_app_details(input_data, ai_apps_doc)
     expected_output = {
         "metadata": {
