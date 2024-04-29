@@ -5,6 +5,8 @@ This module handles business logic for local UI
 import json
 import os
 
+from dateutil import parser
+
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import (
@@ -307,7 +309,9 @@ class AppData:
                         f"Skipping app '{app_dir}' due to missing or invalid file"
                     )
                     return json.dumps({})
-                return self.get_retrieval_app_details(app_metadata_content)
+                response = self.get_retrieval_app_details(app_metadata_content)
+                logger.debug(f"Retrieval App Details for {app_dir} app: {response}")
+                return response
 
         except Exception as ex:
             logger.error(f"Error in app detail. Error: {ex}")
@@ -360,9 +364,22 @@ class AppData:
                 self.retrieval_active_users[user_name] = data
 
     @staticmethod
-    def get_active_users(retrieval_data: dict) -> dict:
+    def fetch_last_accessed_time(accessed_time: list) -> str:
+        """Fetching last accessed time"""
+        try:
+            sorted_time = sorted(accessed_time, reverse=True)
+            last_accessed_time = sorted_time[0].isoformat()
+            return last_accessed_time
+        except Exception as ex:
+            logger.error(
+                f"Error in fetching last accessed time while returning app details response :{ex}"
+            )
+            return ""
+
+    @staticmethod
+    def get_sorted_users(retrieval_data: dict) -> dict:
         """
-        This function returns active users per app in sorted descending order
+        This function returns sorted active users per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
         sorted_active_users: dict = {}
@@ -390,6 +407,30 @@ class AppData:
 
         return sorted_active_users
 
+    def get_active_users(self, retrieval_data: dict) -> dict:
+        """
+        This function returns active users per app with its metadata in following format:
+        {
+            "retrievals": [sorted active users],
+            "last_accessed_time": "last accessed time",
+            "linked_groups": [user groups]
+        }
+        """
+        sorted_active_users = self.get_sorted_users(retrieval_data)
+        response = {}
+        for user_name, user_data in sorted_active_users.items():
+            accessed_time = []
+            user_groups = []
+            for data in user_data:
+                accessed_time.append(parser.parse(data.get("prompt_time")))
+                user_groups.extend(data.get("user_identities"))
+            response[user_name] = {
+                "retrieval": user_data,
+                "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
+                "linked_groups": list(set(user_groups)),
+            }
+        return response
+
     @staticmethod
     def get_vector_dbs(chains: dict) -> list:
         """This function returns vector dbs per app"""
@@ -399,67 +440,90 @@ class AppData:
         return list(set(vector_dbs))
 
     @staticmethod
-    def get_all_documents(retrieval_data: dict) -> dict:
+    def sort_based_on_retrievals(retrieval_data: dict, search_key: str) -> dict:
         """
-        This function returns documents per app in sorted descending order
+        This function returns data based on search key per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        documents: dict = {}
-        all_sorted_documents: dict = {}
+        resp: dict = {}
+        sorted_resp: dict = {}
 
-        # fetch document wise retrievals
+        # fetch data wise retrievals
         for data in retrieval_data:
             data_context = data.get("context")
             for context in data_context:
-                document_name = context["retrieved_from"]
-                if document_name in documents.keys():
-                    documents[document_name].extend([data])
+                data_name = context[search_key]
+                if data_name in resp.keys():
+                    resp[data_name].extend([data])
                 else:
-                    documents[document_name] = [data]
+                    resp[data_name] = [data]
 
-        # sorting based on length on retrieval values per documents
-        all_documents = sorted(
-            documents.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
+        # sorting based on length on retrieval values per search key
+        all_resp_data = sorted(
+            resp.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
         )
 
         # converting sorted tuples to dictionary
-        for user_name, data in all_documents:
-            if user_name in all_sorted_documents.keys():
-                all_sorted_documents[user_name].extend(data)
+        for user_name, data in all_resp_data:
+            if user_name in sorted_resp.keys():
+                sorted_resp[user_name].extend(data)
             else:
-                all_sorted_documents.update({user_name: data})
+                sorted_resp.update({user_name: data})
 
-        return all_sorted_documents
+        return sorted_resp
 
-    @staticmethod
-    def get_all_vector_dbs(retrieval_data: dict) -> dict:
+    def get_all_documents(self, retrieval_data: dict) -> dict:
+        """
+        This function returns documents per app with its metadata in following format:
+        {
+            "retrievals": [sorted active users],
+            "last_accessed_time": "last accessed time",
+        }
+        """
+        sorted_document = self.sort_based_on_retrievals(
+            retrieval_data, "retrieved_from"
+        )
+        response = {}
+        for user_name, user_data in sorted_document.items():
+            accessed_time = []
+            for data in user_data:
+                accessed_time.append(parser.parse(data.get("prompt_time")))
+            response[user_name] = {
+                "retrieval": user_data,
+                "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
+            }
+        return response
+
+    def get_all_vector_dbs(self, retrieval_data: dict) -> dict:
         """
         This function returns vector dbs per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        all_vector_dbs: dict = {}
-        all_sorted_vector_dbs: dict = {}
-
-        # fetch vector dbs wise retrievals
-        for data in retrieval_data:
-            data_context = data.get("context")
-            for context in data_context:
-                document_name = context["vector_db"]
-                if document_name in all_vector_dbs.keys():
-                    all_vector_dbs[document_name].extend([data])
-                else:
-                    all_vector_dbs[document_name] = [data]
-
-        # sorting based on length on retrieval values per vector dbs
-        all_vector_dbs = sorted(
-            all_vector_dbs.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
-        )
-
-        # converting sorted tuples to dictionary
-        for user_name, data in all_vector_dbs:
-            if user_name in all_sorted_vector_dbs.keys():
-                all_sorted_vector_dbs[user_name].extend(data)
-            else:
-                all_sorted_vector_dbs.update({user_name: data})
-
-        return all_sorted_vector_dbs
+        # all_vector_dbs: dict = {}
+        # all_sorted_vector_dbs: dict = {}
+        #
+        # # fetch vector dbs wise retrievals
+        # for data in retrieval_data:
+        #     data_context = data.get("context")
+        #     for context in data_context:
+        #         document_name = context["vector_db"]
+        #         if document_name in all_vector_dbs.keys():
+        #             all_vector_dbs[document_name].extend([data])
+        #         else:
+        #             all_vector_dbs[document_name] = [data]
+        #
+        # # sorting based on length on retrieval values per vector dbs
+        # all_vector_dbs = sorted(
+        #     all_vector_dbs.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
+        # )
+        #
+        # # converting sorted tuples to dictionary
+        # for user_name, data in all_vector_dbs:
+        #     if user_name in all_sorted_vector_dbs.keys():
+        #         all_sorted_vector_dbs[user_name].extend(data)
+        #     else:
+        #         all_sorted_vector_dbs.update({user_name: data})
+        #
+        # return all_sorted_vector_dbs
+        sorted_vector_dbs = self.sort_based_on_retrievals(retrieval_data, "vector_db")
+        return sorted_vector_dbs
