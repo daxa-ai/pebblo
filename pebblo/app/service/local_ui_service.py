@@ -423,7 +423,7 @@ class AppData:
             user_groups = []
             for data in user_data:
                 accessed_time.append(parser.parse(data.get("prompt_time")))
-                user_groups.extend(data.get("user_identities"))
+                user_groups.extend(data.get("linked_groups"))
             response[user_name] = {
                 "retrieval": user_data,
                 "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
