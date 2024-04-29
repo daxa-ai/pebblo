@@ -77,10 +77,6 @@ class AppData:
 
         # Skip app if data source details are not present for some reason.
         if not data_source_details:
-            logger.debug(
-                f"Error: Unable to fetch dataSources details for {app_dir} app"
-            )
-            logger.debug(f"App Detail Json : {app_detail_json}")
             logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
             return
 
