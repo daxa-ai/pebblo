@@ -4,7 +4,8 @@
 
 #### Steps to Deploy Pebblo Server on k8s cluster
 ```
-kubectl apply -f config.yaml 
+kubectl apply -f config.yaml
+kubectl apply -f pvc.yaml 
 kubectl apply -f deploy.yaml 
 kubectl apply -f service.yaml 
 ```
