@@ -464,11 +464,11 @@ class AppData:
         )
 
         # converting sorted tuples to dictionary
-        for user_name, data in all_resp_data:
-            if user_name in sorted_resp.keys():
-                sorted_resp[user_name].extend(data)
+        for key_name, data in all_resp_data:
+            if key_name in sorted_resp.keys():
+                sorted_resp[key_name].extend(data)
             else:
-                sorted_resp.update({user_name: data})
+                sorted_resp.update({key_name: data})
 
         return sorted_resp
 
