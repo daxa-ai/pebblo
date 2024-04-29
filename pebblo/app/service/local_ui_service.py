@@ -499,31 +499,5 @@ class AppData:
         This function returns vector dbs per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        # all_vector_dbs: dict = {}
-        # all_sorted_vector_dbs: dict = {}
-        #
-        # # fetch vector dbs wise retrievals
-        # for data in retrieval_data:
-        #     data_context = data.get("context")
-        #     for context in data_context:
-        #         document_name = context["vector_db"]
-        #         if document_name in all_vector_dbs.keys():
-        #             all_vector_dbs[document_name].extend([data])
-        #         else:
-        #             all_vector_dbs[document_name] = [data]
-        #
-        # # sorting based on length on retrieval values per vector dbs
-        # all_vector_dbs = sorted(
-        #     all_vector_dbs.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
-        # )
-        #
-        # # converting sorted tuples to dictionary
-        # for user_name, data in all_vector_dbs:
-        #     if user_name in all_sorted_vector_dbs.keys():
-        #         all_sorted_vector_dbs[user_name].extend(data)
-        #     else:
-        #         all_sorted_vector_dbs.update({user_name: data})
-        #
-        # return all_sorted_vector_dbs
         sorted_vector_dbs = self.sort_based_on_retrievals(retrieval_data, "vector_db")
         return sorted_vector_dbs
