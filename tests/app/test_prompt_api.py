@@ -43,6 +43,7 @@ def test_app_prompt_success(mock_write_json_to_file):
         "response": {"data": "His passport ID is 5484880UA."},
         "prompt_time": "Wed 17 Apr, 2024, 15:03 PM",
         "user": "Test Owner",
+        "user_identities": ["test_group@test.com"],
     }
 
     response = client.post("/v1/prompt", json=test_payload)
@@ -88,6 +89,7 @@ def test_app_prompt_server_error(mock_write_json_to_file):
         "response": {"data": "His passport ID is 5484880UA."},
         "prompt_time": "Wed 17 Apr, 2024, 15:03 PM",
         "user": "Test Owner",
+        "user_identities": ["test_group@test.com"],
     }
     response = client.post("/v1/prompt", json=test_payload)
 
