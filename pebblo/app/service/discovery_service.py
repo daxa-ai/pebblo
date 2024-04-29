@@ -68,6 +68,7 @@ class AppDiscover:
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=self.data.get("plugin_version", ""),
             chains=chain_details,
+            retrievals=self.data.get("retrievals", [])
         )
         logger.debug(
             f"AI_APPS [{self.application_name}]: AiApps Details: {ai_apps_model.dict()}"
