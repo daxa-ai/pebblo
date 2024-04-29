@@ -17,7 +17,7 @@ name = "pebblo"  # Required
 #
 # For a discussion on single-sourcing the version, see
 # https://packaging.python.org/guides/single-sourcing-package-version/
-version = "0.1.14"  # Required
+version = "0.1.15"  # Required
 
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
@@ -163,7 +163,7 @@ package-data = {"pebblo" = ['reports/templates/*', 'reports/assets/*','app/pebbl
 include-package-data = false
 
 [tool.setuptools.packages.find]
-exclude=["tests*", "pebblo_safeloader*", "pebblo_saferetriever*"]
+exclude=["tests*", "pebblo_safeloader*", "pebblo_saferetriever*", "pebblo_cloud*"]
 
 [build-system]
 # These are the assumed default build requirements from pip:
