@@ -481,9 +481,7 @@ class AppData:
             "last_accessed_time": "last accessed time",
         }
         """
-        sorted_document = self.sort_retrievals(
-            retrieval_data, "retrieved_from"
-        )
+        sorted_document = self.sort_retrievals(retrieval_data, "retrieved_from")
         response = {}
         for user_name, user_data in sorted_document.items():
             accessed_time = []
