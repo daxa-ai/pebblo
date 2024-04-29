@@ -198,6 +198,7 @@ class RetrievalData(BaseModel):
     response: AiDataModel
     prompt_time: str
     user: str
+    linked_groups: list[str] = []
 
 
 class RetrievalAppListDetails(BaseModel):

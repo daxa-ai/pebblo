@@ -92,6 +92,7 @@ class Prompt:
             response=response_data,
             prompt_time=self.data.get("prompt_time"),
             user=self.data.get("user"),
+            linked_groups=self.data.get("user_identities"),
         )
 
         logger.debug(
