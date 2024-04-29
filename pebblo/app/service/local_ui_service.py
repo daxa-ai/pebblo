@@ -365,7 +365,7 @@ class AppData:
 
     @staticmethod
     def fetch_last_accessed_time(accessed_time: list) -> str:
-        """Fetching last accessed time"""
+        """Fetching last accessed time per user"""
         try:
             sorted_time = sorted(accessed_time, reverse=True)
             last_accessed_time = sorted_time[0].isoformat()
@@ -377,7 +377,7 @@ class AppData:
             return ""
 
     @staticmethod
-    def get_sorted_users(retrieval_data: dict) -> dict:
+    def get_sorted_users(retrieval_data: list) -> dict:
         """
         This function returns sorted active users per app in sorted descending order
         based on number of times it appeared in retrievals.
@@ -395,7 +395,7 @@ class AppData:
 
         # sorting based on length on retrieval values per documents
         all_sorted_users = sorted(
-            active_users.items(), key=lambda data: (len(data[1]), data[0]), reverse=True
+            active_users.items(), key=lambda kv: (len(kv[1]), kv[0]), reverse=True
         )
 
         # converting sorted tuples to dictionary
@@ -407,7 +407,7 @@ class AppData:
 
         return sorted_active_users
 
-    def get_active_users(self, retrieval_data: dict) -> dict:
+    def get_active_users(self, retrieval_data: list) -> dict:
         """
         This function returns active users per app with its metadata in following format:
         {
@@ -440,7 +440,7 @@ class AppData:
         return list(set(vector_dbs))
 
     @staticmethod
-    def sort_based_on_retrievals(retrieval_data: dict, search_key: str) -> dict:
+    def sort_retrievals(retrieval_data: list, search_key: str) -> dict:
         """
         This function returns data based on search key per app in sorted descending order
         based on number of times it appeared in retrievals.
@@ -472,7 +472,7 @@ class AppData:
 
         return sorted_resp
 
-    def get_all_documents(self, retrieval_data: dict) -> dict:
+    def get_all_documents(self, retrieval_data: list) -> dict:
         """
         This function returns documents per app with its metadata in following format:
         {
@@ -480,7 +480,7 @@ class AppData:
             "last_accessed_time": "last accessed time",
         }
         """
-        sorted_document = self.sort_based_on_retrievals(
+        sorted_document = self.sort_retrievals(
             retrieval_data, "retrieved_from"
         )
         response = {}
@@ -494,10 +494,10 @@ class AppData:
             }
         return response
 
-    def get_all_vector_dbs(self, retrieval_data: dict) -> dict:
+    def get_all_vector_dbs(self, retrieval_data: list) -> dict:
         """
         This function returns vector dbs per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        sorted_vector_dbs = self.sort_based_on_retrievals(retrieval_data, "vector_db")
+        sorted_vector_dbs = self.sort_retrievals(retrieval_data, "vector_db")
         return sorted_vector_dbs
