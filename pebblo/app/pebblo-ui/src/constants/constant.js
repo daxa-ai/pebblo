@@ -900,12 +900,12 @@ let retrievalAppDocumentRetrievalTotal = 0;
 const retrievalAppActiveUsersData = APP_DATA?.activeUsers
   ? Object.keys(APP_DATA?.activeUsers)?.map((activeUser, index) => {
       const data = APP_DATA?.activeUsers[activeUser];
-      retrievalAppUserBasedRetrievalTotal += data?.retrieval?.length || 0;
+      retrievalAppUserBasedRetrievalTotal += data?.retrievals?.length || 0;
       return {
         ...data,
         id: index + 1,
         name: activeUser,
-        retrievalCount: data?.retrieval?.length,
+        retrievalCount: data?.retrievals?.length,
       };
     })
   : [];
@@ -913,12 +913,12 @@ const retrievalAppActiveUsersData = APP_DATA?.activeUsers
 const retrievalAppDocumentData = APP_DATA?.documents
   ? Object.keys(APP_DATA?.documents)?.map((document, index) => {
       const data = APP_DATA?.documents[document];
-      retrievalAppDocumentRetrievalTotal += data?.retrieval?.length || 0;
+      retrievalAppDocumentRetrievalTotal += data?.retrievals?.length || 0;
       return {
         ...data,
         id: index + 1,
         name: document,
-        retrievalCount: data?.retrieval?.length,
+        retrievalCount: data?.retrievals?.length,
       };
     })
   : [];
