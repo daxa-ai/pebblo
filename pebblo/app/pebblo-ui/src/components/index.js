@@ -12,10 +12,11 @@ import Dialog from "./Dialog.js";
 import { ChartCard } from "./chartCard.js";
 import { BubbleChart } from "./bubbleChart.js";
 import { LegendBadge } from "./legendBadge.js";
-import { Chips } from "./chips.js";
+import { ViewMore } from "./viewMore.js";
 import { Navbar } from "./navbar.js";
 import { RetrievalDetails } from "./retrievalDetails.js";
 import { EmptyState } from "./emptyState.js";
+import { ProgressBar } from "./progressBar.js";
 
 export {
   AccordionDetails,
@@ -25,7 +26,6 @@ export {
   Button,
   Card,
   ChartCard,
-  Chips,
   Dialog,
   EmptyState,
   Header,
@@ -33,6 +33,7 @@ export {
   KeyValue,
   LegendBadge,
   Navbar,
+  ProgressBar,
   RetrievalDetails,
   SnippetDetails,
   Tabs,
@@ -41,4 +42,5 @@ export {
   Tbody,
   Thead,
   Td,
+  ViewMore,
 };

@@ -1,17 +1,20 @@
 import { FindingsPanel } from "../components/findingsPanel.js";
 import {
   ApplicationsList,
-  Chips,
+  ViewMore,
   SnippetDetails,
   RetrievalDetails,
+  ProgressBar,
 } from "../components/index.js";
 import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
 import {
   extractTimezone,
+  getDifferenceInDays,
   getFileSize,
   getFormattedDate,
+  getMaxValue,
   getStringOfNItems,
 } from "../util.js";
 import { KEYWORD_MAPPING } from "./keywordMapping.js";
@@ -191,7 +194,7 @@ export const FILES_WITH_FINDINGS_TABLE = [
     label: "Identities",
     field: "authorizedIdentities",
     render: (item) =>
-      Chips({
+      ViewMore({
         list: item?.authorizedIdentities,
         showCount: 1,
         fileName: item?.fileName,
@@ -333,7 +336,7 @@ export const TABLE_DATA_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
     label: "VectorDB",
     field: "vector_dbs",
     render: (item) =>
-      Chips({
+      ViewMore({
         list: item?.vector_dbs,
         showCount: 1,
         fileName: item?.name,
@@ -419,7 +422,7 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     label: "Identities",
     field: "authorizedIdentities ",
     render: (item) =>
-      Chips({
+      ViewMore({
         list: item?.authorizedIdentities,
         showCount: 1,
         fileName: item?.sourceFilePath,
@@ -874,23 +877,141 @@ export const TABS_ARR_FOR_APP_DETAILS_RETRIEVAL = [
       : 0,
     value: 1,
     isCritical: true,
-    disable: true,
-  },
-  {
-    label: "Vector Database",
-    critical: APP_DATA?.vectorDbs ? Object.keys(APP_DATA.vectorDbs)?.length : 0,
-    value: 2,
-    isCritical: true,
-    disable: true,
   },
   {
     label: "Documents",
     critical: APP_DATA?.documents
       ? Object.keys(APP_DATA?.documents)?.length
       : 0,
+    value: 2,
+    isCritical: true,
+  },
+  {
+    label: "Vector Database",
+    critical: APP_DATA?.vectorDbs ? Object.keys(APP_DATA.vectorDbs)?.length : 0,
     value: 3,
     isCritical: true,
     disable: true,
+  },
+];
+
+let retrievalAppUserBasedRetrievalTotal = 0;
+let retrievalAppDocumentRetrievalTotal = 0;
+const retrievalAppActiveUsersData = APP_DATA?.activeUsers
+  ? Object.keys(APP_DATA?.activeUsers)?.map((activeUser, index) => {
+      const data = APP_DATA?.activeUsers[activeUser];
+      retrievalAppUserBasedRetrievalTotal += data?.retrievals?.length || 0;
+      return {
+        ...data,
+        id: index + 1,
+        name: activeUser,
+        retrievalCount: data?.retrievals?.length,
+      };
+    })
+  : [];
+
+const retrievalAppDocumentData = APP_DATA?.documents
+  ? Object.keys(APP_DATA?.documents)?.map((document, index) => {
+      const data = APP_DATA?.documents[document];
+      retrievalAppDocumentRetrievalTotal += data?.retrievals?.length || 0;
+      return {
+        ...data,
+        id: index + 1,
+        name: document,
+        retrievalCount: data?.retrievals?.length,
+      };
+    })
+  : [];
+
+export const TAB_PANEL_FOR_APP_ACTIVE_USERS = [
+  {
+    label: "User",
+    field: "user",
+    align: "start",
+    render: (item) => {
+      return /*html*/ `<div class="flex flex-col gap-1 w-300px">
+        <div class="font-13 text-none">${item?.name}</div>
+      </div>`;
+    },
+  },
+  {
+    label: "Retrievals",
+    field: "retrievals",
+    align: "start",
+    render: (item) =>
+      ProgressBar({
+        value: item?.retrievalCount,
+        progress:
+          (item?.retrievalCount / retrievalAppUserBasedRetrievalTotal) * 100,
+        color: "#526FF3",
+        id: item?.id,
+      }),
+  },
+  {
+    label: "Last Accessed",
+    field: "documents",
+    render: (item) =>
+      item?.last_accessed_time
+        ? getDifferenceInDays(new Date(), new Date(item?.last_accessed_time))
+        : "-",
+    align: "start",
+  },
+  {
+    label: "Linked Groups",
+    field: "linkedGroups",
+    render: (item) =>
+      ViewMore({
+        list: item?.linked_groups,
+        showCount: 2,
+        fileName: "",
+        id: item?.id,
+        tableCol: GROUP_TABLE_COL,
+        tableData: item?.linked_groups?.map((group) => ({
+          group,
+        })),
+        dialogTitle: `<div class="flex gap-4 items-center">
+        <div>Groups (${item?.linked_groups?.length})</div>
+      </div>`,
+      }),
+    align: "start",
+  },
+];
+
+export const TAB_PANEL_FOR_APP_DOCUMENTS = [
+  {
+    label: "Document Name",
+    field: "name",
+    align: "start",
+    isTooltip: true,
+    tooltipTitle: (item) => item.name,
+    tooltipWidth: "fit",
+    render: (item) => {
+      return /*html*/ `<div class="flex flex-col gap-1 w-400px">
+        <div class="font-13 text-none">${item?.name}</div>
+      </div>`;
+    },
+  },
+  {
+    label: "Retrievals",
+    field: "retrievals",
+    align: "start",
+    render: (item) =>
+      ProgressBar({
+        value: item?.retrievalCount,
+        progress:
+          (item?.retrievalCount / retrievalAppDocumentRetrievalTotal) * 100,
+        color: "#526FF3",
+        id: item?.id,
+      }),
+  },
+  {
+    label: "Last Accessed",
+    field: "lastAccessed",
+    render: (item) =>
+      item?.last_accessed_time
+        ? getDifferenceInDays(new Date(), new Date(item?.last_accessed_time))
+        : "-",
+    align: "start",
   },
 ];
 
@@ -904,6 +1025,32 @@ export const TAB_PANEL_ARR_APP_DETAILS_RETRIEVAL = [
       error: !APP_DATA?.retrievals?.length ? "NO_FINDINGS_EMPTY_STATE" : null,
     },
     component: RetrievalDetails,
+  },
+  {
+    value: {
+      title: `Users (${
+        APP_DATA?.activeUsers ? Object.keys(APP_DATA?.activeUsers)?.length : 0
+      })`,
+      tableCol: TAB_PANEL_FOR_APP_ACTIVE_USERS,
+      tableData: APP_DATA?.activeUsers ? retrievalAppActiveUsersData : [],
+      searchField: ["labelName"],
+      inputPlaceholder: "Search",
+      error: !APP_DATA?.retrievals?.length ? "NO_FINDINGS_EMPTY_STATE" : null,
+    },
+    component: ApplicationsList,
+  },
+  {
+    value: {
+      title: `Documents (${
+        APP_DATA?.documents ? Object.keys(APP_DATA?.documents)?.length : 0
+      })`,
+      tableCol: TAB_PANEL_FOR_APP_DOCUMENTS,
+      tableData: APP_DATA?.documents ? retrievalAppDocumentData : [],
+      searchField: ["labelName"],
+      inputPlaceholder: "Search",
+      error: !APP_DATA?.retrievals?.length ? "NO_FINDINGS_EMPTY_STATE" : null,
+    },
+    component: ApplicationsList,
   },
 ];
 
@@ -965,6 +1112,15 @@ export const VECTOR_DB_TABLE_COL = [
     label: "Vector DB",
     field: "vector_db",
     align: "start",
+  },
+];
+
+export const GROUP_TABLE_COL = [
+  {
+    label: "Group",
+    field: "group",
+    align: "start",
+    render: (item) => `<div class="text-none">${item?.group || "-"}</div>`,
   },
 ];
 
