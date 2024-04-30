@@ -113,7 +113,7 @@ def test_fetch_chain_details(discovery):
             "model": {"name": "text-davinci-003", "vendor": "openai"},
         }
     ]
-    output = discovery._fetch_chain_details()
+    output = discovery._fetch_chain_details(app_metadata=None)
     assert output == expected_output
 
 
@@ -209,6 +209,8 @@ def test_create_ai_apps_model(discovery):
                 "model": {"name": "text-davinci-003", "vendor": "openai"},
             }
         ],
+        "retrievals": []
     }
-    output = discovery._create_ai_apps_model(instance_details, chain_details)
+    retrievals_details = []
+    output = discovery._create_ai_apps_model(instance_details, chain_details, retrievals_details)
     assert output == expected_output

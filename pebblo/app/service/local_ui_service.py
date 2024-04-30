@@ -359,7 +359,9 @@ class AppData:
         """Adding retrieval data for app listing per users"""
         for user_name, data in active_users.items():
             if user_name in self.retrieval_active_users.keys():
-                self.retrieval_active_users[user_name].extend(data)
+                self.retrieval_active_users[user_name].get("retrievals", []).extend(
+                    data.get("retrievals", [])
+                )
             else:
                 self.retrieval_active_users[user_name] = data
 
@@ -448,7 +450,6 @@ class AppData:
         """
         resp: dict = {}
         sorted_resp: dict = {}
-
         # fetch data wise retrievals
         for data in retrieval_data:
             data_context = data.get("context")
