@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict
+from typing import List
 from unittest.mock import MagicMock
 
 import pytest
@@ -212,7 +212,7 @@ def test_create_ai_apps_model(discovery):
         ],
         "retrievals": [],
     }
-    retrievals_details: Dict = {}
+    retrievals_details: List = []
     output = discovery._create_ai_apps_model(
         instance_details, chain_details, retrievals_details
     )
