@@ -186,7 +186,7 @@ def test_create_ai_apps_model(discovery):
         },
         "framework": {"name": "langchain", "version": "0.1.45"},
         "lastUsed": datetime.datetime(2024, 1, 1, 0, 0, 5),
-        "pebbloServerVersion": "0.1.14",
+        "pebbloServerVersion": "0.1.15",
         "pebbloClientVersion": "0.1.1",
         "chains": [
             {
