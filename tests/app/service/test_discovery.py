@@ -1,4 +1,5 @@
 import datetime
+from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
@@ -209,8 +210,10 @@ def test_create_ai_apps_model(discovery):
                 "model": {"name": "text-davinci-003", "vendor": "openai"},
             }
         ],
-        "retrievals": []
+        "retrievals": [],
     }
-    retrievals_details = []
-    output = discovery._create_ai_apps_model(instance_details, chain_details, retrievals_details)
+    retrievals_details: Dict = {}
+    output = discovery._create_ai_apps_model(
+        instance_details, chain_details, retrievals_details
+    )
     assert output == expected_output
