@@ -956,6 +956,25 @@ export const TAB_PANEL_FOR_APP_ACTIVE_USERS = [
         : "-",
     align: "start",
   },
+  {
+    label: "Linked Groups",
+    field: "linkedGroups",
+    render: (item) =>
+      ViewMore({
+        list: item?.linked_groups,
+        showCount: 2,
+        fileName: "",
+        id: item?.id,
+        tableCol: GROUP_TABLE_COL,
+        tableData: item?.linked_groups?.map((group) => ({
+          group,
+        })),
+        dialogTitle: `<div class="flex gap-4 items-center">
+        <div>Groups (${item?.linked_groups?.length})</div>
+      </div>`,
+      }),
+    align: "start",
+  },
 ];
 
 export const TAB_PANEL_FOR_APP_DOCUMENTS = [
@@ -968,7 +987,7 @@ export const TAB_PANEL_FOR_APP_DOCUMENTS = [
     tooltipWidth: "fit",
     render: (item) => {
       return /*html*/ `<div class="flex flex-col gap-1 w-400px">
-        <div class="font-13">${item?.name}</div>
+        <div class="font-13 text-none">${item?.name}</div>
       </div>`;
     },
   },
@@ -1093,6 +1112,15 @@ export const VECTOR_DB_TABLE_COL = [
     label: "Vector DB",
     field: "vector_db",
     align: "start",
+  },
+];
+
+export const GROUP_TABLE_COL = [
+  {
+    label: "Group",
+    field: "group",
+    align: "start",
+    render: (item) => `<div class="text-none">${item?.group || "-"}</div>`,
   },
 ];
 
