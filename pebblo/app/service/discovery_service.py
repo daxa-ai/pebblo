@@ -45,7 +45,9 @@ class AppDiscover:
         """
         return datetime.now()
 
-    def _create_ai_apps_model(self, instance_details, chain_details):
+    def _create_ai_apps_model(
+        self, instance_details, chain_details, retrievals_details
+    ):
         """
         Create an AI App Model and return the corresponding model object
         """
@@ -68,6 +70,7 @@ class AppDiscover:
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=self.data.get("plugin_version", ""),
             chains=chain_details,
+            retrievals=retrievals_details,
         )
         logger.debug(
             f"AI_APPS [{self.application_name}]: AiApps Details: {ai_apps_model.dict()}"
@@ -99,17 +102,13 @@ class AppDiscover:
         )
         return instance_details_model
 
-    def _fetch_chain_details(self) -> list[Chain]:
+    def _fetch_chain_details(self, app_metadata) -> list[Chain]:
         """
         Retrieve chain details from input data and return its corresponding model object.
         """
         # TODO: Discussion on the uniqueness of chains is not done yet,
         #  so for now we are appending chain to existing chains in the file for this app.
-        app_metadata = self._read_file(
-            f"{CacheDir.HOME_DIR.value}/"
-            f"{self.application_name}"
-            f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
-        )
+
         chains = list()
 
         if app_metadata:
@@ -148,6 +147,23 @@ class AppDiscover:
 
         logger.debug(f"Application Name [{self.application_name}]: Chains: {chains}")
         return chains
+
+    def _fetch_retrievals_details(self, app_metadata) -> list:
+        """
+        Retrieve existing retrievals details from metadata file and append the new retrieval details
+        """
+
+        retrievals_details = list()
+
+        if app_metadata:
+            retrievals_details = app_metadata.get("retrievals", [])
+            logger.debug(f"Existing retrieval details : {retrievals_details}")
+
+        input_retrievals_details = self.data.get("retrievals", [])
+        logger.debug(f"Input retrievals : {input_retrievals_details}")
+        retrievals_details.extend(input_retrievals_details)
+
+        return retrievals_details
 
     @staticmethod
     def _write_file_content_to_path(file_content, file_path):
@@ -225,6 +241,9 @@ class AppDiscover:
         Process App discovery Request. This handles discovery for loader as well as retrieval type applications.
         """
         lock_file_path = ""
+        chain_details = []
+        retrievals_details = []
+
         try:
             logger.debug("AI App discovery request processing started")
             logger.debug(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
@@ -255,15 +274,24 @@ class AppDiscover:
                 )
                 self._upsert_metadata_file()
 
+                # It's a Retrieval call, Fetching chain & retrievals details
+                app_metadata = self._read_file(file_path=file_path)
+
+                # Get chain details
+                chain_details = self._fetch_chain_details(app_metadata)
+
+                # get retrievals details
+                retrievals_details = self._fetch_retrievals_details(app_metadata)
+
             acquire_lock(lock_file_path)
+
             # Get instance details
             instance_details = self._fetch_runtime_instance_details()
 
-            # Get chain details
-            chain_details = self._fetch_chain_details()
-
             # Create AiApps Model
-            ai_apps = self._create_ai_apps_model(instance_details, chain_details)
+            ai_apps = self._create_ai_apps_model(
+                instance_details, chain_details, retrievals_details
+            )
 
             # Write file to metadata location
             self._write_file_content_to_path(ai_apps, file_path)

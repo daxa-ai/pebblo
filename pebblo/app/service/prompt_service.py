@@ -151,13 +151,13 @@ class Prompt:
             if not app_metadata_content:
                 app_metadata_content = {
                     "name": self.application_name,
-                    "retrieval": [retrieval_data],
+                    "retrievals": [retrieval_data],
                 }
             else:  # Updating retrieval data to file
-                if "retrieval" in app_metadata_content.keys():
-                    app_metadata_content.get("retrieval").append(retrieval_data)
+                if "retrievals" in app_metadata_content.keys():
+                    app_metadata_content.get("retrievals").append(retrieval_data)
                 else:
-                    app_metadata_content["retrieval"] = [retrieval_data]
+                    app_metadata_content["retrievals"] = [retrieval_data]
 
             # Writing to app_metadata file
             self._write_file_content_to_path(

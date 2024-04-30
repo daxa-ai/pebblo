@@ -135,13 +135,13 @@ class AppData:
             return
 
         # fetch total retrievals
-        for retrieval in app_metadata_content.get("retrieval", []):
+        for retrieval in app_metadata_content.get("retrievals", []):
             retrieval_data = {"name": app_json.get("name")}
             retrieval_data.update(retrieval)
             self.total_retrievals.append(retrieval_data)
 
         # fetch active users per app
-        active_users = self.get_active_users(app_metadata_content.get("retrieval", []))
+        active_users = self.get_active_users(app_metadata_content.get("retrievals", []))
         self.add_accumulate_active_users(active_users)
 
         # fetch vector dbs per app
@@ -149,12 +149,12 @@ class AppData:
         self.retrieval_vectordbs.extend(vector_dbs)
 
         # fetch documents name per app
-        documents = self.get_all_documents(app_metadata_content.get("retrieval", []))
+        documents = self.get_all_documents(app_metadata_content.get("retrievals", []))
 
         app_details = RetrievalAppListDetails(
             name=app_json.get("name"),
             owner=app_metadata_content.get("owner"),
-            retrievals=app_metadata_content.get("retrieval", []),
+            retrievals=app_metadata_content.get("retrievals", []),
             active_users=list(active_users.keys()),
             vector_dbs=vector_dbs,
             documents=list(documents.keys()),
@@ -334,7 +334,7 @@ class AppData:
         return None, None
 
     def get_retrieval_app_details(self, app_content):
-        retrieval_data = app_content.get("retrieval", [])
+        retrieval_data = app_content.get("retrievals", [])
 
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
@@ -359,7 +359,9 @@ class AppData:
         """Adding retrieval data for app listing per users"""
         for user_name, data in active_users.items():
             if user_name in self.retrieval_active_users.keys():
-                self.retrieval_active_users[user_name].extend(data)
+                self.retrieval_active_users[user_name].get("retrievals", []).extend(
+                    data.get("retrievals", [])
+                )
             else:
                 self.retrieval_active_users[user_name] = data
 
@@ -426,7 +428,7 @@ class AppData:
                 if data.get("linked_groups"):
                     user_groups.extend(data.get("linked_groups"))
             response[user_name] = {
-                "retrieval": user_data,
+                "retrievals": user_data,
                 "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
                 "linked_groups": list(set(user_groups)),
             }
@@ -448,7 +450,6 @@ class AppData:
         """
         resp: dict = {}
         sorted_resp: dict = {}
-
         # fetch data wise retrievals
         for data in retrieval_data:
             data_context = data.get("context")
@@ -488,7 +489,7 @@ class AppData:
             for data in user_data:
                 accessed_time.append(parser.parse(data.get("prompt_time")))
             response[user_name] = {
-                "retrieval": user_data,
+                "retrievals": user_data,
                 "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
             }
         return response
