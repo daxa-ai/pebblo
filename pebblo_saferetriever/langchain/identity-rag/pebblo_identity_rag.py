@@ -57,6 +57,9 @@ class PebbloIdentityRAG:
         """
         return PebbloRetrievalQA.from_chain_type(
             llm=self.llm,
+            app_name=self.app_name,
+            owner="Joe Smith",
+            description="Identity enabled filtering using PebbloSafeLoader, and PebbloRetrievalQA",
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
             verbose=True,
