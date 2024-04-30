@@ -2,8 +2,8 @@ from typing import List, Optional
 
 from dotenv import load_dotenv
 from google_auth import get_authorized_identities
-from langchain.chains import PebbloRetrievalQA
-from langchain.chains.pebblo_retrieval.models import (
+from langchain_community.chains import PebbloRetrievalQA
+from langchain_community.chains.pebblo_retrieval.models import (
     AuthContext,
     ChainInput,
     SemanticContext,
@@ -107,7 +107,7 @@ class SafeRetrieverSemanticRAG:
         entities_to_deny: Optional[List[str]] = None,
     ):
         auth_context = {
-            "username": user_email,
+            "user_id": user_email,
             "authorized_identities": auth_identifiers,
         }
         auth_context = AuthContext(**auth_context)

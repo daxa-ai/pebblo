@@ -1,8 +1,11 @@
 # Fill-in OPENAI_API_KEY in .env file in this directory before proceeding
 from dotenv import load_dotenv
 from google_auth import get_authorized_identities
-from langchain.chains import PebbloRetrievalQA
-from langchain.chains.pebblo_retrieval.models import AuthContext, ChainInput
+from langchain_community.chains import PebbloRetrievalQA
+from langchain_community.chains.pebblo_retrieval.models import (
+    AuthContext,
+    ChainInput,
+)
 from langchain_community.document_loaders import UnstructuredFileIOLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
@@ -71,7 +74,7 @@ class PebbloIdentityRAG:
 
     def ask(self, question: str, user_email: str, auth_identifiers: list):
         auth_context = {
-            "username": user_email,
+            "user_id": user_email,
             "authorized_identities": auth_identifiers,
         }
         auth_context = AuthContext(**auth_context)

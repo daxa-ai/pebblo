@@ -1,8 +1,11 @@
 from typing import List, Optional
 
 from dotenv import load_dotenv
-from langchain.chains import PebbloRetrievalQA
-from langchain.chains.pebblo_retrieval.models import ChainInput, SemanticContext
+from langchain_community.chains import PebbloRetrievalQA
+from langchain_community.chains.pebblo_retrieval.models import (
+    ChainInput,
+    SemanticContext,
+)
 from langchain_community.document_loaders import UnstructuredFileIOLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
