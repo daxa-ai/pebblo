@@ -41,4 +41,5 @@ PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
 $ python3 semantic_rag.py
 ```
 
-5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-sematic-rag/pebblo_report.pdf` file path on the system where `Pebblo Server` is running.
+5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-identity-n-semantic-loader/pebblo_report.pdf` file path on the system where `Pebblo Server`
+   is running.

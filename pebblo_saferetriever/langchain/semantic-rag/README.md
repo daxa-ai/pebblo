@@ -32,7 +32,8 @@ OPENAI_API_KEY=""
 PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
 ```
 
-> Note: You need to set `PEBBLO_CLASSIFIER_URL` only if your `Pebblo Server` is running somewhere other than the default URL of `http://localhost:8000`.
+> Note: You need to set `PEBBLO_CLASSIFIER_URL` only if your `Pebblo Server` is running somewhere other than the default URL
+> of `http://localhost:8000`.
 
 4. Run langchain sample app Pebblo SafeLoader and Pebblo SafeRetriever
 
@@ -40,4 +41,4 @@ PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
 $ python3 pebblo_semantic_rag.py
 ```
 
-5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-sematic-rag/pebblo_report.pdf` file path on the system where `Pebblo Server` is running.
+5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-sematic-loader/pebblo_report.pdf` file path on the system where `Pebblo Server` is running.

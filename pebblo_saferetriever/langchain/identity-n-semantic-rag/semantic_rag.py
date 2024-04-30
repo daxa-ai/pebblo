@@ -30,7 +30,8 @@ class SafeRetrieverSemanticRAG:
     """
 
     def __init__(self, folder_id: str, collection_name: str):
-        self.app_name = "pebblo-sematic-rag"
+        self.loader_app_name = "pebblo-identity-n-semantic-loader"
+        self.retrieval_app_name = "pebblo-identity-n-semantic-retriever"
         self.collection_name = collection_name
 
         # Load documents
@@ -44,7 +45,7 @@ class SafeRetrieverSemanticRAG:
                 file_loader_kwargs={"mode": "elements"},
                 load_auth=True,
             ),
-            name=self.app_name,  # App name (Mandatory)
+            name=self.loader_app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Semantic filtering using PebbloSafeLoader, and PebbloRetrievalQA ",  # Description (Optional)
             load_semantic=True,
@@ -80,7 +81,7 @@ class SafeRetrieverSemanticRAG:
         """
         return PebbloRetrievalQA.from_chain_type(
             llm=self.llm,
-            app_name=self.app_name,
+            app_name=self.retrieval_app_name,
             owner="Joe Smith",
             description="Identity and Semantic filtering using PebbloSafeLoader, and PebbloRetrievalQA",
             chain_type="stuff",
