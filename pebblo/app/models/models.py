@@ -92,6 +92,21 @@ class Chain(BaseModel):
     model: Optional[AiModel]
 
 
+class RetrievalContext(BaseModel):
+    retrieved_from: str
+    doc: str
+    vector_db: str
+
+
+class RetrievalData(BaseModel):
+    context: List[RetrievalContext]
+    prompt: AiDataModel
+    response: AiDataModel
+    prompt_time: str
+    user: str
+    linked_groups: list[str] = []
+
+
 class AiApp(BaseModel):
     metadata: Metadata
     name: str
@@ -104,6 +119,7 @@ class AiApp(BaseModel):
     pebbloServerVersion: Optional[str]
     pebbloClientVersion: Optional[str]
     chains: Optional[List[Chain]]
+    retrievals: Optional[List[RetrievalData]] = []
 
 
 class Summary(BaseModel):
@@ -184,21 +200,6 @@ class LoaderAppModel(BaseModel):
     findings: list
     documentsWithFindings: list
     dataSource: list
-
-
-class RetrievalContext(BaseModel):
-    retrieved_from: str
-    doc: str
-    vector_db: str
-
-
-class RetrievalData(BaseModel):
-    context: List[RetrievalContext]
-    prompt: AiDataModel
-    response: AiDataModel
-    prompt_time: str
-    user: str
-    linked_groups: list[str] = []
 
 
 class RetrievalAppListDetails(BaseModel):
