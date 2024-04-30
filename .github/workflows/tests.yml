@@ -17,6 +17,7 @@ on:
     paths:
       - "pebblo/**/*.py"
       - "pebblo/**/*.txt"
+      - "tests/**/*.py"
 
 jobs:
   
