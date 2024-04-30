@@ -16,9 +16,11 @@ load_dotenv()
 
 
 class PebbloIdentityRAGSharePoint:
-    def __init__(self, folder_id: str, folder_path: str, collection_name: str):
+    def __init__(self, folder_id: str, folder_path: str, file_id: str, site_id: str, collection_name: str):
         self.app_name = "pebblo-identity-rag-1"
         self.folder_id = folder_id
+        self.file_id = file_id
+        self.site_id = site_id
         self.folder_path = folder_path
         self.collection_name = collection_name
 
@@ -28,7 +30,9 @@ class PebbloIdentityRAGSharePoint:
             SharePointLoader(
                 document_library_id=self.folder_id, 
                 folder_path=self.folder_path, 
-                auth_with_token=True
+                file_id=self.file_id, 
+                site_id=self.site_id, 
+                auth_with_token=False
             ),
             name=self.app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
@@ -88,9 +92,12 @@ if __name__ == "__main__":
     ingestion_user_email_address = input("email address : ")
     # ingestion_user_service_account_path = input("service-account.json path : ")
     input_folder_id = input("Folder id : ")
-    imput_folder_path = input("Folder path : ")
+    input_folder_path = input("Folder path : ")
+    input_file_id = input("File id : ")
+    input_site_id = input("Site id : ")
+    input_folder_path = input("Folder path : ")
     rag_app = PebbloIdentityRAGSharePoint(
-        folder_id=input_folder_id, folder_path=imput_folder_path, collection_name=input_collection_name
+        folder_id=input_folder_id, folder_path=input_folder_path, file_id=input_file_id, site_id=input_site_id, collection_name=input_collection_name
     )
 
     while True:
