@@ -3,12 +3,6 @@
 > **Note**  
 > Please note that Pebblo requires Python version 3.9 or above to function optimally.
 
-## Using `pip`
-
-```bash
-pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
-```
-
 ## Using Docker 
 
 ```bash
@@ -27,7 +21,28 @@ docker run \
         --config /opt/pebblo/config/config.yaml
 ```
 
-# Run Pebblo server
+## Using Kubernetes
+Apply below k8s manifiest files in sequence to run the pebblo server on k8s cluster. 
+```bash
+kubectl apply -f deploy/k8s-deploy/config.yaml
+
+kubectl apply -f deploy/k8s-deploy/pvc.yaml
+
+kubectl apply -f deploy/k8s-deploy/deploy.yaml
+
+kubectl apply -f deploy/k8s-deploy/service.yaml
+```
+Use `kubectl logs <pod_name>` to get the logs from pebblo server. 
+
+**Note-** Setup the nginx ingress controller to expose the pebblo server.
+
+## Using `pip`
+
+```bash
+pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
+```
+
+### Run Pebblo server
 
 ```
 pebblo

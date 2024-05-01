@@ -1,0 +1,17 @@
+---
+# Source: k8s/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: pebblo-server
+  name: pebblo-server
+spec:
+  type: ClusterIP
+  selector:
+    app: pebblo-server
+  ports:
+  - name: http-internal
+    port: 8000
+    protocol: TCP
+    targetPort: 8000

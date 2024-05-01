@@ -30,7 +30,7 @@ jobs:
           IMAGE_TAG_SUFFIX: ${{ env.VERSION }}
           PEBBLO_VERSION: ${{ env.VERSION }}
         with:
-          workdir: docker
+          workdir: deploy/docker
           targets: base
           push: true
      
