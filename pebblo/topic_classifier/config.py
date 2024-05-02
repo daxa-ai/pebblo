@@ -9,6 +9,9 @@ TOPIC_CONFIDENCE_SCORE = 0.60
 # Minimum length of input text in characters
 TOPIC_MIN_TEXT_LENGTH = 16
 
+# Topics to exclude from the classification results
+TOPICS_TO_EXCLUDE = ["NORMAL_TEXT"]
+
 # Model paths
 TOKENIZER_PATH = "daxa-ai/pebblo-classifier"
 CLASSIFIER_PATH = "daxa-ai/pebblo-classifier"
