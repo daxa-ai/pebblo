@@ -61,7 +61,11 @@ export function RetrievalDetails(props) {
                    content: item?.context[0]?.doc,
                    subText: contextInfo,
                  })}
-       
+                 ${KeyValueBlock({
+                   label: "Response",
+                   content: item?.response?.data,
+                   subText: "",
+                 })}
                  <div class="w-fit flex gap-2 border-grey-20 items-center pt-3 pb-3 pl-2 pr-2 w-auto inter">
                  <div class="font-12 semi-bold">Retrieved From: </div>
                  <div class="font-13">${item?.context[0]?.retrieved_from}</div>
