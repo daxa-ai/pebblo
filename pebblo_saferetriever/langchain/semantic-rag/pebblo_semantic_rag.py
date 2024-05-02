@@ -1,8 +1,11 @@
 from typing import List, Optional
 
 from dotenv import load_dotenv
-from langchain.chains import PebbloRetrievalQA
-from langchain.chains.pebblo_retrieval.models import ChainInput, SemanticContext
+from langchain_community.chains import PebbloRetrievalQA
+from langchain_community.chains.pebblo_retrieval.models import (
+    ChainInput,
+    SemanticContext,
+)
 from langchain_community.document_loaders import UnstructuredFileIOLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
@@ -25,7 +28,8 @@ class PebbloSemanticRAG:
     """
 
     def __init__(self, folder_id: str, collection_name: str):
-        self.app_name = "pebblo-sematic-rag"
+        self.loader_app_name = "pebblo-sematic-loader"
+        self.retrieval_app_name = "pebblo-sematic-retriever"
         self.collection_name = collection_name
 
         # Load documents
@@ -38,7 +42,7 @@ class PebbloSemanticRAG:
                 file_loader_cls=UnstructuredFileIOLoader,
                 file_loader_kwargs={"mode": "elements"},
             ),
-            name=self.app_name,  # App name (Mandatory)
+            name=self.loader_app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Semantic filtering using PebbloSafeLoader and PebbloRetrievalQA ",  # Description (Optional)
             load_semantic=True,
@@ -73,6 +77,9 @@ class PebbloSemanticRAG:
         """
         return PebbloRetrievalQA.from_chain_type(
             llm=self.llm,
+            app_name=self.retrieval_app_name,
+            owner="Joe Smith",
+            description="Semantic filtering using PebbloSafeLoader, and PebbloRetrievalQA",
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
             verbose=True,

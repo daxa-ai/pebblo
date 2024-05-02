@@ -2,8 +2,8 @@ from typing import List, Optional
 
 from dotenv import load_dotenv
 from google_auth import get_authorized_identities
-from langchain.chains import PebbloRetrievalQA
-from langchain.chains.pebblo_retrieval.models import (
+from langchain_community.chains import PebbloRetrievalQA
+from langchain_community.chains.pebblo_retrieval.models import (
     AuthContext,
     ChainInput,
     SemanticContext,
@@ -30,7 +30,8 @@ class SafeRetrieverSemanticRAG:
     """
 
     def __init__(self, folder_id: str, collection_name: str):
-        self.app_name = "pebblo-sematic-rag"
+        self.loader_app_name = "pebblo-identity-n-semantic-loader"
+        self.retrieval_app_name = "pebblo-identity-n-semantic-retriever"
         self.collection_name = collection_name
 
         # Load documents
@@ -44,7 +45,7 @@ class SafeRetrieverSemanticRAG:
                 file_loader_kwargs={"mode": "elements"},
                 load_auth=True,
             ),
-            name=self.app_name,  # App name (Mandatory)
+            name=self.loader_app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Semantic filtering using PebbloSafeLoader, and PebbloRetrievalQA ",  # Description (Optional)
             load_semantic=True,
@@ -80,6 +81,9 @@ class SafeRetrieverSemanticRAG:
         """
         return PebbloRetrievalQA.from_chain_type(
             llm=self.llm,
+            app_name=self.retrieval_app_name,
+            owner="Joe Smith",
+            description="Identity and Semantic filtering using PebbloSafeLoader, and PebbloRetrievalQA",
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
             verbose=True,
@@ -107,7 +111,7 @@ class SafeRetrieverSemanticRAG:
         entities_to_deny: Optional[List[str]] = None,
     ):
         auth_context = {
-            "username": user_email,
+            "user_id": user_email,
             "authorized_identities": auth_identifiers,
         }
         auth_context = AuthContext(**auth_context)

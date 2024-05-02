@@ -1,8 +1,11 @@
 # Fill-in OPENAI_API_KEY in .env file in this directory before proceeding
 from dotenv import load_dotenv
 from google_auth import get_authorized_identities
-from langchain.chains import PebbloRetrievalQA
-from langchain.chains.pebblo_retrieval.models import AuthContext, ChainInput
+from langchain_community.chains import PebbloRetrievalQA
+from langchain_community.chains.pebblo_retrieval.models import (
+    AuthContext,
+    ChainInput,
+)
 from langchain_community.document_loaders import UnstructuredFileIOLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
@@ -15,7 +18,8 @@ load_dotenv()
 
 class PebbloIdentityRAG:
     def __init__(self, folder_id: str, collection_name: str):
-        self.app_name = "pebblo-identity-rag-1"
+        self.loader_app_name = "pebblo-identity-loader"
+        self.retrieval_app_name = "pebblo-identity-retriever"
         self.collection_name = collection_name
 
         # Load documents
@@ -29,7 +33,7 @@ class PebbloIdentityRAG:
                 file_loader_kwargs={"mode": "elements"},
                 load_auth=True,
             ),
-            name=self.app_name,  # App name (Mandatory)
+            name=self.loader_app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Identity enabled SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
         )
@@ -54,6 +58,9 @@ class PebbloIdentityRAG:
         """
         return PebbloRetrievalQA.from_chain_type(
             llm=self.llm,
+            app_name=self.retrieval_app_name,
+            owner="Joe Smith",
+            description="Identity enabled filtering using PebbloSafeLoader, and PebbloRetrievalQA",
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
             verbose=True,
@@ -71,7 +78,7 @@ class PebbloIdentityRAG:
 
     def ask(self, question: str, user_email: str, auth_identifiers: list):
         auth_context = {
-            "username": user_email,
+            "user_id": user_email,
             "authorized_identities": auth_identifiers,
         }
         auth_context = AuthContext(**auth_context)

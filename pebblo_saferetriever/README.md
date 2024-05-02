@@ -38,6 +38,9 @@ Here is the sample code for `Pebblo SafeRetriever` with `authorized_groups` from
         
         retrieval_chain = PebbloRetrievalQA.from_chain_type(
             llm=self.llm,
+            app_name=self.app_name,
+            owner="Joe Smith",
+            description="Identity and Semantic filtering using PebbloSafeLoader, and PebbloRetrievalQA",
             chain_type="stuff",
             retriever=self.vectordb.as_retriever(),
             verbose=True,
