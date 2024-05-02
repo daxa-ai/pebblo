@@ -1,4 +1,4 @@
-import { getFormattedDate } from "../util.js";
+import { capitalizeFirstLetter, getFormattedDate } from "../util.js";
 import {
   AccordionSummary,
   AccordionDetails,
@@ -75,7 +75,7 @@ export function AppDetailsPage() {
              <img src="${MEDIA_URL}/static/langchain-icon.png" alt="App icon" />
            </div>
            <div class="flex flex-col gap-1 inter surface-10">
-             <div class="font-24">${APP_DATA?.name}</div>
+             <div class="font-24">${capitalizeFirstLetter(APP_DATA?.name)}</div>
              <div class="font-12 flex gap-3">
           
                ${AccordionSummary({ children: "Instance Details", id: 1 })}
