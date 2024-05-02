@@ -4,18 +4,24 @@ import { appRoutes } from "./routes.js";
 import {
   APP_DETAILS_ROUTE,
   DASHBOARD_ROUTE,
+  SAFE_RETRIEVAL_APP_ROUTE,
+  SAFE_RETRIEVAL_ROUTE,
 } from "./constants/routesConstant.js";
 import { LeftArrowIcon } from "./icons/index.js";
 
 export function App() {
   const UI = appRoutes();
   const button =
-    window.location.pathname === APP_DETAILS_ROUTE
+    window.location.pathname === APP_DETAILS_ROUTE ||
+    window.location.pathname === SAFE_RETRIEVAL_APP_ROUTE
       ? Button({
           variant: "text",
           btnText: "Back",
           startIcon: LeftArrowIcon({ color: "white" }),
-          href: DASHBOARD_ROUTE,
+          href:
+            window.location.pathname === SAFE_RETRIEVAL_APP_ROUTE
+              ? SAFE_RETRIEVAL_ROUTE
+              : DASHBOARD_ROUTE,
           color: "white",
         })
       : "";

@@ -115,3 +115,36 @@ export const getFileSize = (size) => {
   }
   return "-";
 };
+
+export const getStringOfNItems = (arr, count) => {
+  if (arr) {
+    if (arr?.length > count) {
+      return arr.splice(0, count).join(", ");
+    }
+    return arr?.join(", ");
+  }
+};
+
+export const getMaxValue = (propName, array) => {
+  return array?.length > 0
+    ? Math.max(...array?.map((arrItem) => arrItem[propName]))
+    : 1;
+};
+
+export const getDifferenceInDays = (date1, date2) => {
+  // Convert both dates to milliseconds
+  const differenceMs = Math.abs(date2.getTime() - date1.getTime());
+
+  // Convert milliseconds to days
+  const hours = Math.floor(differenceMs / (1000 * 60 * 60));
+  const days = Math.floor(hours / 24);
+
+  if (days < 1) {
+    if (hours < 1) {
+      const minutes = Math.floor((differenceMs / (1000 * 60)) % 60);
+      return `${minutes} min Ago`;
+    }
+    return `${hours}h Ago`;
+  }
+  return `${days}d Ago`;
+};

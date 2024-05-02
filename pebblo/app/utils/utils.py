@@ -1,7 +1,9 @@
 import json
+import time
 from json import JSONEncoder, dump
-from os import getcwd, makedirs, path
+from os import getcwd, makedirs, path, remove
 
+from pebblo.app.exceptions.exception_handler import FieldValidationException
 from pebblo.app.libs.logger import logger
 
 
@@ -116,7 +118,7 @@ def update_data_source(data, app_name, findings_entities, findings_topics):
     Update the 'appName' key in the given data dictionary with the provided app_name.
     """
     try:
-        updated_data = dict()
+        updated_data: dict = dict()
         if not data:
             return updated_data
 
@@ -203,3 +205,50 @@ def get_pebblo_server_version():
 
     __version__ = importlib.metadata.version("pebblo")
     return __version__
+
+
+def acquire_lock(lock_file_path: str):
+    """
+    Acquire lock using given lock file. It will be busy wait, polling after every 2 seconds.
+    """
+    sleep_time = 2
+    while True:
+        try:
+            full_lock_file_path = get_full_path(lock_file_path)
+
+            # Extract directory path from the lock file path
+            lock_dir = path.dirname(full_lock_file_path)
+
+            # Create directory if it doesn't exist
+            if not path.exists(lock_dir):
+                makedirs(lock_dir)
+
+            # Try to open the file in write mode exclusively.
+            # This will create the file if it doesn't exist and fail if it does.
+            with open(full_lock_file_path, "x"):
+                # If successful, break out of the loop
+                logger.debug(f"Lock Acquired. {full_lock_file_path}")
+                break
+        except FileExistsError:
+            # If the file already exists, wait for a short while and try again
+            logger.debug(f"Sleeping for {sleep_time} seconds")
+            time.sleep(sleep_time)
+
+
+def release_lock(lock_file_path: str):
+    """
+    Release lock for given lock file.
+    """
+    # Simply delete the lock file to release the lock
+    try:
+        full_lock_file_path = get_full_path(lock_file_path)
+        remove(full_lock_file_path)
+        logger.debug(f"Lock Released. {full_lock_file_path}")
+    except FileNotFoundError:
+        pass  # The lock file doesn't exist, nothing to release
+
+
+def fields_validator(data, mandatory_fields):
+    for field in mandatory_fields:
+        if field not in data.keys() or data[field] is None:
+            raise FieldValidationException(field)

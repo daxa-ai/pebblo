@@ -34,7 +34,7 @@ function Tabs(tabsArr, tabPanel) {
     tabPanelComponent = tabPanel[tabValue]?.component;
 
     tabPanelEl.innerHTML = tabPanelComponent(tabPanel[tabValue].value);
-    const tabElements = document.getElementsByClassName("tab");
+    const tabElements = document.getElementsByClassName("tab-active");
     Array.from(tabElements).forEach((element) => {
       element?.addEventListener(CLICK, onClick);
     });
@@ -62,8 +62,11 @@ function Tabs(tabsArr, tabPanel) {
 }
 
 function Tab(item) {
+  console.log(item);
   return /*html*/ `
-          <div class="tab manrope" data-value=${item?.value}>
+          <div class="tab manrope ${
+            !item.disable ? "tab-active" : ""
+          }" data-value=${item?.value}>
             <div class="inline ${
               item?.isCritical ? "critical" : "surface-10"
             } font-48 font-thin pointer-none">

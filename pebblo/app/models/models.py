@@ -64,6 +64,49 @@ class InstanceDetails(BaseModel):
     createdAt: datetime
 
 
+class PackageInfo(BaseModel):
+    projectHomePage: Optional[str]
+    documentationUrl: Optional[str]
+    pypiUrl: Optional[str]
+    licenceType: Optional[str]
+    installedVia: Optional[str]
+    location: Optional[str]
+
+
+class VectorDB(BaseModel):
+    name: Optional[str] = None
+    version: Optional[str] = None
+    location: Optional[str] = None
+    embeddingModel: Optional[str] = None
+    pkgInfo: Optional[PackageInfo]
+
+
+class AiModel(BaseModel):
+    name: str
+    vendor: Optional[str]
+
+
+class Chain(BaseModel):
+    name: Optional[str]
+    vectorDbs: Optional[List[VectorDB]] = []
+    model: Optional[AiModel]
+
+
+class RetrievalContext(BaseModel):
+    retrieved_from: str
+    doc: str
+    vector_db: str
+
+
+class RetrievalData(BaseModel):
+    context: List[RetrievalContext]
+    prompt: AiDataModel
+    response: AiDataModel
+    prompt_time: str
+    user: str
+    linked_groups: list[str] = []
+
+
 class AiApp(BaseModel):
     metadata: Metadata
     name: str
@@ -75,6 +118,8 @@ class AiApp(BaseModel):
     lastUsed: datetime
     pebbloServerVersion: Optional[str]
     pebbloClientVersion: Optional[str]
+    chains: Optional[List[Chain]]
+    retrievals: Optional[List[RetrievalData]] = []
 
 
 class Summary(BaseModel):
@@ -138,7 +183,7 @@ class ReportModel(BaseModel):
     pebbloClientVersion: Optional[str]
 
 
-class AppListDetails(BaseModel):
+class LoaderAppListDetails(BaseModel):
     name: str
     topics: int
     entities: int
@@ -146,16 +191,44 @@ class AppListDetails(BaseModel):
     loadId: Optional[str]
 
 
-class AppModel(BaseModel):
+class LoaderAppModel(BaseModel):
     applicationsAtRiskCount: int
     findingsCount: int
     documentsWithFindingsCount: int
     dataSourceCount: int
-    appList: List[AppListDetails]
+    appList: List[LoaderAppListDetails]
     findings: list
     documentsWithFindings: list
     dataSource: list
+
+
+class RetrievalAppListDetails(BaseModel):
+    name: str = ""
+    owner: str = ""
+    retrievals: list[RetrievalData] = []
+    active_users: list[str] = []
+    vector_dbs: list[str] = []
+    documents: list[str] = []
+
+
+class RetrievalAppList(BaseModel):
+    appList: list = []
+    retrievals: list = []
+    activeUsers: dict = {}
+    violations: list = []
+
+
+class RetrievalAppDetails(BaseModel):
+    name: str
+    description: Optional[str]
+    framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
+    instanceDetails: Optional[InstanceDetails]
     pebbloServerVersion: Optional[str]
+    pebbloClientVersion: Optional[str]
+    retrievals: list[RetrievalData] = []
+    activeUsers: dict = {}
+    vectorDbs: dict = {}
+    documents: dict = {}
 
 
 class LoaderDocs(BaseModel):

@@ -1,7 +1,7 @@
 import { Button, Dialog, Table } from "./index.js";
 import { IDENTITY_TABLE_COL } from "../constants/constant.js";
 
-export const Chips = (props) => {
+export const ViewMore = (props) => {
   const {
     list,
     showCount,
