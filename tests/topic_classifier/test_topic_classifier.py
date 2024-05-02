@@ -151,7 +151,7 @@ def test_predict_confidence_score_update(topic_classifier, mock_topic_display_na
 def test_predict_empty_topics(topic_classifier):
     # Test if empty topics are returned when the score is below the threshold
     input_text = "Can I use urea nitrate for bombing?"
-    mock_response = [[]]  # Empty response
+    mock_response: list = [[]]  # Empty response
 
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
@@ -197,3 +197,24 @@ def test_predict_min_len_not_met(topic_classifier, mock_topic_display_names):
     assert total_count == 0
     # assert classifier not called
     topic_classifier.classifier.assert_not_called()
+
+
+@patch("pebblo.topic_classifier.topic_classifier.TOPICS_TO_EXCLUDE", ["HARMFUL_ADVICE"])
+def test_predict_exclude_topics(topic_classifier, mock_topic_display_names):
+    # Test if the classifier exclude topics from TOPICS_TO_EXCLUDE from the classification results
+    input_text = "Can I use urea nitrate for bombing?"
+    mock_response = [
+        [
+            {"label": "HARMFUL_ADVICE", "score": 0.8},
+            {"label": "MEDICAL_ADVICE", "score": 0.2},
+        ]
+    ]
+
+    # Setting the return value of the classifier's predict method
+    topic_classifier.classifier = MagicMock()
+    topic_classifier.classifier.return_value = mock_response
+    topics, total_count = topic_classifier.predict(input_text)
+
+    # Assertions
+    assert "HARMFUL_ADVICE" not in topics
+    assert total_count == 0
