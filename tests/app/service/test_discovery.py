@@ -1,6 +1,6 @@
 import datetime
 from typing import List
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -56,6 +56,17 @@ data = {
 @pytest.fixture
 def discovery():
     return AppDiscover(data)
+
+
+@pytest.fixture
+def mock_pebblo_server_version():
+    # Mocking the get_pebblo_server_version function
+    with patch(
+        "pebblo.app.service.discovery_service.get_pebblo_server_version"
+    ) as mock_get_pebblo_server_version:
+        # Set the return value of the mocked function
+        mock_get_pebblo_server_version.return_value = "x.x.x"
+        yield mock_get_pebblo_server_version
 
 
 def test_fetch_runtime_instance_details(discovery):
@@ -118,7 +129,7 @@ def test_fetch_chain_details(discovery):
     assert output == expected_output
 
 
-def test_create_ai_apps_model(discovery):
+def test_create_ai_apps_model(discovery, mock_pebblo_server_version):
     """
         Testing create_ai_apps_model from discovery_service
     :param discovery:
@@ -186,7 +197,7 @@ def test_create_ai_apps_model(discovery):
         },
         "framework": {"name": "langchain", "version": "0.1.45"},
         "lastUsed": datetime.datetime(2024, 1, 1, 0, 0, 5),
-        "pebbloServerVersion": "0.1.15",
+        "pebbloServerVersion": "x.x.x",
         "pebbloClientVersion": "0.1.1",
         "chains": [
             {
