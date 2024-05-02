@@ -79,7 +79,7 @@ class AppLoaderDoc:
         if loader_details.get("source_path_size") is not None:
             source_size = loader_details.get("source_path_size", 0)
         else:
-            source_size = loader_details.get("source_aggr_size", 0)
+            source_size = loader_details.get("source_aggregate_size", 0)
 
         # Checking for same loader details in app details
         if loader_name and source_type:
