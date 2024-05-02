@@ -14,7 +14,7 @@ const KeyValueBlock = (props) => {
           : ""
       }
     </div>
-    <div class="font-13">${content}</div>
+    <div class="font-13">${content || "-"}</div>
   </div>`;
 };
 
@@ -26,8 +26,8 @@ export function RetrievalDetails(props) {
     <div class="flex items-center gap-2">
       <div class="surface-10 font-16 medium">Retrievals</div>
       <div class="font-12 surface-10-opacity-50">Showing ${
-        data?.length
-      } out of ${data?.length}</div>
+        data?.length || 0
+      } out of ${data?.length || 0}</div>
     </div>
     <div class="font-12"></div>
     </div>
@@ -48,6 +48,10 @@ export function RetrievalDetails(props) {
             item?.context && item?.context[0]
               ? `From ${item?.context[0]?.vector_db || ""}`
               : "";
+          const retrievedFrom =
+            item?.context && item?.context[0]
+              ? item?.context[0]?.retrieved_from || "-"
+              : "-";
           return /*html*/ `
           <div class="flex flex-col gap-1">
              <div class="snippet-body flex flex-col gap-4 pr-3 pl-3 pt-3 pb-3">
@@ -63,8 +67,8 @@ export function RetrievalDetails(props) {
                  })}
        
                  <div class="w-fit flex gap-2 border-grey-20 items-center pt-3 pb-3 pl-2 pr-2 w-auto inter">
-                 <div class="font-12 semi-bold">Retrieved From: </div>
-                 <div class="font-13">${item?.context[0]?.retrieved_from}</div>
+                 <div class="font-12 semi-bold">Retrieved from: </div>
+                 <div class="font-13">${retrievedFrom}</div>
                  </div>
        
                <div class="divider-horizontal"></div>

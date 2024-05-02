@@ -55,7 +55,7 @@ export function SnippetDetails(props) {
               <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
                ${KeyValue({ key: "Snippets", value: snipp?.snippet })}
                ${KeyValue({
-                 key: "Retrieved From",
+                 key: "Retrieved from",
                  value: snipp?.sourcePath,
                })}
                ${KeyValue({
@@ -112,7 +112,7 @@ export function SnippetDetails(props) {
                 <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
                  ${KeyValue({ key: "Snippets", value: snipp?.snippet })}
                  ${KeyValue({
-                   key: "Retrieved From",
+                   key: "Retrieved from",
                    value: snipp?.sourcePath,
                  })}
                 ${KeyValue({

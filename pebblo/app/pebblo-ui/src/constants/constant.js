@@ -154,8 +154,8 @@ export const FILES_WITH_FINDINGS_TABLE = [
     label: "File Name",
     field: "fileName",
     render: (item) => /*html*/ `
-    <div class="flex flex-col inter">
-       <div class="surface-10 font-13 text-none">${item.fileName || "-"}</div>
+    <div class="flex flex-col inter text-none">
+       <div class="surface-10 font-13">${item.fileName || "-"}</div>
        <div class="surface-10-opacity-50 font-12 flex">
          <div>${item?.fileOwner || "-"}</div>
        </div>
@@ -267,6 +267,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     label: "Owner",
     field: "owner",
     align: "start",
+    render: (item) => `<div class="text-none">${item?.owner || "-"}</div>`,
   },
   {
     label: "",
@@ -388,7 +389,7 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     align: "start",
     render: (item) => /*html*/ `
      <div class="text-none">${item?.sourceFilePath}</div>
-     <div class="inter font-12 surface-10-opacity-50">By ${item?.owner}</div>
+     <div class="inter font-12 surface-10-opacity-50 text-none">By ${item?.owner}</div>
     `,
     isTooltip: true,
     tooltipTitle: (item) => item.sourceFilePath,
@@ -455,7 +456,7 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
     label: "Data Source Name",
     field: "name",
     render: (item) => /*html*/ `
-      <div class="flex flex-col inter">
+      <div class="flex flex-col inter text-none">
          <div class="surface-10 font-13">${item.name || "-"}</div>
          <div class="surface-10-opacity-50 font-12">${
            item?.sourceSize ? getFileSize(item.sourceSize) : "-"
@@ -486,7 +487,7 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
     label: "Data Source Name",
     field: "name",
     render: (item) => /*html*/ `
-      <div class="flex flex-col inter">
+      <div class="flex flex-col inter text-none">
          <div class="surface-10 font-13">${item.name || "-"}</div>
          <div class="surface-10-opacity-50 font-12">${
            item.sourceSize ? getFileSize(item.sourceSize) : ""
@@ -1019,7 +1020,7 @@ export const TAB_PANEL_ARR_APP_DETAILS_RETRIEVAL = [
   {
     value: {
       title: "",
-      data: APP_DATA?.retrievals,
+      data: APP_DATA?.retrievals?.reverse(),
       searchField: ["labelName"],
       inputPlaceholder: "Search",
       error: !APP_DATA?.retrievals?.length ? "NO_FINDINGS_EMPTY_STATE" : null,
