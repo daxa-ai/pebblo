@@ -151,3 +151,18 @@ export const getDifferenceInDays = (date1, date2) => {
 
 export const capitalizeFirstLetter = (str) =>
   str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
+
+export const sortByDate = (arr, key, order = "asc") => {
+  return arr
+    ? arr.sort((date1, date2) => {
+        if (date1[key] && date2[key]) {
+          if (order === "asc") {
+            return new Date(date1[key]) - new Date(date2[key]);
+          } else {
+            return new Date(date2[key]) - new Date(date1[key]);
+          }
+        }
+        return 0;
+      })
+    : [];
+};
