@@ -17,6 +17,7 @@ import {
   getFormattedDate,
   getMaxValue,
   getStringOfNItems,
+  sortByDate,
 } from "../util.js";
 import { KEYWORD_MAPPING } from "./keywordMapping.js";
 import {
@@ -910,30 +911,39 @@ export const TABS_ARR_FOR_APP_DETAILS_RETRIEVAL = [
 
 let retrievalAppUserBasedRetrievalTotal = 0;
 let retrievalAppDocumentRetrievalTotal = 0;
+
 const retrievalAppActiveUsersData = APP_DATA?.activeUsers
-  ? Object.keys(APP_DATA?.activeUsers)?.map((activeUser, index) => {
-      const data = APP_DATA?.activeUsers[activeUser];
-      retrievalAppUserBasedRetrievalTotal += data?.retrievals?.length || 0;
-      return {
-        ...data,
-        id: index + 1,
-        name: activeUser,
-        retrievalCount: data?.retrievals?.length,
-      };
-    })
+  ? sortByDate(
+      Object.keys(APP_DATA?.activeUsers)?.map((activeUser, index) => {
+        const data = APP_DATA?.activeUsers[activeUser];
+        retrievalAppUserBasedRetrievalTotal += data?.retrievals?.length || 0;
+        return {
+          ...data,
+          id: index + 1,
+          name: activeUser,
+          retrievalCount: data?.retrievals?.length,
+        };
+      }),
+      "last_accessed_time",
+      "desc"
+    )
   : [];
 
 const retrievalAppDocumentData = APP_DATA?.documents
-  ? Object.keys(APP_DATA?.documents)?.map((document, index) => {
-      const data = APP_DATA?.documents[document];
-      retrievalAppDocumentRetrievalTotal += data?.retrievals?.length || 0;
-      return {
-        ...data,
-        id: index + 1,
-        name: document,
-        retrievalCount: data?.retrievals?.length,
-      };
-    })
+  ? sortByDate(
+      Object.keys(APP_DATA?.documents)?.map((document, index) => {
+        const data = APP_DATA?.documents[document];
+        retrievalAppDocumentRetrievalTotal += data?.retrievals?.length || 0;
+        return {
+          ...data,
+          id: index + 1,
+          name: document,
+          retrievalCount: data?.retrievals?.length,
+        };
+      }),
+      "last_accessed_time",
+      "desc"
+    )
   : [];
 
 export const TAB_PANEL_FOR_APP_ACTIVE_USERS = [
