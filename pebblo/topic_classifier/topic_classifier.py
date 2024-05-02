@@ -88,6 +88,6 @@ class TopicClassifier:
 
         final_topic = {}
         if len(topics) > 0:
-            most_possible_advice = max(topics, key=topics.get)
+            most_possible_advice = max(topics, key=lambda t: topics[t])
             final_topic = {most_possible_advice: 1}
         return final_topic, len(final_topic.keys())

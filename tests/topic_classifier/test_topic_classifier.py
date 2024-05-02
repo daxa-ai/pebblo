@@ -151,7 +151,7 @@ def test_predict_confidence_score_update(topic_classifier, mock_topic_display_na
 def test_predict_empty_topics(topic_classifier):
     # Test if empty topics are returned when the score is below the threshold
     input_text = "Can I use urea nitrate for bombing?"
-    mock_response = [[]]  # Empty response
+    mock_response: list = [[]]  # Empty response
 
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
