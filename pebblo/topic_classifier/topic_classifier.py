@@ -14,6 +14,7 @@ from pebblo.topic_classifier.config import (
     TOKENIZER_PATH,
     TOPIC_CONFIDENCE_SCORE,
     TOPIC_MIN_TEXT_LENGTH,
+    TOPICS_TO_EXCLUDE,
 )
 from pebblo.topic_classifier.enums.constants import topic_display_names
 from pebblo.topic_classifier.libs.logger import logger
@@ -77,6 +78,8 @@ class TopicClassifier:
         topics = dict()
         for topic in topic_model_response:
             topic_label = topic["label"]
+            if topic_label in TOPICS_TO_EXCLUDE:
+                continue
             if topic["score"] < float(TOPIC_CONFIDENCE_SCORE):
                 continue
             if topic_label in topic_display_names.keys():
