@@ -1,3 +1,4 @@
+from typing import Tuple
 from unittest.mock import Mock, patch
 
 import pytest
@@ -37,7 +38,7 @@ def mocked_entity_classifier_response(mocker):
         return_value=Mock(),
     )
 
-    anonymize_response1 = (
+    anonymize_response1: Tuple[list, str] = (
         [
             TestAnonymizerResult("PERSON"),
             TestAnonymizerResult("GITHUB_TOKEN"),
@@ -49,7 +50,7 @@ def mocked_entity_classifier_response(mocker):
         input_text1,
     )
 
-    anonymize_response2 = (
+    anonymize_response2: Tuple[list, str] = (
         [
             TestAnonymizerResult("GITHUB_TOKEN"),
             TestAnonymizerResult("AWS_ACCESS_KEY"),
@@ -59,7 +60,7 @@ def mocked_entity_classifier_response(mocker):
         mock_input_text1_anonymize_snippet_true,
     )
 
-    anonymize_response3 = (
+    anonymize_response3: Tuple[list, str] = (
         [
             TestAnonymizerResult("SLACK_TOKEN"),
             TestAnonymizerResult("SLACK_TOKEN"),
@@ -74,7 +75,7 @@ def mocked_entity_classifier_response(mocker):
         input_text2,
     )
 
-    anonymize_response4 = (
+    anonymize_response4: Tuple[list, str] = (
         [
             TestAnonymizerResult("SLACK_TOKEN"),
             TestAnonymizerResult("PERSON"),
@@ -103,12 +104,12 @@ def mocked_entity_classifier_response(mocker):
         mock_input_text2_anonymize_snippet_true,
     )
 
-    anonymize_negative_response1 = (
+    anonymize_negative_response1: Tuple[list, str] = (
         [],
         negative_data,
     )
 
-    anonymize_negative_response2 = (
+    anonymize_negative_response2: Tuple[list, str] = (
         [],
         negative_data,
     )

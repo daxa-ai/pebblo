@@ -59,23 +59,25 @@ class Prompt:
         context_data = self.data.get(param)
         if context_data:
             fields_validator(context_data, ["data"])
-            data = AiDataModel(
-                data=context_data.get("data"),
-                entityCount=context_data.get("entityCount")
-                if context_data.get("entityCount")
-                else 0,
-                entities=context_data.get("entities")
-                if context_data.get("entities")
-                else {},
-                topicCount=context_data.get("topicCount")
-                if context_data.get("topicCount")
-                else 0,
-                topics=context_data.get("topics") if context_data.get("topics") else {},
-            )
+            data = (
+                AiDataModel(
+                    data=context_data.get("data"),
+                    entityCount=context_data.get("entityCount")
+                    if context_data.get("entityCount")
+                    else 0,
+                    entities=context_data.get("entities")
+                    if context_data.get("entities")
+                    else {},
+                    topicCount=context_data.get("topicCount")
+                    if context_data.get("topicCount")
+                    else 0,
+                    topics=context_data.get("topics")
+                    if context_data.get("topics")
+                    else {},
+                )
+            ).dict()
 
-        logger.debug(
-            f"AI_APPS [{self.application_name}]: {param} Details: {data.dict()}"
-        )
+        logger.debug(f"AI_APPS [{self.application_name}]: {param} Details: {data}")
         return data
 
     def _create_retrieval_data(
@@ -85,14 +87,14 @@ class Prompt:
         Create an RetrievalData Model and return the corresponding model object
         """
         logger.debug("Creating RetrievalData model")
-        fields_validator(self.data, ["prompt_time", "user"])
+        fields_validator(self.data, ["prompt_time", "user", "user_identities"])
         retrieval_data_model = RetrievalData(
             context=retrieval_context_data,
             prompt=prompt_data,
             response=response_data,
-            prompt_time=self.data.get("prompt_time"),
-            user=self.data.get("user"),
-            linked_groups=self.data.get("user_identities"),
+            prompt_time=self.data["prompt_time"],
+            user=self.data["user"],
+            linked_groups=self.data["user_identities"],
         )
 
         logger.debug(
