@@ -14,6 +14,8 @@ exception_handlers = {404: not_found_error, 500: not_found_error}
 class FieldValidationException(Exception):
     """This custom exception is to validate compulsory fields"""
 
-    def __init__(self, field_name):
-        message = f"{field_name} is a mandatory field"
+    def __init__(self, missing_field_names):
+        message = f"{', '.join(missing_field_names)} are mandatory fields."
+        if len(missing_field_names) == 1:
+            message = f"{', '.join(missing_field_names)} is a mandatory field."
         super().__init__(message)

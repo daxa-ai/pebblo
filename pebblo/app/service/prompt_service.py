@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 
 from pebblo.app.enums.enums import CacheDir
+from pebblo.app.exceptions.exception_handler import FieldValidationException
 from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import AiDataModel, RetrievalContext, RetrievalData
 from pebblo.app.utils.utils import (
@@ -194,6 +195,9 @@ class Prompt:
             logger.debug("AiApp prompt request completed successfully")
             return {"message": "AiApp Prompt Processed Successfully"}
         except ValidationError as ex:
+            logger.error(f"Error in Prompt API process_request. Error:{ex}")
+            raise HTTPException(status_code=400, detail=str(ex))
+        except FieldValidationException as ex:
             logger.error(f"Error in Prompt API process_request. Error:{ex}")
             raise HTTPException(status_code=400, detail=str(ex))
         except Exception as ex:

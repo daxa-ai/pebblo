@@ -249,6 +249,9 @@ def release_lock(lock_file_path: str):
 
 
 def fields_validator(data, mandatory_fields):
+    missing_fields = []
     for field in mandatory_fields:
         if field not in data.keys() or data[field] is None:
-            raise FieldValidationException(field)
+            missing_fields.append(field)
+    if missing_fields:
+        raise FieldValidationException(missing_fields)
