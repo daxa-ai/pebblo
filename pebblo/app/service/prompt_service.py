@@ -87,14 +87,14 @@ class Prompt:
         Create an RetrievalData Model and return the corresponding model object
         """
         logger.debug("Creating RetrievalData model")
-        fields_validator(self.data, ["prompt_time", "user", "user_identities"])
+        fields_validator(self.data, ["prompt_time", "user"])
         retrieval_data_model = RetrievalData(
             context=retrieval_context_data,
             prompt=prompt_data,
             response=response_data,
             prompt_time=self.data["prompt_time"],
             user=self.data["user"],
-            linked_groups=self.data["user_identities"],
+            linked_groups=self.data.get("user_identities", []),
         )
 
         logger.debug(
