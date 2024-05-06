@@ -8,13 +8,16 @@ export const BubbleChart = (props) => {
       document.getElementById("graph-container").offsetWidth || 1000;
     let height = document.getElementById("graph-container").offsetHeight || 250;
     const margin = 1;
+    const parentHeight =
+      document.getElementById("display_pane").offsetHeight || 800;
 
     const color = d3
       .scaleOrdinal()
       .domain(["entity", "topic"])
       .range(["#BAC5FA", "#B2DDF6"]);
 
-    height = data.length * 10 + 200;
+    const nodeHeight = data.length * 10 + 200;
+    height = nodeHeight > parentHeight ? parentHeight - 80 : nodeHeight;
     const names = (d) => d?.label?.split(" ");
 
     const pack = d3

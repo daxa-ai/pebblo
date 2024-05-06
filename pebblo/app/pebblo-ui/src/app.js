@@ -29,7 +29,7 @@ export function App() {
   return /*html*/ `
        <div class="app">
           ${Header()}
-          <div class="h-full flex flex-col pt-9 pb-9 pl-25 pr-25 gap-3 overflow-hidden">
+          <div class="h-full flex flex-col pt-9 pb-9 pl-25 pr-25 gap-3 overflow-hidden" id="display_pane">
              ${button}
              ${Card(UI)}
           </div>
