@@ -3,6 +3,32 @@
 > **Note**  
 > Please note that Pebblo requires Python version 3.9 or above to function optimally.
 
+## Using `pip`
+
+```bash
+pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
+```
+
+### Run Pebblo server
+
+```
+$ pebblo
+```
+
+Pebblo server now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
+Pebblo UI interface would be available on `http://localhost:8000/pebblo`
+
+See [troubleshooting](troubleshooting.md) for any issues.
+
+#### Configuration flags (Optional)
+
+- `--config <file>`: Specifies a custom configuration file in yaml format.
+
+```bash
+pebblo [--config /path/to/config.yaml]
+```
+
+
 ## Using Docker 
 
 ```bash
@@ -35,31 +61,6 @@ kubectl apply -f deploy/k8s-deploy/service.yaml
 Use `kubectl logs <pod_name>` to get the logs from pebblo server. 
 
 **Note-** Setup the nginx ingress controller to expose the pebblo server.
-
-## Using `pip`
-
-```bash
-pip install pebblo --extra-index-url https://packages.daxa.ai/simple/
-```
-
-### Run Pebblo server
-
-```
-pebblo
-```
-
-Pebblo server now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
-Pebblo UI interface would be available on `http://localhost:8000/pebblo`
-
-see [troubleshooting](troubleshooting.md) if you face any issues.
-
-#### Pebblo Optional Flags
-
-- `--config <file>`: Specifies a custom configuration file in yaml format.
-
-```bash
-pebblo --config [PATH TO CONFIG FILE]
-```
 
 # Enhanced PDF reporting
 
