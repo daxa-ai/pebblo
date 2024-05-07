@@ -44,9 +44,12 @@ const sidebars: SidebarsConfig = {
       ],
     },
     {
-      type: "doc",
-      id: "pebblo_ui", // document ID
+      type: "category",
       label: "Pebblo UI", // sidebar label
+      items: [
+        { type: "doc", label: "Safe Loader", id: "safe_loader" },
+        { type: "doc", label: "Safe Retriever", id: "safe_retriever" },
+      ],
     },
     {
       type: "doc",
