@@ -4,19 +4,24 @@ PebbloRetrievalQA is a Retrieval chain with Identity & Semantic Enforcement for 
 
 This document covers how to retrieve documents with Identity & Semantic Enforcement.
 
-To start, we will load documents with authorization metadata into an in-memory Qdrant vector database we want to use and then use it as a retriever in
-PebbloRetrievalQA.
+**Steps:**
 
-Next, we will define an "ask" function that loads the PebbloRetrievalQA chain using the retriever and provided auth_context.
-Finally, we will ask it questions with authorization context for authorized users and unauthorized users.
-
-PebbloRetrievalQA enables safe retrieval with Identity & Semantic Enforcement.
+- **Loading Documents:** The process starts by loading documents, which contain authorization metadata, into an in-memory Qdrant vector database. This
+  database is
+  subsequently used as a retriever in PebbloRetrievalQA.
+- **Initializing PebbloRetrievalQA Chain:**  After loading the documents, the PebbloRetrievalQA chain is initialized. This chain uses the retriever (
+  created from the vector database) and an llm.
+- **The 'ask' Function:**  The 'ask' function is used to pose questions to the system. This function accepts a question and an auth_context as input
+  and returns the answer using the PebbloRetrievalQA chain. The auth_context contains the identity and authorization groups of the user accessing the
+  application.
+- **Posing Questions:** Finally, questions are posed to the system. The system retrieves answers based on the authorization metadata in the documents
+  and the auth_context provided in the 'ask' function.
 
 ## Setup
 
 ### Dependencies
 
-We need Langchain, langchain-community, langchain-openai and a Qdrant client for this walkthrough.
+The walkthrough requires Langchain, langchain-community, langchain-openai, and a Qdrant client.
 
 ```bash
 %pip install --upgrade --quiet  langchain langchain-community langchain-openai qdrant_client
@@ -24,7 +29,8 @@ We need Langchain, langchain-community, langchain-openai and a Qdrant client for
 
 ### Identity-aware Data Ingestion
 
-Here we are using Qdrant as a vector database; however, you can use any of the supported vector databases.
+In this scenario, Qdrant is being utilized as a vector database. However, the flexibility of the system allows for the use of any supported vector
+databases.
 
 **PebbloRetrievalQA chain supports the following vector databases:**
 
@@ -33,14 +39,11 @@ Here we are using Qdrant as a vector database; however, you can use any of the s
 
 **Load vector database with authorization information in metadata:**
 
-In this step, we capture the authorization information of the source document into the `authorized_identities` field within the metadata of the
-VectorDB
-entry for each chunk.
+In this phase, the authorization details of the original document are captured and stored in the `authorized_identities` field within the metadata of
+each chunk in the VectorDB entry.
 
-_NOTE: To use the PebbloRetrievalQA chain, you always need to place authorization metadata in the `authorized_identities` field, which must be a list
-of strings._
-
-The Pebblo SafeLoader can be enabled with few lines of code change to the above snippet.
+_It's important to note that to use the PebbloRetrievalQA chain, authorization metadata must always be placed in the `authorized_identities`
+field._
 
 ```python
 from langchain_community.vectorstores.qdrant import Qdrant
@@ -120,8 +123,8 @@ Here is the sample code for the PebbloRetrievalQA with `authorized_identities` f
 application, passed in `auth_context`.
 
 ```python
-from langchain.chains import PebbloRetrievalQA
-from langchain.chains.pebblo_retrieval.models import AuthContext, ChainInput
+from langchain_community.chains import PebbloRetrievalQA
+from langchain_community.chains.pebblo_retrieval.models import AuthContext, ChainInput
 
 # Initialize PebbloRetrievalQA chain
 qa_chain = PebbloRetrievalQA.from_chain_type(
@@ -134,7 +137,6 @@ qa_chain = PebbloRetrievalQA.from_chain_type(
     verbose=True,
 )
 
-
 def ask(question: str, auth_context: dict):
     """
     Ask a question to the PebbloRetrievalQA chain
@@ -146,11 +148,12 @@ def ask(question: str, auth_context: dict):
 
 ### Questions by Authorized User
 
-We ingested data for authorized identities ["hr-support", "hr-leadership"], so a user with the
-authorized identity/group "hr-support" should receive the correct answer.
+Data has been ingested for the authorized identities ["hr-support", "hr-leadership"].
+Therefore, a user who belongs to the "hr-support" authorized identity or group should be able to receive the correct answer.
 
 ```python
 auth = {
+    "user_id": "hr-user@acme.org",
     "authorized_identities": [
         "hr-support",
     ]
@@ -175,11 +178,12 @@ relationships with clients and colleagues alike.
 
 ### Questions by Unauthorized User
 
-Since the user's authorized identity/group "eng-support" is not included in the authorized identities ["hr-support", "hr-leadership"], we should not
-receive an answer.
+Since the user's authorized identity/group "eng-support" is not included in the authorized identities ["hr-support", "hr-leadership"], they should not
+expect to receive an answer.
 
 ```python
 auth = {
+    "user_id": "eng-user@acme.org",
     "authorized_identities": [
         "eng-support",
     ]
