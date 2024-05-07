@@ -1,16 +1,16 @@
-# Identity-enabled RAG using PebbloRetrievalQA
+# Safe Retriever for LangChain
+***Identity-enabled RAG using PebbloRetrievalQA***
 
-PebbloRetrievalQA is a Retrieval chain with Identity & Semantic Enforcement for question-answering against a vector database.
+`PebbloRetrievalQA` is a Retrieval chain with Identity & Semantic Enforcement for question-answering against a vector database.
 
 This document covers how to retrieve documents with Identity & Semantic Enforcement.
 
 **Steps:**
 
-- **Loading Documents:** The process starts by loading documents, which contain authorization metadata, into an in-memory Qdrant vector database. This
-  database is
-  subsequently used as a retriever in PebbloRetrievalQA.
+- **Loading Documents with Authorization metadata:** The process starts by loading documents with option to pull additional authorization metadata turned on. See supported loader specific documentation for exact input field (typically `load_auth=True`),
+- **Using supported Vector database** `PebbloRetrievalQA` chain requires a Vector database that supports rich metadata filtering capability. Pick one from the supported Vector database vendor list shown below in this document.
 - **Initializing PebbloRetrievalQA Chain:**  After loading the documents, the PebbloRetrievalQA chain is initialized. This chain uses the retriever (
-  created from the vector database) and an llm.
+  created from the vector database) and an LLM.
 - **The 'ask' Function:**  The 'ask' function is used to pose questions to the system. This function accepts a question and an auth_context as input
   and returns the answer using the PebbloRetrievalQA chain. The auth_context contains the identity and authorization groups of the user accessing the
   application.

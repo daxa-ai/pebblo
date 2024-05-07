@@ -58,6 +58,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "doc",
+      id: "retrieval_chain", // document ID
+      label: "Safe Retriever for Langchain", // sidebar label
+    },
+    {
+      type: "doc",
       id: "reports", // document ID
       label: "Reports", // sidebar label
     },
