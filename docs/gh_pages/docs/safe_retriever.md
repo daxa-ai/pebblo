@@ -2,6 +2,8 @@
 
 This section provides details about the retrievals for all the retrieval based application.
 
+![Pebblo UI](../static/img/pebblo-saferetriever-ui.jpeg)
+
 ## Overview Page
 
 This page consist of 4 primary tabs that provides the following details:
