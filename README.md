@@ -18,10 +18,11 @@
 
 **Pebblo** enables developers to safely load data and promote their Gen AI app to deployment without worrying about the organization’s compliance and security requirements. The project identifies semantic topics and entities found in the loaded data and summarizes them on the UI or a PDF report.
 
-Pebblo has two components.
+Pebblo has these components.
 
 1. Pebblo Server - a REST api application with topic-classifier, entity-classifier and reporting features
-1. Pebblo Safe DataLoader - a thin wrapper to Gen-AI framework's data loaders
+1. Pebblo SafeLoader - a thin wrapper to Gen-AI framework's data loaders
+1. Pebblo SafeRetriever - a retrieval QA chain that enforces identity and semantic rules on Vector database retrieval before LLM inference
 
 ## Pebblo Server
 
@@ -70,11 +71,11 @@ See [installation](docs/gh_pages/docs/installation.md) guide for details on how 
 
 Refer to [troubleshooting](docs/gh_pages/docs/troubleshooting.md) guide.
 
-## Pebblo Safe DataLoader
+## Pebblo SafeLoader
 
 ### Langchain
 
-`Pebblo Safe DataLoader` is natively supported in Langchain framework. It is available in Langchain versions `>=0.1.7`
+`Pebblo SafeLoader` is natively supported in Langchain framework. It is available in Langchain versions `>=0.1.7`
 
 #### Enable Pebblo in Langchain Application
 
@@ -106,7 +107,40 @@ The Pebblo SafeLoader can be enabled with few lines of code change to the above 
     vectordb = Chroma.from_documents(documents, OpenAIEmbeddings())
 ```
 
-See [here](https://github.com/srics/pebblo/tree/main/pebblo_safeloader) for samples with Pebblo enabled RAG applications and [this](https://daxa-ai.github.io/pebblo/rag) document for more details.
+See [here](https://github.com/srics/pebblo/tree/main/pebblo_safeloader) for samples with Pebblo SafeLoader enabled RAG applications and [this](https://daxa-ai.github.io/pebblo/rag) document for more details.
+
+## Pebblo SafeRetriever
+
+### Langchain
+
+
+PebbloRetrievalQA chain uses a SafeRetrieval to enforce that the snippets used for in-context are retrieved
+only from the documents authorized for the user and semantically allowed for the Gen-AI application.
+
+Here is a sample code for the PebbloRetrievalQA with `authorized_identities` from the user accessing the RAG
+application, passed in `auth_context`.
+
+```python
+from langchain_community.chains import PebbloRetrievalQA
+from langchain_community.chains.pebblo_retrieval.models import AuthContext, ChainInput
+
+safe_rag_chain = PebbloRetrievalQA.from_chain_type(
+    llm=llm,
+    app_name="pebblo-safe-retriever-demo",
+    owner="Joe Smith",
+    description="Safe RAG demo using Pebblo",
+    chain_type="stuff",
+    retriever=vectordb.as_retriever(),
+    verbose=True,
+)
+
+def ask(question: str, auth_context: dict):
+    auth_context_obj = AuthContext(**auth_context)
+    chain_input_obj = ChainInput(query=question, auth_context=auth_context_obj)
+    return safe_rag_chain.invoke(chain_input_obj.dict())
+```
+
+See [here](https://github.com/srics/pebblo/tree/main/pebblo_saferetriever) for samples with Pebblo SafeRetriever enabled RAG applications and [this](https://daxa-ai.github.io/pebblo/retrieval_chain) document for more details.
 
 # Contribution
 
