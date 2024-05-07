@@ -1,6 +1,6 @@
 # Pebblo UI
 
-Pebblo UI provides an in-depth visibility into the document ingested into Gen-AI RAG applications during every load.
+Pebblo UI provides an in-depth visibility into the Gen-AI RAG applications for documents ingested into  during every load and for retrievals being done using it. 
 
 Pebblo server now listens to `localhost:8000` to accept Gen-AI application data snippets for inspection and reporting.
 Pebblo UI interface would be available on `http://localhost:8000/pebblo`
@@ -9,8 +9,10 @@ This document describes the information displayed on the interface.
 
 ![Pebblo UI](../static/img/pebblo-ui.jpeg)
 
-# Overview Page
+# Safe Loader Tab
+This section provides details about the documents ingested into all Gen-AI RAG applications during every load.
 
+## Overview Page
 This page consist of 4 primary tabs that provides the following details:
 
 1. **Applications With Findings**:
@@ -20,7 +22,7 @@ This page consist of 4 primary tabs that provides the following details:
    The figure denotes the cumulative count of Topics and Entities identified across all applications. It will also furnish you with a comprehensive list of these Topics and Entities, along with supplementary information including the count of source files they originate from, the Datasource, and the name of the Application.
 
 3. **Files with Findings**:
-   The number of files that has one or more Findings over the total number of files used in document load across all the applications. This field indicates the number of files that need to be inspected to remediate any potentially text that needs to be removed and/or cleaned for Gen-AI inference.
+   The number of files that has one or more Findings over the total number of files used in document load across all the applications. This field indicates the number of files that need to be inspected to remediate any potentially text that needs to be removed and/or cleaned for Gen-AI inference.
 
    It will also provide you with a list of these files, accompanied by additional details such as the file size, the owner's name, the count of topics & entities within each file, and the name of the Datasource.
 
@@ -29,7 +31,7 @@ This page consist of 4 primary tabs that provides the following details:
 
    It will also provide you with a list of these Datasource, accompanied by additional details such as the size, source path, the count of topics & entities across the datasource, and the Application they are associated with.
 
-# Application Details Page
+## Application Details Page
 
 You will be directed to the application details page by clicking on any application from the list available in the `Applications With Findings` tab in overview page.
 
@@ -53,7 +55,7 @@ Load History provides details about latest 5 loads of this app. It provides the 
 
 1. **Findings**: The figure denotes the cumulative count of Topics and Entities identified in the application. It will also furnish you with a comprehensive list of these Topics and Entities, along with supplementary information including the count of source files they originate from, and the Datasource name.
 
-2. **Files with Findings**: The number of files that has one or more Findings over the total number of files used in document load across the application. This field indicates the number of files that need to be inspected to remediate any potentially text that needs to be removed and/or cleaned for Gen-AI inference.
+2. **Files with Findings**: The number of files that has one or more Findings over the total number of files used in document load across the application. This field indicates the number of files that need to be inspected to remediate any potentially text that needs to be removed and/or cleaned for Gen-AI inference.
 
    It will also provide you with a list of these files, accompanied by additional details such as the file size, the owner's name, the count of topics & entities within each file, and the name of the Datasource.
 
@@ -62,3 +64,53 @@ Load History provides details about latest 5 loads of this app. It provides the 
    It will also provide you with a list of these Datasource, accompanied by additional details such as the size, source path, the count of topics & entities across the datasource.
 
 4. **Snippets**: This sections provides the actual text inspected by the Pebblo Server using the Pebblo Topic Classifier and Pebblo Entity Classifier. This will be useful to quickly inspect and remediate text that should not be ingested into the Gen-AI RAG application. Each snippet shows the exact file the snippet is loaded from easy remediation.
+
+
+# Safe Retriever Tab
+This section provides details about the retrievals for all the retrieval based application.
+
+## Overview Page
+This page consist of 4 primary tabs that provides the following details:
+
+1. **Applications**:
+   The number signifies total number of retrieval type applications.
+
+   The below section lists all retrieval type applications along with details like Application Name, Owner, Retrievals i.e. cumulative count of retrievals, Active Users, Documents, VectorDBs.
+
+2. **Retrievals**:
+   The figure denotes the cumulative count of retrievals happened for all the apps.
+
+3. **Active Users**:
+   The number of active users for all the retrieval type applications.
+
+4. **Violations**:
+   Coming Soon!
+
+## Application Details Page
+
+You will be directed to the application details page by clicking on any application from the list available in the `Application` tab in overview page.
+
+**Instance Details**:
+This section provide a quick glance of where the RAG application is physically running like in a Laptop (Mac OSX) or Linux VM and related properties like IP address, local filesystem path and Python version.
+
+
+This page consist of 4 primary tabs that provides the following details:
+
+1. **Retrievals**: The figure denotes the cumulative count of retrievals happened for this app.
+   This section provides details about all retrievals with information like 
+   
+   **Prompt** : What was the prompt sent by the end user, Who sent the prompt and when it was sent.
+   
+   **Context** : What was the context and which vector db was used.
+
+   **Retrieved From** : Source file of this context.
+
+2. **Active Users**: The number of active users for this application.
+   Details within this tab are coming soon.
+
+3. **Vector Databases**: The number of vector databases used in retrievals for this application.
+
+   Details within this tab are coming soon.
+
+4. **Documents**: The number of documents actively used in the retrievals.
+   Details within this tab are coming soon.
