@@ -5,3 +5,4 @@ o365
 pymupdf
 langchain_openai
 langchain-community
+qdrant-client
