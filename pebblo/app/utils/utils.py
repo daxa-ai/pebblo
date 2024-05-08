@@ -3,7 +3,6 @@ import time
 from json import JSONEncoder, dump
 from os import getcwd, makedirs, path, remove
 
-from pebblo.app.exceptions.exception_handler import FieldValidationException
 from pebblo.app.libs.logger import logger
 
 
@@ -246,9 +245,3 @@ def release_lock(lock_file_path: str):
         logger.debug(f"Lock Released. {full_lock_file_path}")
     except FileNotFoundError:
         pass  # The lock file doesn't exist, nothing to release
-
-
-def fields_validator(data, mandatory_fields):
-    for field in mandatory_fields:
-        if field not in data.keys() or data[field] is None:
-            raise FieldValidationException(field)
