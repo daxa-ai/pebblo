@@ -51,7 +51,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         current_date = datetime.datetime.now().strftime("%B %d, %Y")
         load_history_items = []
         findings_details = []
-        datastores = []
+        datastores: dict = {}
         if "dataSources" in data and data["dataSources"]:
             datastores = data["dataSources"][0]
             if "findingsDetails" in datastores:

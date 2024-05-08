@@ -127,6 +127,7 @@ class AppDiscover:
                     version=vector_db.get("version"),
                     location=vector_db.get("location"),
                     embeddingModel=vector_db.get("embedding_model"),
+                    pkgInfo=None,
                 )
 
                 package_info = vector_db.get("pkg_info")

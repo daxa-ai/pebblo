@@ -284,7 +284,7 @@ def test_update_app_details(loader_helper):
             "sourceSize": 1000,
         }
     ]
-    ai_apps_doc: list[dict] = []
+    ai_apps_doc: list = []
     loader_helper._update_app_details(input_data, ai_apps_doc)
     expected_output = {
         "metadata": {
