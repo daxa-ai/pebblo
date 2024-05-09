@@ -32,6 +32,6 @@ jobs:
         with:
           python-version:  ${{ matrix.python_version }}
       - name: Install the dependencies needed for tests
-        run: pip install -r tests/test_requirements.txt
+        run: pip install --no-cache-dir -r tests/test_requirements.txt
       - name: Run Unit Tests
         run: make test
