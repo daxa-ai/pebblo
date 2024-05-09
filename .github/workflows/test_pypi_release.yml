@@ -20,7 +20,7 @@ jobs:
         python-version: "3.11.x"
     - name: Install pypa/build
       run: |
-        DATE_TIME=$(date +'%d%m%H%M')
+        DATE_TIME=$(date +'%Y%m%d%H%M')
         PROJECT_FILE_PATH=pyproject.toml
         VERSION_FILE=$(grep -m 1 "version =" $PROJECT_FILE_PATH | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
         VERSION="$VERSION_FILE$DATE_TIME"
