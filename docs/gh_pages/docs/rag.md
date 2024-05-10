@@ -59,6 +59,7 @@ The following Langchain DocumentLoaders are currently supported.
 1. UnstructuredExcelLoader
 1. AmazonTextractPDFLoader
 1. GCSFileLoader
+1. GoogleDriveLoader
 1. PyPDFDirectoryLoader
 1. PyPDFLoader
 
