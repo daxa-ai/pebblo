@@ -39,7 +39,7 @@ databases.
 1. Qdrant
 1. Pinecone
 
-**Load vector database with authorization information in metadata:**
+**Load vector database with semantic information in metadata:**
 
 In this phase, the semantic topics and entities of the original document are captured and stored in the `pebblo_semantic_topics`
 and `pebblo_semantic_entities` fields respectively within the metadata of
@@ -112,13 +112,12 @@ print("Vectordb loaded.")
 
 ## Retrieval with Semantic Enforcement
 
-PebbloRetrievalQA chain uses a SafeRetrieval to enforce that the snippets used for in-context are retrieved
-only from the documents authorized for the user.
-To achieve this, the Gen-AI application needs to provide an authorization context for this retrieval chain.
-This `auth_context` should be filled with the identity and authorization groups of the user accessing the Gen-AI app.
+The PebbloRetrievalQA chain uses SafeRetrieval to ensure that the snippets used in context are retrieved only from documents that comply with the
+provided semantic context.
+To achieve this, the Gen-AI application must provide a semantic context for this retrieval chain.
+This `semantic_context` should include the topics and entities that should be denied for the user accessing the Gen-AI app.
 
-Here is the sample code for the PebbloRetrievalQA with `authorized_identities` from the user accessing the RAG
-application, passed in `auth_context`.
+Below is a sample code for PebbloRetrievalQA with `topics_to_deny` and `entities_to_deny`. These are passed in `semantic_context` to the chain input.
 
 ```python
 from typing import Optional, List
@@ -222,16 +221,14 @@ Answer:  Unfortunately, I do not have access to that information.
 Since the entity "us-bank-account-number" is denied, the system should not return the answer.
 
 ```python
-auth = {
-    "user_id": "eng-user@acme.org",
-    "authorized_identities": [
-        "eng-support",
-    ]
-}
-
-question = "Please share the performance report for John Smith?"
-resp = ask(question, auth)
-print(f"Question: {question}\n\nAnswer: {resp['result']}\n")
+topic_to_deny = []
+entities_to_deny = ["us-bank-account-number"]
+question = "Please share the financial performance of ACME Corp for 2020"
+resp = ask(question, topics_to_deny=topic_to_deny, entities_to_deny=entities_to_deny)
+print(
+    f"Topics to deny: {topic_to_deny}\nEntities to deny: {entities_to_deny}\n"
+    f"Question: {question}\nAnswer: {resp['result']}\n"
+)
 ```
 
 Output:
