@@ -96,6 +96,10 @@ class RetrievalContext(BaseModel):
     retrieved_from: str
     doc: str
     vector_db: str
+    entityCount: Optional[int]
+    entities: Optional[dict]
+    topicCount: Optional[int]
+    topics: Optional[dict]
 
 
 class RetrievalData(BaseModel):
@@ -252,4 +256,9 @@ class LoaderDocResponseModel(BaseModel):
 
 class DiscoverAIAppsResponseModel(BaseModel):
     pebblo_server_version: Union[str, None] = None
+    message: Optional[str] = None
+
+
+class PromptResponseModel(BaseModel):
+    retrieval_data: Union[RetrievalData, None] = None
     message: Optional[str] = None

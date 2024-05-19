@@ -2,12 +2,12 @@
 This module handles app prompt API business logic.
 """
 
-from fastapi import HTTPException
 from pydantic import ValidationError
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
-from pebblo.app.models.models import RetrievalData
+from pebblo.app.libs.responses import PebbloJsonResponse
+from pebblo.app.models.models import PromptResponseModel, RetrievalData
 from pebblo.app.utils.utils import (
     acquire_lock,
     read_json_file,
@@ -24,39 +24,62 @@ class Prompt:
     def __init__(self, data: dict):
         self.data = data
         self.application_name = self.data.get("name")
+        self.classified = self.data.get("classified")
+        if self.classified:
+            from pebblo.entity_classifier.entity_classifier import EntityClassifier
+            from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
-    def _fetch_context_data(self, param):
-        """
-        Retrieve prompt/response data from input data and return its corresponding model object.
-        """
-        logger.debug(f"Retrieving {param} details from input data")
+            self.entity_classifier_obj = EntityClassifier()
+            self.topic_classifier_obj = TopicClassifier()
 
-        data: dict = {}
-        context_data = self.data.get(param)
-        if context_data:
-            data = {
-                "data": context_data.get("data"),
-                "entityCount": context_data.get("entityCount")
-                if context_data.get("entityCount")
-                else 0,
-                "entities": context_data.get("entities")
-                if context_data.get("entities")
-                else {},
-                "topicCount": context_data.get("topicCount")
-                if context_data.get("topicCount")
-                else 0,
-                "topics": context_data.get("topics")
-                if context_data.get("topics")
-                else {},
-            }
-        logger.debug(f"AI_APPS [{self.application_name}]: {param} Details: {data}")
+    def _fetch_classified_data(self, input_data):
+        """
+        Retrieve input data and return its corresponding model object with classification.
+        """
+
+        logger.debug(f"Retrieving details from input data: {input_data}")
+
+        entities = dict()
+        entity_count = 0
+        topics = dict()
+        topic_count = 0
+        if self.classified:
+            entities, entity_count, _ = (
+                self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
+                    input_data
+                )
+            )
+            topics, topic_count = self.topic_classifier_obj.predict(input_data)
+
+        data = {
+            "data": input_data,
+            "entityCount": entity_count,
+            "entities": entities,
+            "topicCount": topic_count,
+            "topics": topics,
+        }
+        logger.debug(f"AI_APPS [{self.application_name}]:Classified Details: {data}")
         return data
+
+    def _fetch_context_data(self):
+        """Retrieve context data from input data and return its corresponding model object with classification."""
+        logger.debug("Retrieving context details from input data")
+        response = []
+        context_data = self.data.get("context")
+        if context_data:
+            for data in context_data:
+                resp = data
+                classified_data = self._fetch_classified_data(data.get("doc"))
+                resp.update(classified_data)
+                resp.pop("data")
+                response.append(resp)
+        return response
 
     def _create_retrieval_data(self):
         """
         Create an RetrievalData Model and return the corresponding model object
         """
-        logger.debug("Creating RetrievalData model")
+        logger.debug(f"Creating RetrievalData model: {self.data}")
         retrieval_data_model = RetrievalData(**self.data)
         logger.debug(
             f"AI_APPS [{self.application_name}]: Retrieval Data Details: {retrieval_data_model.dict()}"
@@ -140,23 +163,48 @@ class Prompt:
             logger.debug(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
 
             # getting prompt data
-            prompt_data = self._fetch_context_data("prompt")
+            prompt_data = self._fetch_classified_data(
+                self.data.get("prompt").get("data")
+            )
 
             # getting response data
-            response_data = self._fetch_context_data("response")
+            response_data = self._fetch_classified_data(
+                self.data.get("response").get("data")
+            )
 
-            self.data.update({"prompt": prompt_data, "response": response_data})
+            # getting context data
+            context_data = self._fetch_context_data()
+
+            self.data.update(
+                {
+                    "prompt": prompt_data,
+                    "response": response_data,
+                    "context": context_data,
+                    "linked_groups": self.data.get("user_identities"),
+                }
+            )
+            self.data.pop("user_identities")
 
             # creating retrieval data model object
             retrieval_data = self._create_retrieval_data()
 
             self._upsert_app_metadata_file(retrieval_data.dict())
 
-            logger.debug("AiApp prompt request completed successfully")
-            return {"message": "AiApp Prompt Processed Successfully"}
+            message = "AiApp prompt request completed successfully"
+            logger.debug(message)
+            response = PromptResponseModel(retrieval_data=self.data, message=message)
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=200
+            )
         except ValidationError as ex:
-            logger.error(f"Error in Prompt API process_request. Error:{ex}")
-            raise HTTPException(status_code=400, detail=str(ex))
+            response = PromptResponseModel(retrieval_data=None, message=str(ex))
+            logger.error(f"Error in Prompt API process_request. Error: {ex}")
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=400
+            )
         except Exception as ex:
-            logger.error(f"Error in Prompt API process_request. Error:{ex}")
-            raise HTTPException(status_code=500, detail=str(ex))
+            response = PromptResponseModel(retrieval_data=None, message=str(ex))
+            logger.error(f"Error in Prompt API process_request. Error: {ex}")
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=500
+            )
