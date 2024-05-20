@@ -180,10 +180,8 @@ class Prompt:
                     "prompt": prompt_data,
                     "response": response_data,
                     "context": context_data,
-                    "linked_groups": self.data.get("user_identities"),
                 }
             )
-            self.data.pop("user_identities")
 
             # creating retrieval data model object
             retrieval_data = self._create_retrieval_data()

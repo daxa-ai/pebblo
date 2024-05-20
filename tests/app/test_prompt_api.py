@@ -86,7 +86,6 @@ def test_app_prompt_success(mock_write_json_to_file):
         "topics": {},
     }
     assert response.json()["retrieval_data"]["user"] == "Test Owner"
-    assert response.json()["retrieval_data"]["linked_groups"] == ["test_group@test.com"]
 
 
 def test_app_prompt_validation_errors(mock_write_json_to_file):
