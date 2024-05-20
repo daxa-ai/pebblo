@@ -1,6 +1,6 @@
-langchain>=0.1.7
-langchain-community
-langchain-openai
+langchain==0.2.0
+langchain-community==0.2.0 # For PebbloSafeLoader, VectorStore
+langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
 chromadb==0.4.7
 python-dotenv==1.0.0
 tiktoken

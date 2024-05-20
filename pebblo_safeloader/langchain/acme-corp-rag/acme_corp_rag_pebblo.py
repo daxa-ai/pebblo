@@ -4,7 +4,7 @@ from typing import List
 # in this directory before proceeding
 from dotenv import load_dotenv
 from langchain.chains import RetrievalQA
-from langchain.document_loaders.csv_loader import CSVLoader
+from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain.schema import Document
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores import Chroma
