@@ -63,6 +63,17 @@ def mock_write_json_to_file():
         yield mock_write_json_to_file
 
 
+@pytest.fixture
+def mock_pebblo_server_version():
+    # Mocking the get_pebblo_server_version function
+    with patch(
+        "pebblo.app.service.discovery_service.get_pebblo_server_version"
+    ) as mock_get_pebblo_server_version:
+        # Set the return value of the mocked function
+        mock_get_pebblo_server_version.return_value = "x.x.x"
+        yield mock_get_pebblo_server_version
+
+
 def test_topic_classifier(topic_classifier):
     assert topic_classifier is not None
 
@@ -80,7 +91,7 @@ def test_root_endpoint():
     assert response.json() == {"detail": "Not Found"}
 
 
-def test_app_discover_success(mock_write_json_to_file):
+def test_app_discover_success(mock_write_json_to_file, mock_pebblo_server_version):
     """
     Test the app discover endpoint.
     """
@@ -95,9 +106,7 @@ def test_app_discover_success(mock_write_json_to_file):
 
     # Assertions
     assert response.status_code == 200
-    assert response.json()["ai_apps_data"]["description"] == "This is a test app."
-    assert response.json()["ai_apps_data"]["name"] == "Test App"
-    assert response.json()["ai_apps_data"]["owner"] == "Test owner"
+    assert response.json()["pebblo_server_version"] == "x.x.x"
     assert response.json()["message"] == "App Discover Request Processed Successfully"
 
 

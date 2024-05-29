@@ -250,17 +250,6 @@ class LoaderDocResponseModel(BaseModel):
     message: Optional[str] = None
 
 
-class DiscoverAIApps(BaseModel):
-    name: str
-    description: Optional[str]
-    owner: str
-    instanceDetails: Optional[InstanceDetails]
-    framework: Optional[FrameworkInfo]
-    lastUsed: datetime
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
-
-
 class DiscoverAIAppsResponseModel(BaseModel):
-    ai_apps_data: Union[DiscoverAIApps, None] = None
+    pebblo_server_version: Union[str, None] = None
     message: Optional[str] = None

@@ -12,7 +12,6 @@ from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import (
     AiApp,
     Chain,
-    DiscoverAIApps,
     DiscoverAIAppsResponseModel,
     InstanceDetails,
     Metadata,
@@ -298,33 +297,27 @@ class AppDiscover:
             self._write_file_content_to_path(ai_apps, file_path)
 
             # Prepare response
-            ai_apps_data = ai_apps
-            ai_apps_obj = DiscoverAIApps(
-                name=ai_apps_data["name"],
-                description=ai_apps_data.get("description"),
-                owner=ai_apps_data.get("owner"),
-                instanceDetails=ai_apps_data.get("instanceDetails"),
-                framework=ai_apps_data.get("framework"),
-                lastUsed=ai_apps_data.get("lastUsed"),
-                pebbloServerVersion=ai_apps_data.get("pebbloServerVersion"),
-                pebbloClientVersion=ai_apps_data.get("pebbloClientVersion"),
-            )
             message = "App Discover Request Processed Successfully"
             response = DiscoverAIAppsResponseModel(
-                ai_apps_data=ai_apps_obj, message=message
+                pebblo_server_version=ai_apps.get("pebbloServerVersion"),
+                message=message,
             )
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=200
             )
         except ValidationError as ex:
-            response = DiscoverAIAppsResponseModel(ai_apps_data=None, message=str(ex))
-            logger.error(f"Error in Discovery API process_request. Error:{ex}")
+            response = DiscoverAIAppsResponseModel(
+                pebblo_server_version=None, message=str(ex)
+            )
+            logger.error(f"Error in Discovery API process_request. Error: {ex}")
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=400
             )
         except Exception as ex:
-            response = DiscoverAIAppsResponseModel(ai_apps_data=None, message=str(ex))
-            logger.error(f"Error in Discovery API process_request. Error:{ex}")
+            response = DiscoverAIAppsResponseModel(
+                pebblo_server_version=None, message=str(ex)
+            )
+            logger.error(f"Error in Discovery API process_request. Error: {ex}")
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=500
             )
