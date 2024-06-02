@@ -16,3 +16,4 @@ opencv-python
 pillow-heif
 pikepdf
 unstructured_inference
+langchain-community
