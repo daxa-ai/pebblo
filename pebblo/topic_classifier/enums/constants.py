@@ -20,6 +20,8 @@ topic_display_names = {
     "PATENT_APPLICATION_FILLINGS_AGREEMENT": "patent-application-fillings",
     "PRICE_LIST_AGREEMENT": "price-list",
     "SETTLEMENT_AGREEMENT": "settlement-agreement",
-    "SEXUAL_HARRASSMENT": "sexual-harassment",
     "EMPLOYEE_AGREEMENT": "employee-agreement",
+    "INTERNAL_PRODUCT_ROADMAP_AGREEMENT": "internal-product-roadmap-agreement",
+    "SEXUAL_CONTENT": "sexual-content",
+    "SEXUAL_INCIDENT_REPORT": "sexual-incident-report",
 }

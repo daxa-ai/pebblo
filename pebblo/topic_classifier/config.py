@@ -18,4 +18,4 @@ CLASSIFIER_PATH = "daxa-ai/pebblo-classifier"
 
 # Specific model version to use. Revision can be any identifier allowed by
 # git e.g. branch name, a tag name, or a commit id
-MODEL_REVISION = "8fbe0dcbf8af13b2a37f8c6ad260cbe1065976f8"  # Pebblo classifier V8
+MODEL_REVISION = "5fbbe83dee7ef72c61a8173c4ccf27b19788fc2e"  # Pebblo classifier V8
