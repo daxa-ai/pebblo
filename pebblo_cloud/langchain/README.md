@@ -5,7 +5,7 @@
 Pebblo Cloud can be enabled by adding API key in the Pebblo SafeLoader and Pebblo SafeRetriever initializations. 
 
 ```python
-    from langchain.document_loaders.csv_loader import CSVLoader
+    from langchain_community.document_loaders import CSVLoader
     from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
     loader = PebbloSafeLoader(

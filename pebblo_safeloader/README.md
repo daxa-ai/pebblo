@@ -7,7 +7,7 @@ Pebblo Safeloader enables safe data ingestion for Langchain document loader. Thi
 The Pebblo SafeLoader can be enabled with few lines of code change to the above snippet.
 
 ```python
-    from langchain.document_loaders.csv_loader import CSVLoader
+    from langchain_community.document_loaders import CSVLoader
     from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
     loader = PebbloSafeLoader(

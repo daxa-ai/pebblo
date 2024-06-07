@@ -34,7 +34,7 @@ Here is the sample code for `GoogleDriveLoader` with `load_auth` parameter set t
 Here is the sample code for `Pebblo SafeRetriever` with `authorized_groups` from the user accessing RAG application passed in `auth_context`
 
 ```python
-        from langchain.chains.pebblo_retrieval.models import AuthContext, ChainInput
+        from langchain_community.chains.pebblo_retrieval.models import AuthContext, ChainInput
         
         retrieval_chain = PebbloRetrievalQA.from_chain_type(
             llm=self.llm,
