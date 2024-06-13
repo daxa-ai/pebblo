@@ -79,7 +79,7 @@ class PebbloIdentityRAG:
     def ask(self, question: str, user_email: str, auth_identifiers: list):
         auth_context = {
             "user_id": user_email,
-            "authorized_identities": auth_identifiers,
+            "user_auth": auth_identifiers,
         }
         auth_context = AuthContext(**auth_context)
         chain_input = ChainInput(query=question, auth_context=auth_context)
