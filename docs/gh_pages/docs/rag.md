@@ -11,7 +11,7 @@ Assume a Langchain RAG application snippet using `CSVLoader` to read a CSV docum
 Here is the snippet of Lanchain RAG application using `CSVLoader`.
 
 ```python
-    from langchain.document_loaders.csv_loader import CSVLoader
+    from langchain_community.document_loaders import CSVLoader
 
     loader = CSVLoader(file_path)
     documents = loader.load()
@@ -21,7 +21,7 @@ Here is the snippet of Lanchain RAG application using `CSVLoader`.
 The Pebblo SafeLoader can be enabled with few lines of code change to the above snippet.
 
 ```python
-    from langchain.document_loaders.csv_loader import CSVLoader
+    from langchain_community.document_loaders import CSVLoader
     from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 
     loader = PebbloSafeLoader(

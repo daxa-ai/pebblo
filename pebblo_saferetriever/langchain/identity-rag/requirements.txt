@@ -1,6 +1,7 @@
-langchain>=0.1.7
-langchain-community
-langchain-openai
+langchain==0.2.3
+langchain-community==0.2.4 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
+langchain-google-community>=1.0.4 # For GoogleDriveLoader
+langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
 python-dotenv==1.0.0
 tiktoken
 requests==2.31.0
@@ -11,4 +12,3 @@ google-auth-httplib2
 google-auth-oauthlib
 qdrant-client==1.8.0 # for Qdrant VectorStore
 PyPDF2
-langchain_google_community # For GoogleDriveLoader

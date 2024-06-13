@@ -112,7 +112,7 @@ class SafeRetrieverSemanticRAG:
     ):
         auth_context = {
             "user_id": user_email,
-            "authorized_identities": auth_identifiers,
+            "user_auth": auth_identifiers,
         }
         auth_context = AuthContext(**auth_context)
         semantic_context = dict()
