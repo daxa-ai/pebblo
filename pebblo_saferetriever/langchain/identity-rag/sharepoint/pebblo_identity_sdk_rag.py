@@ -4,7 +4,7 @@ load_dotenv()
 
 import asyncio
 import os
-from msgraph_auth import get_authorized_identities
+from msgraph_sdk_auth import get_authorized_identities
 from langchain_community.chains import PebbloRetrievalQA
 from langchain_community.chains.pebblo_retrieval.models import (
     AuthContext,
