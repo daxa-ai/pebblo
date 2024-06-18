@@ -44,6 +44,12 @@
       .w-120 {
         width: 120px;
       }
+      .w-90px {
+        width: 90px;
+      }
+      .w-160px {
+        width: 160px;
+      }
       .w-70 {
         width: 70%;
       }
@@ -730,10 +736,10 @@
                     Document Name
                   </th>
                   <th class="th-colored normal text-end align-cell-right">
-                    Findings - Topics
+                    Findings- Topics
                   </th>
                   <th class="th-colored normal text-end align-cell-right">
-                    Findings - Entities
+                    Findings- Entities
                   </th>
                   <th class="th-colored normal align-cell-left">Owner</th>
                   <th class="th-colored normal align-cell-left">Identity</th>
@@ -743,16 +749,16 @@
                 {% for item in data.topFindings %}
                 <tr>
                   <td class="break-all">{{ item.fileName|default('-') }}</td>
-                  <td class="text-end w-120 align-cell-right">
+                  <td class="text-end w-90px align-cell-right">
                     {{ item.findingsTopics|default('-') }}
                   </td>
-                  <td class="text-end w-120 align-cell-right">
+                  <td class="text-end w-90px align-cell-right">
                     {{ item.findingsEntities|default('-') }}
                   </td>
-                  <td class="text-end w-120 align-cell-center">
+                  <td class="text-end w-160px break-all align-cell-center">
                     {{ item.fileOwner|default('-') }}
                   </td>
-                  <td>
+                  <td class="text-end break-all">
                     {{ identity_comma_separated(item.authorizedIdentities) }}
                   </td>
                 </tr>

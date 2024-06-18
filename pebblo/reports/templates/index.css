@@ -605,6 +605,10 @@ body {
   overflow-wrap: break-word;
 }
 
+.break-all {
+  word-break: break-all;
+}
+
 /* Common styles end */
 
 section {

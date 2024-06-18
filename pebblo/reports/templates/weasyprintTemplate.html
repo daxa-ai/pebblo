@@ -126,8 +126,10 @@
                   <td class="text-end">
                     {{ item.findingsEntities|default('-') }}
                   </td>
-                  <td>{{ item.fileOwner|default('-') }}</td>
-                  <td>
+                  <td class="w-120 break-all">
+                    {{ item.fileOwner|default('-') }}
+                  </td>
+                  <td class="break-all">
                     {{ identity_comma_separated(item.authorizedIdentities) }}
                   </td>
                 </tr>
