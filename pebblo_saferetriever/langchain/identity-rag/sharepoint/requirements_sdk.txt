@@ -1,0 +1,12 @@
+azure-identity
+msgraph-sdk-python-core
+langchain==0.2.3
+# langchain-community==0.2.4 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
+langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
+python-dotenv==1.0.0
+tiktoken
+requests==2.31.0
+Markdown==3.5
+unstructured[all-docs]
+qdrant-client==1.8.0 # for Qdrant VectorStore
+PyPDF2
