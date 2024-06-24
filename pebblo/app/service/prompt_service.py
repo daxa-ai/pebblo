@@ -8,12 +8,15 @@ from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import PromptResponseModel, RetrievalData
+from pebblo.app.models.models import RetrievalData
 from pebblo.app.utils.utils import (
     acquire_lock,
     read_json_file,
     release_lock,
     write_json_to_file,
 )
+from pebblo.entity_classifier.entity_classifier import EntityClassifier
+from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 
 class Prompt:
@@ -24,13 +27,8 @@ class Prompt:
     def __init__(self, data: dict):
         self.data = data
         self.application_name = self.data.get("name")
-        self.classified = self.data.get("classified")
-        if self.classified:
-            from pebblo.entity_classifier.entity_classifier import EntityClassifier
-            from pebblo.topic_classifier.topic_classifier import TopicClassifier
-
-            self.entity_classifier_obj = EntityClassifier()
-            self.topic_classifier_obj = TopicClassifier()
+        self.entity_classifier_obj = EntityClassifier()
+        self.topic_classifier_obj = TopicClassifier()
 
     def _fetch_classified_data(self, input_data):
         """
@@ -39,17 +37,12 @@ class Prompt:
 
         logger.debug(f"Retrieving details from input data: {input_data}")
 
-        entities = dict()
-        entity_count = 0
-        topics = dict()
-        topic_count = 0
-        if self.classified:
-            entities, entity_count, _ = (
-                self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
-                    input_data
-                )
+        entities, entity_count, _ = (
+            self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
+                input_data
             )
-            topics, topic_count = self.topic_classifier_obj.predict(input_data)
+        )
+        topics, topic_count = self.topic_classifier_obj.predict(input_data)
 
         data = {
             "data": input_data,
