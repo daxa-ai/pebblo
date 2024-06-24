@@ -1,0 +1,8 @@
+python-dotenv==1.0.0
+requests==2.31.0
+unstructured
+google-api-python-client # For Google Auth
+langchain
+langchain-openai
+langchain_google_community # For GoogleDriveLoader
+pinecone-client # for Pinecone VectorStore
