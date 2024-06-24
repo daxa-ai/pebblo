@@ -8,7 +8,6 @@ from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import PromptResponseModel, RetrievalData
-from pebblo.app.models.models import RetrievalData
 from pebblo.app.utils.utils import (
     acquire_lock,
     read_json_file,
