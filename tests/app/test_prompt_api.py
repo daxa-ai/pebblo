@@ -30,17 +30,17 @@ def test_app_prompt_success(mock_write_json_to_file):
         "context": [
             {
                 "retrieved_from": "test_data.pdf",
-                "doc": "This is test doc.",
-                "vector_db": "ChromaDB",
+                "doc": "Patient SSN: 222-85-4836",
+                "vector_db": "TestDB",
             },
             {
                 "retrieved_from": "test_data1.pdf",
-                "doc": "This is test1 doc.",
-                "vector_db": "ChromaDB",
+                "doc": "Patient SSN: 222-85-4836",
+                "vector_db": "TestDB",
             },
         ],
-        "prompt": {"data": "What is Sachin's Passport ID?"},
-        "response": {"data": "His passport ID is 5484880UA."},
+        "prompt": {"data": "What is John's SSN?"},
+        "response": {"data": "Patient SSN is 222-85-4836"},
         "prompt_time": "2024-04-17T15:03:18.177368",
         "user": "Test Owner",
         "user_identities": ["test_group@test.com"],
@@ -49,7 +49,20 @@ def test_app_prompt_success(mock_write_json_to_file):
     response = client.post("/v1/prompt", json=test_payload)
 
     assert response.status_code == 200
-    assert response.json()["message"] == "AiApp Prompt Processed Successfully"
+    assert response.json()["message"] == "AiApp prompt request completed successfully"
+    assert response.json()["retrieval_data"]["prompt"] == {
+        "entityCount": 0,
+        "entities": {},
+        "topicCount": 0,
+        "topics": {},
+    }
+    assert response.json()["retrieval_data"]["response"] == {
+        "entityCount": 1,
+        "entities": {"us-ssn": 1},
+        "topicCount": 0,
+        "topics": {},
+    }
+    assert response.json()["retrieval_data"]["user"] == "Test Owner"
 
 
 def test_app_prompt_validation_errors(mock_write_json_to_file):
@@ -66,7 +79,7 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
             },
             {
                 "retrieved_from": "test_data1.pdf",
-                "vector_db": "ChromaDB",
+                "vector_db": "TestDB",
             },
         ],
         "prompt": {"data": "What is Sachin's Passport ID?"},
@@ -75,12 +88,8 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
     }
     response = client.post("/v1/prompt", json=test_payload)
     assert response.status_code == 400
-    assert response.json()["detail"] == (
-        "4 validation errors for RetrievalData\n"
-        "context -> 0 -> vector_db\n"
-        "  field required (type=value_error.missing)\n"
-        "context -> 1 -> doc\n"
-        "  field required (type=value_error.missing)\n"
+    assert response.json()["message"] == (
+        "2 validation errors for RetrievalData\n"
         "prompt_time\n"
         "  field required (type=value_error.missing)\n"
         "user\n"
@@ -99,12 +108,12 @@ def test_app_prompt_validation_errors_single_missing_field(mock_write_json_to_fi
             {
                 "retrieved_from": "test_data.pdf",
                 "doc": "This is test doc.",
-                "vector_db": "ChromaDB",
+                "vector_db": "TestDB",
             },
             {
                 "retrieved_from": "test_data1.pdf",
                 "doc": "This is test1 doc.",
-                "vector_db": "ChromaDB",
+                "vector_db": "TestDB",
             },
         ],
         "prompt": {"data": "What is Sachin's Passport ID?"},
@@ -114,7 +123,7 @@ def test_app_prompt_validation_errors_single_missing_field(mock_write_json_to_fi
     }
     response = client.post("/v1/prompt", json=test_payload)
     assert response.status_code == 400
-    assert response.json()["detail"] == (
+    assert response.json()["message"] == (
         "1 validation error for RetrievalData\n"
         "prompt_time\n"
         "  field required (type=value_error.missing)"
@@ -132,12 +141,12 @@ def test_app_prompt_server_error(mock_write_json_to_file):
             {
                 "retrieved_from": "test_data.pdf",
                 "doc": "This is test doc.",
-                "vector_db": "ChromaDB",
+                "vector_db": "TestDB",
             },
             {
                 "retrieved_from": "test_data1.pdf",
                 "doc": "This is test1 doc.",
-                "vector_db": "ChromaDB",
+                "vector_db": "TestDB",
             },
         ],
         "prompt": {"data": "What is Sachin's Passport ID?"},
@@ -150,4 +159,4 @@ def test_app_prompt_server_error(mock_write_json_to_file):
 
     # Assertions
     assert response.status_code == 500
-    assert response.json() == {"detail": "Mocked exception"}
+    assert response.json() == {"message": "Mocked exception"}
