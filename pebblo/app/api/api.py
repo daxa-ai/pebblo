@@ -30,7 +30,7 @@ class App:
 
     @staticmethod
     def prompt(data: dict):
-        # "/promptgov" API entrypoint
+        # "/prompt" API entrypoint
         prompt_obj = Prompt(data=data)
         response = prompt_obj.process_request()
         return response
