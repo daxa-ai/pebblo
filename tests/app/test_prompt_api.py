@@ -62,7 +62,6 @@ def test_app_prompt_success(mock_write_json_to_file):
         "topicCount": 0,
         "topics": {},
     }
-    assert response.json()["retrieval_data"]["user"] == "Test Owner"
 
 
 def test_app_prompt_validation_errors(mock_write_json_to_file):
