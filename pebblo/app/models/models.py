@@ -235,7 +235,7 @@ class RetrievalAppDetails(BaseModel):
 
 
 class LoaderDocs(BaseModel):
-    id: Optional[str]
+    pb_id: Optional[str]
     content_checksum: str
     source_path: str
     loader_source_path: str

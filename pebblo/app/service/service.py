@@ -187,7 +187,7 @@ class AppLoaderDoc:
             docs_out = []
             for doc in docs:
                 doc_obj = LoaderDocs(
-                    id=doc["id"],
+                    pb_id=doc["id"],
                     content_checksum=hashlib.md5(doc["doc"].encode()).hexdigest(),
                     source_path=doc["sourcePath"],
                     loader_source_path=doc["loaderSourcePath"],

@@ -150,6 +150,7 @@ class Prompt:
             )
 
             self.data.update({"prompt": prompt_data, "response": response_data})
+            # Removing original context from data
             self.data.pop("context")
 
             # creating retrieval data model object
