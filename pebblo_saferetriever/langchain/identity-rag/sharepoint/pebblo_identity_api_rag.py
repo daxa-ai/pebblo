@@ -1,23 +1,20 @@
 # Fill-in OPENAI_API_KEY in .env file in this directory before proceeding
-from dotenv import load_dotenv
-load_dotenv()
-
-import asyncio
 import os
-from msgraph_api_auth import SharepointADHelper
+
+from dotenv import load_dotenv
 from langchain_community.chains import PebbloRetrievalQA
 from langchain_community.chains.pebblo_retrieval.models import (
     AuthContext,
     ChainInput,
 )
-from langchain_community.document_loaders import UnstructuredFileIOLoader
+from langchain_community.document_loaders import SharePointLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
-from langchain_community.document_loaders import SharePointLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
+from msgraph_api_auth import SharepointADHelper
 
-
+load_dotenv()
 
 
 class PebbloIdentityRAG:
@@ -98,25 +95,34 @@ if __name__ == "__main__":
 
     print("Please enter ingestion user details for loading data...")
     app_client_id = input("App client id : ") or os.environ.get("O365_CLIENT_ID")
-    app_client_secret = input("App client secret : ") or os.environ.get("O365_CLIENT_SECRET")
+    app_client_secret = input("App client secret : ") or os.environ.get(
+        "O365_CLIENT_SECRET"
+    )
     tenant_id = input("Tenant id : ") or os.environ.get("O365_TENANT_ID")
-    
-    drive_id = input("Drive id : ") or "b!TVvGZhXfGUuSKMdCgOucz08XRKxsDuVCojWCjzBMN-as9t-EstljQKBl332OMJnI"
+
+    drive_id = (
+        input("Drive id : ")
+        or "b!TVvGZhXfGUuSKMdCgOucz08XRKxsDuVCojWCjzBMN-as9t-EstljQKBl332OMJnI"
+    )
 
     rag_app = PebbloIdentityRAG(
-        drive_id = drive_id, folder_path = "/document", collection_name=input_collection_name
+        drive_id=drive_id,
+        folder_path="/document",
+        collection_name=input_collection_name,
     )
-    
+
     while True:
         print("Please enter end user details below")
-        end_user_email_address = input("User email address : ") or "arpit@daxaai.onmicrosoft.com"
+        end_user_email_address = (
+            input("User email address : ") or "arpit@daxaai.onmicrosoft.com"
+        )
         prompt = input("Please provide the prompt : ") or "tell me about sample.pdf."
         print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")
         authorized_identities = SharepointADHelper(
-                client_id = app_client_id,
-                client_secret = app_client_secret,
-                tenant_id = tenant_id,
-            ).get_authorized_identities(end_user_email_address)
+            client_id=app_client_id,
+            client_secret=app_client_secret,
+            tenant_id=tenant_id,
+        ).get_authorized_identities(end_user_email_address)
         response = rag_app.ask(prompt, end_user_email_address, authorized_identities)
         print(f"Response:\n{response}")
         try:
@@ -129,4 +135,3 @@ if __name__ == "__main__":
             exit(0)
 
         print("\n\n")
-
