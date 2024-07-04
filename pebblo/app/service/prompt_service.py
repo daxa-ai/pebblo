@@ -150,15 +150,12 @@ class Prompt:
             )
 
             self.data.update({"prompt": prompt_data, "response": response_data})
-            # Removing original context from data
-            self.data.pop("context")
 
             # creating retrieval data model object
             retrieval_data = self._create_retrieval_data()
 
             self._upsert_app_metadata_file(retrieval_data.dict())
 
-            logger.info(f"RETURN: {self.data}")
             message = "AiApp prompt request completed successfully"
             logger.debug(message)
             response = PromptResponseModel(retrieval_data=self.data, message=message)

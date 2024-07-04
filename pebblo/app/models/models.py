@@ -255,6 +255,11 @@ class DiscoverAIAppsResponseModel(BaseModel):
     message: Optional[str] = None
 
 
+class RetrievalResponse(BaseModel):
+    prompt: AiDataModel
+    response: AiDataModel
+
+
 class PromptResponseModel(BaseModel):
-    retrieval_data: Union[RetrievalData, None] = None
+    retrieval_data: Union[RetrievalResponse, None] = None
     message: Optional[str] = None
