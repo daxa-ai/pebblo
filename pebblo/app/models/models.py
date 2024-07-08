@@ -102,6 +102,11 @@ class RetrievalContext(BaseModel):
     topics: Optional[dict]
 
 
+class AiClassificationData(BaseModel):
+    entities: dict
+    topics: dict
+
+
 class RetrievalData(BaseModel):
     prompt: AiDataModel
     response: AiDataModel
@@ -256,8 +261,8 @@ class DiscoverAIAppsResponseModel(BaseModel):
 
 
 class RetrievalResponse(BaseModel):
-    prompt: AiDataModel
-    response: AiDataModel
+    prompt: AiClassificationData
+    response: AiClassificationData
 
 
 class PromptResponseModel(BaseModel):

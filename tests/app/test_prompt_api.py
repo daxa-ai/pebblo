@@ -51,15 +51,11 @@ def test_app_prompt_success(mock_write_json_to_file):
     assert response.status_code == 200
     assert response.json()["message"] == "AiApp prompt request completed successfully"
     assert response.json()["retrieval_data"]["prompt"] == {
-        "entityCount": 0,
         "entities": {},
-        "topicCount": 0,
         "topics": {},
     }
     assert response.json()["retrieval_data"]["response"] == {
-        "entityCount": 1,
         "entities": {"us-ssn": 1},
-        "topicCount": 0,
         "topics": {},
     }
 
