@@ -241,7 +241,7 @@ class RetrievalAppDetails(BaseModel):
 
 class LoaderDocs(BaseModel):
     pb_id: Optional[str]
-    content_checksum: str
+    pb_checksum: str
     source_path: str
     loader_source_path: str
     entity_count: Optional[int]
