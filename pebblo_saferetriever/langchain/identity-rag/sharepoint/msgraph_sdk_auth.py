@@ -1,7 +1,5 @@
 from dotenv import load_dotenv
 
-load_dotenv()  # noqa: F402
-
 import asyncio
 import os
 from typing import Optional
@@ -9,6 +7,9 @@ from typing import Optional
 from msgraph import GraphServiceClient
 from azure.identity import ClientSecretCredential
 from kiota_abstractions.api_error import APIError
+
+
+load_dotenv()  # While running RAG app, move to line no. 2
 
 
 async def get_authorized_identities(

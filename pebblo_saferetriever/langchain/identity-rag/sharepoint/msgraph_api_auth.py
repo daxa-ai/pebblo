@@ -4,7 +4,7 @@ import requests
 
 from dotenv import load_dotenv
 
-load_dotenv()  # noqa: F402
+load_dotenv()
 
 
 class SharepointADHelper:

@@ -1,7 +1,7 @@
 # Fill-in OPENAI_API_KEY in .env_qa file in this directory before proceeding
 from dotenv import load_dotenv
 
-load_dotenv()  # noqa: F402
+load_dotenv()  # ruff: noqa
 
 import asyncio
 import os
