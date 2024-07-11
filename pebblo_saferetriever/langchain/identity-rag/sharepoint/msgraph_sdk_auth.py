@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
-load_dotenv()
+
+load_dotenv()  # noqa: F402
 
 import asyncio
 import os
@@ -9,11 +10,12 @@ from msgraph import GraphServiceClient
 from azure.identity import ClientSecretCredential
 from kiota_abstractions.api_error import APIError
 
+
 async def get_authorized_identities(
     user_id: str,
     client_id: Optional[str] = None,
     client_secret: Optional[str] = None,
-    tenant_id: Optional[str] = None
+    tenant_id: Optional[str] = None,
 ):
     client_id = client_id or os.environ.get("O365_CLIENT_ID")
     client_secret = client_secret or os.environ.get("O365_CLIENT_SECRET")
@@ -42,6 +44,6 @@ async def get_authorized_identities(
     ] + [user_id]
     return auth_iden
 
+
 if __name__ == "__main__":
     print(asyncio.run(get_authorized_identities("arpit@daxaai.onmicrosoft.com")))
-
