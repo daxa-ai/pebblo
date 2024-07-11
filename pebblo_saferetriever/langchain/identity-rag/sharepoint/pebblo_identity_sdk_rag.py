@@ -1,8 +1,6 @@
 # Fill-in OPENAI_API_KEY in .env_qa file in this directory before proceeding
 from dotenv import load_dotenv
 
-load_dotenv()  # ruff: noqa
-
 import asyncio
 import os
 from msgraph_sdk_auth import get_authorized_identities
@@ -16,6 +14,8 @@ from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_community.document_loaders import SharePointLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
+
+load_dotenv()  # While running RAG app, move to line no. 2
 
 
 class PebbloIdentityRAG:
