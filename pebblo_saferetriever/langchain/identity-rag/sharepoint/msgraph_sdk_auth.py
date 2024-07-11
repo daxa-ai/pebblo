@@ -1,13 +1,11 @@
-from dotenv import load_dotenv
-
 import asyncio
 import os
 from typing import Optional
 
-from msgraph import GraphServiceClient
 from azure.identity import ClientSecretCredential
+from dotenv import load_dotenv
 from kiota_abstractions.api_error import APIError
-
+from msgraph import GraphServiceClient
 
 load_dotenv()  # While running RAG app, move to line no. 2
 

@@ -1,18 +1,18 @@
 # Fill-in OPENAI_API_KEY in .env file in this directory before proceeding
-from dotenv import load_dotenv
 import os
-from msgraph_api_auth import SharepointADHelper
+
+from dotenv import load_dotenv
 from langchain_community.chains import PebbloRetrievalQA
 from langchain_community.chains.pebblo_retrieval.models import (
     AuthContext,
     ChainInput,
 )
+from langchain_community.document_loaders import SharePointLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
-from langchain_community.document_loaders import SharePointLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
-
+from msgraph_api_auth import SharepointADHelper
 
 load_dotenv()  # While running RAG app, move to line no. 2
 

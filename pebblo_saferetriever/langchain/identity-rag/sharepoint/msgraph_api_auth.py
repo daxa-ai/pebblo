@@ -1,7 +1,7 @@
-from typing import Optional
 import os
-import requests
+from typing import Optional
 
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
