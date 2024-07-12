@@ -9,10 +9,10 @@ load_dotenv()
 
 class SharepointADHelper:
     def __init__(
-            self,
-            client_id: Optional[str] = None,
-            client_secret: Optional[str] = None,
-            tenant_id: Optional[str] = None,
+        self,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        tenant_id: Optional[str] = None,
     ):
         self.client_id = client_id or os.environ.get("O365_CLIENT_ID")
         self.client_secret = client_secret or os.environ.get("O365_CLIENT_SECRET")
