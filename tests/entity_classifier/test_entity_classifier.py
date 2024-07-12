@@ -19,13 +19,13 @@ class TestAnonymizerResult:
 @pytest.fixture
 def mocked_objects():
     with (
-        patch (
+        patch(
             "pebblo.entity_classifier.entity_classifier.AnalyzerEngine"
         ) as mock_analyzer,
-        patch (
+        patch(
             "pebblo.entity_classifier.entity_classifier.AnalyzerEngine"
         ) as mock_anomyzer,
-        patch (
+        patch(
             "pebblo.entity_classifier.utils.utils.add_custom_regex_analyzer_registry"
         ) as mock_custom_registry,
     ):
