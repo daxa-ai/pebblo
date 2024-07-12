@@ -1,4 +1,5 @@
 import os
+from typing import Optional, List
 
 from dotenv import load_dotenv
 
@@ -8,6 +9,7 @@ from langchain_community.chains import PebbloRetrievalQA
 from langchain_community.chains.pebblo_retrieval.models import (
     AuthContext,
     ChainInput,
+    SemanticContext,
 )
 from langchain_community.document_loaders import SharePointLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
@@ -15,9 +17,10 @@ from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
 from msgraph_api_auth import SharepointADHelper
+from utils import get_input_as_list, obfuscate, format_text
 
 
-class PebbloIdentityRAG:
+class PebbloSafeRAG:
     """
     Sample app to demonstrate the usage of PebbloSafeLoader, and PebbloRetrievalQA
     for Identity enforcement using Qdrant VectorDB
@@ -87,43 +90,86 @@ class PebbloIdentityRAG:
         )
         return vectordb
 
-    def ask(self, question: str, user_email: str, auth_identifiers: list):
+    def ask(
+        self,
+        question: str,
+        user_email: str,
+        auth_identifiers: list,
+        topics_to_deny: Optional[List[str]] = None,
+        entities_to_deny: Optional[List[str]] = None,
+    ):
         """
-        Ask a question
+        Ask a question with identity and semantic context
         """
-        auth_context = {
-            "user_id": user_email,
-            "user_auth": auth_identifiers,
-        }
-        auth_context = AuthContext(**auth_context)
-        chain_input = ChainInput(query=question, auth_context=auth_context)
+        auth_context = None
+        if auth_identifiers:
+            auth_context = {
+                "user_id": user_email,
+                "user_auth": auth_identifiers,
+            }
+            auth_context = AuthContext(**auth_context)
+        semantic_context = dict()
+        if topics_to_deny:
+            semantic_context["pebblo_semantic_topics"] = {"deny": topics_to_deny}
+        if entities_to_deny:
+            semantic_context["pebblo_semantic_entities"] = {"deny": entities_to_deny}
 
+        semantic_context = (
+            SemanticContext(**semantic_context) if semantic_context else None
+        )
+
+        chain_input = ChainInput(
+            query=question, auth_context=auth_context, semantic_context=semantic_context
+        )
+        # Print chain input in formatted json
+        print(f"\nchain_input: {chain_input.json(indent=4)}")
         return self.retrieval_chain.invoke(chain_input.dict())
 
 
 if __name__ == "__main__":
     input_collection_name = "identity-enabled-rag"
 
-    print("Please enter ingestion user details for loading data...")
-    app_client_id = input("App client id : ") or os.environ.get("O365_CLIENT_ID")
-    app_client_secret = input("App client secret : ") or os.environ.get(
-        "O365_CLIENT_SECRET"
-    )
-    tenant_id = input("Tenant id : ") or os.environ.get("O365_TENANT_ID")
+    _client_id = os.environ.get("O365_CLIENT_ID")
+    _client_secret = os.environ.get("O365_CLIENT_SECRET")
+    _tenant_id = os.environ.get("O365_TENANT_ID")
 
+    print("Please enter the app details to authenticate with Microsoft Graph API ...")
+    app_client_id = input(f"App client id ({_client_id}): ") or _client_id
+    app_client_secret = (
+        input(f"App client secret ({obfuscate(_client_secret)}): ") or _client_secret
+    )
+    tenant_id = input(f"Tenant id ({_tenant_id}): ") or _tenant_id
+
+    print("\nPlease enter drive id for loading data...")
     drive_id = input("Drive id : ")
 
-    rag_app = PebbloIdentityRAG(
+    rag_app = PebbloSafeRAG(
         drive_id=drive_id,
         folder_path="/document",
         collection_name=input_collection_name,
     )
 
     while True:
-        print("Please enter end user details below")
-        end_user_email_address = input("User email address : ")
+        print("Please enter end user details below:")
+        end_user_email_address = input("User email address: ")
+
+        def_topics = None  # ["employee-agreement"]
+        topic_to_deny = (
+            get_input_as_list(
+                f"Enter topics to deny (Optional, comma separated, no quotes needed): "
+            )
+            or def_topics
+        )
+
+        def_entities = None
+        entity_to_deny = (
+            get_input_as_list(
+                f"Enter entities to deny (Optional, comma separated, no quotes needed): "
+            )
+            or def_entities
+        )
+
         prompt = input("Please provide the prompt : ")
-        print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")
 
         authorized_identities = SharepointADHelper(
             client_id=app_client_id,
@@ -131,18 +177,23 @@ if __name__ == "__main__":
             tenant_id=tenant_id,
         ).get_authorized_identities(end_user_email_address)
 
-        response = rag_app.ask(prompt, end_user_email_address, authorized_identities)
-        print(
-            f"auth_context: {response['auth_context']}\n"
-            f"semantic_context: {response['semantic_context']}\n"
-            f"Result: \n{response['result']}\n"
+        response = rag_app.ask(
+            prompt,
+            end_user_email_address,
+            authorized_identities,
+            topic_to_deny,
+            entity_to_deny,
         )
+        print(f"Result: {format_text(response['result'])}")
+        print(120 * "-")
 
         try:
-            continue_or_exist = int(input("\n\nType 1 to continue and 0 to exit : "))
+            continue_or_exist = int(input("\nType 1 to continue and 0 to exit : "))
         except ValueError:
             print("Please provide valid input")
             continue
 
         if not continue_or_exist:
             exit(0)
+
+        print("\n")
