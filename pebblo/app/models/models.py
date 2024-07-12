@@ -96,10 +96,18 @@ class RetrievalContext(BaseModel):
     retrieved_from: str
     doc: str
     vector_db: str
+    entityCount: Optional[int]
+    entities: Optional[dict]
+    topicCount: Optional[int]
+    topics: Optional[dict]
+
+
+class AiClassificationData(BaseModel):
+    entities: dict
+    topics: dict
 
 
 class RetrievalData(BaseModel):
-    context: List[RetrievalContext]
     prompt: AiDataModel
     response: AiDataModel
     prompt_time: str
@@ -232,13 +240,10 @@ class RetrievalAppDetails(BaseModel):
 
 
 class LoaderDocs(BaseModel):
-    id: Optional[str]
-    doc: str
-    source_size: int
-    file_owner: str
+    pb_id: Optional[str]
+    pb_checksum: str
     source_path: str
     loader_source_path: str
-    last_modified: Optional[datetime]
     entity_count: Optional[int]
     entities: Optional[dict]
     topic_count: Optional[int]
@@ -252,4 +257,14 @@ class LoaderDocResponseModel(BaseModel):
 
 class DiscoverAIAppsResponseModel(BaseModel):
     pebblo_server_version: Union[str, None] = None
+    message: Optional[str] = None
+
+
+class RetrievalResponse(BaseModel):
+    prompt: AiClassificationData
+    response: AiClassificationData
+
+
+class PromptResponseModel(BaseModel):
+    retrieval_data: Union[RetrievalResponse, None] = None
     message: Optional[str] = None

@@ -2,6 +2,7 @@
 This module handles app loader/doc API business logic.
 """
 
+import hashlib
 from datetime import datetime
 
 from pydantic import ValidationError
@@ -186,13 +187,10 @@ class AppLoaderDoc:
             docs_out = []
             for doc in docs:
                 doc_obj = LoaderDocs(
-                    id=doc["id"],
-                    doc=doc["doc"],
-                    source_size=doc["sourceSize"],
-                    file_owner=doc["fileOwner"],
+                    pb_id=doc["id"],
+                    pb_checksum=hashlib.md5(doc["doc"].encode()).hexdigest(),
                     source_path=doc["sourcePath"],
                     loader_source_path=doc["loaderSourcePath"],
-                    last_modified=doc["lastModified"],
                     entity_count=doc.get("entityCount")
                     if doc.get("entityCount") > 0
                     else None,
