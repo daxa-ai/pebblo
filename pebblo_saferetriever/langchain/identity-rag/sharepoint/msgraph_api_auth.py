@@ -1,16 +1,18 @@
-from typing import Optional
 import os
-import requests
+from typing import Optional
 
+import requests
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 class SharepointADHelper:
     def __init__(
-        self,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        tenant_id: Optional[str] = None
+            self,
+            client_id: Optional[str] = None,
+            client_secret: Optional[str] = None,
+            tenant_id: Optional[str] = None,
     ):
         self.client_id = client_id or os.environ.get("O365_CLIENT_ID")
         self.client_secret = client_secret or os.environ.get("O365_CLIENT_SECRET")
@@ -21,9 +23,11 @@ class SharepointADHelper:
             )
         self.access_token = self.get_access_token()
         if not self.access_token:
-            raise EnvironmentError("o365 client id/secret or tenant id is invalid."
-                            "Please check the environment variables.")
-        self.headers = { 'Authorization': 'Bearer' + self.access_token }
+            raise EnvironmentError(
+                "o365 client id/secret or tenant id is invalid."
+                "Please check the environment variables."
+            )
+        self.headers = {"Authorization": "Bearer" + self.access_token}
 
     def get_authorized_identities(self, user_id: str):
         """
@@ -38,11 +42,15 @@ class SharepointADHelper:
         user = self._get_users(user_id)
         user_index_id = user.get("id")
         if not user_index_id:
-            print(f"Could not find the user `{user_id}` information in Microsoft Graph API. Not authorized.")
+            print(
+                f"Could not find the user `{user_id}` information in Microsoft Graph API. Not authorized."
+            )
             return [user_id]
         associated_groups = self._get_associated_groups(user_index_id)
         associated_groups_emails = [
-            group.get("mail") for group in associated_groups["value"] if group.get("mail")
+            group.get("mail")
+            for group in associated_groups["value"]
+            if group.get("mail")
         ]
         return associated_groups_emails + [user_id]
 
@@ -92,7 +100,6 @@ class SharepointADHelper:
         else:
             return response.json()
 
-
     def get_access_token(self):
         """
         Retrieves an access token from Microsoft Graph API using client credentials.
@@ -102,14 +109,14 @@ class SharepointADHelper:
             requests.exceptions.HTTPError: If the request to retrieve the access token fails.
         """
         # ToDo: This access token should be cached and refreshed when it expires
-        # It should also be stored in home directory or in a secure location 
+        # It should also be stored in home directory or in a secure location
         url = f"https://login.microsoftonline.com/{self.tenant_id}/oauth2/v2.0/token"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         data = {
             "grant_type": "client_credentials",
             "client_id": self.client_id,
             "client_secret": self.client_secret,
-            "scope": "https://graph.microsoft.com/.default"
+            "scope": "https://graph.microsoft.com/.default",
         }
         try:
             response = requests.post(url, headers=headers, data=data, timeout=10)
@@ -119,6 +126,7 @@ class SharepointADHelper:
             return ""
         else:
             return response.json()["access_token"]
+
 
 if __name__ == "__main__":
     pass
