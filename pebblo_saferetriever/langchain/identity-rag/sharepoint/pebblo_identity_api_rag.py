@@ -2,6 +2,8 @@
 import os
 
 from dotenv import load_dotenv
+load_dotenv()
+
 from langchain_community.chains import PebbloRetrievalQA
 from langchain_community.chains.pebblo_retrieval.models import (
     AuthContext,
@@ -13,8 +15,6 @@ from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
 from msgraph_api_auth import SharepointADHelper
-
-load_dotenv()  # While running RAG app, move to line no. 2
 
 
 class PebbloIdentityRAG:
