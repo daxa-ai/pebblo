@@ -35,13 +35,16 @@ def mocked_objects():
     """
     Mock the HF Login and model objects used in the TopicClassifier class to avoid actual API calls
     """
-    with patch("pebblo.topic_classifier.topic_classifier.login") as mock_login, patch(
-        "pebblo.topic_classifier.topic_classifier.AutoTokenizer.from_pretrained"
-    ) as mock_tokenizer, patch(
-        "pebblo.topic_classifier.topic_classifier.AutoModelForSequenceClassification.from_pretrained"
-    ) as mock_model, patch(
-        "pebblo.topic_classifier.topic_classifier.pipeline"
-    ) as mock_pipeline:
+    with (
+        patch("pebblo.topic_classifier.topic_classifier.login") as mock_login,
+        patch(
+                "pebblo.topic_classifier.topic_classifier.AutoTokenizer.from_pretrained"
+            ) as mock_tokenizer,
+        patch(
+                "pebblo.topic_classifier.topic_classifier.AutoModelForSequenceClassification.from_pretrained"
+            ) as mock_model,
+        patch("pebblo.topic_classifier.topic_classifier.pipeline") as mock_pipeline,
+    ):
         yield mock_login, mock_tokenizer, mock_model, mock_pipeline
 
 

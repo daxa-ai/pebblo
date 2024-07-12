@@ -18,13 +18,17 @@ class TestAnonymizerResult:
 
 @pytest.fixture
 def mocked_objects():
-    with patch(
-        "pebblo.entity_classifier.entity_classifier.AnalyzerEngine"
-    ) as mock_analyzer, patch(
-        "pebblo.entity_classifier.entity_classifier.AnalyzerEngine"
-    ) as mock_anomyzer, patch(
-        "pebblo.entity_classifier.utils.utils.add_custom_regex_analyzer_registry"
-    ) as mock_custom_registry:
+    with (
+        patch (
+            "pebblo.entity_classifier.entity_classifier.AnalyzerEngine"
+        ) as mock_analyzer,
+        patch (
+            "pebblo.entity_classifier.entity_classifier.AnalyzerEngine"
+        ) as mock_anomyzer,
+        patch (
+            "pebblo.entity_classifier.utils.utils.add_custom_regex_analyzer_registry"
+        ) as mock_custom_registry,
+    ):
         yield mock_analyzer, mock_anomyzer, mock_custom_registry
 
 
