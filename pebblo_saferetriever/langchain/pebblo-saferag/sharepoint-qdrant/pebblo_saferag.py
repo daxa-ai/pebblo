@@ -1,8 +1,8 @@
-# Fill-in OPENAI_API_KEY in .env file in this directory before proceeding
 import asyncio
 import os
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 from langchain_community.chains import PebbloRetrievalQA
@@ -19,6 +19,11 @@ from msgraph_sdk_auth import get_authorized_identities
 
 
 class PebbloIdentityRAG:
+    """
+    Sample app to demonstrate the usage of PebbloSafeLoader, and PebbloRetrievalQA
+    for Identity enforcement using Qdrant VectorDB
+    """
+
     def __init__(self, drive_id: str, folder_path: str, collection_name: str):
         self.loader_app_name = "pebblo-identity-loader"
         self.retrieval_app_name = "pebblo-identity-retriever"
@@ -40,15 +45,15 @@ class PebbloIdentityRAG:
             name=self.loader_app_name,  # App name (Mandatory)
             owner="Joe Smith",  # Owner (Optional)
             description="Identity enabled SafeLoader and SafeRetrival app using Pebblo",  # Description (Optional)
+            load_semantic=True,
         )
         self.documents = self.loader.load()
         print(self.documents[-1].metadata.get("authorized_identities"))
         print(f"Loaded {len(self.documents)} documents ...\n")
 
         # Load documents into VectorDB
-
         print("Hydrating Vector DB ...")
-        self.vectordb = self.embeddings()
+        self.vectordb = self.init_vector_db()
         print("Finished hydrating Vector DB ...\n")
 
         # Prepare LLM
@@ -70,7 +75,10 @@ class PebbloIdentityRAG:
             verbose=True,
         )
 
-    def embeddings(self):
+    def init_vector_db(self):
+        """
+        Initialize Qdrant VectorDB from documents
+        """
         embeddings = OpenAIEmbeddings()
         vectordb = Qdrant.from_documents(
             self.documents,
@@ -81,6 +89,9 @@ class PebbloIdentityRAG:
         return vectordb
 
     def ask(self, question: str, user_email: str, auth_identifiers: list):
+        """
+        Ask a question
+        """
         auth_context = {
             "user_id": user_email,
             "user_auth": auth_identifiers,
@@ -101,10 +112,7 @@ if __name__ == "__main__":
     )
     tenant_id = input("Tenant id : ") or os.environ.get("O365_TENANT_ID")
 
-    drive_id = (
-            input("Drive id : ")
-            or "b!TVvGZhXfGUuSKMdCgOucz08XRKxsDuVCojWCjzBMN-as9t-EstljQKBl332OMJnI"
-    )
+    drive_id = input("Drive id : ")
 
     rag_app = PebbloIdentityRAG(
         drive_id=drive_id,
@@ -115,11 +123,10 @@ if __name__ == "__main__":
 
     while True:
         print("Please enter end user details below")
-        end_user_email_address = (
-                input("User email address : ") or "arpit@daxaai.onmicrosoft.com"
-        )
-        prompt = input("Please provide the prompt : ") or "tell me about sample.pdf."
+        end_user_email_address = input("User email address : ")
+        prompt = input("Please provide the prompt : ")
         print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")
+
         authorized_identities = loop.run_until_complete(
             get_authorized_identities(
                 user_id=end_user_email_address,
@@ -128,8 +135,14 @@ if __name__ == "__main__":
                 tenant_id=tenant_id,
             )
         )
+
         response = rag_app.ask(prompt, end_user_email_address, authorized_identities)
-        print(f"Response:\n{response}")
+        print(
+            f"auth_context: {response['auth_context']}\n"
+            f"semantic_context: {response['semantic_context']}\n"
+            f"Result: \n{response['result']}\n"
+        )
+
         try:
             continue_or_exist = int(input("\n\nType 1 to continue and 0 to exit : "))
         except ValueError:
@@ -138,5 +151,3 @@ if __name__ == "__main__":
 
         if not continue_or_exist:
             exit(0)
-
-        print("\n\n")
