@@ -1,11 +1,4 @@
-## Semantic Enforcement using Pebblo
-
-This solution uses the following two proposed PRs:
-
-1. Add semantic info to metadata, classified by pebblo-server
-   https://github.com/daxa-ai/langchain/pull/16
-2. langchain: Add PebbloRetrievalQA chain with Identity & Semantic Enforcement support
-   https://github.com/langchain-ai/langchain/pull/19991
+## Identity Enforcement using Pebblo
 
 ### Instructions
 
@@ -38,7 +31,8 @@ PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
 4. Run langchain sample app Pebblo SafeLoader and Pebblo SafeRetriever
 
 ```console
-$ python3 pebblo_semantic_rag.py
+$ python3 pebblo_identity_rag.py
 ```
 
-5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-sematic-loader/pebblo_report.pdf` file path on the system where `Pebblo Server` is running.
+5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-identity-loader/pebblo_report.pdf` file path on the system where `Pebblo Server` is
+   running.
