@@ -36,6 +36,7 @@ databases.
 
 1. Qdrant
 1. Pinecone
+1. Postgres(utilizing the pgvector extension)
 
 **Load vector database with authorization information in metadata:**
 

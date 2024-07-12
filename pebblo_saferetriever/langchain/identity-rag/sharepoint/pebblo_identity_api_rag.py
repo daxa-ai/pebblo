@@ -101,8 +101,8 @@ if __name__ == "__main__":
     tenant_id = input("Tenant id : ") or os.environ.get("O365_TENANT_ID")
 
     drive_id = (
-        input("Drive id : ")
-        or "b!TVvGZhXfGUuSKMdCgOucz08XRKxsDuVCojWCjzBMN-as9t-EstljQKBl332OMJnI"
+            input("Drive id : ")
+            or "b!TVvGZhXfGUuSKMdCgOucz08XRKxsDuVCojWCjzBMN-as9t-EstljQKBl332OMJnI"
     )
 
     rag_app = PebbloIdentityRAG(
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     while True:
         print("Please enter end user details below")
         end_user_email_address = (
-            input("User email address : ") or "arpit@daxaai.onmicrosoft.com"
+                input("User email address : ") or "arpit@daxaai.onmicrosoft.com"
         )
         prompt = input("Please provide the prompt : ") or "tell me about sample.pdf."
         print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")

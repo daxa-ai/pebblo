@@ -167,8 +167,7 @@ include-package-data = false
 exclude=["tests*", "pebblo_safeloader*", "pebblo_saferetriever*", "pebblo_cloud*"]
 
 [tool.ruff]
-exclude = ["pebblo_saferetriever/langchain/identity-rag/sharepoint/*"]
-
+exclude = ["pebblo_saferetriever/langchain/identity-rag/sharepoint/*.py"]
 
 [build-system]
 # These are the assumed default build requirements from pip:
