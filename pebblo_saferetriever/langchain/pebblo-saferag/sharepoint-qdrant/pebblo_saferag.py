@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 from dotenv import load_dotenv
@@ -119,7 +118,6 @@ if __name__ == "__main__":
         folder_path="/document",
         collection_name=input_collection_name,
     )
-    loop = asyncio.get_event_loop()
 
     while True:
         print("Please enter end user details below")
