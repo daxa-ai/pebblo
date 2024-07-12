@@ -15,7 +15,7 @@ from langchain_community.document_loaders.pebblo import PebbloSafeLoader
 from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
-from msgraph_sdk_auth import get_authorized_identities
+from msgraph_api_auth import SharepointADHelper
 
 
 class PebbloIdentityRAG:
@@ -127,14 +127,11 @@ if __name__ == "__main__":
         prompt = input("Please provide the prompt : ")
         print(f"User: {end_user_email_address}.\nQuery:{prompt}\n")
 
-        authorized_identities = loop.run_until_complete(
-            get_authorized_identities(
-                user_id=end_user_email_address,
-                client_id=app_client_id,
-                client_secret=app_client_secret,
-                tenant_id=tenant_id,
-            )
-        )
+        authorized_identities = SharepointADHelper(
+            client_id=app_client_id,
+            client_secret=app_client_secret,
+            tenant_id=tenant_id,
+        ).get_authorized_identities(end_user_email_address)
 
         response = rag_app.ask(prompt, end_user_email_address, authorized_identities)
         print(
