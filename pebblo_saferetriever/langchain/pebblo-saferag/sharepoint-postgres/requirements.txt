@@ -1,0 +1,16 @@
+langchain==0.2.6
+# langchain-community==0.2.6 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
+langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
+python-dotenv==1.0.0
+unstructured
+unstructured[pdf]
+unstructured[docx]
+
+o365
+azure-identity
+msgraph-sdk
+psycopg2-binary
+pgvector
+langchain-postgres
+
+# (cd ../langchain; git checkout daxa_3.1; cd libs/community; pip install .)

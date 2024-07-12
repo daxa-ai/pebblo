@@ -1,7 +1,8 @@
 azure-identity
 msgraph-sdk-python-core
-langchain==0.2.3
-# langchain-community==0.2.4 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
+o365
+langchain-core==0.2.10
+langchain-community==0.2.6 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
 langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
 python-dotenv==1.0.0
 tiktoken

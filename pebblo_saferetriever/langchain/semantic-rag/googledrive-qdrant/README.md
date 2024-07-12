@@ -1,12 +1,4 @@
-## Identity Enforcement using Pebblo
-
-This solution uses the following two proposed PRs to LangChain:
-
-1. community: add authorization identities to GoogleDriveLoader #18813
-   https://github.com/langchain-ai/langchain/pull/18813
-
-2. langchain: add PebbloRetrievalQA chain with Identity & Semantic enforcement #19991
-   https://github.com/langchain-ai/langchain/pull/19991
+## Semantic Enforcement using Pebblo
 
 ### Instructions
 
@@ -39,8 +31,7 @@ PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
 4. Run langchain sample app Pebblo SafeLoader and Pebblo SafeRetriever
 
 ```console
-$ python3 pebblo_identity_rag.py
+$ python3 pebblo_semantic_rag.py
 ```
 
-5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-identity-loader/pebblo_report.pdf` file path on the system where `Pebblo Server` is
-   running.
+5. Retrieve the Pebblo PDF report in `$HOME/.pebblo/pebblo-sematic-loader/pebblo_report.pdf` file path on the system where `Pebblo Server` is running.
