@@ -67,6 +67,33 @@ const sidebars: SidebarsConfig = {
       label: "Reports", // sidebar label
     },
     {
+        type: "category",
+        label: "Samples", // sidebar label
+        items: [
+            {
+              type: "category",
+              label: "Safe Loader Samples",
+              items: [
+                {
+                  type: "link",
+                  label: "1. Google Drive-Qdrant Safe Loader Sample",
+                  href: "https://github.com/daxa-ai/pebblo/tree/main/pebblo_safeloader/langchain/identity-rag",
+                },
+                {
+                  type: "link",
+                  label: "2. CSV Loader-Chroma Safe Loader Sample",
+                  href: "https://github.com/daxa-ai/pebblo/tree/main/pebblo_safeloader/langchain/acme-corp-rag",
+                },
+              ],
+            },
+            {
+              type: "doc",
+              label: "Safe Retriever Samples",
+              id: "safe_retriever_samples",
+            }
+        ]
+    },
+    {
       type: "doc",
       id: "troubleshooting", // document ID
       label: "Troubleshooting Guide", // sidebar label
