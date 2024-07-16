@@ -334,7 +334,7 @@ class AppDiscover:
                 f"{CacheDir.HOME_DIR.value}/{self.application_name}/{self.load_id}"
                 f"/{CacheDir.METADATA_FILE_PATH.value}"
             )
-            self._write_file_content_to_path(ai_apps.dict(), load_dir_file_path)
+            self._write_file_content_to_path(ai_apps, load_dir_file_path)
 
             # When run_id is present, write metadata to run metadata file by acquiring lock
             if self.run_id:
@@ -352,7 +352,7 @@ class AppDiscover:
                     # Check if file is not present, then write details, otherwise skip writing file again.
                     if not existing_ai_app_details:
                         self._write_file_content_to_path(
-                            ai_apps.dict(), run_dir_file_path
+                            ai_apps, run_dir_file_path
                         )
                 finally:
                     release_lock(run_dir_lock_file_path)
