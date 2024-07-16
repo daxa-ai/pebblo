@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Optional, List
 
 from dotenv import load_dotenv
@@ -44,11 +45,12 @@ class PebbloSafeRAG:
         print(120 * "-")
         # Load documents
         print("Loading RAG documents ...")
+        token_path = Path.home() / ".credentials" / "o365_token.txt"
         self.loader = PebbloSafeLoader(
             SharePointLoader(
                 document_library_id=self.drive_id,
                 folder_path=self.folder_path or "/",
-                auth_with_token=True,
+                auth_with_token=True if os.path.exists(token_path) else False,
                 load_auth=True,
                 recursive=True,
                 load_extended_metadata=True,

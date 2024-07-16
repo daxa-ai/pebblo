@@ -1,16 +1,15 @@
-langchain==0.2.6
-# langchain-community==0.2.6 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
-langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
 python-dotenv==1.0.0
-unstructured
-unstructured[pdf]
-unstructured[docx]
+unstructured # For Docx loading
+pymupdf # For PDF loading
+tiktoken # OpenAI tokenizer
 
-o365
-azure-identity
-msgraph-sdk
-psycopg2-binary
-pgvector
-langchain-postgres
+langchain==0.2.6
+langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
+# Install langchain-community for PebbloSafeLoader, PebbloRetrievalQA
+# (cd <path-to-langchain-root>; git checkout daxa_3.1; cd libs/community; pip install .)
 
-# (cd ../langchain; git checkout daxa_3.1; cd libs/community; pip install .)
+o365 # Sharepoint
+azure-identity # Sharepoint
+
+psycopg2-binary # For Postgres VectorStore
+langchain-postgres # For Postgres VectorStore

@@ -1,13 +1,14 @@
-azure-identity
-msgraph-sdk-python-core
-o365
-langchain-core==0.2.10
-langchain-community==0.2.6 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
-langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
 python-dotenv==1.0.0
-tiktoken
-requests==2.31.0
-Markdown==3.5
-unstructured[all-docs]
+unstructured # For Docx loading
+pymupdf # For PDF loading
+tiktoken # OpenAI tokenizer
+
+langchain==0.2.6
+langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
+# Install langchain-community for PebbloSafeLoader, PebbloRetrievalQA, VectorStore
+# (cd <path-to-langchain-root>; git checkout daxa_3.1; cd libs/community; pip install .)
+
+o365 # Sharepoint
+azure-identity # Sharepoint
+
 qdrant-client==1.8.0 # for Qdrant VectorStore
-PyPDF2
