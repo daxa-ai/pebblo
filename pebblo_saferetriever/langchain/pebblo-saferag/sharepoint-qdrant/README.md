@@ -24,7 +24,17 @@ $ pip3 install -r requirements.txt
 
 ```console
 $ cat .env
-OPENAI_API_KEY=""
+# OpenAI credentials
+OPENAI_API_KEY=<YOUR OPENAI API KEY>
+
+# 0365 configuration
+O365_CLIENT_ID=<YOUR APPLICATION (CLIENT) ID>
+O365_CLIENT_SECRET=<YOUR CLIENT SECRET>
+O365_TENANT_ID=<YOUR TENANT ID>
+
+# Pebblo configuration
+PEBBLO_CLOUD_URL=<PEBBLO CLOUD URL>
+PEBBLO_API_KEY=<YOUR PEBBLO API KEY>
 PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
 ```
 
