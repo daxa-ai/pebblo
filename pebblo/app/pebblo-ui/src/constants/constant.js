@@ -10,7 +10,6 @@ import { Tooltip } from "../components/tooltip.js";
 import { CopyIcon } from "../icons/index.js";
 import { DownloadIcon } from "../icons/index.js";
 import {
-  capitalizeFirstLetter,
   extractTimezone,
   getDifferenceInDays,
   getFileSize,
@@ -246,8 +245,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
     label: "Application",
     field: "name",
     align: "start",
-    render: (item) =>
-      `<span class="text-none">${capitalizeFirstLetter(item?.name)}</span>`,
+    render: (item) => `<span class="text-none">${item?.name}</span>`,
   },
   {
     label: "Findings - Total",
@@ -306,9 +304,7 @@ export const TABLE_DATA_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
     align: "start",
     render: (item) => {
       return /*html*/ `<div class="flex flex-col gap-1">
-        <div class="font-13 text-none">${capitalizeFirstLetter(
-          item?.name
-        )}</div>
+        <div class="font-13 text-none">${item?.name}</div>
         <div class="surface-60 font-11">Owner: ${item?.owner}</div>
       </div>`;
     },
@@ -385,8 +381,7 @@ export const TABLE_DATA_FOR_FINDINGS = [
     label: "Application",
     field: "appName",
     align: "start",
-    render: (item) =>
-      `<span class="text-none">${capitalizeFirstLetter(item?.appName)}</span>`,
+    render: (item) => `<span class="text-none">${item?.appName}</span>`,
   },
 ];
 
@@ -451,8 +446,7 @@ export const TABLE_DATA_FOR_FILES_WITH_FINDINGS = [
     label: "Application",
     field: "appName",
     align: "start",
-    render: (item) =>
-      `<span class="text-none">${capitalizeFirstLetter(item?.appName)}</span>`,
+    render: (item) => `<span class="text-none">${item?.appName}</span>`,
   },
   {
     label: "Data Source",
@@ -489,8 +483,7 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
     label: "Application",
     field: "appName",
     align: "start",
-    render: (item) =>
-      `<span class="text-none">${capitalizeFirstLetter(item?.appName)}</span>`,
+    render: (item) => `<span class="text-none">${item?.appName}</span>`,
   },
 ];
 
@@ -521,8 +514,7 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
   {
     label: "Application",
     field: "appName",
-    render: () =>
-      `<span class="text-none">${capitalizeFirstLetter(APP_DATA?.name)}</span>`,
+    render: () => `<span class="text-none">${APP_DATA?.name}</span>`,
     align: "start",
   },
 ];
