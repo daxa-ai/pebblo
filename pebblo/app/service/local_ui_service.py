@@ -174,6 +174,16 @@ class AppData:
             all_loader_apps: list = []
             all_retrieval_apps: list = []
 
+            # Default values
+            all_apps = []
+            apps_at_risk = 0
+            findings = 0
+            files_findings = 0
+            data_source = 0
+            findings_list = []
+            data_source_list = []
+            document_with_findings_list = []
+
             # Iterating through each app in the directory
             for app_dir in dir_path:
                 try:
@@ -238,7 +248,7 @@ class AppData:
                     app_name = app_json.get("name")
                     findings_entities = report_summary.get("findingsEntities", 0)
                     findings_topics = report_summary.get("findingsTopics", 0)
-                    app_details = AppListDetails(
+                    app_details = LoaderAppListDetails(
                         name=app_json.get("name"),
                         topics=findings_topics,
                         entities=findings_entities,
