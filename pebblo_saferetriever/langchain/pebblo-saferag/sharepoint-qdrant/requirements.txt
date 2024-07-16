@@ -11,3 +11,4 @@ Markdown==3.5
 unstructured[all-docs]
 qdrant-client==1.8.0 # for Qdrant VectorStore
 PyPDF2
+pymupdf
