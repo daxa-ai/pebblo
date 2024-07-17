@@ -1,5 +1,5 @@
 python-dotenv==1.0.0
-unstructured # For Docx loading
+unstructured[all-docs] # For Docx, PDF loading
 pymupdf # For PDF loading
 tiktoken # OpenAI tokenizer
 

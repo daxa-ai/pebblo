@@ -42,14 +42,16 @@ O365_CLIENT_ID=<YOUR APPLICATION (CLIENT) ID>
 O365_CLIENT_SECRET=<YOUR CLIENT SECRET>
 O365_TENANT_ID=<YOUR TENANT ID>
 
-# Pebblo configuration
-PEBBLO_CLOUD_URL=<PEBBLO CLOUD URL>
-PEBBLO_API_KEY=<YOUR PEBBLO API KEY>
-PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
-
 # Postgres configuration
 PG_CONNECTION_STRING = "postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE-NAME>"
 ```
+
+# Pebblo Cloud configuration (optional)
+PEBBLO_CLOUD_URL=<PEBBLO CLOUD URL>
+PEBBLO_API_KEY=<YOUR PEBBLO API KEY>
+
+# Pebblo Server configuration
+PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
 
 > Note: You need to set `PEBBLO_CLASSIFIER_URL` only if your `Pebblo Server` is running somewhere other than the default URL
 > of `http://localhost:8000`.
