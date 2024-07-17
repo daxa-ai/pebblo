@@ -62,6 +62,18 @@ class App:
         return response
 
     @staticmethod
+    def delete_app(request: Request, app_name: str):
+        app_data = AppData()
+        return templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "data": app_data.delete_application(app_name),
+                "proxy": CacheDir.PROXY.value,
+            },
+        )
+
+    @staticmethod
     def page_not_found(request: Request):
         return templates.TemplateResponse(
             "index.html",

@@ -27,3 +27,6 @@ local_ui_router_instance.router.add_api_route(
 local_ui_router_instance.router.add_api_route(
     "/not-found/", App.page_not_found, methods=["GET"], response_class=HTMLResponse
 )
+local_ui_router_instance.router.add_api_route(
+    "/app/delete/", App.delete_app, methods=["GET"], response_class=HTMLResponse
+)

@@ -2,6 +2,7 @@ import json
 import time
 from json import JSONEncoder, dump
 from os import getcwd, makedirs, path, remove
+from shutil import rmtree
 
 from pebblo.app.libs.logger import logger
 
@@ -245,3 +246,26 @@ def release_lock(lock_file_path: str):
         logger.debug(f"Lock Released. {full_lock_file_path}")
     except FileNotFoundError:
         pass  # The lock file doesn't exist, nothing to release
+
+
+def delete_directory(app_path, app_name):
+    message = ""
+    try:
+        full_path = get_full_path(app_path)
+        logger.info(f"DirPath: {full_path}")
+        rmtree(full_path)
+        message = f"Application {app_name} has been deleted."
+        logger.info(message)
+        return message
+    except FileNotFoundError:
+        message = f"Application {app_name} does not exist."
+        logger.exception(message)
+        return message
+    except PermissionError:
+        message = f"Permission denied: Unable to delete application {app_name}."
+        logger.exception(message)
+    except Exception as e:
+        message = f"Unable to delete application {app_name}, Error: {e}"
+        logger.exception(message)
+    finally:
+        return message
