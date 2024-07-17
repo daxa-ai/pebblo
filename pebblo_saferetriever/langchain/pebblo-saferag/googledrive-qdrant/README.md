@@ -1,11 +1,8 @@
 ## Semantic Enforcement using Pebblo
 
-This solution uses the following two proposed PRs:
+This solution uses:
 
-1. Add semantic info to metadata, classified by pebblo-server
-   https://github.com/daxa-ai/langchain/pull/16
-2. langchain: Add PebbloRetrievalQA chain with Identity & Semantic Enforcement support
-   https://github.com/langchain-ai/langchain/pull/20641
+- LangChain GoogleDrive loader. See https://python.langchain.com/v0.2/docs/integrations/document_loaders/google_drive for details on specific steps required to be completed in Google Cloud
 
 ### Instructions
 

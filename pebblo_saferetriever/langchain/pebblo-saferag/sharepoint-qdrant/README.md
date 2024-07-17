@@ -4,6 +4,7 @@ This solution uses:
 
 - PostgreSQL 15.7
 - langchain-community 0.2.6
+- LangChain Microsoft Sharepoint loader. See https://python.langchain.com/v0.2/docs/integrations/document_loaders/microsoft_sharepoint for details on specific steps required to be completed in Microsoft Office 365 and Azure Portal.
 
 ### Instructions
 
@@ -32,9 +33,11 @@ O365_CLIENT_ID=<YOUR APPLICATION (CLIENT) ID>
 O365_CLIENT_SECRET=<YOUR CLIENT SECRET>
 O365_TENANT_ID=<YOUR TENANT ID>
 
-# Pebblo configuration
+# Pebblo Cloud configuration (optional)
 PEBBLO_CLOUD_URL=<PEBBLO CLOUD URL>
 PEBBLO_API_KEY=<YOUR PEBBLO API KEY>
+
+# Pebblo Server configuration
 PEBBLO_CLASSIFIER_URL="http://localhost:8000/"
 ```
 
