@@ -1,5 +1,9 @@
 ## Semantic Enforcement using Pebblo
 
+This solution uses:
+
+- LangChain GoogleDrive loader. See https://python.langchain.com/v0.2/docs/integrations/document_loaders/google_drive for details on specific steps required to be completed in Google Cloud
+
 ### Instructions
 
 1. Create Python virtual-env

@@ -4,6 +4,7 @@ This solution uses:
 
 - PostgreSQL 15.7
 - langchain-community 0.2.6
+- LangChain Microsoft Sharepoint loader. See https://python.langchain.com/v0.2/docs/integrations/document_loaders/microsoft_sharepoint for details on specific steps required to be completed in Microsoft Office 365 and Azure Portal.
 
 ### Instructions
 
