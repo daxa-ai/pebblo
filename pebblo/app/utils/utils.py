@@ -248,7 +248,7 @@ def release_lock(lock_file_path: str):
         pass  # The lock file doesn't exist, nothing to release
 
 
-def delete_directory(app_path, app_name):
+def delete_directory(app_path, app_name=None):
     message = ""
     try:
         full_path = get_full_path(app_path)
