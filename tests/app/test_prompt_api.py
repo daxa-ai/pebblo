@@ -84,11 +84,9 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
     response = client.post("/v1/prompt", json=test_payload)
     assert response.status_code == 400
     assert response.json()["message"] == (
-        "2 validation errors for RetrievalData\n"
-        "prompt_time\n"
-        "  field required (type=value_error.missing)\n"
-        "user\n"
-        "  field required (type=value_error.missing)"
+        "1 validation error for RetrievalContext\n"
+        "vector_db\n"
+        "  none is not an allowed value (type=type_error.none.not_allowed)"
     )
 
 
