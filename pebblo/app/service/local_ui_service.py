@@ -124,7 +124,7 @@ class AppData:
             f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
         )
         app_metadata_content = read_json_file(app_metadata_path)
-
+        
         # Skip app if app_metadata details are not present for some reason.
         if not app_metadata_content:
             logger.debug(
@@ -133,6 +133,10 @@ class AppData:
             logger.debug(f"App metadata Json : {app_metadata_content}")
             logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
             return
+
+        # Sort retrievals data
+        retrievals = self.sort_retrievals_data(app_metadata_content.get("retrievals", []))
+        app_metadata_content["retrievals"] = retrievals
 
         # fetch total retrievals
         for retrieval in app_metadata_content.get("retrievals", []):
@@ -336,6 +340,8 @@ class AppData:
     def get_retrieval_app_details(self, app_content):
         retrieval_data = app_content.get("retrievals", [])
 
+        retrieval_data = self.sort_retrievals_data(retrieval_data)
+
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
         vector_dbs = self.get_all_vector_dbs(retrieval_data)
@@ -473,6 +479,20 @@ class AppData:
                 sorted_resp.update({key_name: data})
 
         return sorted_resp
+
+    @staticmethod
+    def _calculate_total_count(item):
+        prompt_count = item['prompt']['entityCount']
+        response_count = item['response']['entityCount'] + item['response']['topicCount']
+        return prompt_count + response_count
+
+    def sort_retrievals_data(self, retrieval):
+
+        # Sort the list based on the total count in descending order
+        sorted_data = sorted(retrieval,
+                             key=self._calculate_total_count,
+                             reverse=True)
+        return sorted_data
 
     def get_all_documents(self, retrieval_data: list) -> dict:
         """
