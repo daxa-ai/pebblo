@@ -26,8 +26,12 @@ class AiDataModel(BaseModel):
     data: Optional[Union[list, str]]
     entityCount: int
     entities: dict
-    topicCount: int
-    topics: dict
+    topicCount: Optional[int] = None
+    topics: Optional[dict] = None
+
+    def dict(self, **kwargs):
+        kwargs['exclude_none'] = True
+        return super().dict(**kwargs)
 
 
 class AiDocs(BaseModel):
@@ -100,7 +104,11 @@ class RetrievalContext(BaseModel):
 
 class AiClassificationData(BaseModel):
     entities: dict
-    topics: dict
+    topics: Optional[dict] = None
+
+    def dict(self, **kwargs):
+        kwargs['exclude_none'] = True
+        return super().dict(**kwargs)
 
 
 class RetrievalData(BaseModel):
