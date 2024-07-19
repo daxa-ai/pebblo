@@ -57,6 +57,11 @@ class AppDiscover:
             createdAt=self._get_current_datetime(),
             modifiedAt=self._get_current_datetime(),
         )
+        client_version = (
+            {"langchain_version": self.data.get("langchain_version")}
+            if self.data.get("langchain_version")
+            else {}
+        )
         ai_apps_model = AiApp(
             metadata=metadata,
             name=self.data.get("name"),
@@ -68,6 +73,7 @@ class AppDiscover:
             lastUsed=last_used,
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=self.data.get("plugin_version", ""),
+            clientVersion=client_version,
             chains=chain_details,
             retrievals=retrievals_details,
         )

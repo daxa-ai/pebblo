@@ -131,6 +131,7 @@ class AiApp(BaseModel):
     lastUsed: datetime
     pebbloServerVersion: Optional[str]
     pebbloClientVersion: Optional[str]
+    clientVersion: Optional[dict]
     chains: Optional[List[Chain]]
     retrievals: Optional[List[RetrievalData]] = []
 
