@@ -13,6 +13,7 @@ from pebblo.app.models.models import (
     AiApp,
     Chain,
     DiscoverAIAppsResponseModel,
+    FrameworkInfo,
     InstanceDetails,
     Metadata,
     PackageInfo,
@@ -57,11 +58,12 @@ class AppDiscover:
             createdAt=self._get_current_datetime(),
             modifiedAt=self._get_current_datetime(),
         )
-        client_version = (
-            {"langchain_version": self.data.get("langchain_version")}
-            if self.data.get("langchain_version")
-            else {}
-        )
+        client_version = None
+        if self.data.get("langchain_community_version"):
+            client_version = FrameworkInfo(
+                name="langchain_community_version",
+                version=self.data.get("langchain_community_version"),
+            )
         ai_apps_model = AiApp(
             metadata=metadata,
             name=self.data.get("name"),
