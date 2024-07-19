@@ -30,7 +30,7 @@ class AiDataModel(BaseModel):
     topics: Optional[dict] = None
 
     def dict(self, **kwargs):
-        kwargs['exclude_none'] = True
+        kwargs["exclude_none"] = True
         return super().dict(**kwargs)
 
 
@@ -107,7 +107,7 @@ class AiClassificationData(BaseModel):
     topics: Optional[dict] = None
 
     def dict(self, **kwargs):
-        kwargs['exclude_none'] = True
+        kwargs["exclude_none"] = True
         return super().dict(**kwargs)
 
 

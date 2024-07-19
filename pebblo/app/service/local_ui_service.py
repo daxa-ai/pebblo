@@ -124,7 +124,7 @@ class AppData:
             f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
         )
         app_metadata_content = read_json_file(app_metadata_path)
-        
+
         # Skip app if app_metadata details are not present for some reason.
         if not app_metadata_content:
             logger.debug(
@@ -135,7 +135,9 @@ class AppData:
             return
 
         # Sort retrievals data
-        retrievals = self.sort_retrievals_data(app_metadata_content.get("retrievals", []))
+        retrievals = self.sort_retrievals_data(
+            app_metadata_content.get("retrievals", [])
+        )
         app_metadata_content["retrievals"] = retrievals
 
         # fetch total retrievals
@@ -481,17 +483,14 @@ class AppData:
         return sorted_resp
 
     @staticmethod
-    def _calculate_total_count(item):
-        prompt_count = item['prompt']['entityCount']
-        response_count = item['response']['entityCount'] + item['response']['topicCount']
+    def _calculate_total_count(item: dict):
+        prompt_count = item.get("prompt", {}).get("entityCount") or 0
+        response_count = item.get("prompt", {}).get("entityCount") or 0
         return prompt_count + response_count
 
     def sort_retrievals_data(self, retrieval):
-
         # Sort the list based on the total count in descending order
-        sorted_data = sorted(retrieval,
-                             key=self._calculate_total_count,
-                             reverse=True)
+        sorted_data = sorted(retrieval, key=self._calculate_total_count, reverse=True)
         return sorted_data
 
     def get_all_documents(self, retrieval_data: list) -> dict:
