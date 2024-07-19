@@ -96,10 +96,6 @@ class RetrievalContext(BaseModel):
     retrieved_from: str
     doc: str
     vector_db: str
-    entityCount: Optional[int]
-    entities: Optional[dict]
-    topicCount: Optional[int]
-    topics: Optional[dict]
 
 
 class AiClassificationData(BaseModel):
@@ -110,6 +106,7 @@ class AiClassificationData(BaseModel):
 class RetrievalData(BaseModel):
     prompt: AiDataModel
     response: AiDataModel
+    context: list[RetrievalContext]
     prompt_time: str
     user: str
     linked_groups: list[str] = []

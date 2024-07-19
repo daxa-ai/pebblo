@@ -7,7 +7,11 @@ from pydantic import ValidationError
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
 from pebblo.app.libs.responses import PebbloJsonResponse
-from pebblo.app.models.models import PromptResponseModel, RetrievalData
+from pebblo.app.models.models import (
+    PromptResponseModel,
+    RetrievalContext,
+    RetrievalData,
+)
 from pebblo.app.utils.utils import (
     acquire_lock,
     read_json_file,
@@ -36,14 +40,17 @@ class Prompt:
 
         logger.debug(f"Retrieving details from input data: {input_data}")
 
-        entities, entity_count, _ = (
-            self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
-                input_data
-            )
+        (
+            entities,
+            entity_count,
+            _,
+        ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
+            input_data
         )
         topics, topic_count = self.topic_classifier_obj.predict(input_data)
 
         data = {
+            "data": input_data,
             "entityCount": entity_count,
             "entities": entities,
             "topicCount": topic_count,
@@ -52,12 +59,13 @@ class Prompt:
         logger.debug(f"AI_APPS [{self.application_name}]:Classified Details: {data}")
         return data
 
-    def _create_retrieval_data(self):
+    def _create_retrieval_data(self, context_data):
         """
         Create an RetrievalData Model and return the corresponding model object
         """
         logger.debug(f"Creating RetrievalData model: {self.data}")
         retrieval_data_model = RetrievalData(**self.data)
+        retrieval_data_model.context = context_data
         logger.debug(
             f"AI_APPS [{self.application_name}]: Retrieval Data Details: {retrieval_data_model.dict()}"
         )
@@ -141,18 +149,21 @@ class Prompt:
 
             # getting prompt data
             prompt_data = self._fetch_classified_data(
-                self.data.get("prompt").get("data")
+                self.data.get("prompt", {}).get("data")
             )
 
             # getting response data
             response_data = self._fetch_classified_data(
-                self.data.get("response").get("data")
+                self.data.get("response", {}).get("data")
             )
+
+            # getting retrieval context data
+            context_data = self._fetch_context_data(self.data.get("context"))
 
             self.data.update({"prompt": prompt_data, "response": response_data})
 
             # creating retrieval data model object
-            retrieval_data = self._create_retrieval_data()
+            retrieval_data = self._create_retrieval_data(context_data)
 
             self._upsert_app_metadata_file(retrieval_data.dict())
 
@@ -174,3 +185,16 @@ class Prompt:
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=500
             )
+
+    @staticmethod
+    def _fetch_context_data(context_list):
+        retrieval_context_data = []
+        if context_list:
+            for context in context_list:
+                retrieval_context_obj = RetrievalContext(
+                    retrieved_from=context.get("retrieved_from"),
+                    doc=context.get("doc"),
+                    vector_db=context.get("vector_db"),
+                )
+                retrieval_context_data.append(retrieval_context_obj)
+        return retrieval_context_data
