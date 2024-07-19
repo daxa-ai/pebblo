@@ -1,9 +1,11 @@
-import toml
 import os
+
+import toml
+
 from pebblo.app.utils.utils import (
-    get_pebblo_server_version,
     delete_directory,
     get_full_path,
+    get_pebblo_server_version,
 )
 
 
