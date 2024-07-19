@@ -1,4 +1,4 @@
-import os
+import tempfile
 
 import toml
 
@@ -20,12 +20,10 @@ def test_get_pebblo_server_version():
 
 def test_delete_directory():
     # make sample directory
-    app_name = "test_dir"
-    dir_path = ".pebblo/test_dir"
+    dir_path = tempfile.mkdtemp()
     full_path = get_full_path(dir_path)
-    os.mkdir(full_path)
-    response = delete_directory(full_path, app_name)
-    assert response == f"Application {app_name} has been deleted."
+    response = delete_directory(full_path, dir_path)
+    assert response == f"Application {dir_path} has been deleted."
 
 
 def test_delete_directory_dir_not_exist():
