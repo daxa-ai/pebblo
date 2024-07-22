@@ -25,7 +25,7 @@ def test_delete_directory():
     response = delete_directory(full_path, dir_path)
     assert response == {
         "message": f"Application {dir_path} has been deleted.",
-        "status_code": 200
+        "status_code": 200,
     }
 
 
@@ -36,5 +36,5 @@ def test_delete_directory_dir_not_exist():
     response = delete_directory(full_path, app_name)
     assert response == {
         "message": f"Application {app_name} does not exist.",
-        "status_code": 404
+        "status_code": 404,
     }
