@@ -6,6 +6,7 @@ import json
 import os
 
 from dateutil import parser
+from fastapi import status
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
@@ -337,7 +338,10 @@ class AppData:
         except Exception as ex:
             error_message = f"Error in delete application. Error: {ex}"
             logger.error(error_message)
-            return error_message
+            return {
+                "message": error_message,
+                "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+            }
 
     @staticmethod
     def get_latest_load_id(load_ids, app_dir):
