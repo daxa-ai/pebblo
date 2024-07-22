@@ -23,7 +23,10 @@ def test_delete_directory():
     dir_path = tempfile.mkdtemp()
     full_path = get_full_path(dir_path)
     response = delete_directory(full_path, dir_path)
-    assert response == f"Application {dir_path} has been deleted."
+    assert response == {
+        "message": f"Application {dir_path} has been deleted.",
+        "status_code": 200
+    }
 
 
 def test_delete_directory_dir_not_exist():
@@ -31,4 +34,7 @@ def test_delete_directory_dir_not_exist():
     dir_path = ".pebblo/test_dir"
     full_path = get_full_path(dir_path)
     response = delete_directory(full_path, app_name)
-    assert response == f"Application {app_name} does not exist."
+    assert response == {
+        "message": f"Application {app_name} does not exist.",
+        "status_code": 404
+    }
