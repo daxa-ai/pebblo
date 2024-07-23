@@ -6,6 +6,7 @@ import json
 import os
 
 from dateutil import parser
+from fastapi import status
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
@@ -17,6 +18,7 @@ from pebblo.app.models.models import (
     RetrievalAppListDetails,
 )
 from pebblo.app.utils.utils import (
+    delete_directory,
     get_document_with_findings_data,
     get_full_path,
     get_pebblo_server_version,
@@ -133,6 +135,12 @@ class AppData:
             logger.debug(f"App metadata Json : {app_metadata_content}")
             logger.warning(f"Skipping app '{app_dir}' due to missing or invalid file")
             return
+
+        # Sort retrievals data
+        retrievals = self.sort_retrievals_data(
+            app_metadata_content.get("retrievals", [])
+        )
+        app_metadata_content["retrievals"] = retrievals
 
         # fetch total retrievals
         for retrieval in app_metadata_content.get("retrievals", []):
@@ -317,6 +325,25 @@ class AppData:
             logger.error(f"Error in app detail. Error: {ex}")
 
     @staticmethod
+    def delete_application(app_name):
+        """
+        Delete an app
+        """
+        try:
+            # Path to application directory
+            app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
+            logger.debug(f"App directory path: {app_dir_path}")
+            response = delete_directory(app_dir_path, app_name)
+            return response
+        except Exception as ex:
+            error_message = f"Error in delete application. Error: {ex}"
+            logger.error(error_message)
+            return {
+                "message": error_message,
+                "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+            }
+
+    @staticmethod
     def get_latest_load_id(load_ids, app_dir):
         """
         Returns app latestLoadId for an app.
@@ -335,6 +362,8 @@ class AppData:
 
     def get_retrieval_app_details(self, app_content):
         retrieval_data = app_content.get("retrievals", [])
+
+        retrieval_data = self.sort_retrievals_data(retrieval_data)
 
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
@@ -473,6 +502,17 @@ class AppData:
                 sorted_resp.update({key_name: data})
 
         return sorted_resp
+
+    @staticmethod
+    def _calculate_total_count(item: dict):
+        prompt_count = item.get("prompt", {}).get("entityCount") or 0
+        response_count = item.get("prompt", {}).get("entityCount") or 0
+        return prompt_count + response_count
+
+    def sort_retrievals_data(self, retrieval):
+        # Sort the list based on the total count in descending order
+        sorted_data = sorted(retrieval, key=self._calculate_total_count, reverse=True)
+        return sorted_data
 
     def get_all_documents(self, retrieval_data: list) -> dict:
         """

@@ -62,6 +62,12 @@ class App:
         return response
 
     @staticmethod
+    def delete_app(request: Request, app_name: str):
+        app_data = AppData()
+        result = app_data.delete_application(app_name)
+        return result
+
+    @staticmethod
     def page_not_found(request: Request):
         return templates.TemplateResponse(
             "index.html",

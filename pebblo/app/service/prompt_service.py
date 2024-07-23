@@ -33,7 +33,7 @@ class Prompt:
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 
-    def _fetch_classified_data(self, input_data):
+    def _fetch_classified_data(self, input_data, input_type=""):
         """
         Retrieve input data and return its corresponding model object with classification.
         """
@@ -47,15 +47,15 @@ class Prompt:
         ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
             input_data
         )
-        topics, topic_count = self.topic_classifier_obj.predict(input_data)
 
-        data = {
-            "data": input_data,
-            "entityCount": entity_count,
-            "entities": entities,
-            "topicCount": topic_count,
-            "topics": topics,
-        }
+        data = {"data": input_data, "entityCount": entity_count, "entities": entities}
+
+        # Topic classification is performed only for the response.
+        if input_type == "response":
+            topics, topic_count = self.topic_classifier_obj.predict(input_data)
+            data["topicCount"] = topic_count
+            data["topics"] = topics
+
         logger.debug(f"AI_APPS [{self.application_name}]:Classified Details: {data}")
         return data
 
@@ -154,7 +154,7 @@ class Prompt:
 
             # getting response data
             response_data = self._fetch_classified_data(
-                self.data.get("response", {}).get("data")
+                self.data.get("response", {}).get("data"), input_type="response"
             )
 
             # getting retrieval context data
