@@ -58,12 +58,10 @@ class AppDiscover:
             createdAt=self._get_current_datetime(),
             modifiedAt=self._get_current_datetime(),
         )
-        client_version = None
-        if self.data.get("langchain_community_version"):
-            client_version = FrameworkInfo(
-                name="langchain_community_version",
-                version=self.data.get("langchain_community_version"),
-            )
+        client_version = FrameworkInfo(
+            name=self.data.get("client_version", {}).get("name"),
+            version=self.data.get("client_version", {}).get("version"),
+        )
         ai_apps_model = AiApp(
             metadata=metadata,
             name=self.data.get("name"),
@@ -79,6 +77,7 @@ class AppDiscover:
             chains=chain_details,
             retrievals=retrievals_details,
         )
+
         logger.debug(
             f"AI_APPS [{self.application_name}]: AiApps Details: {ai_apps_model.dict()}"
         )

@@ -50,7 +50,7 @@ data = {
     ],
     "framework": {"name": "langchain", "version": "0.1.45"},
     "plugin_version": "0.1.1",
-    "langchain_community_version": "x.x.x",
+    "client_version": {"name": "langchain_community_version", "version": "x.x.x"},
 }
 
 
