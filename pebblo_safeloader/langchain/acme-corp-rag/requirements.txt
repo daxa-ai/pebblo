@@ -3,6 +3,6 @@ langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
 chromadb==0.4.7
 python-dotenv==1.0.0
 tiktoken
-requests==2.31.0
+requests>=2.32.0
 Markdown==3.5
 unstructured[all-docs]

@@ -2,7 +2,7 @@ langchain-community>=0.2.9 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStor
 langchain-google-community>=1.0.4 # For GoogleDriveLoader
 langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
 python-dotenv==1.0.0
-requests==2.31.0
+requests>=2.32.0
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
