@@ -50,7 +50,7 @@ data = {
     ],
     "framework": {"name": "langchain", "version": "0.1.45"},
     "plugin_version": "0.1.1",
-    "client_version": {"name": "langchain_community_version", "version": "x.x.x"},
+    "client_version": {"name": "langchain_community", "version": "x.x.x"},
 }
 
 
@@ -200,7 +200,7 @@ def test_create_ai_apps_model(discovery, mock_pebblo_server_version):
         "lastUsed": datetime.datetime(2024, 1, 1, 0, 0, 5),
         "pebbloServerVersion": "x.x.x",
         "pebbloClientVersion": "0.1.1",
-        "clientVersion": {"name": "langchain_community_version", "version": "x.x.x"},
+        "clientVersion": {"name": "langchain_community", "version": "x.x.x"},
         "chains": [
             {
                 "name": "RetrievalQA",
