@@ -9,5 +9,5 @@ unstructured[all-docs]
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
-qdrant-client==1.8.0 # for Qdrant VectorStore
+qdrant-client>=1.9.0 # for Qdrant VectorStore
 PyPDF2
