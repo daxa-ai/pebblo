@@ -9,6 +9,7 @@
   --surface-60: #7e83a5;
   --surface-70: #ced0dc;
   --surface-80: #838282;
+  --critical: #f03844;
 }
 * {
   margin: 0;
@@ -47,6 +48,9 @@ svg.icon-primary {
 }
 svg.icon-white {
   fill: white;
+}
+svg.icon-critical {
+  fill: var(--critical);
 }
 
 svg:focus {
@@ -399,7 +403,7 @@ svg.icon-success {
   opacity: 0.5;
 }
 .critical {
-  color: #f03844;
+  color: var(--critical);
 }
 
 /* <----------- FONT SIZE PROPERTY -----------> */
@@ -880,6 +884,11 @@ button.btn-contained-primary {
   color: white;
 }
 
+button.btn-contained-critical {
+  background-color: var(--critical);
+  color: white;
+}
+
 button.btn-contained-primary svg {
   fill: white;
 }
@@ -894,6 +903,11 @@ button.btn-text-primary {
   padding: 8px 10px;
 }
 
+button.btn-text-critical {
+  color: var(--critical);
+  padding: 8px 10px;
+}
+
 button.btn-contained-primary:hover {
   background-color: #4d61ef;
 }
@@ -901,6 +915,10 @@ button.btn-contained-primary:hover {
 button.btn-outlined-primary:hover {
   background: #5468f308;
   border: 1px solid #4d61ef;
+}
+
+button.btn-text-critical:hover {
+  background: #fff4f3;
 }
 
 button.btn-text-primary:hover {
@@ -1314,4 +1332,8 @@ dialog::backdrop {
   height: inherit;
   transition: 0.5s ease;
   width: 0px;
+}
+
+.text-right {
+  text-align: right;
 }
