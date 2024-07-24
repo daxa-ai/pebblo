@@ -7,7 +7,7 @@ from datetime import datetime
 from pydantic import ValidationError
 
 from pebblo.app.enums.enums import ApplicationTypes, CacheDir
-from pebblo.app.libs.logger import logger
+from pebblo.log import get_logger
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import (
     AiApp,
@@ -26,6 +26,7 @@ from pebblo.app.utils.utils import (
     write_json_to_file,
 )
 
+logger = get_logger("pebblo.app.service")
 
 class AppDiscover:
     """

@@ -6,9 +6,10 @@ from shutil import rmtree
 
 from fastapi import status
 
-from pebblo.app.libs.logger import logger
+from pebblo.log import get_logger
+# from pebblo.app.libs.loggdder import logger
 
-
+logger = get_logger("pebblo.app.utils")
 class DatetimeEncoder(JSONEncoder):
     def default(self, o):
         try:

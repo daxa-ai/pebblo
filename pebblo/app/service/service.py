@@ -7,14 +7,16 @@ from datetime import datetime
 
 from pydantic import ValidationError
 
+from pebblo.log import get_logger
 from pebblo.app.enums.enums import CacheDir
-from pebblo.app.libs.logger import logger
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import LoaderDocResponseModel, LoaderDocs, LoaderMetadata
 from pebblo.app.service.doc_helper import LoaderHelper
 from pebblo.app.utils.utils import get_full_path, read_json_file, write_json_to_file
 from pebblo.reports.reports import Reports
 
+
+logger = get_logger("pebblo.app.service")
 
 class AppLoaderDoc:
     """

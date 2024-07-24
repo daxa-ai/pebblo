@@ -4,8 +4,9 @@ These are all enums related to Pebblo Server.
 
 from enum import Enum
 
-from pebblo.app.daemon import config_details
+from pebblo.app.config.config import var_server_config_dict
 
+config_details = var_server_config_dict.get()
 
 class CacheDir(Enum):
     """

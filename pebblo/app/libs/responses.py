@@ -3,8 +3,9 @@ from typing import Optional
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from pebblo.app.libs.logger import logger
+from pebblo.log import get_logger
 
+logger = get_logger("pebblo.app.libs")
 
 class PebbloJsonResponse:
     """
