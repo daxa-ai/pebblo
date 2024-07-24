@@ -32,6 +32,7 @@ import {
 } from "../icons/index.js";
 import DeleteIcon from "../icons/deleteIcon.js";
 import { DELETE_APP } from "../services/delete.js";
+import { showSnackbar } from "../services/snackbar.js";
 
 const SUCCESS_CODE = 200;
 
@@ -55,9 +56,13 @@ const DeleteAppDialogBody = () => {
         `${DELETE_APP_ROUTE}?app_name=${APP_DATA?.name}`
       );
       if (res.status === SUCCESS_CODE) {
-        window.location.href = DASHBOARD_ROUTE;
+        DIALOG.close();
+        showSnackbar("App deleted successfully", () => {
+          window.location.href = DASHBOARD_ROUTE;
+        });
       } else {
         DIALOG.close();
+        showSnackbar("Failed to delete app");
       }
     });
   });
