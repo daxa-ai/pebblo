@@ -110,19 +110,19 @@ def test_app_discover_success(mock_write_json_to_file, mock_pebblo_server_versio
     assert response.json()["message"] == "App Discover Request Processed Successfully"
 
 
-# def test_app_discover_validation_errors(mock_write_json_to_file):
-#     """
-#     Test the app discover endpoint with validation errors.
-#     """
-#     mock_write_json_to_file.return_value = None
-#     app = {
-#         "owner": "Test owner",
-#         "description": "This is a test app.",
-#         "plugin_version": "0.1",
-#     }
-#     response = client.post("/v1/app/discover", json=app)
-#     assert response.status_code == 400
-#     assert "1 validation error for AiApp" in response.json()["message"]
+def test_app_discover_validation_errors(mock_write_json_to_file):
+    """
+    Test the app discover endpoint with validation errors.
+    """
+    mock_write_json_to_file.return_value = None
+    app = {
+        "owner": "Test owner",
+        "description": "This is a test app.",
+        "plugin_version": "0.1",
+    }
+    response = client.post("/v1/app/discover", json=app)
+    assert response.status_code == 400
+    assert "1 validation error for AiApp" in response.json()["message"]
 
 
 def test_app_discover_server_error(mock_write_json_to_file):
