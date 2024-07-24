@@ -4,6 +4,7 @@ This module handles business logic for local UI
 
 import json
 import os
+from typing import Any, Dict, List
 
 from dateutil import parser
 from fastapi import status
@@ -381,6 +382,23 @@ class AppData:
 
         return None, None
 
+    def get_prompts_with_findings(self, retrieval_data: List[Dict[str, Any]]) -> int:
+        """
+        Counts the number of prompts with findings in the retrieval data.
+
+        Args:
+            retrieval_data (List[Dict[str, Any]]): A list of dictionaries containing the retrieval data.
+                Each dictionary is expected to have a "prompt" key with another dictionary that contains an "entityCount" key.
+
+        Returns:
+            int: The total number of prompts with findings (where "entityCount" > 0).
+        """
+        return sum(
+            1
+            for data in retrieval_data
+            if data.get("prompt", {}).get("entityCount", 0) > 0
+        )
+
     def get_retrieval_app_details(self, app_content):
         retrieval_data = app_content.get("retrievals", [])
 
@@ -389,7 +407,7 @@ class AppData:
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
         vector_dbs = self.get_all_vector_dbs(retrieval_data)
-
+        prompt_with_findings = self.get_prompts_with_findings(retrieval_data)
         # prepare app response
         response = RetrievalAppDetails(
             name=app_content["name"],
@@ -398,11 +416,13 @@ class AppData:
             instanceDetails=app_content.get("instanceDetails"),
             pebbloServerVersion=app_content.get("pebbloServerVersion"),
             pebbloClientVersion=app_content.get("pebbloClientVersion"),
+            total_prompt_with_findings=prompt_with_findings,
             retrievals=retrieval_data,
             activeUsers=active_users,
             vectorDbs=vector_dbs,
             documents=documents,
         )
+        print("sdasdasdsadsdsa", response.dict())
         return json.dumps(response.dict(), default=str, indent=4)
 
     def add_accumulate_active_users(self, active_users):

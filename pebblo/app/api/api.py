@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from pebblo.app.service.discovery_service import AppDiscover
+from pebblo.app.service.prompt_gov import PromptGov
 from pebblo.app.service.prompt_service import Prompt
 from pebblo.app.service.service import AppLoaderDoc
 
@@ -31,5 +32,12 @@ class App:
     def prompt(data: dict):
         # "/prompt" API entrypoint
         prompt_obj = Prompt(data=data)
+        response = prompt_obj.process_request()
+        return response
+
+    @staticmethod
+    def promptgov(data: dict):
+        # "/promptgov" API entrypoint
+        prompt_obj = PromptGov(data=data)
         response = prompt_obj.process_request()
         return response
