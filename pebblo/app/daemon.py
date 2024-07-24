@@ -22,7 +22,9 @@ def start():
     # For loading config file details
     parser = argparse.ArgumentParser(description="Pebblo  CLI")
     parser.add_argument("-c", "--config", type=str, help="config file path")
-    parser.add_argument("-v", "--version", action='store_true', help="display the version")
+    parser.add_argument(
+        "-v", "--version", action="store_true", help="display the version"
+    )
     args = parser.parse_args()
 
     version = get_pebblo_version()
