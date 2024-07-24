@@ -18,6 +18,16 @@ const KeyValueBlock = (props) => {
   </div>`;
 };
 
+const constructFindingsStr = (findings) => {
+  console.log({ findings });
+  if (findings && Object.keys(findings)?.length > 0) {
+    return Object.keys(findings)
+      .map((item) => `${KEYWORD_MAPPING[item]}: ${findings[item]}`)
+      .join(" | ");
+  }
+  return "";
+};
+
 export function RetrievalDetails(props) {
   const { title, data, searchField, inputPlaceholder, error } = props;
   return /*html*/ ` <div class="tab_panel snippet-details-container flex flex-col gap-4">
@@ -52,14 +62,27 @@ export function RetrievalDetails(props) {
             item?.context && item?.context[0]
               ? item?.context[0]?.retrieved_from || "-"
               : "-";
+          const findings = constructFindingsStr(item?.prompt?.entities);
           return /*html*/ `
           <div class="flex flex-col gap-1">
              <div class="snippet-body flex flex-col gap-4 pr-3 pl-3 pt-3 pb-3">
+                <div>
                  ${KeyValueBlock({
                    label: "Prompt",
                    content: item?.prompt?.data,
                    subText: promptInfo,
                  })}
+                 ${
+                   findings
+                     ? `<div class="mt-2 w-fit flex gap-2 items-center pb-2 pr-2 w-auto inter">
+                       <div class="surface-10-opacity-50 semi-bold font-12">
+                         Findings:
+                       </div>
+                       <div class="font-13">${findings}</div>
+                     </div>`
+                     : ""
+                 }
+                </div>
                  ${KeyValueBlock({
                    label: "Context",
                    content: item?.context[0]?.doc,
