@@ -229,6 +229,7 @@ class RetrievalAppList(BaseModel):
     retrievals: list = []
     activeUsers: dict = {}
     violations: list = []
+    promptDetails: dict = {}
 
 
 class RetrievalAppDetails(BaseModel):
