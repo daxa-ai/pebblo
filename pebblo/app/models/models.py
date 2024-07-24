@@ -238,6 +238,7 @@ class RetrievalAppDetails(BaseModel):
     instanceDetails: Optional[InstanceDetails]
     pebbloServerVersion: Optional[str]
     pebbloClientVersion: Optional[str]
+    total_prompt_with_findings: int = 0
     retrievals: list[RetrievalData] = []
     activeUsers: dict = {}
     vectorDbs: dict = {}

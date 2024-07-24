@@ -65,7 +65,7 @@ class PromptGov:
             return {
                 "message": "Prompt Gov Processed Successfully",
                 "entities": doc_info.entities,
-                "entityCount": doc_info.entityCount
+                "entityCount": doc_info.entityCount,
             }
         except ValidationError as ex:
             logger.error(
