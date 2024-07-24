@@ -33,16 +33,18 @@ class ClassifierConfig(BaseSettings):
 
 # ConfigFile BaseModel
 class Config(BaseSettings):
+    version: str = Field(default="unknown")
     daemon: PortConfig
     reports: ReportConfig
     logging: LoggingConfig
     classifier: ClassifierConfig
 
 
-def load_config(path) -> dict:
+def load_config(path, version) -> dict:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
+            version=version,
             daemon=PortConfig(host="localhost", port=8000),
             reports=ReportConfig(
                 format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
