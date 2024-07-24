@@ -28,7 +28,7 @@ export function Header() {
           ? `<div>Server Version ${SERVER_VERSION}</div><div class="divider bg-main"></div>`
           : ""
       }
-      <a href="${DOCUMENTATION_URL}/pebblo_ui" target="_blank" class="cursor-pointer" >${HelpIcon(
+      <a href="${DOCUMENTATION_URL}/safe_loader" target="_blank" class="cursor-pointer" >${HelpIcon(
     {
       color: "white",
       size: "sm",
