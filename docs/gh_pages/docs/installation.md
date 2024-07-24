@@ -42,7 +42,7 @@ To pass a specific configuration file and to access PDF reports iin the host mac
 ```bash
 docker run \
     -v /path/to/pebblo/config.yaml:/opt/pebblo/config/config.yaml \
-    -v /path/to/pebblo_reports:/root/.pebblo \
+    -v /path/to/pebblo_cached:/opt/.pebblo \
     -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest \
         --config /opt/pebblo/config/config.yaml
 ```
