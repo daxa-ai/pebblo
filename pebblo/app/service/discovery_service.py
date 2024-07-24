@@ -71,9 +71,6 @@ class AppDiscover:
             chains=chain_details,
             retrievals=retrievals_details,
         )
-        logger.debug(
-            f"AI_APPS [{self.application_name}]: AiApps Details: {ai_apps_model.dict()}"
-        )
         return ai_apps_model.dict()
 
     def _fetch_runtime_instance_details(self) -> InstanceDetails:
@@ -157,7 +154,6 @@ class AppDiscover:
 
         if app_metadata:
             retrievals_details = app_metadata.get("retrievals", [])
-            logger.debug(f"Existing retrieval details : {retrievals_details}")
 
         input_retrievals_details = self.data.get("retrievals", [])
         logger.debug(f"Input retrievals : {input_retrievals_details}")
@@ -170,7 +166,6 @@ class AppDiscover:
         """
         Write content to the specified file path
         """
-        logger.debug(f"Writing content to file path: {file_content}")
         # Writing file content to given file path
         write_json_to_file(file_content, file_path)
 

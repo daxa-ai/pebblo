@@ -21,7 +21,7 @@ class CacheDir(Enum):
     REPORT_FILE_NAME = (
         f"pebblo_report.{config_details.get('reports', {}).get('format')}"
     )
-    HOME_DIR = config_details.get("reports", {}).get("outputDir", "~/.pebblo")
+    HOME_DIR = config_details.get("reports", {}).get("cacheDir", "~/.pebblo")
     RENDERER = config_details.get("reports", {}).get("renderer")
     FORMAT = config_details.get("reports", {}).get("format")
     PROXY = (

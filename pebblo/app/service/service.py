@@ -118,9 +118,7 @@ class AppLoaderDoc:
         """
         try:
             logger.debug("Loader doc request processing started")
-            logger.debug(
-                f"Loader Doc, Application Name: {self.app_name}, Input Data: {self.data}"
-            )
+            logger.debug(f"Loader Doc, Application Name: {self.app_name}")
 
             # Read metadata file & get current load details
             app_metadata_file_path = (
@@ -160,8 +158,6 @@ class AppLoaderDoc:
                 app_details,
                 final_report,
             ) = loader_helper_obj.process_docs_and_generate_report()
-
-            logger.debug(f"Final Report with doc details: {final_report}")
 
             # Write current state to the file, Updating app details
             write_json_to_file(app_details, app_load_metadata_file_path)

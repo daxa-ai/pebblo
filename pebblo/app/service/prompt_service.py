@@ -38,7 +38,7 @@ class Prompt:
         Retrieve input data and return its corresponding model object with classification.
         """
 
-        logger.debug(f"Retrieving details from input data: {input_data}")
+        logger.debug(f"Retrieving details for {input_type}")
 
         (
             entities,
@@ -56,7 +56,6 @@ class Prompt:
             data["topicCount"] = topic_count
             data["topics"] = topics
 
-        logger.debug(f"AI_APPS [{self.application_name}]:Classified Details: {data}")
         return data
 
     def _create_retrieval_data(self, context_data):
@@ -77,7 +76,6 @@ class Prompt:
         Write content to the specified file path.
         This function is just written for UT mocking.
         """
-        logger.debug(f"Writing content to file path: {file_content}")
         # Writing file content to given file path
         write_json_to_file(file_content, file_path)
 
@@ -114,10 +112,6 @@ class Prompt:
             # Read app_metadata file & get current app_metadata
             app_metadata_content = self._read_file(app_metadata_file_path)
 
-            logger.debug(
-                f"AI_APP [{self.application_name}]: app metadata content: {app_metadata_content}"
-            )
-
             # write app_metadata file if it is not present
             if not app_metadata_content:
                 app_metadata_content = {
@@ -145,11 +139,11 @@ class Prompt:
             logger.debug("AI App prompt request processing started")
 
             # Input Data
-            logger.info(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
+            logger.info(f"AI_APP [{self.application_name}]")
 
             # getting prompt data
             prompt_data = self._fetch_classified_data(
-                self.data.get("prompt", {}).get("data")
+                self.data.get("prompt", {}).get("data"), input_type="prompt"
             )
 
             # getting response data

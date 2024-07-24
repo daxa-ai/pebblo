@@ -49,7 +49,7 @@ class ReportsConfig(ConfigValidator):
     def validate(self):
         format_ = self.config.get("format")
         renderer = self.config.get("renderer")
-        output_dir = self.config.get("outputDir")
+        cache_dir = self.config.get("cacheDir")
 
         if format_ not in ["pdf"]:
             self.errors.append(
@@ -60,8 +60,8 @@ class ReportsConfig(ConfigValidator):
                 f"Error: Unsupported renderer '{renderer}' specified in the configuration"
             )
         # Check if the output directory exists, create if it doesn't
-        if not os.path.exists(get_full_path(str(output_dir))):
-            os.makedirs(get_full_path(str(output_dir)), exist_ok=True)
+        if not os.path.exists(get_full_path(str(cache_dir))):
+            os.makedirs(get_full_path(str(cache_dir)), exist_ok=True)
 
 
 class ClassifierConfig(ConfigValidator):

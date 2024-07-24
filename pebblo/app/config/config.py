@@ -19,7 +19,7 @@ class PortConfig(BaseSettings):
 class ReportConfig(BaseSettings):
     format: str = Field(default="pdf")
     renderer: str = Field(default="xhtml2pdf")
-    outputDir: str = Field(default=str(dir_path))
+    cacheDir: str = Field(default=str(dir_path))
 
 
 # Logging BaseModel
@@ -47,7 +47,7 @@ def load_config(path, version) -> dict:
             version=version,
             daemon=PortConfig(host="localhost", port=8000),
             reports=ReportConfig(
-                format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
+                format="pdf", renderer="xhtml2pdf", cacheDir="~/.pebblo"
             ),
             logging=LoggingConfig(level="info"),
             classifier=ClassifierConfig(anonymizeSnippets=False),
