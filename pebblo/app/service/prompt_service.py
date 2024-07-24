@@ -153,7 +153,7 @@ class Prompt:
                 "prompt_gov_enabled"
             )
 
-            if is_prompt_gov_enabled:
+            if is_prompt_gov_enabled is False:
                 prompt_data = self._fetch_classified_data(
                     prompt_data.get("data", ""), input_type="prompt"
                 )

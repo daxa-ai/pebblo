@@ -401,7 +401,6 @@ class AppData:
             vectorDbs=vector_dbs,
             documents=documents,
         )
-        print("sdasdasdsadsdsa", response.dict())
         return json.dumps(response.dict(), default=str, indent=4)
 
     def add_accumulate_active_users(self, active_users):
