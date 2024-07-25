@@ -215,10 +215,6 @@ class AppData:
         app_metadata_content["retrievals"] = retrievals
         app_name = app_metadata_content.get("name", "")
         # fetch total retrievals
-        logger.info(f"app_name {app_name}")
-        logger.info(
-            f"length of retirevals {len(app_metadata_content.get("retrievals", []))}"
-        )
         for retrieval in app_metadata_content.get("retrievals", []):
             retrieval_data = {"name": app_json.get("name")}
             retrieval_data.update(retrieval)
