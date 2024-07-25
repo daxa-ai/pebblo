@@ -19,10 +19,9 @@ const KeyValueBlock = (props) => {
 };
 
 const constructFindingsStr = (findings) => {
-  console.log({ findings });
   if (findings && Object.keys(findings)?.length > 0) {
     return Object.keys(findings)
-      .map((item) => `${KEYWORD_MAPPING[item]}: ${findings[item]}`)
+      .map((item) => KEYWORD_MAPPING[item] || item)
       .join(" | ");
   }
   return "";
