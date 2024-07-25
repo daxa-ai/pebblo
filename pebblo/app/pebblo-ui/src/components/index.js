@@ -17,6 +17,7 @@ import { Navbar } from "./navbar.js";
 import { RetrievalDetails } from "./retrievalDetails.js";
 import { EmptyState } from "./emptyState.js";
 import { ProgressBar } from "./progressBar.js";
+import { DeleteAppButton } from "./deleteApp.js";
 
 export {
   AccordionDetails,
@@ -43,4 +44,5 @@ export {
   Thead,
   Td,
   ViewMore,
+  DeleteAppButton,
 };

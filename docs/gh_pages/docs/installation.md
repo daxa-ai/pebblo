@@ -32,20 +32,27 @@ pebblo [--config /path/to/config.yaml]
 ## Using Docker 
 
 ```bash
-docker run -p 8000:8000 docker.daxa.ai/daxaai/pebblo
+docker run \
+    -v /path/to/pebblo_reports:/opt/.pebblo \
+    -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest
 ```
 
 Local UI can be accessed by pointing the browser to `https://localhost:8000`.
+
+To access PDF reports in the host machine outside the docker container, use the above command with mounted volumes for the report folder. By default reports are in cached dir i.e `/opt/.pebblo`. If custom configuration file is passed then this value should be as per the `cacheDir` from `config.yaml` 
+
+## Using Docker with custom configuration
 
 To pass a specific configuration file and to access PDF reports iin the host machine outside the docker container, use the following command with mounted volumes for config.yaml and the report folder.
 
 ```bash
 docker run \
+    -v /path/to/pebblo_reports:/opt/.pebblo \
     -v /path/to/pebblo/config.yaml:/opt/pebblo/config/config.yaml \
-    -v /path/to/pebblo_reports:/root/.pebblo \
     -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest \
         --config /opt/pebblo/config/config.yaml
 ```
+
 
 ## Using Kubernetes
 Apply below k8s manifiest files in sequence to run the pebblo server on k8s cluster. 

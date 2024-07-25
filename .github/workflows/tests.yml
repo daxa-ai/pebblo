@@ -18,6 +18,7 @@ on:
       - "pebblo/**/*.py"
       - "pebblo/**/*.txt"
       - "tests/**/*.py"
+      - "pyproject.toml"
 
 jobs:
   
