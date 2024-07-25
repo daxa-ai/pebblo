@@ -652,11 +652,6 @@ export const TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL = [
     align: "end",
   },
   {
-    label: "Entity",
-    field: "entity",
-    align: "end",
-  },
-  {
     label: "Users",
     field: "users",
     render: (item) =>
