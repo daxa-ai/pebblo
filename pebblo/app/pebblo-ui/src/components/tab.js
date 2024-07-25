@@ -62,7 +62,6 @@ function Tabs(tabsArr, tabPanel) {
 }
 
 function Tab(item) {
-  console.log(item);
   return /*html*/ `
           <div class="tab manrope ${
             !item.disable ? "tab-active" : ""
