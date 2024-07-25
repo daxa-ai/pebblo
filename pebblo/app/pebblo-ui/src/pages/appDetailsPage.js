@@ -19,22 +19,14 @@ import {
 } from "../constants/constant.js";
 import { CLICK, LOAD, PATH } from "../constants/enums.js";
 import { GET_FILE } from "../services/get.js";
-import {
-  DASHBOARD_ROUTE,
-  DELETE_APP_ROUTE,
-  GET_REPORT,
-} from "../constants/routesConstant.js";
+import { DASHBOARD_ROUTE, GET_REPORT } from "../constants/routesConstant.js";
 import {
   CheckIcon,
   CopyIcon,
   DownloadIcon,
   LoadHistoryIcon,
 } from "../icons/index.js";
-import DeleteIcon from "../icons/deleteIcon.js";
-import { DELETE_APP } from "../services/delete.js";
-import { showSnackbar } from "../services/snackbar.js";
-
-const SUCCESS_CODE = 200;
+import { DeleteAppButton } from "../components/index.js";
 
 const DialogBody = () => {
   return /*html*/ `
@@ -44,44 +36,6 @@ const DialogBody = () => {
       tableData: LOAD_HISTORY_TABLE_DATA,
     })}
   </div>
-  `;
-};
-
-const DeleteAppDialogBody = () => {
-  window.addEventListener(LOAD, function () {
-    const delete_icon = document.getElementById("delete_confirm_btn");
-    const DIALOG = document.getElementById("delete_app_dialog");
-    delete_icon?.addEventListener(CLICK, async function () {
-      const res = await DELETE_APP(
-        `${DELETE_APP_ROUTE}?app_name=${APP_DATA?.name}`
-      );
-      if (res.status === SUCCESS_CODE) {
-        DIALOG.close();
-        showSnackbar("App deleted successfully", () => {
-          window.location.href = DASHBOARD_ROUTE;
-        });
-      } else {
-        DIALOG.close();
-        showSnackbar("Failed to delete app");
-      }
-    });
-  });
-
-  return /*html*/ `
-   <div>
-    <div class="flex flex-col gap-1">
-      <div class="font-14 inter">Are you sure you want to delete this app?</div>
-    </div>
-    <div class="text-right">
-      ${Button({
-        class: "ml-auto",
-        id: `delete_confirm_btn`,
-        variant: "contained",
-        btnText: "Confirm",
-        color: "critical",
-      })}
-    </div>
-   </div>
   `;
 };
 
@@ -141,13 +95,10 @@ export function AppDetailsPage() {
             color: "primary",
           })}
           <div class="divider mt-2 mb-2"></div>
-          ${Button({
-            variant: "text",
-            btnText: "Delete App",
-            startIcon: DeleteIcon({ color: "critical" }),
-            id: "delete_app_btn",
-            color: "critical",
-          })}
+         ${DeleteAppButton({
+           appName: APP_DATA?.name,
+           redirectRoute: DASHBOARD_ROUTE,
+         })}
         </div>
       </div>
       ${AccordionDetails({
@@ -187,13 +138,6 @@ export function AppDetailsPage() {
         dialogBody: DialogBody(),
         dialogId: "load_history_dialog",
         btnId: "load_history_dialog_btn",
-      })}
-      ${Dialog({
-        title: "Delete App",
-        maxWidth: "sm",
-        dialogBody: DeleteAppDialogBody(),
-        dialogId: "delete_app_dialog",
-        btnId: "delete_app_btn",
       })}
    </div>
     `;
