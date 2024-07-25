@@ -131,7 +131,11 @@ class AppData:
         return app_details.dict()
 
     def get_prompt_details(
-        self, prompt_details: Dict[str, Any], retrieval: Dict[str, Any], app_name: str
+        self,
+        prompt_details: Dict[str, Any],
+        retrieval: Dict[str, Any],
+        app_name: str,
+        total_prompt_with_findings: int,
     ) -> Dict[str, Any]:
         """
         Updates the prompt details with information from the retrieval data.
@@ -151,6 +155,7 @@ class AppData:
         count_entity = prompt.get("entityCount")
 
         if count_entity > 0:
+            total_prompt_with_findings += 1
             # If entities are detected, get the list of entities
             entity_detected = prompt.get("entities")
 
@@ -192,11 +197,14 @@ class AppData:
                         prompt_details[key]["app_count"] = 1
                         prompt_details[key]["apps"].append(app_name)
 
-        return prompt_details
+        return prompt_details, total_prompt_with_findings
 
-    def prepare_retrieval_response(self, app_dir, app_json, prompt_details):
+    def prepare_retrieval_response(
+        self, app_dir, app_json, prompt_details, total_prompt_with_findings
+    ):
         logger.debug("[Dashboard]: In prepare retrieval response")
         app_name = app_json["name"]
+
         app_metadata_path = (
             f"{CacheDir.HOME_DIR.value}/{app_dir}/"
             f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
@@ -223,14 +231,14 @@ class AppData:
         # fetch total retrievals
         logger.info(f"app_name {app_name}")
         logger.info(
-            f"length of retirevals {app_metadata_content.get("retrievals", [])}"
+            f"length of retirevals {len(app_metadata_content.get("retrievals", []))}"
         )
         for retrieval in app_metadata_content.get("retrievals", []):
             retrieval_data = {"name": app_json.get("name")}
             retrieval_data.update(retrieval)
             self.total_retrievals.append(retrieval_data)
-            prompt_details = self.get_prompt_details(
-                prompt_details, retrieval, app_name
+            prompt_details, total_prompt_with_findings = self.get_prompt_details(
+                prompt_details, retrieval, app_name, total_prompt_with_findings
             )
 
         # fetch active users per app
@@ -252,7 +260,7 @@ class AppData:
             vector_dbs=vector_dbs,
             documents=list(documents.keys()),
         )
-        return app_details.dict(), prompt_details
+        return app_details.dict(), prompt_details, total_prompt_with_findings
 
     def get_all_apps_details(self):
         """
@@ -266,6 +274,7 @@ class AppData:
             all_loader_apps: list = []
             all_retrieval_apps: list = []
             prompt_details: dict = {}
+            total_prompt_with_findings = 0
             # Iterating through each app in the directory
             for app_dir in dir_path:
                 try:
@@ -300,8 +309,13 @@ class AppData:
                         if loader_app:
                             all_loader_apps.append(loader_app)
                     elif app_type == "retrieval":
-                        retrieval_app, prompt_details = self.prepare_retrieval_response(
-                            app_dir, app_json, prompt_details
+                        retrieval_app, prompt_details, total_prompt_with_findings = (
+                            self.prepare_retrieval_response(
+                                app_dir,
+                                app_json,
+                                prompt_details,
+                                total_prompt_with_findings,
+                            )
                         )
                         if retrieval_app:
                             all_retrieval_apps.append(retrieval_app)
@@ -339,7 +353,9 @@ class AppData:
                 activeUsers=self.retrieval_active_users,
                 violations=[],
                 promptDetails=prompt_details,
+                total_prompt_with_findings=total_prompt_with_findings,
             )
+
             logger.info(f"retrieval_response {retrieval_response.__dict__}")
             response = {
                 "pebbloServerVersion": get_pebblo_server_version(),
