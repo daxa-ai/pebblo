@@ -63,6 +63,21 @@ class ReportsConfig(ConfigValidator):
         if not os.path.exists(get_full_path(str(cache_dir))):
             os.makedirs(get_full_path(str(cache_dir)), exist_ok=True)
 
+    @staticmethod
+    def validate_input(input_dict):
+        deprecate_error = "DeprecationWarning: 'outputDir' in config is deprecated, use 'cacheDir' instead"
+        dirs = input_dict.get("reports").keys()
+        if "cacheDir" in dirs and "outputDir" in dirs:
+            raise Exception(
+                f"Either 'cacheDir' or 'outputDir' should be there in config \n{deprecate_error}"
+            )
+
+        if "outputDir" in dirs:
+            print(deprecate_error)
+            input_dict["reports"]["cacheDir"] = input_dict["reports"]["outputDir"]
+            input_dict["reports"].pop("outputDir")
+        return input_dict
+
 
 class ClassifierConfig(ConfigValidator):
     def validate(self):
@@ -94,14 +109,23 @@ def validate_config(config_dict):
         sys.exit(1)
 
 
-def validate_cache_dir(cred_yaml):
-    dirs = cred_yaml.get("reports").keys()
-    if "cacheDir" in dirs and "outputDir" in dirs:
-        raise Exception("Either 'cacheDir' or 'outputDir' should be there in config")
-    if "outputDir" in dirs:
-        print(
-            "DeprecationWarning: 'outputDir' in config is deprecated, use 'cacheDir' instead"
-        )
-        cred_yaml["reports"]["cacheDir"] = cred_yaml["reports"]["outputDir"]
-        cred_yaml["reports"].pop("outputDir")
-    return cred_yaml
+def validate_input(input_dict):
+    """This function is used to validate input of config file"""
+    validators = {
+        "reports": ReportsConfig,
+    }
+
+    validation_errors = []
+
+    output_dict = input_dict
+    for section, ValidatorClass in validators.items():
+        validator = ValidatorClass(input_dict.get(section, {}))
+        output_dict = validator.validate_input(input_dict)
+        validation_errors.extend(validator.errors)
+
+    if validation_errors:
+        for error in validation_errors:
+            logger.error(error)
+        sys.exit(1)
+
+    return output_dict
