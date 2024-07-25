@@ -5,7 +5,7 @@ logging:
   level: info
 reports:
   format: pdf
-  renderer: xhtml2pdf
+  renderer: weasyprint
   outputDir: /opt/.pebblo
 classifier:
   anonymizeSnippets: False
