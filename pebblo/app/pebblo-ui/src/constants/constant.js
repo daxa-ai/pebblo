@@ -717,6 +717,7 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_LOADER = [
       searchField: ["name", "owner"],
       isSorting: true,
       error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
+      link: APP_DETAILS_ROUTE,
       inputPlaceholder: "Search by Application & Owner",
     },
     component: ApplicationsList,
@@ -811,8 +812,8 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
       searchField: ["name"],
       isSorting: false,
       error:
-        promptsWithFindingsArr?.length === 0
-          ? "ENABLE_PEBBLO_EMPTY_STATE"
+        APP_DATA?.total_prompt_with_findings === 0
+          ? "NO_FINDINGS_EMPTY_STATE"
           : null,
     },
     component: ApplicationsList,
