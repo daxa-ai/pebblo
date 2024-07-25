@@ -3,7 +3,7 @@ import pathlib
 import yaml
 from pydantic import BaseSettings, Field
 
-from pebblo.app.config.config_validation import validate_config
+from pebblo.app.config.config_validation import validate_cache_dir, validate_config
 
 # Default config value
 dir_path = pathlib.Path().absolute()
@@ -60,6 +60,8 @@ def load_config(path, version) -> dict:
         try:
             with open(path, "r") as output:
                 cred_yaml = yaml.safe_load(output)
+                cred_yaml = validate_cache_dir(cred_yaml)
+
                 # Replace missing fields with default values
                 for key in conf_obj.dict().keys():
                     if key not in cred_yaml:

@@ -92,3 +92,16 @@ def validate_config(config_dict):
         for error in validation_errors:
             logger.error(error)
         sys.exit(1)
+
+
+def validate_cache_dir(cred_yaml):
+    dirs = cred_yaml.get("reports").keys()
+    if "cacheDir" in dirs and "outputDir" in dirs:
+        raise Exception("Either 'cacheDir' or 'outputDir' should be there in config")
+    if "outputDir" in dirs:
+        print(
+            "DeprecationWarning: 'outputDir' in config is deprecated, use 'cacheDir' instead"
+        )
+        cred_yaml["reports"]["cacheDir"] = cred_yaml["reports"]["outputDir"]
+        cred_yaml["reports"].pop("outputDir")
+    return cred_yaml
