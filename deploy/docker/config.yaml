@@ -6,6 +6,6 @@ logging:
 reports:
   format: pdf
   renderer: weasyprint
-  outputDir: /opt/pebblo
+  outputDir: /opt/.pebblo
 classifier:
   anonymizeSnippets: False

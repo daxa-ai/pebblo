@@ -6,6 +6,7 @@ import json
 import os
 
 from dateutil import parser
+from fastapi import status
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.logger import logger
@@ -17,6 +18,7 @@ from pebblo.app.models.models import (
     RetrievalAppListDetails,
 )
 from pebblo.app.utils.utils import (
+    delete_directory,
     get_document_with_findings_data,
     get_full_path,
     get_pebblo_server_version,
@@ -321,6 +323,25 @@ class AppData:
 
         except Exception as ex:
             logger.error(f"Error in app detail. Error: {ex}")
+
+    @staticmethod
+    def delete_application(app_name):
+        """
+        Delete an app
+        """
+        try:
+            # Path to application directory
+            app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
+            logger.debug(f"App directory path: {app_dir_path}")
+            response = delete_directory(app_dir_path, app_name)
+            return response
+        except Exception as ex:
+            error_message = f"Error in delete application. Error: {ex}"
+            logger.error(error_message)
+            return {
+                "message": error_message,
+                "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+            }
 
     @staticmethod
     def get_latest_load_id(load_ids, app_dir):

@@ -18,7 +18,7 @@ RUN pip install weasyprint && pip install build && python -m build --wheel && pi
 # Stage 2
 FROM $base_image
 
-RUN mkdir /opt/pebblo /opt/pebblo/log /opt/pebblo/config 
+RUN mkdir /opt/pebblo /opt/.pebblo /opt/pebblo/log /opt/pebblo/config 
 
 WORKDIR /opt/pebblo
 

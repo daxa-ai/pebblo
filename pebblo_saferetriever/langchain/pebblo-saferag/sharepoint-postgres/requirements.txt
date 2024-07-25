@@ -3,10 +3,8 @@ unstructured[all-docs] # For Docx, PDF loading
 pymupdf # For PDF loading
 tiktoken # OpenAI tokenizer
 
-langchain==0.2.6
 langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
-# Install langchain-community for PebbloSafeLoader, PebbloRetrievalQA
-# (cd <path-to-langchain-root>; git checkout daxa_3.1; cd libs/community; pip install .)
+langchain-community>=0.2.9 # for PebbloSafeLoader, PebbloRetrievalQA
 
 o365 # Sharepoint
 azure-identity # Sharepoint
