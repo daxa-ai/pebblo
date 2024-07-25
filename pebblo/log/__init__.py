@@ -62,6 +62,67 @@ def get_logger(name:str):
     logger_utility = LoggerUtility(name, level=log_level, log_file=log_file, max_file_size=log_max_file_size, backup_count=log_backup_count, timestamp_format=DEFAULT_TIMESTAMP_FORMAT)
     return logger_utility.get_logger()
 
+def get_uvicorn_logconfig(log_file:str, log_level:int):
+    '''
+    Log config in logging.config.dictConfig format for uvicorn framework
+    '''
+    log_config = {
+        "version": 1,
+        'disable_existing_loggers': False,
+        "formatters": {
+            "default": {
+                "format": "%(asctime)s - %(process)s - %(name)s - %(levelname)s - %(message)s",
+            },
+            "json": {
+                "()": "stdlib.log.CustomUvironJsonFormatter",
+            }
+        },
+        "handlers": {
+            "default_console": {
+                "formatter": "default",
+                "class": "logging.StreamHandler",
+                "stream": "ext://sys.stderr",
+                "level": "DEBUG"
+            },
+            "console": {
+                "formatter": "json",
+                "class": "logging.StreamHandler",
+                "level": log_level,
+            },
+        },
+        "root": {
+                "handlers": ["console"],
+                "level": log_level,
+        },
+        "loggers": {
+            "gunicorn": {
+                "propagate": True,
+            },
+            "uvicorn": {
+                "propagate": True,
+            },
+            "uvicorn.access": {
+                "propagate": True,
+            }
+        }
+    }
+    if log_file != None:
+        try:
+            f = open(log_file, "a")
+            f.close()
+            log_config["handlers"]["file"] = {
+                "formatter": "json",
+                "class": "logging.handlers.RotatingFileHandler",
+                "level": log_level,
+                "filename": log_file,
+            }
+            log_config["root"]["handlers"].append("file")
+        except Exception as e:
+            # silently disable file handler if log file not writable
+            pass
+    return log_config
+
+
 if __name__ == '__main__':
     logger = get_logger("test")
 

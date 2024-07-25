@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import uvicorn
+import logging
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -12,6 +13,8 @@ from fastapi.staticfiles import StaticFiles
 from pebblo.app.exceptions.exception_handler import exception_handlers
 from pebblo.app.routers.local_ui_routers import local_ui_router_instance
 from pebblo.app.routers.redirection_router import redirect_router_instance
+
+from pebblo.log import get_uvicorn_logconfig
 
 with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
     from pebblo.app.routers.routers import router_instance
@@ -53,6 +56,7 @@ class Service:
         self.port = self.config_details.get("daemon", {}).get("port", 8000)
         self.host = self.config_details.get("daemon", {}).get("host", "localhost")
         self.log_level = self.config_details.get("logging", {}).get("level", "info")
+        self.log_file = self.config_details.get("logging", {}).get("file", "")
 
     async def create_main_api_server(self):
         self.app.mount(
@@ -63,9 +67,11 @@ class Service:
             name="static",
         )
 
+        log_cfg = get_uvicorn_logconfig(self.log_file, logging.getLevelName(self.log_level))
+
         # Add config Details to Uvicorn
         config = uvicorn.Config(
-            app=self.app, host=self.host, port=self.port, log_level=self.log_level
+            app=self.app, host=self.host, port=self.port, log_config=log_cfg
         )
         server = uvicorn.Server(config)
         await server.serve()
