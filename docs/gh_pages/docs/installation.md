@@ -32,7 +32,7 @@ pebblo [--config /path/to/config.yaml]
 ## Using Docker 
 
 ```bash
-docker run -p 8000:8000 docker.daxa.ai/daxaai/pebblo
+docker run -p 8000:8000 docker.daxa.ai/daxaai/pebblo -v /path/to/pebblo/config.yaml:/opt/pebblo/config/config.yaml 
 ```
 
 Local UI can be accessed by pointing the browser to `https://localhost:8000`.
@@ -41,10 +41,8 @@ To pass a specific configuration file and to access PDF reports iin the host mac
 
 ```bash
 docker run \
-    -v /path/to/pebblo/config.yaml:/opt/pebblo/config/config.yaml \
-    -v /path/to/pebblo_reports:/root/.pebblo \
-    -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest \
-        --config /opt/pebblo/config/config.yaml
+    -v /path/to/pebblo_reports:/opt/.pebblo \
+    -p 8000:8000 docker.daxa.ai/daxaai/pebblo:latest
 ```
 
 ## Using Kubernetes
