@@ -519,6 +519,17 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
   },
 ];
 
+const promptsWithFindingsArr = APP_DATA?.promptDetails
+  ? Object.keys(APP_DATA?.promptDetails)?.map((prompt, index) => ({
+      id: index,
+      name: prompt,
+      prompts: APP_DATA?.promptDetails[prompt]?.total_prompts,
+      entity: APP_DATA?.promptDetails[prompt]?.total_entity_count,
+      users: APP_DATA?.promptDetails[prompt]?.user,
+      apps: APP_DATA?.promptDetails[prompt]?.apps,
+    }))
+  : [];
+
 const IS_CRITICAL_DATA =
   NO_APPLICATIONS_FOUND || APP_DATA?.applicationsAtRiskCount?.length === 0
     ? false
@@ -572,7 +583,7 @@ export const TABS_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
   },
   {
     label: "Prompts with Findings",
-    critical: 0,
+    critical: promptsWithFindingsArr?.length || 0,
     value: 2,
     isCritical: false,
   },
@@ -629,7 +640,7 @@ export const TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL = [
     field: "name",
     render: (item) => /*html*/ `
       <div class="flex flex-col inter text-none">
-         <div class="surface-10 font-13">${item?.name}</div>
+         <div class="surface-10 font-13">${KEYWORD_MAPPING[item?.name]}</div>
          <div class="surface-10-opacity-50 font-12"></div>
       </div>
    `,
@@ -641,13 +652,62 @@ export const TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL = [
     align: "end",
   },
   {
+    label: "Entity",
+    field: "entity",
+    align: "end",
+  },
+  {
     label: "Users",
     field: "users",
+    render: (item) =>
+      ViewMore({
+        list: item?.users,
+        showCount: 1,
+        id: item.id + "user",
+        align: "end",
+        tableCol: [
+          {
+            label: "Users",
+            field: "user",
+            align: "start",
+            render: (item) =>
+              `<div class="text-none w-500">${item?.user || "-"}</div>`,
+          },
+        ],
+        tableData: item?.users?.map((user) => ({
+          user,
+        })),
+        dialogTitle: `<div class="flex gap-4 items-center">
+          <div>Users (${item?.users?.length})</div>
+        </div>`,
+      }),
     align: "end",
   },
   {
     label: "Apps",
     field: "apps",
+    render: (item) =>
+      ViewMore({
+        list: item?.apps,
+        showCount: 1,
+        id: item?.id + "app",
+        align: "end",
+        tableCol: [
+          {
+            label: "Apps",
+            field: "app",
+            align: "start",
+            render: (item) =>
+              `<div class="text-none">${item?.app || "-"}</div>`,
+          },
+        ],
+        tableData: item?.apps?.map((app) => ({
+          app,
+        })),
+        dialogTitle: `<div class="flex gap-4 items-center">
+          <div>Apps (${item?.apps?.length})</div>
+        </div>`,
+      }),
     align: "end",
   },
 ];
@@ -751,12 +811,14 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
     value: {
       title: "Prompts with Findings",
       tableCol: TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL,
-      tableData: [{ name: "entity name", prompts: 10, users: 5, apps: 2 }],
+      tableData: promptsWithFindingsArr,
       isDownloadReport: false,
       searchField: ["name"],
       isSorting: false,
-      error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
-      link: SAFE_RETRIEVAL_APP_ROUTE,
+      error:
+        promptsWithFindingsArr?.length === 0
+          ? "ENABLE_PEBBLO_EMPTY_STATE"
+          : null,
     },
     component: ApplicationsList,
   },
