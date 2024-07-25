@@ -583,7 +583,7 @@ export const TABS_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
   },
   {
     label: "Prompts with Findings",
-    critical: promptsWithFindingsArr?.length || 0,
+    critical: APP_DATA?.total_prompt_with_findings || 0,
     value: 2,
     isCritical: false,
   },
