@@ -4,7 +4,7 @@ This module handles business logic for local UI
 
 import json
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from dateutil import parser
 from fastapi import status
@@ -18,6 +18,7 @@ from pebblo.app.models.models import (
     RetrievalAppList,
     RetrievalAppListDetails,
 )
+
 from pebblo.app.utils.utils import (
     delete_directory,
     get_document_with_findings_data,
@@ -136,7 +137,7 @@ class AppData:
         retrieval: Dict[str, Any],
         app_name: str,
         total_prompt_with_findings: int,
-    ) -> tuple[Dict[str, Any], int]:
+    ) -> Tuple[Dict[str, Any], int]:
         """
         Updates the prompt details with information from the retrieval data.
 
