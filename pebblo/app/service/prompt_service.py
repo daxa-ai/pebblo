@@ -150,7 +150,7 @@ class Prompt:
             prompt_data = self.data.get("prompt", {})
 
             is_prompt_gov_enabled = self.data.get("prompt", {}).get(
-                "prompt_gov_enabled"
+                "prompt_gov_enabled", False
             )
 
             if is_prompt_gov_enabled is False:
