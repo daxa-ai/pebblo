@@ -524,7 +524,7 @@ const promptsWithFindingsArr = APP_DATA?.promptDetails
       id: index,
       name: prompt?.entity_name,
       prompts: prompt?.total_prompts,
-      users: prompt?.user,
+      users: prompt?.users,
       app: prompt?.app_name,
     }))
   : [];
