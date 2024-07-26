@@ -229,7 +229,7 @@ class RetrievalAppList(BaseModel):
     retrievals: list = []
     activeUsers: dict = {}
     violations: list = []
-    promptDetails: dict = {}
+    promptDetails: list = []
     total_prompt_with_findings: int = 0
 
 
