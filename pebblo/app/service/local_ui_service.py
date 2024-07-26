@@ -152,7 +152,7 @@ class AppData:
         prompt = retrieval.get("prompt", {})
 
         # Get the count of entities detected in the prompt
-        count_entity = prompt.get("entityCount")
+        count_entity = prompt.get("entityCount", 0)
 
         if count_entity > 0:
             total_prompt_with_findings += 1
