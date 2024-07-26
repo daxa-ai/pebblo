@@ -136,7 +136,7 @@ class AppData:
         retrieval: Dict[str, Any],
         app_name: str,
         total_prompt_with_findings: int,
-    ) -> tuple:
+    ) -> tuple[Dict[str, Any], int]:
         """
         Updates the prompt details with information from the retrieval data.
 
@@ -166,14 +166,14 @@ class AppData:
                     prompt_details[app_name][key]["total_entity_count"] += value
 
                     # Get the user name from the retrieval data
-                    user_name = retrieval.get("user", "")
+                    user_name = retrieval.get("users", "")
 
                     if (
                         user_name
                         and user_name not in prompt_details[app_name][key]["user"]
                     ):
                         # Add new user to the user list if not already present
-                        prompt_details[app_name][key]["user"].append(user_name)
+                        prompt_details[app_name][key]["users"].append(user_name)
                         prompt_details[app_name][key]["total_users"] += 1
 
                 else:
@@ -181,13 +181,13 @@ class AppData:
                     prompt_details[app_name][key] = {
                         "total_prompts": 1,
                         "total_entity_count": value,
-                        "user": [],
+                        "users": [],
                         "total_users": 0,
                     }
 
-                    user_name = retrieval.get("user", "")
+                    user_name = retrieval.get("users", "")
                     if user_name:
-                        prompt_details[app_name][key]["user"].append(user_name)
+                        prompt_details[app_name][key]["users"].append(user_name)
                         prompt_details[app_name][key]["total_users"] = 1
 
         prompt_details[app_name] = dict(
@@ -329,7 +329,7 @@ class AppData:
                     prompt_dict["entity_name"] = k1
                     prompt_dict["total_prompts"] = v1["total_prompts"]
                     prompt_dict["total_entity_count"] = v1["total_entity_count"]
-                    prompt_dict["user"] = v1["user"]
+                    prompt_dict["users"] = v1["users"]
                     prompt_dict["total_users"] = v1["total_users"]
                     final_prompt_details.append(prompt_dict)
             logger.debug("[Dashboard]: Preparing loader app response object")
