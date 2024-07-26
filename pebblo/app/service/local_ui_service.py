@@ -18,7 +18,6 @@ from pebblo.app.models.models import (
     RetrievalAppList,
     RetrievalAppListDetails,
 )
-
 from pebblo.app.utils.utils import (
     delete_directory,
     get_document_with_findings_data,
