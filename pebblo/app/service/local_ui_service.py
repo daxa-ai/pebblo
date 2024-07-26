@@ -150,7 +150,7 @@ class AppData:
             return
 
         # Sort retrievals data
-        retrievals = self.sort_retrievals_data(
+        retrievals = self.sort_retrievals_data_based_on_findings(
             app_metadata_content.get("retrievals", [])
         )
         app_metadata_content["retrievals"] = retrievals
@@ -384,7 +384,7 @@ class AppData:
     def get_retrieval_app_details(self, app_content):
         retrieval_data = app_content.get("retrievals", [])
 
-        retrieval_data = self.sort_retrievals_data(retrieval_data)
+        retrieval_data = self.sort_retrievals_data_based_on_prompt_time(retrieval_data)
 
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
@@ -530,9 +530,15 @@ class AppData:
         response_count = item.get("prompt", {}).get("entityCount") or 0
         return prompt_count + response_count
 
-    def sort_retrievals_data(self, retrieval):
+    def sort_retrievals_data_based_on_findings(self, retrieval):
         # Sort the list based on the total count in descending order
         sorted_data = sorted(retrieval, key=self._calculate_total_count, reverse=True)
+        return sorted_data
+
+    @staticmethod
+    def sort_retrievals_data_based_on_prompt_time(retrieval):
+        # Sorting the retrievals based on prompt_time
+        sorted_data = sorted(retrieval, key=lambda x: x["prompt_time"])
         return sorted_data
 
     def get_all_documents(self, retrieval_data: list) -> dict:
