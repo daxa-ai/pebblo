@@ -166,11 +166,11 @@ class AppData:
                     prompt_details[app_name][key]["total_entity_count"] += value
 
                     # Get the user name from the retrieval data
-                    user_name = retrieval.get("users", "")
+                    user_name = retrieval.get("user", "")
 
                     if (
                         user_name
-                        and user_name not in prompt_details[app_name][key]["user"]
+                        and user_name not in prompt_details[app_name][key]["users"]
                     ):
                         # Add new user to the user list if not already present
                         prompt_details[app_name][key]["users"].append(user_name)
@@ -344,8 +344,6 @@ class AppData:
                 dataSource=self.loader_data_source_list,
             )
 
-            # logger.info(f"prompt_details ###### {prompt_details}")
-            logger.debug("Preparing retrieval app response object")
             retrieval_response = RetrievalAppList(
                 appList=all_retrieval_apps,
                 retrievals=self.total_retrievals,
