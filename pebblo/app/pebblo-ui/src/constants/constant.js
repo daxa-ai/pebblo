@@ -520,13 +520,12 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
 ];
 
 const promptsWithFindingsArr = APP_DATA?.promptDetails
-  ? Object.keys(APP_DATA?.promptDetails)?.map((prompt, index) => ({
+  ? APP_DATA?.promptDetails?.map((prompt, index) => ({
       id: index,
-      name: prompt,
-      prompts: APP_DATA?.promptDetails[prompt]?.total_prompts,
-      entity: APP_DATA?.promptDetails[prompt]?.total_entity_count,
-      users: APP_DATA?.promptDetails[prompt]?.user,
-      apps: APP_DATA?.promptDetails[prompt]?.apps,
+      name: prompt?.entity_name,
+      prompts: prompt?.total_prompts,
+      users: prompt?.user,
+      app: prompt?.app_name,
     }))
   : [];
 
@@ -659,14 +658,13 @@ export const TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL = [
         list: item?.users,
         showCount: 1,
         id: item.id + "user",
-        align: "end",
         tableCol: [
           {
             label: "Users",
             field: "user",
             align: "start",
             render: (item) =>
-              `<div class="text-none w-500">${item?.user || "-"}</div>`,
+              `<div class="text-none">${item?.user || "-"}</div>`,
           },
         ],
         tableData: item?.users?.map((user) => ({
@@ -676,34 +674,13 @@ export const TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL = [
           <div>Users (${item?.users?.length})</div>
         </div>`,
       }),
-    align: "end",
+    align: "start",
   },
   {
     label: "Apps",
-    field: "apps",
-    render: (item) =>
-      ViewMore({
-        list: item?.apps,
-        showCount: 1,
-        id: item?.id + "app",
-        align: "end",
-        tableCol: [
-          {
-            label: "Apps",
-            field: "app",
-            align: "start",
-            render: (item) =>
-              `<div class="text-none">${item?.app || "-"}</div>`,
-          },
-        ],
-        tableData: item?.apps?.map((app) => ({
-          app,
-        })),
-        dialogTitle: `<div class="flex gap-4 items-center">
-          <div>Apps (${item?.apps?.length})</div>
-        </div>`,
-      }),
-    align: "end",
+    field: "app",
+    render: (item) => `<div class="text-none">${item?.app || "-"}</div>`,
+    align: "start",
   },
 ];
 
