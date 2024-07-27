@@ -12,7 +12,7 @@ from pebblo.reports.enums.keyword_mapping import topic_entity_mapping
 from pebblo.reports.enums.report_libraries import library_function_mapping
 from pebblo.log import get_logger
 
-logger = get_logger("pebblo.reports")
+logger = get_logger(__name__)
 
 def date_formatter(date_obj, show_timezone=True):
     """Converts date string to object and returns formatted string for date (D M Y, H:M)"""

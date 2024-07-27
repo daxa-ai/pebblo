@@ -17,7 +17,6 @@ from pebblo.topic_classifier.config import (
     TOPICS_TO_EXCLUDE,
 )
 from pebblo.topic_classifier.enums.constants import topic_display_names
-# from pebblo.topic_classifier.libs.logger import logger
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
