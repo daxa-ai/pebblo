@@ -9,7 +9,8 @@ from fastapi import status
 from pebblo.log import get_logger
 # from pebblo.app.libs.loggdder import logger
 
-logger = get_logger("pebblo.app.utils")
+logger = get_logger(__name__)
+
 class DatetimeEncoder(JSONEncoder):
     def default(self, o):
         try:

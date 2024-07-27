@@ -22,7 +22,7 @@ from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 
-logger = get_logger("pebblo.app.service")
+logger = get_logger(__name__)
 
 class Prompt:
     """

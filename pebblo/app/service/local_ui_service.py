@@ -27,7 +27,7 @@ from pebblo.app.utils.utils import (
     update_findings_summary,
 )
 
-logger = get_logger("pebblo.app.service")
+logger = get_logger(__name__)
 
 class AppData:
     """

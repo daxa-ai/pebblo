@@ -14,7 +14,7 @@ from pebblo.entity_classifier.utils.utils import (
 
 from pebblo.log import get_logger
 
-logger = get_logger("pebblo.entity_classifier")
+logger = get_logger(__name__)
 
 class EntityClassifier:
     def __init__(self):

@@ -16,7 +16,7 @@ from pebblo.app.utils.utils import get_full_path, read_json_file, write_json_to_
 from pebblo.reports.reports import Reports
 
 
-logger = get_logger("pebblo.app.service")
+logger = get_logger(__name__)
 
 class AppLoaderDoc:
     """

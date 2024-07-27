@@ -20,7 +20,7 @@ from pebblo.topic_classifier.enums.constants import topic_display_names
 # from pebblo.topic_classifier.libs.logger import logger
 from pebblo.log import get_logger
 
-logger = get_logger("pebblo.topic_classifier")
+logger = get_logger(__name__)
 
 
 class TopicClassifier:

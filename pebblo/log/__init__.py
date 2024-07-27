@@ -110,20 +110,3 @@ def get_uvicorn_logconfig(log_file:str, log_level:int):
             },
         },
 }
-
-if __name__ == '__main__':
-    logger = get_logger("test")
-
-    logger.info("This is an info message.")
-    logger.debug("This is a debug message.")
-    logger.warning("This is a warning message.")
-    logger.error("This is an error message.")
-    logger.critical("This is a critical message.")
-
-    logger = get_logger("test-123")
-
-    logger.info("This is an info message.")
-    logger.debug("This is a debug message.")
-    logger.warning("This is a warning message.")
-    logger.error("This is an error message.")
-    logger.critical("This is a critical message.")

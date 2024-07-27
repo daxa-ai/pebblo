@@ -26,7 +26,7 @@ from pebblo.app.utils.utils import (
     write_json_to_file,
 )
 
-logger = get_logger("pebblo.app.service")
+logger = get_logger(__name__)
 
 class AppDiscover:
     """

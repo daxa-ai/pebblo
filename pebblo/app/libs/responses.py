@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 from pebblo.log import get_logger
 
-logger = get_logger("pebblo.app.libs")
+logger = get_logger(__name__)
 
 class PebbloJsonResponse:
     """
