@@ -1,9 +1,9 @@
 import pathlib
+from contextvars import ContextVar
+from typing import Tuple
 
 import yaml
 from pydantic import BaseSettings, Field
-from typing import Tuple
-from contextvars import ContextVar
 
 from pebblo.app.config.config_validation import validate_config
 
@@ -25,12 +25,13 @@ class ReportConfig(BaseSettings):
 
 
 # Logging Defaults
-DEFAULT_LOGGER_NAME = 'pebblo'
-DEFAULT_LOG_MAX_FILE_SIZE = 2*1024*1024
+DEFAULT_LOGGER_NAME = "pebblo"
+DEFAULT_LOG_MAX_FILE_SIZE = 2 * 1024 * 1024
 DEFAULT_LOG_BACKUP_COUNT = 3
-DEFAULT_LOG_LEVEL = 'INFO'
-DEFAULT_LOG_FILE_PATH = '/tmp/logs'
-DEFAULT_LOG_FILE = f'{DEFAULT_LOG_FILE_PATH}/{DEFAULT_LOGGER_NAME}.log'
+DEFAULT_LOG_LEVEL = "INFO"
+DEFAULT_LOG_FILE_PATH = "/tmp/logs"
+DEFAULT_LOG_FILE = f"{DEFAULT_LOG_FILE_PATH}/{DEFAULT_LOGGER_NAME}.log"
+
 
 # Logging BaseModel
 class LoggingConfig(BaseSettings):
@@ -51,10 +52,12 @@ class Config(BaseSettings):
     logging: LoggingConfig
     classifier: ClassifierConfig
 
-var_server_config: ContextVar[Config] = ContextVar('server_config', default=None)
-var_server_config_dict: ContextVar[dict] = ContextVar('server_config_dict', default={})
 
-def load_config(path: str)->Tuple[dict, Config]:
+var_server_config: ContextVar[Config] = ContextVar("server_config", default=None)
+var_server_config_dict: ContextVar[dict] = ContextVar("server_config_dict", default={})
+
+
+def load_config(path: str) -> Tuple[dict, Config]:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
@@ -79,7 +82,9 @@ def load_config(path: str)->Tuple[dict, Config]:
                         cred_yaml[key] = conf_obj.dict()[key]
                 parsed_config = Config.parse_obj(cred_yaml)
                 config_dict = parsed_config.dict()
-                config_dict["logging"]["level"] = config_dict.get("logging").get("level").upper()
+                config_dict["logging"]["level"] = (
+                    config_dict.get("logging").get("level").upper()
+                )
                 validate_config(config_dict)
                 return config_dict, parsed_config
         except IOError as err:

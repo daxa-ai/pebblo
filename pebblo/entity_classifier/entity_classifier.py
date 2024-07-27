@@ -11,10 +11,10 @@ from pebblo.entity_classifier.utils.utils import (
     add_custom_regex_analyzer_registry,
     get_entities,
 )
-
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
+
 
 class EntityClassifier:
     def __init__(self):

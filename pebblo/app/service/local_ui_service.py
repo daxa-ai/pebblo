@@ -9,7 +9,6 @@ from dateutil import parser
 from fastapi import status
 
 from pebblo.app.enums.enums import CacheDir
-from pebblo.log import get_logger
 from pebblo.app.models.models import (
     LoaderAppListDetails,
     LoaderAppModel,
@@ -26,8 +25,10 @@ from pebblo.app.utils.utils import (
     update_data_source,
     update_findings_summary,
 )
+from pebblo.log import get_logger
 
 logger = get_logger(__name__)
+
 
 class AppData:
     """

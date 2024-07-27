@@ -1,4 +1,4 @@
-from fastapi.responses import RedirectResponse, PlainTextResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse
 
 from pebblo.app.api.redirection_api import App
 

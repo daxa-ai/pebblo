@@ -8,6 +8,7 @@ import os
 from huggingface_hub import login
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 
+from pebblo.log import get_logger
 from pebblo.topic_classifier.config import (
     CLASSIFIER_PATH,
     MODEL_REVISION,
@@ -17,7 +18,6 @@ from pebblo.topic_classifier.config import (
     TOPICS_TO_EXCLUDE,
 )
 from pebblo.topic_classifier.enums.constants import topic_display_names
-from pebblo.log import get_logger
 
 logger = get_logger(__name__)
 

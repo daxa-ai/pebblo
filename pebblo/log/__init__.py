@@ -1,15 +1,14 @@
 import logging
 import logging.handlers
 import os
-
 from threading import Lock
-
 
 from pebblo.app.config.config import var_server_config
 
 g_config = var_server_config.get()
 
-DEFAULT_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
+DEFAULT_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
 class LoggerUtility:
     _lock = Lock()
@@ -24,7 +23,9 @@ class LoggerUtility:
                     cls._loggers[name]._initialize(*args, **kwargs)
         return cls._loggers[name]
 
-    def _initialize(self, name, log_file, max_file_size, backup_count, level, timestamp_format):
+    def _initialize(
+        self, name, log_file, max_file_size, backup_count, level, timestamp_format
+    ):
         self.logger = logging.getLogger(name)
         # self.logger.propagate = False
         self.logger.setLevel(level)
@@ -37,17 +38,22 @@ class LoggerUtility:
 
         # Create a file handler with log rotation
         file_handler = logging.handlers.RotatingFileHandler(
-            log_file, maxBytes=max_file_size, backupCount=backup_count)
+            log_file, maxBytes=max_file_size, backupCount=backup_count
+        )
         file_handler.setLevel(level)
         file_formatter = logging.Formatter(
-            '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s', datefmt=timestamp_format)
+            "%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s",
+            datefmt=timestamp_format,
+        )
         file_handler.setFormatter(file_formatter)
 
         # Create a console handler
         console_handler = logging.StreamHandler()
         console_handler.setLevel(level)
         console_formatter = logging.Formatter(
-            '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s', datefmt=timestamp_format)
+            "%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s",
+            datefmt=timestamp_format,
+        )
         console_handler.setFormatter(console_formatter)
 
         # Add handlers to the logger
@@ -57,17 +63,26 @@ class LoggerUtility:
     def get_logger(self):
         return self.logger
 
-def get_logger(name:str):
+
+def get_logger(name: str):
     # Get logger from environment variables
     log_level = logging.getLevelName(g_config.logging.level.upper())
     log_file = g_config.logging.file
     log_max_file_size = g_config.logging.maxFileSize
     log_backup_count = g_config.logging.backupCount
 
-    logger_utility = LoggerUtility(name, level=log_level, log_file=log_file, max_file_size=log_max_file_size, backup_count=log_backup_count, timestamp_format=DEFAULT_TIMESTAMP_FORMAT)
+    logger_utility = LoggerUtility(
+        name,
+        level=log_level,
+        log_file=log_file,
+        max_file_size=log_max_file_size,
+        backup_count=log_backup_count,
+        timestamp_format=DEFAULT_TIMESTAMP_FORMAT,
+    )
     return logger_utility.get_logger()
 
-def get_uvicorn_logconfig(log_file:str, log_level:int):
+
+def get_uvicorn_logconfig(log_file: str, log_level: int):
     return {
         "version": 1,
         "disable_existing_loggers": False,
@@ -102,7 +117,7 @@ def get_uvicorn_logconfig(log_file:str, log_level:int):
             "uvicorn.access": {
                 "handlers": ["console", "file"],
                 "level": log_level,
-                "propagate": False
+                "propagate": False,
             },
         },
-}
+    }

@@ -1,11 +1,11 @@
 import asyncio
+import logging
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from pathlib import Path
 from typing import Any
 
 import uvicorn
-import logging
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -13,13 +13,13 @@ from fastapi.staticfiles import StaticFiles
 from pebblo.app.exceptions.exception_handler import exception_handlers
 from pebblo.app.routers.local_ui_routers import local_ui_router_instance
 from pebblo.app.routers.redirection_router import redirect_router_instance
-
 from pebblo.log import get_logger, get_uvicorn_logconfig
 
 with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
     from pebblo.app.routers.routers import router_instance
 
 logger = get_logger(__name__)
+
 
 class NoCacheStaticFiles(StaticFiles):
     def __init__(self, *args: Any, **kwargs: Any):
@@ -69,7 +69,9 @@ class Service:
         )
 
         # Add config Details to Uvicorn
-        log_cfg = get_uvicorn_logconfig(self.log_file, logging.getLevelName(self.log_level))
+        log_cfg = get_uvicorn_logconfig(
+            self.log_file, logging.getLevelName(self.log_level)
+        )
         config = uvicorn.Config(
             app=self.app, host=self.host, port=self.port, log_config=log_cfg
         )

@@ -7,6 +7,7 @@ from pebblo.log import get_logger
 
 logger = get_logger(__name__)
 
+
 class PebbloJsonResponse:
     """
     Response class for custom json response

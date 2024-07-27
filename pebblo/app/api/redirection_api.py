@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Request
+
 from pebblo.app.daemon import server_version
+
 
 class App:
     """

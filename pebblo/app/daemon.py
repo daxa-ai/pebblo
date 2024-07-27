@@ -7,13 +7,18 @@ import warnings
 
 from tqdm import tqdm
 
-from pebblo.app.config.config import load_config, var_server_config, var_server_config_dict
+from pebblo.app.config.config import (
+    load_config,
+    var_server_config,
+    var_server_config_dict,
+)
 from pebblo.app.utils.version import get_pebblo_version
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 server_version = get_pebblo_version()
+
 
 def start():
     """Entry point for pebblo-server."""
@@ -77,6 +82,7 @@ def server_start(config: dict, p_bar: tqdm):
     p_bar.close()
     svc.start()
     print("Pebblo server stopped. BYE!")
+
 
 if __name__ == "__main__":
     start()

@@ -41,6 +41,7 @@ class LoggingConfig(ConfigValidator):
                 f"Error: Unsupported logLevel '{level}' specified in the configuration"
             )
 
+
 def expand_path(file_path: str) -> str:
     # Expand user (~) and environment variables
     expanded_path = os.path.expanduser(file_path)
@@ -50,6 +51,7 @@ def expand_path(file_path: str) -> str:
     absolute_path = os.path.abspath(expanded_path)
 
     return absolute_path
+
 
 class ReportsConfig(ConfigValidator):
     def validate(self):

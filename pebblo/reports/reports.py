@@ -6,12 +6,12 @@ Contains generate_report() to generate report pdf
 
 import os
 
+from pebblo.log import get_logger
 from pebblo.reports.enums.report_libraries import (
     ReportLibraries,
     template_renderer_mapping,
 )
 from pebblo.reports.html_to_pdf_generator.report_generator import convert_html_to_pdf
-from pebblo.log import get_logger
 
 logger = get_logger(__name__)
 

@@ -7,7 +7,6 @@ import os.path
 from datetime import datetime
 
 from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
-from pebblo.log import get_logger
 from pebblo.app.models.models import (
     AiDataModel,
     AiDocs,
@@ -23,6 +22,7 @@ from pebblo.app.utils.utils import (
     read_json_file,
 )
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
+from pebblo.log import get_logger
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 logger = get_logger(__name__)

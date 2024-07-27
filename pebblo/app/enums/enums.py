@@ -8,6 +8,7 @@ from pebblo.app.config.config import var_server_config_dict
 
 config_details = var_server_config_dict.get()
 
+
 class CacheDir(Enum):
     """
     Enums for cache directory
