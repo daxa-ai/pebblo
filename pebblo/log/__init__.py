@@ -1,12 +1,17 @@
 import logging
+import logging.handlers
 import os
-from threading import Lock
 
+from threading import Lock
 from datetime import datetime
 from typing import Dict, Any
 
 
 from pebblo.app.config.config import DEFAULT_LOG_FILE, DEFAULT_LOG_LEVEL, DEFAULT_LOG_MAX_FILE_SIZE, DEFAULT_LOG_BACKUP_COUNT, DEFAULT_LOGGER_NAME
+
+from pebblo.app.config.config import var_server_config
+
+g_config = var_server_config.get()
 
 DEFAULT_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -58,10 +63,10 @@ class LoggerUtility:
 
 def get_logger(name:str):
     # Get logger from environment variables
-    log_level = logging.getLevelName(os.environ.get('LOG_LEVEL', DEFAULT_LOG_LEVEL))
-    log_file = os.environ.get('LOG_FILE', DEFAULT_LOG_FILE)
-    log_max_file_size = int(os.environ.get('LOG_MAX_FILE_SIZE', str(DEFAULT_LOG_MAX_FILE_SIZE)))
-    log_backup_count = int(os.environ.get('LOG_BACKUP_COUNT', str(DEFAULT_LOG_BACKUP_COUNT)))
+    log_level = logging.getLevelName(g_config.logging.level.upper())
+    log_file = g_config.logging.file
+    log_max_file_size = g_config.logging.maxFileSize
+    log_backup_count = g_config.logging.backupCount
 
     logger_utility = LoggerUtility(name, level=log_level, log_file=log_file, max_file_size=log_max_file_size, backup_count=log_backup_count, timestamp_format=DEFAULT_TIMESTAMP_FORMAT)
     return logger_utility.get_logger()

@@ -14,11 +14,12 @@ from pebblo.app.exceptions.exception_handler import exception_handlers
 from pebblo.app.routers.local_ui_routers import local_ui_router_instance
 from pebblo.app.routers.redirection_router import redirect_router_instance
 
-from pebblo.log import get_uvicorn_logconfig
+from pebblo.log import get_logger, get_uvicorn_logconfig
 
 with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
     from pebblo.app.routers.routers import router_instance
 
+logger = get_logger(__name__)
 
 class NoCacheStaticFiles(StaticFiles):
     def __init__(self, *args: Any, **kwargs: Any):
@@ -79,4 +80,5 @@ class Service:
         await server.serve()
 
     def start(self):
+        logger.info(f"Starting Pebblo Server with config {self.config_details}")
         asyncio.run(self.create_main_api_server())
