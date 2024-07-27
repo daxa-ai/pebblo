@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 # initialize logging subsystem for tests
-import tests.log
+import tests.log  # noqa: F401
 
 from pebblo.app.service.discovery_service import AppDiscover
 

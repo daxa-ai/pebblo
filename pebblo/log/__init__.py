@@ -3,11 +3,7 @@ import logging.handlers
 import os
 
 from threading import Lock
-from datetime import datetime
-from typing import Dict, Any
 
-
-from pebblo.app.config.config import DEFAULT_LOG_FILE, DEFAULT_LOG_LEVEL, DEFAULT_LOG_MAX_FILE_SIZE, DEFAULT_LOG_BACKUP_COUNT, DEFAULT_LOGGER_NAME
 
 from pebblo.app.config.config import var_server_config
 
@@ -44,14 +40,14 @@ class LoggerUtility:
             log_file, maxBytes=max_file_size, backupCount=backup_count)
         file_handler.setLevel(level)
         file_formatter = logging.Formatter(
-            f'%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s', datefmt=timestamp_format)
+            '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s', datefmt=timestamp_format)
         file_handler.setFormatter(file_formatter)
 
         # Create a console handler
         console_handler = logging.StreamHandler()
         console_handler.setLevel(level)
         console_formatter = logging.Formatter(
-            f'%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s', datefmt=timestamp_format)
+            '%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(message)s', datefmt=timestamp_format)
         console_handler.setFormatter(console_formatter)
 
         # Add handlers to the logger
