@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request
-
+from pebblo.app.daemon import server_version
 
 class App:
     """
@@ -11,3 +11,7 @@ class App:
     @staticmethod
     def redirect(request: Request):
         return f"{request.base_url}pebblo/"
+
+    @staticmethod
+    def health(request: Request):
+        return f"Pebblo Server version {server_version} is running"

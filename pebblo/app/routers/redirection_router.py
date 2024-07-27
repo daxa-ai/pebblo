@@ -1,4 +1,4 @@
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, PlainTextResponse
 
 from pebblo.app.api.redirection_api import App
 
@@ -8,4 +8,7 @@ redirect_router_instance = App()
 # Add routes to the class-based router
 redirect_router_instance.router.add_api_route(
     "/", App.redirect, methods=["GET"], response_class=RedirectResponse
+)
+redirect_router_instance.router.add_api_route(
+    "/health", App.health, methods=["GET"], response_class=PlainTextResponse
 )

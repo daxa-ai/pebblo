@@ -2,7 +2,7 @@ import pathlib
 
 import yaml
 from pydantic import BaseSettings, Field
-from typing import Tuple, Dict
+from typing import Tuple
 from contextvars import ContextVar
 
 from pebblo.app.config.config_validation import validate_config
@@ -62,7 +62,7 @@ def load_config(path: str)->Tuple[dict, Config]:
             reports=ReportConfig(
                 format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
             ),
-            logging=LoggingConfig(level="info"),
+            logging=LoggingConfig(),
             classifier=ClassifierConfig(anonymizeSnippets=False),
         )
         if not path:
@@ -79,6 +79,7 @@ def load_config(path: str)->Tuple[dict, Config]:
                         cred_yaml[key] = conf_obj.dict()[key]
                 parsed_config = Config.parse_obj(cred_yaml)
                 config_dict = parsed_config.dict()
+                config_dict["logging"]["level"] = config_dict.get("logging").get("level").upper()
                 validate_config(config_dict)
                 return config_dict, parsed_config
         except IOError as err:

@@ -55,7 +55,7 @@ class Service:
         self.config_details = config_details
         self.port = self.config_details.get("daemon", {}).get("port", 8000)
         self.host = self.config_details.get("daemon", {}).get("host", "localhost")
-        self.log_level = self.config_details.get("logging", {}).get("level", "info")
+        self.log_level = self.config_details.get("logging", {}).get("level", "INFO")
         self.log_file = self.config_details.get("logging", {}).get("file", "")
 
     async def create_main_api_server(self):
@@ -67,13 +67,15 @@ class Service:
             name="static",
         )
 
-        log_cfg = get_uvicorn_logconfig(self.log_file, logging.getLevelName(self.log_level))
-
         # Add config Details to Uvicorn
+        log_cfg = get_uvicorn_logconfig(self.log_file, logging.getLevelName(self.log_level))
         config = uvicorn.Config(
             app=self.app, host=self.host, port=self.port, log_config=log_cfg
         )
         server = uvicorn.Server(config)
+        logging.getLogger("uvicorn").propagate = False
+        logging.getLogger("uvicorn.error").propagate = False
+        logging.getLogger("uvicorn.access").propagate = False
         await server.serve()
 
     def start(self):

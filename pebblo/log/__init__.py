@@ -1,7 +1,10 @@
 import logging
-import logging.handlers
 import os
 from threading import Lock
+
+from datetime import datetime
+from typing import Dict, Any
+
 
 from pebblo.app.config.config import DEFAULT_LOG_FILE, DEFAULT_LOG_LEVEL, DEFAULT_LOG_MAX_FILE_SIZE, DEFAULT_LOG_BACKUP_COUNT, DEFAULT_LOGGER_NAME
 
@@ -22,6 +25,7 @@ class LoggerUtility:
 
     def _initialize(self, name, log_file, max_file_size, backup_count, level, timestamp_format):
         self.logger = logging.getLogger(name)
+        # self.logger.propagate = False
         self.logger.setLevel(level)
         self.log_file = log_file
 
@@ -63,65 +67,44 @@ def get_logger(name:str):
     return logger_utility.get_logger()
 
 def get_uvicorn_logconfig(log_file:str, log_level:int):
-    '''
-    Log config in logging.config.dictConfig format for uvicorn framework
-    '''
-    log_config = {
+    return {
         "version": 1,
-        'disable_existing_loggers': False,
+        "disable_existing_loggers": False,
         "formatters": {
             "default": {
-                "format": "%(asctime)s - %(process)s - %(name)s - %(levelname)s - %(message)s",
+                "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             },
-            "json": {
-                "()": "stdlib.log.CustomUvironJsonFormatter",
-            }
         },
         "handlers": {
-            "default_console": {
-                "formatter": "default",
-                "class": "logging.StreamHandler",
-                "stream": "ext://sys.stderr",
-                "level": "DEBUG"
-            },
             "console": {
-                "formatter": "json",
                 "class": "logging.StreamHandler",
+                "formatter": "default",
                 "level": log_level,
             },
-        },
-        "root": {
-                "handlers": ["console"],
+            "file": {
+                "class": "logging.FileHandler",
+                "formatter": "default",
+                "filename": log_file,
                 "level": log_level,
+            },
         },
         "loggers": {
-            "gunicorn": {
-                "propagate": True,
-            },
             "uvicorn": {
-                "propagate": True,
+                "handlers": ["console", "file"],
+                "level": log_level,
+                "propagate": False,
+            },
+            "uvicorn.error": {
+                "handlers": ["console", "file"],
+                "level": log_level,
             },
             "uvicorn.access": {
-                "propagate": True,
-            }
-        }
-    }
-    if log_file != None:
-        try:
-            f = open(log_file, "a")
-            f.close()
-            log_config["handlers"]["file"] = {
-                "formatter": "json",
-                "class": "logging.handlers.RotatingFileHandler",
+                "handlers": ["console", "file"],
                 "level": log_level,
-                "filename": log_file,
-            }
-            log_config["root"]["handlers"].append("file")
-        except Exception as e:
-            # silently disable file handler if log file not writable
-            pass
-    return log_config
-
+                "propagate": False
+            },
+        },
+}
 
 if __name__ == '__main__':
     logger = get_logger("test")
