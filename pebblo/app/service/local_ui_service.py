@@ -149,12 +149,6 @@ class AppData:
             )
             return
 
-        # Sort retrievals data
-        retrievals = self.sort_retrievals_data(
-            app_metadata_content.get("retrievals", [])
-        )
-        app_metadata_content["retrievals"] = retrievals
-
         # fetch total retrievals
         for retrieval in app_metadata_content.get("retrievals", []):
             retrieval_data = {"name": app_json.get("name")}
@@ -251,9 +245,14 @@ class AppData:
                 dataSource=self.loader_data_source_list,
             )
 
+            # Sort retrievals data
+            sorted_retrievals_apps = self._sort_retrievals_with_retrieval_count(
+                all_retrieval_apps
+            )
+
             logger.debug("[Dashboard]: Preparing retrieval app response object")
             retrieval_response = RetrievalAppList(
-                appList=all_retrieval_apps,
+                appList=sorted_retrievals_apps,
                 retrievals=self.total_retrievals,
                 activeUsers=self.retrieval_active_users,
                 violations=[],
@@ -384,7 +383,7 @@ class AppData:
     def get_retrieval_app_details(self, app_content):
         retrieval_data = app_content.get("retrievals", [])
 
-        retrieval_data = self.sort_retrievals_data(retrieval_data)
+        retrieval_data = self._sort_retrievals_data(retrieval_data)
 
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
@@ -525,14 +524,25 @@ class AppData:
         return sorted_resp
 
     @staticmethod
-    def _calculate_total_count(item: dict):
-        prompt_count = item.get("prompt", {}).get("entityCount") or 0
-        response_count = item.get("prompt", {}).get("entityCount") or 0
-        return prompt_count + response_count
+    def _sort_retrievals_with_retrieval_count(retrievals: list) -> list:
+        """
+        Sort the list based on the retrieval count in the descending order
+        :param retrievals: retrievals list
+        :return:  sorted retrievals list
+        """
+        sorted_data = sorted(
+            retrievals, key=lambda item: len(item["retrievals"]), reverse=True
+        )
+        return sorted_data
 
-    def sort_retrievals_data(self, retrieval):
-        # Sort the list based on the total count in descending order
-        sorted_data = sorted(retrieval, key=self._calculate_total_count, reverse=True)
+    @staticmethod
+    def _sort_retrievals_data(retrieval: list):
+        """
+        Sort the retrievals based on prompt_time in descending order
+        :param retrieval: retrievals list
+        :return: sorted retrievals list
+        """
+        sorted_data = sorted(retrieval, key=lambda x: x["prompt_time"])
         return sorted_data
 
     def get_all_documents(self, retrieval_data: list) -> dict:
