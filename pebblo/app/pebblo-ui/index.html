@@ -8,10 +8,6 @@
     <meta http-equiv="Expires" content="-1" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="upgrade-insecure-requests"
-    />
     <link
       rel="shortcut icon"
       href="{{ url_for('static', path='/static/pebblo-favicon.png') }}"
@@ -29,6 +25,7 @@
   </head>
   <body>
     <div id="root"></div>
+    <div id="snackbar"></div>
   </body>
   <script
     type="module"

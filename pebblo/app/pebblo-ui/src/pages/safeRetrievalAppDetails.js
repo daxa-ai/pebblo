@@ -1,6 +1,7 @@
 import {
   AccordionDetails,
   AccordionSummary,
+  DeleteAppButton,
   KeyValue,
   Tabs,
 } from "../components/index.js";
@@ -13,6 +14,7 @@ import {
   TAB_PANEL_ARR_APP_DETAILS_RETRIEVAL,
 } from "../constants/constant.js";
 import { PATH } from "../constants/enums.js";
+import { SAFE_RETRIEVAL_ROUTE } from "../constants/routesConstant.js";
 import { capitalizeFirstLetter, getFormattedDate } from "../util.js";
 
 export function SafeRetrievalAppDetails(props) {
@@ -30,6 +32,12 @@ export function SafeRetrievalAppDetails(props) {
            ${AccordionSummary({ children: "Instance Details", id: 1 })}
          </div>
        </div>
+    </div>
+    <div>
+      ${DeleteAppButton({
+        appName: APP_DATA?.name,
+        redirectRoute: SAFE_RETRIEVAL_ROUTE,
+      })}
     </div>
   </div>
   ${AccordionDetails({

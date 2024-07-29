@@ -19,13 +19,14 @@ import {
 } from "../constants/constant.js";
 import { CLICK, LOAD, PATH } from "../constants/enums.js";
 import { GET_FILE } from "../services/get.js";
-import { GET_REPORT } from "../constants/routesConstant.js";
+import { DASHBOARD_ROUTE, GET_REPORT } from "../constants/routesConstant.js";
 import {
   CheckIcon,
   CopyIcon,
   DownloadIcon,
   LoadHistoryIcon,
 } from "../icons/index.js";
+import { DeleteAppButton } from "../components/index.js";
 
 const DialogBody = () => {
   return /*html*/ `
@@ -62,11 +63,6 @@ export function AppDetailsPage() {
     }, 2000);
   }
 
-  // last updated date
-  // <div class="font-thin">Last Updated 13 Feb 2024
-  // </div>
-  // <div class="divider"></div>
-
   return /*html*/ `
     <div class="flex gap-6 flex-col h-full overflow-auto">
       <div class="flex justify-between">
@@ -98,6 +94,11 @@ export function AppDetailsPage() {
             id: "load_history_dialog_btn",
             color: "primary",
           })}
+          <div class="divider mt-2 mb-2"></div>
+         ${DeleteAppButton({
+           appName: APP_DATA?.name,
+           redirectRoute: DASHBOARD_ROUTE,
+         })}
         </div>
       </div>
       ${AccordionDetails({
