@@ -162,35 +162,40 @@ class AppData:
             entity_detected = prompt.get("entities")
 
             for key, value in entity_detected.items():
-                if key in prompt_details[app_name]:
-                    # If the entity type already exists in prompt_details, update the existing entry
-                    prompt_details[app_name][key]["total_prompts"] += 1
-                    prompt_details[app_name][key]["total_entity_count"] += value
+                try:
+                    if key in prompt_details[app_name]:
+                        # If the entity type already exists in prompt_details, update the existing entry
+                        prompt_details[app_name][key]["total_prompts"] += 1
+                        prompt_details[app_name][key]["total_entity_count"] += value
 
-                    # Get the user name from the retrieval data
-                    user_name = retrieval.get("user", "")
+                        # Get the user name from the retrieval data
+                        user_name = retrieval.get("user", "")
 
-                    if (
-                        user_name
-                        and user_name not in prompt_details[app_name][key]["users"]
-                    ):
-                        # Add new user to the user list if not already present
-                        prompt_details[app_name][key]["users"].append(user_name)
-                        prompt_details[app_name][key]["total_users"] += 1
+                        if (
+                            user_name
+                            and user_name not in prompt_details[app_name][key]["users"]
+                        ):
+                            # Add new user to the user list if not already present
+                            prompt_details[app_name][key]["users"].append(user_name)
+                            prompt_details[app_name][key]["total_users"] += 1
 
-                else:
-                    # If the entity type does not exist in prompt_details, create a new entry
-                    prompt_details[app_name][key] = {
-                        "total_prompts": 1,
-                        "total_entity_count": value,
-                        "users": [],
-                        "total_users": 0,
-                    }
+                    else:
+                        # If the entity type does not exist in prompt_details, create a new entry
+                        prompt_details[app_name][key] = {
+                            "total_prompts": 1,
+                            "total_entity_count": value,
+                            "users": [],
+                            "total_users": 0,
+                        }
 
-                    user_name = retrieval.get("user", "")
-                    if user_name:
-                        prompt_details[app_name][key]["users"].append(user_name)
-                        prompt_details[app_name][key]["total_users"] = 1
+                        user_name = retrieval.get("user", "")
+                        if user_name:
+                            prompt_details[app_name][key]["users"].append(user_name)
+                            prompt_details[app_name][key]["total_users"] = 1
+                except Exception as ex:
+                    logger.error(
+                        f"[Dashboard]:  Error while iterating prompts for app {app_name} Error: {ex}"
+                    )
 
         prompt_details[app_name] = dict(
             sorted(
@@ -228,12 +233,17 @@ class AppData:
         prompt_details[app_name] = {}
         # fetch total retrievals
         for retrieval in app_metadata_content.get("retrievals", []):
-            retrieval_data = {"name": app_json.get("name")}
-            retrieval_data.update(retrieval)
-            self.total_retrievals.append(retrieval_data)
-            prompt_details, total_prompt_with_findings = self.get_prompt_details(
-                prompt_details, retrieval, app_name, total_prompt_with_findings
-            )
+            try:
+                retrieval_data = {"name": app_json.get("name")}
+                retrieval_data.update(retrieval)
+                self.total_retrievals.append(retrieval_data)
+                prompt_details, total_prompt_with_findings = self.get_prompt_details(
+                    prompt_details, retrieval, app_name, total_prompt_with_findings
+                )
+            except Exception as ex:
+                logger.error(
+                    f"[Dashboard]:  Error while iterating retrieval for app {app_name} Error: {ex}"
+                )
 
         # fetch active users per app
         active_users = self.get_active_users(app_metadata_content.get("retrievals", []))
@@ -320,15 +330,25 @@ class AppData:
                     )
             final_prompt_details = []
             for key, value in prompt_details.items():
-                for k1, v1 in value.items():
-                    prompt_dict = {}
-                    prompt_dict = {"app_name": key}
-                    prompt_dict["entity_name"] = k1
-                    prompt_dict["total_prompts"] = v1["total_prompts"]
-                    prompt_dict["total_entity_count"] = v1["total_entity_count"]
-                    prompt_dict["users"] = v1["users"]
-                    prompt_dict["total_users"] = v1["total_users"]
-                    final_prompt_details.append(prompt_dict)
+                try:
+                    for k1, v1 in value.items():
+                        try:
+                            prompt_dict = {}
+                            prompt_dict = {"app_name": key}
+                            prompt_dict["entity_name"] = k1
+                            prompt_dict["total_prompts"] = v1["total_prompts"]
+                            prompt_dict["total_entity_count"] = v1["total_entity_count"]
+                            prompt_dict["users"] = v1["users"]
+                            prompt_dict["total_users"] = v1["total_users"]
+                            final_prompt_details.append(prompt_dict)
+                        except Exception as ex:
+                            logger.error(
+                                f"[Dashboard]: Error in iterating key value pair in retrieval app list. Error: {ex}"
+                            )
+                except Exception as ex:
+                    logger.error(
+                        f"[Dashboard]: Error in iterating prompt details for all retrieval apps: {ex}"
+                    )
 
             # Sort loader apps
             sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
