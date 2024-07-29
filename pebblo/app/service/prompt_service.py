@@ -144,7 +144,7 @@ class Prompt:
             logger.debug("AI App prompt request processing started")
 
             # Input Data
-            logger.info(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
+            logger.debug(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
 
             # getting prompt data
             prompt_data = self.data.get("prompt", {})

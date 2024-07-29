@@ -5,7 +5,7 @@ Copyright (c) 2024 Cloud Defense, Inc. All rights reserved.
 from enum import Enum
 
 secret_entities_context_mapping = {
-    "github-token": ["github", "github_token"],
+    "github-token": ["github", "github_token", "git"],
     "slack-token": ["slack", "slack token", "slack_token"],
     "aws-access-key": ["aws_access_key", "aws_key", "access", "id", "api"],
     "aws-secret-key": ["aws_secret_key", "secret"],
