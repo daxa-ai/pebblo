@@ -3,9 +3,6 @@ import os
 import sys
 from abc import ABC, abstractmethod
 
-from pebblo.app.libs.logger import logger
-from pebblo.app.utils.utils import get_full_path
-
 
 class ConfigValidator(ABC):
     def __init__(self, config):
@@ -43,6 +40,17 @@ class LoggingConfig(ConfigValidator):
             self.errors.append(
                 f"Error: Unsupported logLevel '{level}' specified in the configuration"
             )
+
+
+def expand_path(file_path: str) -> str:
+    # Expand user (~) and environment variables
+    expanded_path = os.path.expanduser(file_path)
+    expanded_path = os.path.expandvars(expanded_path)
+
+    # Convert to absolute path
+    absolute_path = os.path.abspath(expanded_path)
+
+    return absolute_path
 
 
 class ReportsConfig(ConfigValidator):
@@ -105,7 +113,7 @@ def validate_config(config_dict):
 
     if validation_errors:
         for error in validation_errors:
-            logger.error(error)
+            print(error)
         sys.exit(1)
 
 
