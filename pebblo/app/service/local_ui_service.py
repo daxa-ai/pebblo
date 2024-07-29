@@ -185,7 +185,7 @@ class AppData:
                         "total_users": 0,
                     }
 
-                    user_name = retrieval.get("users", "")
+                    user_name = retrieval.get("user", "")
                     if user_name:
                         prompt_details[app_name][key]["users"].append(user_name)
                         prompt_details[app_name][key]["total_users"] = 1

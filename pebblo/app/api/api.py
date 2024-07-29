@@ -37,7 +37,7 @@ class App:
 
     @staticmethod
     def promptgov(data: dict):
-        # "/promptgov" API entrypoint
+        # "/prompt/governance" API entrypoint
         prompt_obj = PromptGov(data=data)
         response = prompt_obj.process_request()
         return response
