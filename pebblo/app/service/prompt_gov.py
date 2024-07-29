@@ -7,9 +7,11 @@ import traceback
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-from pebblo.app.libs.logger import logger
 from pebblo.app.models.models import AiDataModel
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
+from pebblo.log import get_logger
+
+logger = get_logger(__name__)
 
 
 class PromptGov:
