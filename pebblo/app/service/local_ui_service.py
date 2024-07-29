@@ -233,13 +233,15 @@ class AppData:
                         f"[Dashboard]: Error processing app {app_dir}: {err}"
                     )
 
+            # Sort loader apps
+            sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
             logger.debug("[Dashboard]: Preparing loader app response object")
             loader_response = LoaderAppModel(
                 applicationsAtRiskCount=self.loader_apps_at_risk,
                 findingsCount=self.loader_findings,
                 documentsWithFindingsCount=self.loader_files_findings,
                 dataSourceCount=self.loader_data_source,
-                appList=all_loader_apps,
+                appList=sorted_loader_apps,
                 findings=self.loader_findings_list,
                 documentsWithFindings=self.loader_document_with_findings_list,
                 dataSource=self.loader_data_source_list,
@@ -543,6 +545,18 @@ class AppData:
         :return: sorted retrievals list
         """
         sorted_data = sorted(retrieval, key=lambda x: x["prompt_time"])
+        return sorted_data
+
+    @staticmethod
+    def _calculate_findings(item):
+        """Calculate total findings(entities + topics)"""
+        return item["topics"] + item["entities"]
+
+    def _sort_loader_apps(self, loader_apps_list: list):
+        """Sort the list based on the findings in descending order"""
+        sorted_data = sorted(
+            loader_apps_list, key=self._calculate_findings, reverse=True
+        )
         return sorted_data
 
     def get_all_documents(self, retrieval_data: list) -> dict:
