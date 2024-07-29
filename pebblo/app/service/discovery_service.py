@@ -7,12 +7,12 @@ from datetime import datetime
 from pydantic import ValidationError
 
 from pebblo.app.enums.enums import ApplicationTypes, CacheDir
-from pebblo.app.libs.logger import logger
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import (
     AiApp,
     Chain,
     DiscoverAIAppsResponseModel,
+    FrameworkInfo,
     InstanceDetails,
     Metadata,
     PackageInfo,
@@ -25,6 +25,9 @@ from pebblo.app.utils.utils import (
     release_lock,
     write_json_to_file,
 )
+from pebblo.log import get_logger
+
+logger = get_logger(__name__)
 
 
 class AppDiscover:
@@ -57,6 +60,10 @@ class AppDiscover:
             createdAt=self._get_current_datetime(),
             modifiedAt=self._get_current_datetime(),
         )
+        client_version = FrameworkInfo(
+            name=self.data.get("client_version", {}).get("name"),
+            version=self.data.get("client_version", {}).get("version"),
+        )
         ai_apps_model = AiApp(
             metadata=metadata,
             name=self.data.get("name"),
@@ -68,9 +75,11 @@ class AppDiscover:
             lastUsed=last_used,
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=self.data.get("plugin_version", ""),
+            clientVersion=client_version,
             chains=chain_details,
             retrievals=retrievals_details,
         )
+
         logger.debug(
             f"AI_APPS [{self.application_name}]: AiApps Details: {ai_apps_model.dict()}"
         )
