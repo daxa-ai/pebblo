@@ -8,6 +8,7 @@ import StraightIcon from "./straightIcon.js";
 import CloseIcon from "./closeIcon.js";
 import SearchIcon from "./searchIcon.js";
 import HelpIcon from "./helpIcon.js";
+import DeleteIcon from "./deleteIcon.js";
 
 export {
   DownloadIcon,
@@ -20,4 +21,5 @@ export {
   CloseIcon,
   SearchIcon,
   HelpIcon,
+  DeleteIcon,
 };
