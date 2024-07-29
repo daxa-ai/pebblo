@@ -39,7 +39,6 @@ class Prompt:
         """
         Retrieve input data and return its corresponding model object with classification.
         """
-
         logger.debug(f"Retrieving details for {input_type}")
 
         (
@@ -146,7 +145,15 @@ class Prompt:
             # getting prompt data
             prompt_data = self._fetch_classified_data(
                 self.data.get("prompt", {}).get("data"), input_type="prompt"
+
+            is_prompt_gov_enabled = self.data.get("prompt", {}).get(
+                "prompt_gov_enabled", False
             )
+
+            if is_prompt_gov_enabled is False:
+                prompt_data = self._fetch_classified_data(
+                    prompt_data.get("data", ""), input_type="prompt"
+                )
 
             # getting response data
             response_data = self._fetch_classified_data(

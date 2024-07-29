@@ -4,6 +4,7 @@ This module handles business logic for local UI
 
 import json
 import os
+from typing import Any, Dict, List, Tuple
 
 from dateutil import parser
 from fastapi import status
@@ -131,9 +132,81 @@ class AppData:
 
         return app_details.dict()
 
-    def prepare_retrieval_response(self, app_dir, app_json):
+    def get_prompt_details(
+        self,
+        prompt_details: Dict[str, Any],
+        retrieval: Dict[str, Any],
+        app_name: str,
+        total_prompt_with_findings: int,
+    ) -> Tuple[Dict[str, Any], int]:
+        """
+        Updates the prompt details with information from the retrieval data.
+
+        Args:
+            prompt_details (Dict[str, Any]): A dictionary to be updated with the retrieved prompt information.
+            retrieval (Dict[str, Any]): A dictionary containing retrieval data, including prompt and user information.
+            app_name (str): The name of the application associated with the prompt.
+
+        Returns:
+            Dict[str, Any]: The updated prompt details.
+        """
+        # Extract the prompt data from the retrieval
+        prompt = retrieval.get("prompt", {})
+
+        # Get the count of entities detected in the prompt
+        count_entity = prompt.get("entityCount", 0)
+
+        if count_entity > 0:
+            total_prompt_with_findings += 1
+            # If entities are detected, get the list of entities
+            entity_detected = prompt.get("entities")
+
+            for key, value in entity_detected.items():
+                if key in prompt_details[app_name]:
+                    # If the entity type already exists in prompt_details, update the existing entry
+                    prompt_details[app_name][key]["total_prompts"] += 1
+                    prompt_details[app_name][key]["total_entity_count"] += value
+
+                    # Get the user name from the retrieval data
+                    user_name = retrieval.get("user", "")
+
+                    if (
+                        user_name
+                        and user_name not in prompt_details[app_name][key]["users"]
+                    ):
+                        # Add new user to the user list if not already present
+                        prompt_details[app_name][key]["users"].append(user_name)
+                        prompt_details[app_name][key]["total_users"] += 1
+
+                else:
+                    # If the entity type does not exist in prompt_details, create a new entry
+                    prompt_details[app_name][key] = {
+                        "total_prompts": 1,
+                        "total_entity_count": value,
+                        "users": [],
+                        "total_users": 0,
+                    }
+
+                    user_name = retrieval.get("user", "")
+                    if user_name:
+                        prompt_details[app_name][key]["users"].append(user_name)
+                        prompt_details[app_name][key]["total_users"] = 1
+
+        prompt_details[app_name] = dict(
+            sorted(
+                prompt_details[app_name].items(),
+                key=lambda item: item[1]["total_entity_count"],
+                reverse=True,
+            )
+        )
+        return prompt_details, total_prompt_with_findings
+
+    def prepare_retrieval_response(
+        self, app_dir, app_json, prompt_details, total_prompt_with_findings
+    ):
         logger.debug("[Dashboard]: In prepare retrieval response")
         app_name = app_json["name"]
+
         app_metadata_path = (
             f"{CacheDir.HOME_DIR.value}/{app_dir}/"
             f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
@@ -151,11 +224,16 @@ class AppData:
             )
             return
 
+        app_name = app_metadata_content.get("name", "")
+        prompt_details[app_name] = {}
         # fetch total retrievals
         for retrieval in app_metadata_content.get("retrievals", []):
             retrieval_data = {"name": app_json.get("name")}
             retrieval_data.update(retrieval)
             self.total_retrievals.append(retrieval_data)
+            prompt_details, total_prompt_with_findings = self.get_prompt_details(
+                prompt_details, retrieval, app_name, total_prompt_with_findings
+            )
 
         # fetch active users per app
         active_users = self.get_active_users(app_metadata_content.get("retrievals", []))
@@ -176,7 +254,7 @@ class AppData:
             vector_dbs=vector_dbs,
             documents=list(documents.keys()),
         )
-        return app_details.dict()
+        return app_details.dict(), prompt_details, total_prompt_with_findings
 
     def get_all_apps_details(self):
         """
@@ -189,7 +267,8 @@ class AppData:
 
             all_loader_apps: list = []
             all_retrieval_apps: list = []
-
+            prompt_details: dict = {}
+            total_prompt_with_findings = 0
             # Iterating through each app in the directory
             for app_dir in dir_path:
                 try:
@@ -224,8 +303,13 @@ class AppData:
                         if loader_app:
                             all_loader_apps.append(loader_app)
                     elif app_type == "retrieval":
-                        retrieval_app = self.prepare_retrieval_response(
-                            app_dir, app_json
+                        retrieval_app, prompt_details, total_prompt_with_findings = (
+                            self.prepare_retrieval_response(
+                                app_dir,
+                                app_json,
+                                prompt_details,
+                                total_prompt_with_findings,
+                            )
                         )
                         if retrieval_app:
                             all_retrieval_apps.append(retrieval_app)
@@ -234,9 +318,21 @@ class AppData:
                     logger.warning(
                         f"[Dashboard]: Error processing app {app_dir}: {err}"
                     )
+            final_prompt_details = []
+            for key, value in prompt_details.items():
+                for k1, v1 in value.items():
+                    prompt_dict = {}
+                    prompt_dict = {"app_name": key}
+                    prompt_dict["entity_name"] = k1
+                    prompt_dict["total_prompts"] = v1["total_prompts"]
+                    prompt_dict["total_entity_count"] = v1["total_entity_count"]
+                    prompt_dict["users"] = v1["users"]
+                    prompt_dict["total_users"] = v1["total_users"]
+                    final_prompt_details.append(prompt_dict)
 
             # Sort loader apps
             sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
+
             logger.debug("[Dashboard]: Preparing loader app response object")
             loader_response = LoaderAppModel(
                 applicationsAtRiskCount=self.loader_apps_at_risk,
@@ -260,8 +356,11 @@ class AppData:
                 retrievals=self.total_retrievals,
                 activeUsers=self.retrieval_active_users,
                 violations=[],
+                promptDetails=final_prompt_details,
+                total_prompt_with_findings=total_prompt_with_findings,
             )
 
+            logger.info(f"retrieval_response {retrieval_response.__dict__}")
             response = {
                 "pebbloServerVersion": get_pebblo_server_version(),
                 "loaderApps": loader_response.dict(),
@@ -384,6 +483,23 @@ class AppData:
 
         return None, None
 
+    def get_prompts_with_findings(self, retrieval_data: List[Dict[str, Any]]) -> int:
+        """
+        Counts the number of prompts with findings in the retrieval data.
+
+        Args:
+            retrieval_data (List[Dict[str, Any]]): A list of dictionaries containing the retrieval data.
+                Each dictionary is expected to have a "prompt" key with another dictionary that contains an "entityCount" key.
+
+        Returns:
+            int: The total number of prompts with findings (where "entityCount" > 0).
+        """
+        return sum(
+            1
+            for data in retrieval_data
+            if data.get("prompt", {}).get("entityCount", 0) > 0
+        )
+
     def get_retrieval_app_details(self, app_content):
         retrieval_data = app_content.get("retrievals", [])
 
@@ -392,7 +508,7 @@ class AppData:
         active_users = self.get_active_users(retrieval_data)
         documents = self.get_all_documents(retrieval_data)
         vector_dbs = self.get_all_vector_dbs(retrieval_data)
-
+        prompt_with_findings = self.get_prompts_with_findings(retrieval_data)
         # prepare app response
         response = RetrievalAppDetails(
             name=app_content["name"],
@@ -401,6 +517,7 @@ class AppData:
             instanceDetails=app_content.get("instanceDetails"),
             pebbloServerVersion=app_content.get("pebbloServerVersion"),
             pebbloClientVersion=app_content.get("pebbloClientVersion"),
+            total_prompt_with_findings=prompt_with_findings,
             retrievals=retrieval_data,
             activeUsers=active_users,
             vectorDbs=vector_dbs,
