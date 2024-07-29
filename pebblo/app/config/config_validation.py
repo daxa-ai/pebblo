@@ -68,8 +68,8 @@ class ReportsConfig(ConfigValidator):
                 f"Error: Unsupported renderer '{renderer}' specified in the configuration"
             )
         # Check if the output directory exists, create if it doesn't
-        if not os.path.exists(get_full_path(str(cache_dir))):
-            os.makedirs(get_full_path(str(cache_dir)), exist_ok=True)
+        if not os.path.exists(expand_path(str(cache_dir))):
+            os.makedirs(expand_path(str(cache_dir)), exist_ok=True)
 
     @staticmethod
     def validate_input(input_dict):
@@ -133,7 +133,7 @@ def validate_input(input_dict):
 
     if validation_errors:
         for error in validation_errors:
-            logger.error(error)
+            print(error)
         sys.exit(1)
 
     return output_dict

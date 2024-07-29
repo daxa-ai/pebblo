@@ -39,7 +39,7 @@ class Prompt:
         """
         Retrieve input data and return its corresponding model object with classification.
         """
-        logger.debug(f"Retrieving details for {input_type}")
+        logger.debug(f"Retrieving details for: {input_type}")
 
         (
             entities,
@@ -139,12 +139,10 @@ class Prompt:
         try:
             logger.debug("AI App prompt request processing started")
 
-            # Input Data
-            logger.info(f"AI_APP [{self.application_name}]")
-
             # getting prompt data
             prompt_data = self._fetch_classified_data(
                 self.data.get("prompt", {}).get("data"), input_type="prompt"
+            )
 
             is_prompt_gov_enabled = self.data.get("prompt", {}).get(
                 "prompt_gov_enabled", False

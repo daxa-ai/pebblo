@@ -11,7 +11,7 @@ from pebblo.app.config.config import (
 config = Config(
     daemon=PortConfig(host="localhost", port=8000),
     logging=LoggingConfig(),
-    reports=ReportConfig(format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"),
+    reports=ReportConfig(format="pdf", renderer="xhtml2pdf", cacheDir="~/.pebblo"),
     classifier=ClassifierConfig(anonymizeSnippets=False),
 )
 var_server_config.set(config)
