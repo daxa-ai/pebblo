@@ -27,6 +27,7 @@ def test_process_request_success(mock_entity_classifier):
     expected_response = {
         "message": "Prompt Gov Processed Successfully",
         "entities": {"us-ssn": 1},
+        "entityCount": 1,
     }
 
     assert response == expected_response
