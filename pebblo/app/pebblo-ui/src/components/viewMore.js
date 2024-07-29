@@ -11,6 +11,7 @@ export const ViewMore = (props) => {
     showTooltip,
     tableCol,
     tableData,
+    align = "start",
   } = props;
   const DialogBody = () => {
     return /*html*/ `
@@ -22,7 +23,7 @@ export const ViewMore = (props) => {
 
   return list && list.length > 0
     ? /*html*/ `
-  <div class="flex items-center">
+  <div class="flex items-center ${align === "end" ? "justify-end" : ""}">
     <div class="text-none">${list[0]}</div>
     ${
       list.length > 1

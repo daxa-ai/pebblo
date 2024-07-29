@@ -9,13 +9,11 @@ import {
   APP_DATA,
   APP_DETAILS,
   MEDIA_URL,
-  TABS_ARR_FOR_APPLICATION_DETAILS,
   TABS_ARR_FOR_APP_DETAILS_RETRIEVAL,
   TAB_PANEL_ARR_APP_DETAILS_RETRIEVAL,
 } from "../constants/constant.js";
 import { PATH } from "../constants/enums.js";
 import { SAFE_RETRIEVAL_ROUTE } from "../constants/routesConstant.js";
-import { capitalizeFirstLetter, getFormattedDate } from "../util.js";
 
 export function SafeRetrievalAppDetails(props) {
   return /*html*/ `
@@ -26,7 +24,7 @@ export function SafeRetrievalAppDetails(props) {
          <img src="${MEDIA_URL}/static/langchain-icon.png" alt="App icon" />
        </div>
        <div class="flex flex-col gap-1 inter surface-10">
-         <div class="font-24">${capitalizeFirstLetter(APP_DATA?.name)}</div>
+         <div class="font-24">${APP_DATA?.name}</div>
          <div class="font-12 flex gap-3">
       
            ${AccordionSummary({ children: "Instance Details", id: 1 })}

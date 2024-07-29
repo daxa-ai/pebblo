@@ -39,7 +39,6 @@ class Prompt:
         """
         Retrieve input data and return its corresponding model object with classification.
         """
-
         logger.debug(f"Retrieving details from input data: {input_data}")
 
         (
@@ -147,12 +146,19 @@ class Prompt:
             logger.debug("AI App prompt request processing started")
 
             # Input Data
-            logger.info(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
+            logger.debug(f"AI_APP [{self.application_name}]: Input Data: {self.data}")
 
             # getting prompt data
-            prompt_data = self._fetch_classified_data(
-                self.data.get("prompt", {}).get("data")
+            prompt_data = self.data.get("prompt", {})
+
+            is_prompt_gov_enabled = self.data.get("prompt", {}).get(
+                "prompt_gov_enabled", False
             )
+
+            if is_prompt_gov_enabled is False:
+                prompt_data = self._fetch_classified_data(
+                    prompt_data.get("data", ""), input_type="prompt"
+                )
 
             # getting response data
             response_data = self._fetch_classified_data(

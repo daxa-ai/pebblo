@@ -519,6 +519,16 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
   },
 ];
 
+const promptsWithFindingsArr = APP_DATA?.promptDetails
+  ? APP_DATA?.promptDetails?.map((prompt, index) => ({
+      id: index,
+      name: prompt?.entity_name,
+      prompts: prompt?.total_prompts,
+      users: prompt?.users,
+      app: prompt?.app_name,
+    }))
+  : [];
+
 const IS_CRITICAL_DATA =
   NO_APPLICATIONS_FOUND || APP_DATA?.applicationsAtRiskCount?.length === 0
     ? false
@@ -571,6 +581,12 @@ export const TABS_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
     disable: true,
   },
   {
+    label: "Prompts with Findings",
+    critical: APP_DATA?.total_prompt_with_findings || 0,
+    value: 2,
+    isCritical: false,
+  },
+  {
     label: "Active Users",
     critical: APP_DATA?.activeUsers
       ? Object.keys(APP_DATA?.activeUsers)?.length
@@ -616,6 +632,57 @@ const topicsCountAllApps = APP_DATA?.findings
 const entitiesCountAllApps = APP_DATA?.findings
   ? APP_DATA?.findings?.length - topicsCountAllApps
   : 0;
+
+export const TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL = [
+  {
+    label: "Entity Name",
+    field: "name",
+    render: (item) => /*html*/ `
+      <div class="flex flex-col inter text-none">
+         <div class="surface-10 font-13">${KEYWORD_MAPPING[item?.name]}</div>
+         <div class="surface-10-opacity-50 font-12"></div>
+      </div>
+   `,
+    align: "start",
+  },
+  {
+    label: "Prompts",
+    field: "prompts",
+    align: "end",
+  },
+  {
+    label: "Users",
+    field: "users",
+    render: (item) =>
+      ViewMore({
+        list: item?.users,
+        showCount: 1,
+        id: item.id + "user",
+        tableCol: [
+          {
+            label: "Users",
+            field: "user",
+            align: "start",
+            render: (item) =>
+              `<div class="text-none">${item?.user || "-"}</div>`,
+          },
+        ],
+        tableData: item?.users?.map((user) => ({
+          user,
+        })),
+        dialogTitle: `<div class="flex gap-4 items-center">
+          <div>Users (${item?.users?.length})</div>
+        </div>`,
+      }),
+    align: "start",
+  },
+  {
+    label: "Apps",
+    field: "app",
+    render: (item) => `<div class="text-none">${item?.app || "-"}</div>`,
+    align: "start",
+  },
+];
 
 export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_LOADER = [
   {
@@ -709,6 +776,22 @@ export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_RETRIEVAL = [
       error: NO_APPLICATIONS_FOUND ? "ENABLE_PEBBLO_EMPTY_STATE" : null,
       link: SAFE_RETRIEVAL_APP_ROUTE,
       inputPlaceholder: "Search By Application Name",
+    },
+    component: ApplicationsList,
+  },
+  {},
+  {
+    value: {
+      title: "Prompts with Findings",
+      tableCol: TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL,
+      tableData: promptsWithFindingsArr,
+      isDownloadReport: false,
+      searchField: ["name"],
+      isSorting: false,
+      error:
+        APP_DATA?.total_prompt_with_findings === 0
+          ? "NO_FINDINGS_EMPTY_STATE"
+          : null,
     },
     component: ApplicationsList,
   },
@@ -877,11 +960,18 @@ export const TABS_ARR_FOR_APP_DETAILS_RETRIEVAL = [
     isCritical: true,
   },
   {
+    label: "Prompts with Findings",
+    critical: APP_DATA?.total_prompt_with_findings || 0,
+    value: 1,
+    isCritical: true,
+    disable: true,
+  },
+  {
     label: "Active Users",
     critical: APP_DATA?.activeUsers
       ? Object.keys(APP_DATA?.activeUsers)?.length
       : 0,
-    value: 1,
+    value: 2,
     isCritical: true,
   },
   {
@@ -889,13 +979,13 @@ export const TABS_ARR_FOR_APP_DETAILS_RETRIEVAL = [
     critical: APP_DATA?.documents
       ? Object.keys(APP_DATA?.documents)?.length
       : 0,
-    value: 2,
+    value: 3,
     isCritical: true,
   },
   {
     label: "Vector Database",
     critical: APP_DATA?.vectorDbs ? Object.keys(APP_DATA.vectorDbs)?.length : 0,
-    value: 3,
+    value: 4,
     isCritical: true,
     disable: true,
   },
@@ -1041,6 +1131,7 @@ export const TAB_PANEL_ARR_APP_DETAILS_RETRIEVAL = [
     },
     component: RetrievalDetails,
   },
+  {},
   {
     value: {
       title: `Users (${
