@@ -18,7 +18,10 @@ Notes:
 
 ### Logging
 
-- `level`: Sets the logging level for the Pebblo application. Possible values are 'info', 'debug', 'error', 'warning', and 'critical'.
+- `level`: Sets the logging level. Possible values are 'info', 'debug', 'error', 'warning', and 'critical'. Default value is `info`.
+- `file`: Sets the log file path. Default value is `/tmp/logs/pebblo.log`.
+- `maxFileSize`: Sets the maximum size of the log file. Default value is `8306688` bytes (8 MB).
+- `backupCount`: Sets the number of backup files to keep. Default value is `3`.
 
 ### Reports
 
@@ -30,7 +33,8 @@ Notes:
 
   ![Pebblo Reports](../static/img/report-comparision.png)
 
-- `outputDir`: Defines the directory where generated reports will be saved.
+- `cacheDir`: Sets the directory where pebblo stores metadata, generated reports, and other temporary files. Default value is `~/.pebblo`.
+- `outputDir`: Deprecated. Use `cacheDir` instead.
 
 ### Classifier
 
