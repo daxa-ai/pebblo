@@ -3,6 +3,8 @@ from unittest.mock import patch
 
 import pytest
 
+from pebblo.app.libs.responses import PebbloJsonResponse
+from pebblo.app.models.models import PromptGovResponseModel
 from pebblo.app.service.prompt_gov import PromptGov
 
 
@@ -23,14 +25,16 @@ def test_process_request_success(mock_entity_classifier):
     data = {"prompt": "Sachin's SSN is 222-85-4836"}
     prompt_gov = PromptGov(data)
     response = prompt_gov.process_request()
+    expected_response = PromptGovResponseModel(
+        entities={"us-ssn": 1},
+        entityCount=1,
+        message="Prompt Governance Processed Successfully",
+    )
+    expected_response = PebbloJsonResponse.build(
+        body=expected_response.dict(exclude_none=True), status_code=200
+    )
 
-    expected_response = {
-        "message": "Prompt Gov Processed Successfully",
-        "entities": {"us-ssn": 1},
-        "entityCount": 1,
-    }
-
-    assert response == expected_response
+    assert response.__dict__ == expected_response.__dict__
 
 
 if __name__ == "__main__":

@@ -277,3 +277,9 @@ class RetrievalResponse(BaseModel):
 class PromptResponseModel(BaseModel):
     retrieval_data: Union[RetrievalResponse, None] = None
     message: Optional[str] = None
+
+
+class PromptGovResponseModel(BaseModel):
+    entities: dict
+    entityCount: int
+    message: Optional[str] = None
