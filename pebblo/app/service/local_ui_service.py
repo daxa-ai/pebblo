@@ -193,7 +193,7 @@ class AppData:
                             prompt_details[app_name][key]["users"].append(user_name)
                             prompt_details[app_name][key]["total_users"] = 1
                 except Exception as ex:
-                    logger.error(
+                    logger.warning(
                         f"[Dashboard]:  Error while iterating prompts for app {app_name} Error: {ex}"
                     )
 
@@ -241,7 +241,7 @@ class AppData:
                     prompt_details, retrieval, app_name, total_prompt_with_findings
                 )
             except Exception as ex:
-                logger.error(
+                logger.warning(
                     f"[Dashboard]:  Error while iterating retrieval for app {app_name} Error: {ex}"
                 )
 
@@ -342,11 +342,11 @@ class AppData:
                             prompt_dict["total_users"] = v1["total_users"]
                             final_prompt_details.append(prompt_dict)
                         except Exception as ex:
-                            logger.error(
+                            logger.warning(
                                 f"[Dashboard]: Error in iterating key value pair in retrieval app list. Error: {ex}"
                             )
                 except Exception as ex:
-                    logger.error(
+                    logger.warning(
                         f"[Dashboard]: Error in iterating prompt details for all retrieval apps: {ex}"
                     )
 
