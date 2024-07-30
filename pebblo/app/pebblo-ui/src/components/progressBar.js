@@ -6,7 +6,6 @@ export function ProgressBar(props) {
   if (id) {
     waitForElement(`#inner-${id}`, 1500).then(function () {
       const innerRect = document.getElementById(`inner-${id}`);
-      console.log({ id, innerRect });
       innerRect.style.width = `${progress}%`;
       innerRect.style.backgroundColor = color;
     });
