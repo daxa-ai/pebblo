@@ -81,13 +81,13 @@ def test_logging_config_validate():
 
 def test_reports_config_validate(setup_and_teardown):
     # Test with valid format, renderer, and output directory
-    config = {"format": "pdf", "renderer": "xhtml2pdf", "outputDir": "~/.pebblo_test_"}
+    config = {"format": "pdf", "renderer": "xhtml2pdf", "cacheDir": "~/.pebblo_test_"}
     validator = ReportsConfig(config)
     validator.validate()
     assert validator.errors == []
 
     # Test with invalid format
-    config = {"format": "doc", "renderer": "xhtml2pdf", "outputDir": "~/.pebblo_test_"}
+    config = {"format": "doc", "renderer": "xhtml2pdf", "cacheDir": "~/.pebblo_test_"}
     validator = ReportsConfig(config)
     validator.validate()
     assert validator.errors == [
@@ -98,7 +98,7 @@ def test_reports_config_validate(setup_and_teardown):
     config = {
         "format": "pdf",
         "renderer": "invalid_renderer",
-        "outputDir": "~/.pebblo_test_",
+        "cacheDir": "~/.pebblo_test_",
     }
     validator = ReportsConfig(config)
     validator.validate()
@@ -145,7 +145,7 @@ def test_validate_config(setup_and_teardown):
         "reports": {
             "format": "pdf",
             "renderer": "xhtml2pdf",
-            "outputDir": "~/.pebblo_test_",
+            "cacheDir": "~/.pebblo_test_",
         },
         "classifier": {
             "anonymizeSnippets": True,
@@ -161,7 +161,7 @@ def test_validate_config(setup_and_teardown):
         "reports": {
             "format": "doc",
             "renderer": "xhtml2pdf",
-            "outputDir": "~/.pebblo_test_",
+            "cacheDir": "~/.pebblo_test_",
         },
         "classifier": {
             "anonymizeSnippets": "abc",

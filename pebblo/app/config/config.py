@@ -5,7 +5,7 @@ from typing import Tuple
 import yaml
 from pydantic import BaseSettings, Field
 
-from pebblo.app.config.config_validation import validate_config
+from pebblo.app.config.config_validation import validate_config, validate_input
 
 # Default config value
 dir_path = pathlib.Path().absolute()
@@ -21,7 +21,7 @@ class PortConfig(BaseSettings):
 class ReportConfig(BaseSettings):
     format: str = Field(default="pdf")
     renderer: str = Field(default="xhtml2pdf")
-    outputDir: str = Field(default=str(dir_path))
+    cacheDir: str = Field(default=str(dir_path))
 
 
 # Logging Defaults
@@ -63,7 +63,7 @@ def load_config(path: str) -> Tuple[dict, Config]:
         conf_obj = Config(
             daemon=PortConfig(host="localhost", port=8000),
             reports=ReportConfig(
-                format="pdf", renderer="xhtml2pdf", outputDir="~/.pebblo"
+                format="pdf", renderer="xhtml2pdf", cacheDir="~/.pebblo"
             ),
             logging=LoggingConfig(),
             classifier=ClassifierConfig(anonymizeSnippets=False),
@@ -76,6 +76,8 @@ def load_config(path: str) -> Tuple[dict, Config]:
         try:
             with open(path, "r") as output:
                 cred_yaml = yaml.safe_load(output)
+                cred_yaml = validate_input(cred_yaml)
+
                 # Replace missing fields with default values
                 for key in conf_obj.dict().keys():
                     if key not in cred_yaml:

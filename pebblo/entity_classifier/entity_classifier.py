@@ -92,21 +92,17 @@ class EntityClassifier:
         anonymized_text = ""
         try:
             logger.debug("Presidio Entity Classifier and Anonymizer Started.")
-            logger.debug(f"Data Input: {input_text}")
 
             analyzer_results = self.analyze_response(input_text)
             anonymized_response, anonymized_text = self.anonymize_response(
                 analyzer_results, input_text
             )
-            logger.debug(f"Presidio Entity Classifier Response: {anonymized_response}")
-            logger.debug(f"Presidio Anonymizer Response: {anonymized_text}")
             if anonymize_snippets:  # If Document snippet needs to be anonymized
                 input_text = anonymized_text.replace("<", "&lt;").replace(">", "&gt;")
             entities, total_count = get_entities(self.entities, anonymized_response)
             logger.debug("Presidio Entity Classifier and Anonymizer Finished")
             logger.debug(f"Entities: {entities}")
             logger.debug(f"Entity Total count: {total_count}")
-            logger.debug(f"Output Text: {input_text}")
             return entities, total_count, input_text
         except Exception as e:
             logger.error(

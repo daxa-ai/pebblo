@@ -6,6 +6,6 @@ logging:
 reports:
   format: pdf
   renderer: xhtml2pdf
-  outputDir: ~/.pebblo
+  cacheDir: ~/.pebblo
 classifier:
   anonymizeSnippets: False

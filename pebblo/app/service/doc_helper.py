@@ -196,7 +196,6 @@ class LoaderHelper:
                 doc_info.topicCount = topic_count
                 doc_info.entityCount = entity_count
                 doc_info.data = anonymized_doc
-                logger.debug(f"Anonymized Doc: {anonymized_doc}")
             return doc_info
         except Exception as e:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
@@ -574,7 +573,6 @@ class LoaderHelper:
                 doc_obj = self._create_doc_model(doc, doc_info)
                 ai_app_docs.append(doc_obj)
                 raw_data = self._get_doc_report_metadata(doc_obj, raw_data)
-        logger.debug(f"ai_app_docs: {ai_app_docs}")
         # Updating ai apps details
         self._update_app_details(raw_data, ai_app_docs)
 
