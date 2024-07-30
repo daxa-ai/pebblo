@@ -4,10 +4,10 @@ Module for prompt governance
 
 import traceback
 
-from fastapi import HTTPException
 from pydantic import ValidationError
 
-from pebblo.app.models.models import AiDataModel
+from pebblo.app.libs.responses import PebbloJsonResponse
+from pebblo.app.models.models import AiDataModel, PromptGovResponseModel
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.log import get_logger
 
@@ -64,18 +64,32 @@ class PromptGov:
             doc_info = self._get_classifier_response()
             logger.debug(f"Entities {doc_info.entities}")
             logger.debug(f"Entity Count {doc_info.entityCount}")
-            return {
-                "message": "Prompt Gov Processed Successfully",
-                "entities": doc_info.entities,
-                "entityCount": doc_info.entityCount,
-            }
+            response = PromptGovResponseModel(
+                entities=doc_info.entities,
+                entityCount=doc_info.entityCount,
+                message="Prompt Governance Processed Successfully",
+            )
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=200
+            )
+
         except ValidationError as ex:
+            response = PromptGovResponseModel(
+                entities={}, entityCount=0, message=f"Error : {str(ex)}"
+            )
             logger.error(
                 f"Error in Prompt API process_request. Error:{traceback.format_exc()}"
             )
-            raise HTTPException(status_code=400, detail=str(ex))
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=400
+            )
         except Exception as ex:
+            response = PromptGovResponseModel(
+                entities={}, entityCount=0, message=f"Error : {str(ex)}"
+            )
             logger.error(
                 f"Error in Prompt API process_request. Error:{traceback.format_exc()}"
             )
-            raise HTTPException(status_code=500, detail=str(ex))
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=500
+            )
