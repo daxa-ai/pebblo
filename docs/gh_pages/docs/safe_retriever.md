@@ -17,7 +17,7 @@ This page consist of 5 primary tabs that provides the following details:
    The figure denotes the cumulative count of retrievals happened for all the apps.
 
 3. **Prompts with Findings**:
-   The number of prompts that has one or more findings over the total number of prompts used during retrieval process. This field indicates the number of prompts that need to be inspected to remediated for Gen-AI inference.
+   The number of prompts that has one or more findings over the total number of prompts used during retrieval process. This field indicates the number of prompts that need to be inspected for Gen-AI inference.
 
 4. **Active Users**:
    The number of active users for all the retrieval type applications.
