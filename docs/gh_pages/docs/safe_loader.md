@@ -23,7 +23,7 @@ This page consist of 4 primary tabs that provides the following details:
 2. **Findings**:
    The figure denotes the cumulative count of Topics and Entities identified across all applications. It will also furnish you with a comprehensive list of these Topics and Entities, along with supplementary information including the count of source files they originate from, the Datasource, and the name of the Application.
 
-3. **Files with Findings**:
+3. **Documents with Findings**:
    The number of files that has one or more Findings over the total number of files used in document load across all the applications. This field indicates the number of files that need to be inspected to remediate any potentially text that needs to be removed and/or cleaned for Gen-AI inference.
 
    It will also provide you with a list of these files, accompanied by additional details such as the file size, the owner's name, the count of topics & entities within each file, and the name of the Datasource.
