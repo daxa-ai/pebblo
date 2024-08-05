@@ -17,12 +17,19 @@ def get_entities(entities_list, response):
     entity_groups = dict()
     total_count = 0
     for entity in response:
-        if entity.entity_type in entities_list:
-            if entity.entity_type in Entities.__members__:
-                mapped_entity = Entities[entity.entity_type].value
-            elif entity.entity_type in SecretEntities.__members__:
-                mapped_entity = SecretEntities[entity.entity_type].value
-            entity_groups[mapped_entity] = entity_groups.get(mapped_entity, 0) + 1
+        if entity["entity_type"] in entities_list:
+            if entity["entity_type"] in Entities.__members__:
+                mapped_entity = Entities[entity["entity_type"]].value
+            elif entity["entity_type"] in SecretEntities.__members__:
+                mapped_entity = SecretEntities[entity["entity_type"]].value
+            entity_data = {
+                "location": entity["location"],
+                "confidence_score": entity["confidence_score"],
+            }
+            if mapped_entity in entity_groups.keys():
+                entity_groups[mapped_entity].append(entity_data)
+            else:
+                entity_groups[mapped_entity] = [entity_data]
             total_count += 1
 
     return entity_groups, total_count
