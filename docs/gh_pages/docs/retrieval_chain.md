@@ -203,3 +203,8 @@ Question: Please share the performance summary for John Smith?
 Answer: 
 I don't know, I'm sorry.
 ```
+
+## Prompt Governance
+When a user sends any prompt to the LLM using PebbloRetrieveQA, Pebblo captures the findings from that prompt. This behavior is enabled by default.
+
+***Coming Soon***: Ability to block or anonymize prompts based on policy. 
