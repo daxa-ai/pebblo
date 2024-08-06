@@ -39,7 +39,7 @@ jobs:
         run: |
             echo 'Running Pebblo server'
             sleep 10
-            pebblo
+            pebblo &
             sleep 120
 
       - name: Verify Pebblo Server
