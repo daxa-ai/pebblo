@@ -45,6 +45,11 @@ class ClassifierConfig(BaseSettings):
     anonymizeSnippets: bool = Field(default=True)
 
 
+class StorageConfig(BaseSettings):
+    type: str = Field(default="file")
+    # This is default value for current version(0.1.18), it needs to be changed in next version to db.
+
+
 # ConfigFile BaseModel
 class Config(BaseSettings):
     daemon: PortConfig

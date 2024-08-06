@@ -28,3 +28,6 @@ class Database(ABC):
     @abstractmethod
     def create(self, query):
         pass
+
+    def get_application_details(self):
+        pass

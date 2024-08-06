@@ -1,12 +1,13 @@
-import os
-
 from fastapi import APIRouter
 
 from pebblo.app.service.discovery_service import AppDiscover
 from pebblo.app.service.prompt_gov import PromptGov
 from pebblo.app.service.prompt_service import Prompt
-from pebblo.app.service.service import AppLoaderDoc
 from pebblo.app.storage.storage_config import Storage
+from pebblo.app.enums.enums import StorageTypes
+from pebblo.app.config.config import var_server_config_dict
+
+config_details = var_server_config_dict.get()
 
 
 class App:
@@ -28,10 +29,9 @@ class App:
     def loader_doc(data: dict):
         # "/loader/doc" API entrypoint
         # Fetch loader doc object based on a storage type
-        storage_type = os.environ.get("STORAGE_TYPE", "file")
+        storage_type = config_details.get("storage", {}).get("type", StorageTypes.FILE.value)
         storage_obj = Storage()
         loader_doc_obj = storage_obj.get_object(storage_type, data)
-        # loader_doc_obj = AppLoaderDoc(data=data)
         response = loader_doc_obj.process_request()
         return response
 
