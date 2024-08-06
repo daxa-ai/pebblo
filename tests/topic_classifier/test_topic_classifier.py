@@ -9,7 +9,6 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-import tests.log  # noqa: F401
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 HARMFUL_ADVICE = "harmful-advice"

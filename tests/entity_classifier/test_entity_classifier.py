@@ -3,7 +3,6 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-import tests.log  # noqa: F401
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from tests.entity_classifier.mock_response import (
     mock_input_text1_anonymize_snippet_true,

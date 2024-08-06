@@ -3,7 +3,6 @@ from unittest.mock import patch
 
 import pytest
 
-import tests.log  # noqa: F401
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import PromptGovResponseModel
 from pebblo.app.service.prompt_gov import PromptGov
