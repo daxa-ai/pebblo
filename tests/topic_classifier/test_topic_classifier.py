@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
+import tests.log  # noqa: F401
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 HARMFUL_ADVICE = "harmful-advice"
@@ -104,8 +105,8 @@ def test_predict_expected_topic(topic_classifier, mock_topic_display_names):
     # Assertions
     assert total_count == 1
     assert HARMFUL_ADVICE in topics
-    assert topics[HARMFUL_ADVICE] == 1
-    assert topics == {HARMFUL_ADVICE: 1}
+    assert topics[HARMFUL_ADVICE] == [{"confidence_score": "MEDIUM"}]
+    assert topics == {"harmful-advice": [{"confidence_score": "MEDIUM"}]}
 
 
 def test_predict_low_score_topics(topic_classifier, mock_topic_display_names):
@@ -147,8 +148,8 @@ def test_predict_confidence_score_update(topic_classifier, mock_topic_display_na
     # Assertions
     assert total_count == 1
     assert MEDICAL_ADVICE in topics
-    assert topics[MEDICAL_ADVICE] == 1
-    assert topics == {MEDICAL_ADVICE: 1}
+    assert topics[MEDICAL_ADVICE] == [{"confidence_score": "MEDIUM"}]
+    assert topics == {"medical-advice": [{"confidence_score": "MEDIUM"}]}
 
 
 def test_predict_empty_topics(topic_classifier):

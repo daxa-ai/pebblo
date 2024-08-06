@@ -45,6 +45,7 @@ class Prompt:
             entities,
             entity_count,
             _,
+            _,
         ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
             input_data
         )

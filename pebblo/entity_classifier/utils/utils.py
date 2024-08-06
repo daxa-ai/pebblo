@@ -11,10 +11,13 @@ from pebblo.entity_classifier.utils.config import (
     secret_entities_context_mapping,
 )
 from pebblo.entity_classifier.utils.regex_pattern import regex_secrets_patterns
+from pebblo.utils import get_confidence_score_label
 
 
 def get_entities(entities_list, response):
     entity_groups = dict()
+    entity_details = dict()
+    mapped_entity = None
     total_count = 0
     for entity in response:
         if entity["entity_type"] in entities_list:
@@ -22,17 +25,20 @@ def get_entities(entities_list, response):
                 mapped_entity = Entities[entity["entity_type"]].value
             elif entity["entity_type"] in SecretEntities.__members__:
                 mapped_entity = SecretEntities[entity["entity_type"]].value
+            entity_groups[mapped_entity] = entity_groups.get(mapped_entity, 0) + 1
             entity_data = {
                 "location": entity["location"],
-                "confidence_score": entity["confidence_score"],
+                "confidence_score": get_confidence_score_label(
+                    entity["confidence_score"]
+                ),
             }
-            if mapped_entity in entity_groups.keys():
-                entity_groups[mapped_entity].append(entity_data)
+            if mapped_entity in entity_details.keys():
+                entity_details[mapped_entity].append(entity_data)
             else:
-                entity_groups[mapped_entity] = [entity_data]
+                entity_details[mapped_entity] = [entity_data]
             total_count += 1
 
-    return entity_groups, total_count
+    return entity_groups, entity_details, total_count
 
 
 def add_custom_regex_analyzer_registry():

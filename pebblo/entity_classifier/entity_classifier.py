@@ -88,6 +88,7 @@ class EntityClassifier:
         :return: entities: containing the entity group Name as key and its count as value.
                  total_count: Total count of entity groupsInput text in anonymized form.
                  anonymized_text: Input text in anonymized form.
+                 entity_details: Entities with its details such as location and confidence score.
         Example:
 
         input_text = " My SSN is 222-85-4836.
@@ -119,11 +120,13 @@ class EntityClassifier:
                 entities_response = self.get_analyzed_entities_response(
                     analyzer_results
                 )
-            entities, total_count = get_entities(self.entities, entities_response)
+            entities, entity_details, total_count = get_entities(
+                self.entities, entities_response
+            )
             logger.debug("Presidio Entity Classifier and Anonymizer Finished")
             logger.debug(f"Entities: {entities}")
             logger.debug(f"Entity Total count: {total_count}")
-            return entities, total_count, input_text
+            return entities, total_count, input_text, entity_details
         except Exception as e:
             logger.error(
                 f"Presidio Entity Classifier and Anonymizer Failed, Exception: {e}"
