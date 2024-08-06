@@ -99,13 +99,14 @@ def test_predict_expected_topic(topic_classifier, mock_topic_display_names):
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
     topic_classifier.classifier.return_value = mock_response
-    topics, total_count = topic_classifier.predict(input_text)
+    topics, total_count, topic_details = topic_classifier.predict(input_text)
 
     # Assertions
     assert total_count == 1
     assert HARMFUL_ADVICE in topics
-    assert topics[HARMFUL_ADVICE] == [{"confidence_score": "MEDIUM"}]
-    assert topics == {"harmful-advice": [{"confidence_score": "MEDIUM"}]}
+    assert topics[HARMFUL_ADVICE] == 1
+    assert topics == {"harmful-advice": 1}
+    assert topic_details == {"harmful-advice": [{"confidence_score": "MEDIUM"}]}
 
 
 def test_predict_low_score_topics(topic_classifier, mock_topic_display_names):
@@ -121,11 +122,12 @@ def test_predict_low_score_topics(topic_classifier, mock_topic_display_names):
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
     topic_classifier.classifier.return_value = mock_response
-    topics, total_count = topic_classifier.predict(input_text)
+    topics, total_count, topic_details = topic_classifier.predict(input_text)
 
     # Assertions
     assert total_count == 0
     assert topics == {}
+    assert topic_details == {}
 
 
 @patch("pebblo.topic_classifier.topic_classifier.TOPIC_CONFIDENCE_SCORE", 0.4)
@@ -142,13 +144,14 @@ def test_predict_confidence_score_update(topic_classifier, mock_topic_display_na
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
     topic_classifier.classifier.return_value = mock_response
-    topics, total_count = topic_classifier.predict(input_text)
+    topics, total_count, topic_details = topic_classifier.predict(input_text)
 
     # Assertions
     assert total_count == 1
     assert MEDICAL_ADVICE in topics
-    assert topics[MEDICAL_ADVICE] == [{"confidence_score": "MEDIUM"}]
-    assert topics == {"medical-advice": [{"confidence_score": "MEDIUM"}]}
+    assert topics[MEDICAL_ADVICE] == 1
+    assert topics == {"medical-advice": 1}
+    assert topic_details == {"medical-advice": [{"confidence_score": "MEDIUM"}]}
 
 
 def test_predict_empty_topics(topic_classifier):
@@ -159,7 +162,7 @@ def test_predict_empty_topics(topic_classifier):
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
     topic_classifier.classifier.return_value = mock_response
-    topics, total_count = topic_classifier.predict(input_text)
+    topics, total_count, topic_details = topic_classifier.predict(input_text)
 
     # Assertions
     assert topics == {}
@@ -173,10 +176,11 @@ def test_predict_on_exception(topic_classifier):
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
     topic_classifier.classifier.side_effect = Exception("Mocked exception")
-    topics, total_count = topic_classifier.predict(input_text)
+    topics, total_count, topic_details = topic_classifier.predict(input_text)
 
     assert topics == {}
     assert total_count == 0
+    assert topic_details == {}
 
 
 @patch("pebblo.topic_classifier.topic_classifier.TOPIC_MIN_TEXT_LENGTH", 16)
@@ -193,7 +197,7 @@ def test_predict_min_len_not_met(topic_classifier, mock_topic_display_names):
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
     topic_classifier.classifier.return_value = mock_response
-    topics, total_count = topic_classifier.predict(input_text)
+    topics, total_count, topic_details = topic_classifier.predict(input_text)
 
     # Assertions
     assert topics == {}
@@ -216,7 +220,7 @@ def test_predict_exclude_topics(topic_classifier, mock_topic_display_names):
     # Setting the return value of the classifier's predict method
     topic_classifier.classifier = MagicMock()
     topic_classifier.classifier.return_value = mock_response
-    topics, total_count = topic_classifier.predict(input_text)
+    topics, total_count, topic_details = topic_classifier.predict(input_text)
 
     # Assertions
     assert "HARMFUL_ADVICE" not in topics

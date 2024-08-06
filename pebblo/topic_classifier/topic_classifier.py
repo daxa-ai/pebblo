@@ -64,15 +64,15 @@ class TopicClassifier:
                     f"Text length is below {TOPIC_MIN_TEXT_LENGTH} characters. "
                     f"Classification not performed."
                 )
-                return {}, 0
+                return {}, 0, {}
 
             topic_model_response = self.classifier(input_text)
-            topics, total_count = self._get_topics(topic_model_response)
+            topics, total_count, topic_details = self._get_topics(topic_model_response)
             logger.debug(f"Topics: {topics}")
-            return topics, total_count
+            return topics, total_count, topic_details
         except Exception as e:
             logger.error(f"Error in topic_classifier. Exception: {e}")
-            return {}, 0
+            return {}, 0, {}
 
     @staticmethod
     def _get_topics(topic_model_response):
@@ -90,9 +90,11 @@ class TopicClassifier:
                 topics[mapped_topic] = topic["score"]
 
         final_topic = {}
+        topic_details = {}
         if len(topics) > 0:
             most_possible_advice = max(topics, key=lambda t: topics[t])
-            final_topic = {
+            final_topic = {most_possible_advice: 1}
+            topic_details = {
                 most_possible_advice: [
                     {
                         "confidence_score": get_confidence_score_label(
@@ -101,4 +103,4 @@ class TopicClassifier:
                     }
                 ]
             }
-        return final_topic, len(final_topic.keys())
+        return final_topic, len(final_topic.keys()), topic_details

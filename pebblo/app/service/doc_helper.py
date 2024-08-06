@@ -182,7 +182,9 @@ class LoaderHelper:
         )
         try:
             if doc_info.data:
-                topics, topic_count = topic_classifier_obj.predict(doc_info.data)
+                topics, topic_count, topic_details = topic_classifier_obj.predict(
+                    doc_info.data
+                )
                 (
                     entities,
                     entity_count,

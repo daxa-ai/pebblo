@@ -54,7 +54,9 @@ class Prompt:
 
         # Topic classification is performed only for the response.
         if input_type == "response":
-            topics, topic_count = self.topic_classifier_obj.predict(input_data)
+            topics, topic_count, topic_details = self.topic_classifier_obj.predict(
+                input_data
+            )
             data["topicCount"] = topic_count
             data["topics"] = topics
 
