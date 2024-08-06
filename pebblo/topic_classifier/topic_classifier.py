@@ -18,6 +18,7 @@ from pebblo.topic_classifier.config import (
     TOPICS_TO_EXCLUDE,
 )
 from pebblo.topic_classifier.enums.constants import topic_display_names
+from pebblo.utils import get_confidence_score_label
 
 logger = get_logger(__name__)
 
@@ -93,7 +94,11 @@ class TopicClassifier:
             most_possible_advice = max(topics, key=lambda t: topics[t])
             final_topic = {
                 most_possible_advice: [
-                    {"confidence_score": topics[most_possible_advice]}
+                    {
+                        "confidence_score": get_confidence_score_label(
+                            (topics[most_possible_advice])
+                        )
+                    }
                 ]
             }
         return final_topic, len(final_topic.keys())
