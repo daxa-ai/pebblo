@@ -1,4 +1,3 @@
-import json
 
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker

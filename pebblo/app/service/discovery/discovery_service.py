@@ -6,9 +6,9 @@ from sqlalchemy.inspection import inspect
 from pebblo.app.models.models import (
     AiApp,
     Chain,
-    FrameworkInfo,
+    # FrameworkInfo,
     InstanceDetails,
-    Metadata,
+    # Metadata,
     PackageInfo,
     VectorDB,
 )
@@ -67,13 +67,13 @@ class AppDiscover:
         """
         logger.debug("Creating AI App model")
         # Initialize Variables
-        last_used = datetime.now()
+        # last_used = datetime.now()
 
-        metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
-        client_version = FrameworkInfo(
-            name=self.data.get("client_version", {}).get("name"),
-            version=self.data.get("client_version", {}).get("version"),
-        )
+        # metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
+        # client_version = FrameworkInfo(
+        #     name=self.data.get("client_version", {}).get("name"),
+        #     version=self.data.get("client_version", {}).get("version"),
+        # )
         ai_app_obj = {
             # "metadata": metadata,
             "description": self.data.get("description", "-"),
