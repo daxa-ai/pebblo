@@ -10,7 +10,7 @@ class SQLiteClient(Database):
     def __init__(self):
         super().__init__()
         # Create an engine that stores data in the local directory's my_database.db file.
-        self.engine = create_engine('sqlite:///my_database.db', echo=True)
+        self.engine = create_engine('sqlite:///pebblo.db', echo=True)
         self.session = None
 
     def create_session(self):

@@ -63,7 +63,6 @@ class AppDiscover:
     def process_request(self):
         try:
             logger.info("Discovery API Request.")
-            print("Discovery API Request.")
             # create session
             self.db.create_session()
 
@@ -72,7 +71,7 @@ class AppDiscover:
             status, message = self.db.insert_data(table_obj=AiAppsTable,
                                            data=ai_apps_data)
             if not status:
-                print(f"Message: {message}")
+                logger.debug(f"Message: {message}")
                 return message
 
             # Fetch ai apps details
@@ -84,13 +83,11 @@ class AppDiscover:
                 logger.debug(f"Discovery Response: {response.data}")
 
         except Exception as err:
-            print(f"Exception: {err}")
             # Getting error, We are rollback everything we did in this run.
             self.db.session.rollback()
             logger.error(f"Discovery api failed, Error: {err}")
 
         else:
-            print("In Commit Part")
             # Commit will only happen when everything went well.
             self.db.session.commit()
             # Prepare response
@@ -103,6 +100,5 @@ class AppDiscover:
                 body=response.dict(exclude_none=True), status_code=200
             )
         finally:
-            print("In Connection closing Part")
             # Closing the session
             self.db.session.close()

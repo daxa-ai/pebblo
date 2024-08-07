@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, JSON
 from sqlalchemy.ext.declarative import declarative_base
 
 # Create an engine that stores data in the local directory's my_database.db file.
-engine = create_engine('sqlite:///my_database.db', echo=True)
+engine = create_engine('sqlite:///pebblo.db', echo=True)
 
 
 Base = declarative_base()
