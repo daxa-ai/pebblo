@@ -6,6 +6,7 @@ from pebblo.entity_classifier.utils.config import (
     ConfidenceScore,
     Entities,
     SecretEntities,
+    entity_group_conf_mapping,
 )
 from pebblo.entity_classifier.utils.utils import (
     add_custom_regex_analyzer_registry,
@@ -43,13 +44,27 @@ class EntityClassifier:
     def analyze_response(self, input_text, anonymize_all_entities=True):
         # Returns analyzed output
         analyzer_results = self.analyzer.analyze(text=input_text, language="en")
-        analyzer_results = [
-            result
-            for result in analyzer_results
-            if result.score >= float(ConfidenceScore.Entity.value)
-            and result.entity_type in self.entities
-        ]
-        return analyzer_results
+        final_results = []
+        for entity in analyzer_results:
+            try:
+                mapped_entity = None
+                if entity.entity_type in Entities.__members__:
+                    mapped_entity = Entities[entity.entity_type].value
+                elif entity.entity_type in SecretEntities.__members__:
+                    mapped_entity = SecretEntities[entity.entity_type].value
+                if (
+                    mapped_entity
+                    and entity.score
+                    >= float(entity_group_conf_mapping[mapped_entity][0])
+                    and entity.entity_type in self.entities
+                ):
+                    final_results.append(entity)
+            except Exception as ex:
+                logger.warning(
+                    f"Error in analyze_response in entity classification. {str(ex)}"
+                )
+
+        return final_results
 
     def anonymize_response(self, analyzer_results, input_text):
         # Returns anonymized output
@@ -63,16 +78,23 @@ class EntityClassifier:
     def get_analyzed_entities_response(data, anonymized_response=None):
         # Returns entities with its location i.e. start to end and confidence score
         response = []
+        mapped_entity = None
         for index, value in enumerate(data):
+            if value.entity_type in Entities.__members__:
+                mapped_entity = Entities[value.entity_type].value
+            elif value.entity_type in SecretEntities.__members__:
+                mapped_entity = SecretEntities[value.entity_type].value
             location = f"{value.start}_{value.end}"
             if anonymized_response:
                 anonymized_data = anonymized_response[len(data) - index - 1]
                 location = f"{anonymized_data.start}_{anonymized_data.end}"
+
             response.append(
                 {
                     "entity_type": value.entity_type,
                     "location": location,
                     "confidence_score": value.score,
+                    "entity_group": entity_group_conf_mapping[mapped_entity][1],
                 }
             )
         return response
