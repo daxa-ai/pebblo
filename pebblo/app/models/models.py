@@ -121,14 +121,14 @@ class RetrievalData(BaseModel):
 
 
 class AiApp(BaseModel):
-    metadata: Metadata
+    # metadata: Metadata
     name: str
     description: Optional[str]
     owner: str
     pluginVersion: Optional[str]
     instanceDetails: Optional[InstanceDetails]
     framework: Optional[FrameworkInfo]
-    lastUsed: datetime
+    lastUsed: Optional[datetime]
     pebbloServerVersion: Optional[str]
     pebbloClientVersion: Optional[str]
     clientVersion: Union[FrameworkInfo, None] = None

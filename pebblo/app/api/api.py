@@ -21,7 +21,11 @@ class App:
     @staticmethod
     def discover(data: dict):
         # "/app/discover" API entrypoint
-        discovery_obj = AppDiscover(data=data)
+        # Fetch discover object based on a storage type
+        storage_type = config_details.get("storage", {}).get("type", StorageTypes.FILE.value)
+
+        storage_obj = Storage()
+        discovery_obj = storage_obj.get_discovery_object(storage_type, data)
         response = discovery_obj.process_request()
         return response
 
@@ -31,7 +35,8 @@ class App:
         # Fetch loader doc object based on a storage type
         storage_type = config_details.get("storage", {}).get("type", StorageTypes.FILE.value)
         storage_obj = Storage()
-        loader_doc_obj = storage_obj.get_object(storage_type, data)
+        loader_doc_obj = storage_obj.get_laoder_doc_object(storage_type, data)
+        # loader_doc_obj = AppLoaderDoc(data=data)
         response = loader_doc_obj.process_request()
         return response
 

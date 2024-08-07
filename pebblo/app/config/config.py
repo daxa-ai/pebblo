@@ -56,6 +56,7 @@ class Config(BaseSettings):
     reports: ReportConfig
     logging: LoggingConfig
     classifier: ClassifierConfig
+    storage: StorageConfig
 
 
 var_server_config: ContextVar[Config] = ContextVar("server_config", default=None)
@@ -72,6 +73,7 @@ def load_config(path: str) -> Tuple[dict, Config]:
             ),
             logging=LoggingConfig(),
             classifier=ClassifierConfig(anonymizeSnippets=False),
+            storage=StorageConfig(type="file"),
         )
         if not path:
             # Setting Default config details
@@ -100,4 +102,4 @@ def load_config(path: str) -> Tuple[dict, Config]:
 
     except Exception as err:
         print(f"Error while loading config details, err: {err}")
-        return {}
+        return {}, {}
