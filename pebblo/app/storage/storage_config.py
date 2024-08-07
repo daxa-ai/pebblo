@@ -1,4 +1,4 @@
-from pebblo.app.enums.enums import StorageTypes
+from pebblo.app.enums.common import StorageTypes
 from pebblo.app.service import db_discovery_service, discovery_service
 from pebblo.app.service import loader_db, service
 

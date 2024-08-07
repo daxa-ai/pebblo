@@ -6,6 +6,7 @@ import yaml
 from pydantic import BaseSettings, Field
 
 from pebblo.app.config.config_validation import validate_config, validate_input
+from pebblo.app.enums.common import StorageTypes
 
 # Default config value
 dir_path = pathlib.Path().absolute()
@@ -46,7 +47,7 @@ class ClassifierConfig(BaseSettings):
 
 
 class StorageConfig(BaseSettings):
-    type: str = Field(default="file")
+    type: str = Field(default=StorageTypes.FILE.value)
     # This is default value for current version(0.1.18), it needs to be changed in next version to db.
 
 

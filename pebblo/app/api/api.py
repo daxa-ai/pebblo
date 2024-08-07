@@ -1,10 +1,9 @@
 from fastapi import APIRouter
 
-from pebblo.app.service.discovery_service import AppDiscover
 from pebblo.app.service.prompt_gov import PromptGov
 from pebblo.app.service.prompt_service import Prompt
 from pebblo.app.storage.storage_config import Storage
-from pebblo.app.enums.enums import StorageTypes
+from pebblo.app.enums.common import StorageTypes
 from pebblo.app.config.config import var_server_config_dict
 
 config_details = var_server_config_dict.get()

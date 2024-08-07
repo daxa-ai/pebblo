@@ -51,7 +51,3 @@ class ApplicationTypes(Enum):
     RETRIEVAL = "retrieval"
 
 
-class StorageTypes(Enum):
-    FILE = "file"
-    DATABASE = "db"
-    
