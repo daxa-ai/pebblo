@@ -1,8 +1,8 @@
 from .database import Database
-from sqlalchemy import create_engine, Column, Integer, JSON
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from ..models.sqltable import AiAppsTable
+from pebblo.log import get_logger
+logger = get_logger(__name__)
 
 
 class SQLiteClient(Database):
@@ -10,11 +10,16 @@ class SQLiteClient(Database):
     def __init__(self):
         super().__init__()
         # Create an engine that stores data in the local directory's my_database.db file.
-        engine = create_engine('sqlite:///my_database.db', echo=True)
+        self.engine = create_engine('sqlite:///my_database.db', echo=True)
+        self.session = None
 
-        # Create a new session
-        Session = sessionmaker(bind=engine)
+    def create_session(self):
+        Session = sessionmaker(bind=self.engine)
         self.session = Session()
+
+    def close_session(self):
+        self.session.close()
+        self.session=None
 
     def insert(self, query):
         pass
@@ -31,17 +36,23 @@ class SQLiteClient(Database):
     def create(self, query):
         pass
 
-    def insert_ai_app(self, ai_apps):
-        print("Insert Into AiAPps")
-        new_record = AiAppsTable(data=ai_apps)
-        self.session.add(new_record)
-        self.session.commit()
+    def insert_data(self, table_obj, data):
+        try:
+            logger.info(f"Insert data into table {table_obj}, Data: {data}")
+            new_record = table_obj(data=data)
+            self.session.add(new_record)
+            logger.info("Data inserted into the table.")
+            return True, "Data inserted into the table"
+        except Exception as err:
+            logger.info(f"insert data into table {table_obj} failed, Error: {err}")
+            return False, err
 
-        # Close the session
-        self.session.close()
-
-    def get_ai_apps(self, table_name):
-
-        # Query the table
-        output = self.session.query(table_name).all()
-        return output
+    def get_objects(self, table_obj):
+        try:
+            logger.info(f"Fetching data from table {table_obj}")
+            # Query the table
+            output = self.session.query(table_obj).all()
+            return True, output
+        except Exception as err:
+            logger.error(f"Failed in fetching data from table, Error: {err}")
+            return False, err

@@ -20,7 +20,7 @@ from pebblo.log import get_logger
 logger = get_logger(__name__)
 
 
-class DBAppDiscover:
+class AppDiscover:
 
     def __init__(self, data):
         self.db = SQLiteClient()
@@ -61,23 +61,42 @@ class DBAppDiscover:
         return ai_apps_model.dict()
 
     def process_request(self):
+        try:
+            # create session
+            self.db.create_session()
 
-        ai_apps = self.create_ai_app_model()
-        response = self.db.insert_ai_app(ai_apps)
-        print(f"Insert Response: {response}")
+            # Create AiApp Model
+            ai_apps_data = self.create_ai_app_model()
+            status, message = self.db.insert_data(table_obj=AiAppsTable,
+                                           data=ai_apps_data)
+            if not status:
+                return message
 
-        # Fetch ai apps details
-        ai_app_coll = AiAppsTable # define in config
-        output = self.db.get_ai_apps(ai_app_coll)
-        print("Fetch AiApps Data")
-        for res in output:
-            print(res.data)
-            # Prepare response
-            message = "App Discover Request Processed Successfully"
-            response = DiscoverAIAppsResponseModel(
-                pebblo_server_version=ai_apps.get("pebbloServerVersion"),
-                message=message,
-            )
-            return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=200
-            )
+            # Fetch ai apps details
+            status, output = self.db.get_objects(AiAppsTable)
+            if not status:
+                return output
+
+            for response in output:
+                logger.debug(response.data)
+
+                # Prepare response
+                message = "App Discover Request Processed Successfully"
+                response = DiscoverAIAppsResponseModel(
+                    pebblo_server_version=ai_apps_data.get("pebbloServerVersion"),
+                    message=message,
+                )
+                return PebbloJsonResponse.build(
+                    body=response.dict(exclude_none=True), status_code=200
+                )
+        except Exception as err:
+            # Getting error, We are rollback everything we did in this run.
+            self.db.session.rollback()
+            logger.errro(f"Discovery api failed, Error: {err}")
+
+        else:
+            # Commit will only happen when everything went well.
+            self.db.session.commit()
+        finally:
+            # Closing the session
+            self.db.session.close()
