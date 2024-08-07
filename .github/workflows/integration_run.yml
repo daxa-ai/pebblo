@@ -39,14 +39,14 @@ jobs:
         run: |
             echo 'Running Pebblo server'
             sleep 10
-            pebblo > run_pebblo.txt 2>&1 &
+            pebblo &
             sleep 120
 
       - name: Verify Pebblo Server
         run: |
-          cat run_pebblo.txt
+          cat /tmp/logs/pebblo.log
           
-          if grep -q "Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)" run_pebblo.txt; then
+          if grep -q "Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)" /tmp/logs/pebblo.log; then
             echo "Server started successfully."
           else
             echo "Unexpected issue detected at server."
@@ -70,22 +70,22 @@ jobs:
 
       - name: Check Pebblo App Run Logs
         run: |
-          cat run_pebblo.txt
+          cat /tmp/logs/pebblo.log
 
       - name: Upload Pebblo App Run Logs as Artifact
         uses: actions/upload-artifact@v2
         with:
           name: Pebblo_Report
           path: |
-            run_pebblo.txt
+            /tmp/logs/pebblo.log
 
       - name: Check logs for Pebblo Report 
         run: |
-          if grep -q "INFO:     PDF report generated, please check path : /home/runner/.pebblo/" run_pebblo.txt; then
+          if grep -q "INFO - PDF report generated, please check path : /home/runner/.pebblo/" /tmp/logs/pebblo.log; then
             echo "Report Generated Successfully."
           else
             echo "Unexpected issue detected at running sample app."
-            cat run_pebblo.txt
+            cat /tmp/logs/pebblo.log
             exit 1 
           fi
       - name: Upload Pebblo Report File
