@@ -14,6 +14,11 @@ class AiAppsTable(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
 
+class AiDataLoaderTable(Base):
+    __tablename__ = "aidataloader"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    data = Column(JSON)
 
 # Create all tables in the engine. This is equivalent to "Create Table" statements in raw SQL.
 Base.metadata.create_all(engine)

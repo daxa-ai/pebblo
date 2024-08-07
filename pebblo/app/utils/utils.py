@@ -5,7 +5,8 @@ from os import getcwd, makedirs, path, remove
 from shutil import rmtree
 
 from fastapi import status
-
+from pebblo.app.libs.responses import PebbloJsonResponse
+from pebblo.app.models.models import DiscoverAIAppsResponseModel
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
@@ -282,3 +283,13 @@ def delete_directory(app_path, app_name=None):
         logger.exception(message)
     finally:
         return result
+
+
+def return_response(message, status_code, pebblo_server_version=None):
+    response = DiscoverAIAppsResponseModel(
+        pebblo_server_version=pebblo_server_version,
+        message=str(message),
+    )
+    return PebbloJsonResponse.build(
+        body=response.dict(exclude_none=True), status_code=status_code
+    )

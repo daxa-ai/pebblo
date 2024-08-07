@@ -65,7 +65,7 @@ class InstanceDetails(BaseModel):
     platform: Optional[str]
     os: Optional[str]
     osVersion: Optional[str]
-    createdAt: datetime
+    createdAt: Optional[datetime]
 
 
 class PackageInfo(BaseModel):
