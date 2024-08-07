@@ -549,6 +549,7 @@ class LoaderHelper:
             dataSources=data_source_obj_list,
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=self.app_details.get("pluginVersion", ""),
+            clientVersion=self.app_details.get("clientVersion", {}),
         )
         return report_dict.dict()
 

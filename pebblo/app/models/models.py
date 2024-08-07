@@ -195,6 +195,7 @@ class ReportModel(BaseModel):
     dataSources: Optional[List[DataSource]]
     pebbloServerVersion: Optional[str]
     pebbloClientVersion: Optional[str]
+    clientVersion: Optional[dict]
 
 
 class LoaderAppListDetails(BaseModel):
