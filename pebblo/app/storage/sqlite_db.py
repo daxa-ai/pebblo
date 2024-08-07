@@ -59,7 +59,7 @@ class SQLiteClient(Database):
                 for key, value in condition.items():
                     # Build the filter condition dynamically using JSON path
                     query = query.filter(
-                        func.json_extract(table_obj.data, f'$.{key}') == value
+                        func.json_extract(table_obj.data, f"$.{key}") == value
                     )
                 # Execute the query and fetch results
                 output = query.first()
@@ -78,7 +78,8 @@ class SQLiteClient(Database):
         try:
             logger.info("Updating aiapp details")
             logger.debug(f"New Updated data: {data}")
-            app_obj.data = json.dumps(data)
+            # app_obj.data = json.dumps(data)
+            app_obj.data = data
             return True, "Data has been updated successfully"
         except Exception as err:
             message = f"Failed in updating app object in table, Error: {err}"

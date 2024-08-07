@@ -2,12 +2,13 @@ from pebblo.log import get_logger
 
 logger = get_logger(__name__)
 
-def get_or_create_app(db, app_name, load_id, AppClass):
+
+def get_or_create_app(db, app_name, load_id, app_class):
     """
     Gets or creates an AiApp.
     """
     logger.info("In Function get_or_create_app")
-    exist, ai_app = db.get_objects(AppClass, {"name": app_name})
+    exist, ai_app = db.get_objects(app_class, {"name": app_name})
     if exist and ai_app:
         logger.info(f"AiApps: {ai_app}")
         return ai_app
@@ -16,7 +17,7 @@ def get_or_create_app(db, app_name, load_id, AppClass):
         "name": app_name,
         "id": load_id
     }
-    response, app_object = db.insert_data(AppClass, ai_app)
+    response, app_object = db.insert_data(app_class, ai_app)
 
     if response:
         return app_object

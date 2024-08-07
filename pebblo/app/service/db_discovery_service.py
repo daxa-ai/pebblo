@@ -84,7 +84,7 @@ class AppDiscover:
             "description": self.data.get("description", "-"),
             "owner": self.data.get("owner", ""),
             "pluginVersion": self.data.get("plugin_version"),
-            # "instanceDetails": instance_details,
+            "instanceDetails": instance_details,
             "framework": self.data.get("framework"),
             # "lastUsed": last_used,
             "pebbloServerVersion": get_pebblo_server_version(),
@@ -183,7 +183,6 @@ class AppDiscover:
     def process_request(self):
         try:
             logger.info("Discovery API Request.")
-
             chain_details = []
             retrievals_details = []
             load_id = self.data.get("load_id") or None
@@ -218,13 +217,14 @@ class AppDiscover:
                 retrievals_details = self._fetch_retrievals_details(ai_app)
 
             # Create AiApp Model
-            ai_apps_data = self.create_ai_app_model(ai_app, instance_details=instance_details,
+            ai_apps_data = self.create_ai_app_model(ai_app,
+                                                    instance_details=instance_details,
                                                     chain_details=chain_details,
                                                     retrievals_details=retrievals_details)
 
             status, message = self.db.update_data(table_obj=AppClass,
-                                                  app_obj = ai_app_obj,
-                                           data=ai_apps_data)
+                                                  app_obj=ai_app_obj,
+                                                  data=ai_apps_data)
             if not status:
                 logger.error(f"Process request failed: {message}")
                 return return_response(message=message, status_code=500)
