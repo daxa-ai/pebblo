@@ -47,8 +47,10 @@ class StorageConfig(ConfigValidator):
         storage_type = self.config.get("type")
         valid_storage_types = ["file", "db"]
         if storage_type not in valid_storage_types:
-            self.errors.append(f"Error: Unsupported storage type '{storage_type}' specified in the configuration."
-                               f"Valid values are {valid_storage_types}")
+            self.errors.append(
+                f"Error: Unsupported storage type '{storage_type}' specified in the configuration."
+                f"Valid values are {valid_storage_types}"
+            )
 
 
 def expand_path(file_path: str) -> str:

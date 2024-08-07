@@ -1,15 +1,15 @@
-from sqlalchemy import create_engine, Column, Integer, JSON
+from sqlalchemy import JSON, Column, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 # Create an engine that stores data in the local directory's my_database.db file.
-engine = create_engine('sqlite:///pebblo.db', echo=True)
+engine = create_engine("sqlite:///pebblo.db", echo=True)
 
 
 Base = declarative_base()
 
 
 class AiAppsTable(Base):
-    __tablename__ = 'aiapps'
+    __tablename__ = "aiapps"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)

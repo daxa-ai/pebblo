@@ -5,20 +5,23 @@ from abc import ABC, abstractmethod
 
 
 class Database(ABC):
-
     def __init__(self):
         pass
 
     @abstractmethod
-    def insert(self, query):
+    def create_session(self):
         pass
 
     @abstractmethod
-    def update(self, query):
+    def close_session(self):
         pass
 
     @abstractmethod
-    def upsert(self, query):
+    def insert_data(self, table_obj, data):
+        pass
+
+    @abstractmethod
+    def update_data(self, table_obj, data):
         pass
 
     @abstractmethod
@@ -26,8 +29,5 @@ class Database(ABC):
         pass
 
     @abstractmethod
-    def create(self, query):
-        pass
-
-    def get_application_details(self):
+    def query(self, table_obj, condition):
         pass

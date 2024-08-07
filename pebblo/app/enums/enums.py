@@ -49,5 +49,3 @@ class ClassifierConstants(Enum):
 class ApplicationTypes(Enum):
     LOADER = "loader"
     RETRIEVAL = "retrieval"
-
-

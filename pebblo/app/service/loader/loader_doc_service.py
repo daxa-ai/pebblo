@@ -2,7 +2,7 @@ from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import LoaderDocResponseModel
 
 
-class AppLoaderDoc():
+class AppLoaderDoc:
     def __init__(self, data):
         self.data = data
         self.app_name = self.data.get("name")

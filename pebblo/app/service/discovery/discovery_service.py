@@ -1,13 +1,11 @@
 # Discovery API with database implementation.
-import json
 from datetime import datetime
-from pebblo.app.libs.responses import PebbloJsonResponse
 
 from sqlalchemy.inspection import inspect
+
 from pebblo.app.models.models import (
     AiApp,
     Chain,
-    DiscoverAIAppsResponseModel,
     FrameworkInfo,
     InstanceDetails,
     Metadata,
@@ -15,17 +13,15 @@ from pebblo.app.models.models import (
     VectorDB,
 )
 from pebblo.app.models.sqltable import AiAppsTable, AiDataLoaderTable
-from pebblo.app.service.common import get_or_create_app
+from pebblo.app.service.discovery.common import get_or_create_app
 from pebblo.app.storage.sqlite_db import SQLiteClient
-from pebblo.app.utils.utils import return_response
-from pebblo.app.utils.utils import get_pebblo_server_version
+from pebblo.app.utils.utils import get_pebblo_server_version, return_response
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
 
 
 class AppDiscover:
-
     def __init__(self, data):
         self.db = SQLiteClient()
         self.data = data
@@ -63,18 +59,17 @@ class AppDiscover:
         )
         return instance_details_model
 
-    def create_ai_app_model(self, ai_app, instance_details, chain_details, retrievals_details):
+    def create_ai_app_model(
+        self, ai_app, instance_details, chain_details, retrievals_details
+    ):
         """
-                Create an AI App Model and return the corresponding model object
-                """
+        Create an AI App Model and return the corresponding model object
+        """
         logger.debug("Creating AI App model")
         # Initialize Variables
         last_used = datetime.now()
 
-        metadata = Metadata(
-            createdAt=datetime.now(),
-            modifiedAt=datetime.now()
-        )
+        metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
         client_version = FrameworkInfo(
             name=self.data.get("client_version", {}).get("name"),
             version=self.data.get("client_version", {}).get("version"),
@@ -89,7 +84,7 @@ class AppDiscover:
             # "lastUsed": last_used,
             "pebbloServerVersion": get_pebblo_server_version(),
             "pebbloClientVersion": self.data.get("plugin_version", ""),
-            "clientVersion": None, #client_version,
+            "clientVersion": None,  # client_version,
             "chains": chain_details,
             "retrievals": retrievals_details,
         }
@@ -113,9 +108,10 @@ class AppDiscover:
         if instance:
             # Use SQLAlchemy's inspection to get the column attributes
             mapper = inspect(instance).mapper
-            return {column.key: getattr(instance, column.key) for column in mapper.columns}
+            return {
+                column.key: getattr(instance, column.key) for column in mapper.columns
+            }
         return {}
-
 
     def _fetch_chain_details(self, app_metadata) -> list[Chain]:
         """
@@ -217,14 +213,16 @@ class AppDiscover:
                 retrievals_details = self._fetch_retrievals_details(ai_app)
 
             # Create AiApp Model
-            ai_apps_data = self.create_ai_app_model(ai_app,
-                                                    instance_details=instance_details,
-                                                    chain_details=chain_details,
-                                                    retrievals_details=retrievals_details)
+            ai_apps_data = self.create_ai_app_model(
+                ai_app,
+                instance_details=instance_details,
+                chain_details=chain_details,
+                retrievals_details=retrievals_details,
+            )
 
-            status, message = self.db.update_data(table_obj=AppClass,
-                                                  app_obj=ai_app_obj,
-                                                  data=ai_apps_data)
+            status, message = self.db.update_data(
+                table_obj=ai_app_obj, data=ai_apps_data
+            )
             if not status:
                 logger.error(f"Process request failed: {message}")
                 return return_response(message=message, status_code=500)
@@ -241,8 +239,9 @@ class AppDiscover:
             logger.error(f"Discovery api failed, Error: {err}")
             # Getting error, We are rollback everything we did in this run.
             self.db.session.rollback()
-            return return_response(message=f"Discovery api failed, Error: {err}",
-                                   status_code=500)
+            return return_response(
+                message=f"Discovery api failed, Error: {err}", status_code=500
+            )
 
         else:
             # Commit will only happen when everything went well.
