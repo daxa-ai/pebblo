@@ -62,6 +62,8 @@ class AppDiscover:
 
     def process_request(self):
         try:
+            logger.info("Discovery API Request.")
+            print("Discovery API Request.")
             # create session
             self.db.create_session()
 
@@ -70,6 +72,7 @@ class AppDiscover:
             status, message = self.db.insert_data(table_obj=AiAppsTable,
                                            data=ai_apps_data)
             if not status:
+                print(f"Message: {message}")
                 return message
 
             # Fetch ai apps details
@@ -78,25 +81,28 @@ class AppDiscover:
                 return output
 
             for response in output:
-                logger.debug(response.data)
+                logger.debug(f"Discovery Response: {response.data}")
 
-                # Prepare response
-                message = "App Discover Request Processed Successfully"
-                response = DiscoverAIAppsResponseModel(
-                    pebblo_server_version=ai_apps_data.get("pebbloServerVersion"),
-                    message=message,
-                )
-                return PebbloJsonResponse.build(
-                    body=response.dict(exclude_none=True), status_code=200
-                )
         except Exception as err:
+            print(f"Exception: {err}")
             # Getting error, We are rollback everything we did in this run.
             self.db.session.rollback()
-            logger.errro(f"Discovery api failed, Error: {err}")
+            logger.error(f"Discovery api failed, Error: {err}")
 
         else:
+            print("In Commit Part")
             # Commit will only happen when everything went well.
             self.db.session.commit()
+            # Prepare response
+            message = "App Discover Request Processed Successfully"
+            response = DiscoverAIAppsResponseModel(
+                pebblo_server_version=ai_apps_data.get("pebbloServerVersion"),
+                message=message,
+            )
+            return PebbloJsonResponse.build(
+                body=response.dict(exclude_none=True), status_code=200
+            )
         finally:
+            print("In Connection closing Part")
             # Closing the session
             self.db.session.close()
