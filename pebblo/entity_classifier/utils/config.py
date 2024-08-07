@@ -38,6 +38,33 @@ class SecretEntities(Enum):
     GOOGLE_API_KEY = "google-api-key"
 
 
+class PIIGroups(Enum):
+    Identification = "pii-identification"
+    Financial = "pii-financial"
+    Secrets = "secrets_and_tokens"
+
+
+entity_group_conf_mapping = {
+    # Identification
+    Entities.US_SSN.value: (0.8, PIIGroups.Identification.value),
+    Entities.US_PASSPORT.value: (0.4, PIIGroups.Identification.value),
+    Entities.US_DRIVER_LICENSE.value: (0.4, PIIGroups.Identification.value),
+    # Financial
+    Entities.US_ITIN.value: (0.8, PIIGroups.Financial.value),
+    Entities.CREDIT_CARD.value: (0.8, PIIGroups.Financial.value),
+    Entities.US_BANK_NUMBER.value: (0.4, PIIGroups.Financial.value),
+    Entities.IBAN_CODE.value: (0.8, PIIGroups.Financial.value),
+    # Secret
+    SecretEntities.GITHUB_TOKEN.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.SLACK_TOKEN.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.AWS_ACCESS_KEY.value: (0.45, PIIGroups.Secrets.value),
+    SecretEntities.AWS_SECRET_KEY.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.AZURE_KEY_ID.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.AZURE_CLIENT_SECRET.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.GOOGLE_API_KEY.value: (0.8, PIIGroups.Secrets.value),
+}
+
+
 class ConfidenceScore(Enum):
     Entity = "0.8"  # based on this score entity output is finalized
     EntityMinScore = "0.45"  # It denotes the pattern's strength

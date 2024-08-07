@@ -8,6 +8,7 @@ from pebblo.entity_classifier.utils.config import (
     ConfidenceScore,
     Entities,
     SecretEntities,
+    entity_group_conf_mapping,
     secret_entities_context_mapping,
 )
 from pebblo.entity_classifier.utils.regex_pattern import regex_secrets_patterns
@@ -15,8 +16,8 @@ from pebblo.utils import get_confidence_score_label
 
 
 def get_entities(entities_list, response):
-    entity_groups = dict()
-    entity_details = dict()
+    entity_groups: dict = dict()
+    entity_details: dict = dict()
     mapped_entity = None
     total_count = 0
     for entity in response:
@@ -31,6 +32,7 @@ def get_entities(entities_list, response):
                 "confidence_score": get_confidence_score_label(
                     entity["confidence_score"]
                 ),
+                "entity_group": entity_group_conf_mapping[mapped_entity][1],
             }
             if mapped_entity in entity_details.keys():
                 entity_details[mapped_entity].append(entity_data)
