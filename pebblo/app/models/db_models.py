@@ -174,7 +174,6 @@ class AiSnippet(BaseModel):
     policyViolations: Optional[List[dict]] = []
     # label_feedback: Optional[List[LabelFeedback]] = []
 
-
 class LoaderDocs(BaseModel):
     pb_id: Optional[str]
     pb_checksum: str
@@ -185,7 +184,20 @@ class LoaderDocs(BaseModel):
     topic_count: Optional[int]
     topics: Optional[dict]
 
-
 class LoaderDocResponseModel(BaseModel):
     docs: List[LoaderDocs] = []
     message: Optional[str] = None
+
+class AiDocs(BaseModel):
+    id: Optional[str]
+    doc: str
+    sourceSize: int
+    fileOwner: str
+    sourcePath: str
+    loaderSourcePath: str
+    lastModified: Optional[str]
+    entityCount: Optional[int]
+    entities: Optional[dict]
+    topicCount: Optional[int]
+    topics: Optional[dict]
+    authorizedIdentities: list
