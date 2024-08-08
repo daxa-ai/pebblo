@@ -6,6 +6,7 @@ import yaml
 from pydantic import BaseSettings, Field
 
 from pebblo.app.config.config_validation import validate_config, validate_input
+from pebblo.app.enums.common import StorageTypes
 
 # Default config value
 dir_path = pathlib.Path().absolute()
@@ -45,12 +46,18 @@ class ClassifierConfig(BaseSettings):
     anonymizeSnippets: bool = Field(default=True)
 
 
+class StorageConfig(BaseSettings):
+    type: str = Field(default=StorageTypes.FILE.value)
+    # This is default value for current version(0.1.18), it needs to be changed in next version to db.
+
+
 # ConfigFile BaseModel
 class Config(BaseSettings):
     daemon: PortConfig
     reports: ReportConfig
     logging: LoggingConfig
     classifier: ClassifierConfig
+    storage: StorageConfig
 
 
 var_server_config: ContextVar[Config] = ContextVar("server_config", default=None)
@@ -67,6 +74,7 @@ def load_config(path: str) -> Tuple[dict, Config]:
             ),
             logging=LoggingConfig(),
             classifier=ClassifierConfig(anonymizeSnippets=False),
+            storage=StorageConfig(type="file"),
         )
         if not path:
             # Setting Default config details
@@ -95,4 +103,4 @@ def load_config(path: str) -> Tuple[dict, Config]:
 
     except Exception as err:
         print(f"Error while loading config details, err: {err}")
-        return {}
+        return {}, {}
