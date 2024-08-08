@@ -43,7 +43,7 @@ class AiBaseApp(BaseModel):
     instanceDetails: Optional[InstanceDetails]
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     policyViolations: Optional[
-        List[dict]
+        List[Dict]
     ] = []  # list of policy id, title and other details
     pebbloServerVersion: Optional[str] = None
     pebbloClientVersion: Optional[str] = None

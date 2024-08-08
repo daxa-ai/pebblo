@@ -22,6 +22,7 @@ class LoaderMetadata(BaseModel):
 
 
 class AiDataModel(BaseModel):
+    load_id: UUID
     data: Optional[Union[list, str]]
     entityCount: int
     entities: dict
