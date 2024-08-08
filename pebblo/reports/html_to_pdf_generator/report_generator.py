@@ -62,7 +62,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
             load_history_items = data["loadHistory"]["history"]
         findings_count = data["reportSummary"].get("findings", 0)
         clientVersion = data.get("pebbloClientVersion", "")
-        if "clientVersion" in data and data["clientVersion"]["version"] != "":
+        if data["clientVersion"]:
             versionDetails = data["clientVersion"]
             clientVersion = versionDetails.get("name") + " "  + versionDetails.get("version")
         source_html = template.render(
