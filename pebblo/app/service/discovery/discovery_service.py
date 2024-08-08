@@ -6,9 +6,9 @@ from sqlalchemy.inspection import inspect
 from pebblo.app.models.models import (
     AiApp,
     Chain,
-    # FrameworkInfo,
+    FrameworkInfo,
     InstanceDetails,
-    # Metadata,
+    Metadata,
     PackageInfo,
     VectorDB,
 )
@@ -32,7 +32,7 @@ class AppDiscover:
         """
         Return current datetime
         """
-        return datetime.now()
+        return datetime.now().isoformat()
 
     def _fetch_runtime_instance_details(self) -> InstanceDetails:
         """
@@ -52,7 +52,7 @@ class AppDiscover:
             platform=runtime_dict.get("platform"),
             os=runtime_dict.get("os"),
             osVersion=runtime_dict.get("os_version"),
-            # createdAt=datetime.now()
+            createdAt=self._get_current_datetime()
         )
         logger.debug(
             f"AI_APPS [{self.app_name}]: Instance Details: {instance_details_model.dict()}"
@@ -67,24 +67,25 @@ class AppDiscover:
         """
         logger.debug("Creating AI App model")
         # Initialize Variables
-        # last_used = datetime.now()
+        current_time = self._get_current_datetime()
+        last_used = current_time
 
-        # metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
-        # client_version = FrameworkInfo(
-        #     name=self.data.get("client_version", {}).get("name"),
-        #     version=self.data.get("client_version", {}).get("version"),
-        # )
+        metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
+        client_version = FrameworkInfo(
+            name=self.data.get("client_version", {}).get("name"),
+            version=self.data.get("client_version", {}).get("version"),
+        )
         ai_app_obj = {
-            # "metadata": metadata,
+            "metadata": metadata,
             "description": self.data.get("description", "-"),
             "owner": self.data.get("owner", ""),
             "pluginVersion": self.data.get("plugin_version"),
             "instanceDetails": instance_details,
             "framework": self.data.get("framework"),
-            # "lastUsed": last_used,
+            "lastUsed": last_used,
             "pebbloServerVersion": get_pebblo_server_version(),
             "pebbloClientVersion": self.data.get("plugin_version", ""),
-            "clientVersion": None,  # client_version,
+            "clientVersion": client_version,
             "chains": chain_details,
             "retrievals": retrievals_details,
         }
@@ -95,10 +96,9 @@ class AppDiscover:
     def _get_app_class(self):
         AppClass = None
         load_id = self.data.get("load_id") or None
-        run_id = self.data.get("run_id") or None
         if load_id:
             AppClass = AiDataLoaderTable
-        elif run_id:
+        else:
             AppClass = AiAppTable
 
         return AppClass
@@ -182,7 +182,6 @@ class AppDiscover:
             chain_details = []
             retrievals_details = []
             load_id = self.data.get("load_id") or None
-            run_id = self.data.get("run_id") or None
 
             AppClass = self._get_app_class()
             if not AppClass:
@@ -193,7 +192,7 @@ class AppDiscover:
             self.db.create_session()
 
             # get or create app
-            ai_app_obj = get_or_create_app(self.db, self.app_name, load_id, AppClass)
+            ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass)
             if not ai_app_obj:
                 message = "Unable to get or create aiapp details"
                 return return_response(message=message, status_code=500)
@@ -203,7 +202,7 @@ class AppDiscover:
             # Get instance details
             instance_details = self._fetch_runtime_instance_details()
 
-            if run_id:
+            if load_id is None:
                 # its retrieval application
 
                 # Get chain details

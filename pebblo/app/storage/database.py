@@ -5,8 +5,8 @@ from abc import ABC, abstractmethod
 
 
 class Database(ABC):
-    def __init__(self):
-        pass
+    def __init__(self, engine):
+        self.engine = engine
 
     @abstractmethod
     def create_session(self):

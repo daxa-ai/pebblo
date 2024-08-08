@@ -13,7 +13,6 @@ class CacheDir(Enum):
     """
     Enums for cache directory
     """
-
     METADATA_FOLDER = "/metadata"
     METADATA_FILE_PATH = f"{METADATA_FOLDER}/metadata.json"
     APPLICATION_METADATA_FILE_PATH = f"{METADATA_FOLDER}/app_metadata.json"
@@ -30,6 +29,7 @@ class CacheDir(Enum):
         f"http://{config_details.get('daemon', {}).get('host')}:"
         f"{config_details.get('daemon', {}).get('port')}"
     )
+    SQLITE_ENGINE = "sqlite:///{}/pebblo.db"
 
 
 class ReportConstants(Enum):

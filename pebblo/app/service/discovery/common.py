@@ -3,7 +3,7 @@ from pebblo.log import get_logger
 logger = get_logger(__name__)
 
 
-def get_or_create_app(db, app_name, load_id, app_class):
+def get_or_create_app(db, app_name, app_class):
     """
     Gets or creates an AiApp.
     """
@@ -13,7 +13,7 @@ def get_or_create_app(db, app_name, load_id, app_class):
         logger.info(f"AiApps: {ai_app}")
         return ai_app
 
-    ai_app = {"name": app_name, "id": load_id}
+    ai_app = {"name": app_name}
     response, app_object = db.insert_data(app_class, ai_app)
 
     if response:
