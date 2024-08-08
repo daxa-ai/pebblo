@@ -1,0 +1,108 @@
+{
+  "sidebar": [
+    {
+      "type": "doc",
+      "id": "introduction",
+      "label": "Overview"
+    },
+    {
+      "type": "doc",
+      "id": "installation",
+      "label": "Installation"
+    },
+    {
+      "type": "doc",
+      "id": "development",
+      "label": "Development Environment"
+    },
+    {
+      "type": "doc",
+      "id": "config",
+      "label": "Configuration"
+    },
+    {
+      "type": "category",
+      "label": "Pebblo",
+      "items": [
+        {
+          "type": "doc",
+          "label": "Server",
+          "id": "daemon"
+        },
+        {
+          "type": "doc",
+          "label": "Entity Classifier",
+          "id": "entityclassifier"
+        },
+        {
+          "type": "doc",
+          "label": "Topic Classifier",
+          "id": "topicclassifier"
+        }
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Pebblo UI",
+      "items": [
+        {
+          "type": "doc",
+          "label": "Safe Loader",
+          "id": "safe_loader"
+        },
+        {
+          "type": "doc",
+          "label": "Safe Retriever",
+          "id": "safe_retriever"
+        }
+      ]
+    },
+    {
+      "type": "doc",
+      "id": "rag",
+      "label": "Safe DataLoader for Langchain"
+    },
+    {
+      "type": "doc",
+      "id": "retrieval_chain",
+      "label": "Safe Retriever for Langchain"
+    },
+    {
+      "type": "doc",
+      "id": "reports",
+      "label": "Reports"
+    },
+    {
+      "type": "category",
+      "label": "Samples",
+      "items": [
+        {
+          "type": "category",
+          "label": "Safe Loader Samples",
+          "items": [
+            {
+              "type": "link",
+              "label": "1. Google Drive-Qdrant Safe Loader Sample",
+              "href": "https://github.com/daxa-ai/pebblo/tree/main/pebblo_safeloader/langchain/identity-rag"
+            },
+            {
+              "type": "link",
+              "label": "2. CSV Loader-Chroma Safe Loader Sample",
+              "href": "https://github.com/daxa-ai/pebblo/tree/main/pebblo_safeloader/langchain/acme-corp-rag"
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "label": "Safe Retriever Samples",
+          "id": "safe_retriever_samples"
+        }
+      ]
+    },
+    {
+      "type": "doc",
+      "id": "troubleshooting",
+      "label": "Troubleshooting Guide"
+    }
+  ]
+}
