@@ -1,4 +1,3 @@
-
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 
@@ -27,10 +26,13 @@ class SQLiteClient(Database):
     def delete(self, query):
         pass
 
-    def insert_data(self, table_obj, data):
+    def insert_data(self, table_obj, data, **kwargs):
         try:
             logger.info(f"Insert data into table {table_obj}, Data: {data}")
-            new_record = table_obj(data=data)
+            if table_obj.__name__ == "AiRetrievalTable":
+                new_record = table_obj(data=data, app_id=kwargs.get("app_id"))
+            else:
+                new_record = table_obj(data=data)
             self.session.add(new_record)
             logger.info("Data inserted into the table.")
             return True, new_record
