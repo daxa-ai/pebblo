@@ -12,7 +12,7 @@ from pebblo.app.models.models import (
     PackageInfo,
     VectorDB,
 )
-from pebblo.app.models.sqltable import AiAppsTable, AiDataLoaderTable
+from pebblo.app.models.sqltable import AiAppTable, AiDataLoaderTable
 from pebblo.app.service.discovery.common import get_or_create_app
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import get_pebblo_server_version, return_response
@@ -99,7 +99,7 @@ class AppDiscover:
         if load_id:
             AppClass = AiDataLoaderTable
         elif run_id:
-            AppClass = AiAppsTable
+            AppClass = AiAppTable
 
         return AppClass
 
@@ -228,7 +228,7 @@ class AppDiscover:
                 return return_response(message=message, status_code=500)
 
             # Fetch ai apps details
-            # status, output = self.db.get_objects(AiAppsTable)
+            # status, output = self.db.get_objects(AiAppTable)
             # if not status:
             #     return return_response(message=output, status_code=500)
             #

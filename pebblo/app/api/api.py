@@ -3,7 +3,6 @@ from fastapi import APIRouter
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import StorageTypes
 from pebblo.app.service.prompt_gov import PromptGov
-from pebblo.app.service.prompt_service import Prompt
 from pebblo.app.storage.storage_config import Storage
 
 config_details = var_server_config_dict.get()
@@ -46,7 +45,13 @@ class App:
     @staticmethod
     def prompt(data: dict):
         # "/prompt" API entrypoint
-        prompt_obj = Prompt(data=data)
+        # Execute discover object based on a storage type
+        storage_type = config_details.get("storage", {}).get(
+            "type", StorageTypes.FILE.value
+        )
+
+        storage_obj = Storage()
+        prompt_obj = storage_obj.get_prompt_obj(storage_type, data)
         response = prompt_obj.process_request()
         return response
 
