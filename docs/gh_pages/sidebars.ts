@@ -62,6 +62,13 @@ const sidebars: SidebarsConfig = {
       label: "Safe Retriever for Langchain", // sidebar label
     },
     {
+      type: "category",
+      label: "LlamaIndex", // sidebar label
+      items: [
+        { type: "doc", label: "Safe DataReader", id: "llama_index_safe_reader" },
+      ],
+    },
+    {
       type: "doc",
       id: "reports", // document ID
       label: "Reports", // sidebar label
