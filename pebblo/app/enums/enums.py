@@ -13,6 +13,7 @@ class CacheDir(Enum):
     """
     Enums for cache directory
     """
+
     METADATA_FOLDER = "/metadata"
     METADATA_FILE_PATH = f"{METADATA_FOLDER}/metadata.json"
     APPLICATION_METADATA_FILE_PATH = f"{METADATA_FOLDER}/app_metadata.json"

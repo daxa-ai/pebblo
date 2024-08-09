@@ -3,8 +3,10 @@ from datetime import datetime
 
 from sqlalchemy.inspection import inspect
 
-from pebblo.app.models.models import (
+from pebblo.app.enums.enums import ApplicationTypes
+from pebblo.app.models.db_models import (
     AiApp,
+    AiDataLoader,
     Chain,
     FrameworkInfo,
     InstanceDetails,
@@ -52,20 +54,20 @@ class AppDiscover:
             platform=runtime_dict.get("platform"),
             os=runtime_dict.get("os"),
             osVersion=runtime_dict.get("os_version"),
-            createdAt=self._get_current_datetime()
+            createdAt=self._get_current_datetime(),
         )
         logger.debug(
             f"AI_APPS [{self.app_name}]: Instance Details: {instance_details_model.dict()}"
         )
         return instance_details_model
 
-    def create_ai_app_model(
-        self, ai_app, instance_details, chain_details, retrievals_details
+    def create_app_obj(
+        self, ai_app, instance_details, chain_details, retrievals_details, app_type
     ):
         """
         Create an AI App Model and return the corresponding model object
         """
-        logger.debug("Creating AI App model")
+        logger.debug("Creating App model object")
         # Initialize Variables
         current_time = self._get_current_datetime()
         last_used = current_time
@@ -90,18 +92,27 @@ class AppDiscover:
             "retrievals": retrievals_details,
         }
         ai_app.update(ai_app_obj)
-        ai_apps_model = AiApp(**ai_app)
-        return ai_apps_model.dict()
 
-    def _get_app_class(self):
+        AppModel = None
+        if app_type == ApplicationTypes.LOADER.value:
+            AppModel = AiDataLoader
+        elif app_type == ApplicationTypes.RETRIEVAL.value:
+            AppModel = AiApp
+        model_obj = AppModel(**ai_app)
+        return model_obj.dict()
+
+    def _get_app_type_and_class(self):
         AppClass = None
+        app_type = None
         load_id = self.data.get("load_id") or None
         if load_id:
             AppClass = AiDataLoaderTable
+            app_type = ApplicationTypes.LOADER.value
         else:
             AppClass = AiAppTable
+            app_type = ApplicationTypes.RETRIEVAL.value
 
-        return AppClass
+        return app_type, AppClass
 
     def model_to_dict(self, instance):
         """Convert SQLAlchemy model instance to dictionary."""
@@ -182,8 +193,7 @@ class AppDiscover:
             chain_details = []
             retrievals_details = []
             load_id = self.data.get("load_id") or None
-
-            AppClass = self._get_app_class()
+            app_type, AppClass = self._get_app_type_and_class()
             if not AppClass:
                 message = "No load_id's or run_id's are present, Invalid Request"
                 return return_response(message=message, status_code=404)
@@ -192,7 +202,7 @@ class AppDiscover:
             self.db.create_session()
 
             # get or create app
-            ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass)
+            ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass, self.data)
             if not ai_app_obj:
                 message = "Unable to get or create aiapp details"
                 return return_response(message=message, status_code=500)
@@ -202,7 +212,7 @@ class AppDiscover:
             # Get instance details
             instance_details = self._fetch_runtime_instance_details()
 
-            if load_id is None:
+            if app_type == ApplicationTypes.RETRIEVAL.value:
                 # its retrieval application
 
                 # Get chain details
@@ -212,11 +222,12 @@ class AppDiscover:
                 retrievals_details = self._fetch_retrievals_details(ai_app)
 
             # Create AiApp Model
-            ai_apps_data = self.create_ai_app_model(
+            ai_apps_data = self.create_app_obj(
                 ai_app,
                 instance_details=instance_details,
                 chain_details=chain_details,
                 retrievals_details=retrievals_details,
+                app_type=app_type,
             )
 
             status, message = self.db.update_data(

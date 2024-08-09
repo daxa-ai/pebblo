@@ -25,7 +25,8 @@ class App:
         )
 
         storage_obj = Storage()
-        discovery_obj = storage_obj.get_discovery_object(storage_type, data)
+        discovery = storage_obj.get_object("discovery", storage_type)
+        discovery_obj = discovery(data)
         response = discovery_obj.process_request()
         return response
 
@@ -38,7 +39,8 @@ class App:
         )
 
         storage_obj = Storage()
-        loader_doc_obj = storage_obj.get_loader_doc_object(storage_type, data)
+        loader_doc = storage_obj.get_object("storage", storage_type)
+        loader_doc_obj = loader_doc(data)
         response = loader_doc_obj.process_request()
         return response
 

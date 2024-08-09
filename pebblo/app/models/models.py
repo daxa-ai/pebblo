@@ -22,6 +22,7 @@ class LoaderMetadata(BaseModel):
 
 
 class AiDataModel(BaseModel):
+    load_id: UUID
     data: Optional[Union[list, str]]
     entityCount: int
     entities: dict
@@ -123,6 +124,7 @@ class RetrievalData(BaseModel):
 class AiApp(BaseModel):
     # metadata: Metadata
     name: str
+    run_id: Optional[UUID]
     description: Optional[str]
     owner: str
     pluginVersion: Optional[str]

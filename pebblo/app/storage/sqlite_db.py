@@ -3,9 +3,9 @@ from sqlalchemy.orm import sessionmaker
 
 from pebblo.log import get_logger
 
-from .database import Database
 from ..enums.enums import CacheDir
 from ..utils.utils import get_full_path
+from .database import Database
 
 logger = get_logger(__name__)
 
@@ -23,7 +23,6 @@ class SQLiteClient(Database):
         sqlite_db_path = CacheDir.SQLITE_ENGINE.value.format(full_path)
         engine = create_engine(sqlite_db_path, echo=True)
         return engine
-
 
     def create_session(self):
         Session = sessionmaker(bind=self.engine)
