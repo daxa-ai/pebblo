@@ -49,7 +49,12 @@ export const APP_DATA =
 export const PORT = window.location.port;
 
 export const SERVER_VERSION = APP_DATA_RESP?.pebbloServerVersion || "";
-export const CLIENT_VERSION = APP_DATA?.pebbloClientVersion || "";
+export const CLIENT_VERSION = APP_DATA?.clientVersion?.version || "";
+const CLIENT_NAME = APP_DATA?.clientVersion?.name || "";
+
+const PEBBLO_CLIENT_VERSION = CLIENT_VERSION
+  ? `${CLIENT_NAME} ${CLIENT_VERSION}`
+  : APP_DATA?.pebbloClientVersion;
 
 export const NO_APPLICATIONS_FOUND = APP_DATA
   ? Object.keys(APP_DATA)?.length === 0
@@ -131,8 +136,8 @@ export const APP_DETAILS = [
     value: getFormattedDate(APP_DATA?.instanceDetails?.createdAt, false, false),
   },
   {
-    label: "Pebblo Client Version",
-    value: CLIENT_VERSION,
+    label: "Pebblo Client",
+    value: PEBBLO_CLIENT_VERSION,
   },
   {
     label: "Path",
