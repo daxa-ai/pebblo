@@ -24,11 +24,6 @@ logger = get_logger(__name__)
 
 
 class AppDiscover:
-    def __init__(self, data):
-        self.db = SQLiteClient()
-        self.data = data
-        self.app_name = data.get("name")
-
     @staticmethod
     def _get_current_datetime():
         """
@@ -187,8 +182,11 @@ class AppDiscover:
 
         return retrievals_details
 
-    def process_request(self):
+    def process_request(self, data):
         try:
+            self.db = SQLiteClient()
+            self.data = data
+            self.app_name = data.get("name")
             logger.info("Discovery API Request.")
             chain_details = []
             retrievals_details = []
