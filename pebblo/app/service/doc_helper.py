@@ -250,8 +250,8 @@ class LoaderHelper:
         source_path = doc.get("sourcePath")
         snippet = Snippets(
             snippet=doc["doc"],
-            entityDetails=doc["entityDetails"],
-            topicDetails=doc["topicDetails"],
+            entityDetails=doc.get("entityDetails", {}),
+            topicDetails=doc.get("topicDetails", {}),
             sourcePath=source_path,
             fileOwner=doc.get("fileOwner", "-"),
             authorizedIdentities=doc.get("authorizedIdentities", []),
