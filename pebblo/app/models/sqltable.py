@@ -4,12 +4,11 @@ from sqlalchemy.ext.declarative import declarative_base
 # Create an engine that stores data in the local directory's my_database.db file.
 engine = create_engine("sqlite:///pebblo.db", echo=True)
 
-
 Base = declarative_base()
 
 
-class AiAppsTable(Base):
-    __tablename__ = "aiapps"
+class AiAppTable(Base):
+    __tablename__ = "aiapp"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
@@ -17,6 +16,13 @@ class AiAppsTable(Base):
 
 class AiDataLoaderTable(Base):
     __tablename__ = "aidataloader"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    data = Column(JSON)
+
+
+class AiRetrievalTable(Base):
+    __tablename__ = "airetrieval"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
