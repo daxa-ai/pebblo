@@ -63,7 +63,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         findings_count = data["reportSummary"].get("findings", 0)
         clientVersion = ""
         versionObj = data.get("clientVersion", None)
-        if versionObj != None and versionObj["version"] != None:
+        if versionObj is not None and versionObj["version"] is not None:
             clientVersion = (
                 versionObj.get("name", "") + " " + versionObj.get("version", "")
             )
