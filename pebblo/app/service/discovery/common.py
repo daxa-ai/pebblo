@@ -16,9 +16,9 @@ def get_or_create_app(db, app_name, app_class, data):
 
         ai_app = {"name": app_name}
         if data.get("load_id"):
-            ai_app["load_id"] = data.get("load_id")
+            ai_app["id"] = data["load_id"]
         else:
-            ai_app["run_id"] = data.get("run_id")
+            ai_app["id"] = data["run_id"]
 
         response, app_object = db.insert_data(app_class, ai_app)
 
