@@ -1,6 +1,6 @@
 # Prompt API with database implementation.
 
-from pebblo.app.models.models import RetrievalContext, RetrievalData
+from pebblo.app.models.db_models import RetrievalContext, RetrievalData
 from pebblo.app.models.sqltable import AiAppTable, AiRetrievalTable
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import return_response
@@ -90,6 +90,9 @@ class Prompt:
             self.application_name = self.data.get("name")
 
             logger.info("Prompt API request processing started")
+
+            # create session
+            self.db.create_session()
 
             # getting prompt data
             prompt_data = self._fetch_classified_data(

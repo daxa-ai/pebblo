@@ -13,6 +13,10 @@ class AppLoaderDoc:
         self.db = SQLiteClient()
         self.data = data
         self.app_name = data.get("name")
+
+        # create session
+        self.db.create_session()
+
         message = "Loader Doc API Request processed successfully"
 
         response = LoaderDocResponseModel(docs=[], message=message)

@@ -193,7 +193,12 @@ class AppDiscover:
             self.db = SQLiteClient()
             self.data = data
             self.app_name = data.get("name")
+
             logger.info("Discovery API Request.")
+
+            # create session
+            self.db.create_session()
+
             chain_details = []
             retrievals_details = []
             load_id = self.data.get("load_id") or None
@@ -202,8 +207,7 @@ class AppDiscover:
                 message = "No load_id's or run_id's are present, Invalid Request"
                 return return_response(message=message, status_code=404)
 
-            # create session
-            self.db.create_session()
+
 
             # get or create app
             ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass, self.data)

@@ -82,7 +82,6 @@ class Chain(BaseModel):
 
 
 class AiDataModel(BaseModel):
-    load_id: str
     data: Optional[Union[list, str]]
     entityCount: int
     entities: dict
