@@ -11,3 +11,4 @@ classifier:
   anonymizeSnippets: False
 storage:
   type: db
+  db: sqlite

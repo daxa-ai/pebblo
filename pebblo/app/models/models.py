@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List, Optional, Union
 from uuid import UUID
 
@@ -6,8 +5,8 @@ from pydantic import BaseModel, Field
 
 
 class Metadata(BaseModel):
-    createdAt: datetime
-    modifiedAt: datetime
+    createdAt: str
+    modifiedAt: str
 
     class Config:
         arbitrary_types_allowed = True
@@ -19,7 +18,7 @@ class LoaderMetadata(BaseModel):
     sourceType: str
     sourceSize: int
     sourceFiles: Optional[list] = []
-    lastModified: Optional[datetime]
+    lastModified: Optional[str]
 
 
 class AiDataModel(BaseModel):
@@ -41,7 +40,7 @@ class AiDocs(BaseModel):
     fileOwner: str
     sourcePath: str
     loaderSourcePath: str
-    lastModified: Optional[datetime]
+    lastModified: Optional[str]
     entityCount: Optional[int]
     entities: Optional[dict]
     topicCount: Optional[int]
@@ -65,7 +64,7 @@ class InstanceDetails(BaseModel):
     platform: Optional[str]
     os: Optional[str]
     osVersion: Optional[str]
-    createdAt: Optional[datetime]
+    createdAt: Optional[str]
 
 
 class PackageInfo(BaseModel):
@@ -124,12 +123,13 @@ class RetrievalData(BaseModel):
 class AiApp(BaseModel):
     # metadata: Metadata
     name: str
+    run_id: Optional[UUID]
     description: Optional[str]
     owner: str
     pluginVersion: Optional[str]
     instanceDetails: Optional[InstanceDetails]
     framework: Optional[FrameworkInfo]
-    lastUsed: Optional[datetime]
+    lastUsed: Optional[str]
     pebbloServerVersion: Optional[str]
     pebbloClientVersion: Optional[str]
     clientVersion: Union[FrameworkInfo, None] = None
@@ -145,7 +145,7 @@ class Summary(BaseModel):
     filesWithFindings: int
     dataSources: int
     owner: str
-    createdAt: datetime
+    createdAt: str
 
 
 class TopFindings(BaseModel):
@@ -182,7 +182,7 @@ class LoadHistory(BaseModel):
     reportName: str
     findings: int
     filesWithFindings: int
-    generatedOn: datetime
+    generatedOn: str
 
 
 class ReportModel(BaseModel):

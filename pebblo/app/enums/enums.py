@@ -30,6 +30,7 @@ class CacheDir(Enum):
         f"http://{config_details.get('daemon', {}).get('host')}:"
         f"{config_details.get('daemon', {}).get('port')}"
     )
+    SQLITE_ENGINE = "sqlite:///{}/pebblo.db"
 
 
 class ReportConstants(Enum):

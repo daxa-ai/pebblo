@@ -3,12 +3,14 @@ from datetime import datetime
 
 from sqlalchemy.inspection import inspect
 
-from pebblo.app.models.models import (
+from pebblo.app.enums.enums import ApplicationTypes
+from pebblo.app.models.db_models import (
     AiApp,
+    AiDataLoader,
     Chain,
-    # FrameworkInfo,
+    FrameworkInfo,
     InstanceDetails,
-    # Metadata,
+    Metadata,
     PackageInfo,
     VectorDB,
 )
@@ -22,17 +24,18 @@ logger = get_logger(__name__)
 
 
 class AppDiscover:
-    def __init__(self, data):
-        self.db = SQLiteClient()
-        self.data = data
-        self.app_name = data.get("name")
+
+    def __init__(self):
+        self.db = None
+        self.data = None
+        self.app_name = None
 
     @staticmethod
     def _get_current_datetime():
         """
         Return current datetime
         """
-        return datetime.now()
+        return datetime.now().isoformat()
 
     def _fetch_runtime_instance_details(self) -> InstanceDetails:
         """
@@ -52,56 +55,65 @@ class AppDiscover:
             platform=runtime_dict.get("platform"),
             os=runtime_dict.get("os"),
             osVersion=runtime_dict.get("os_version"),
-            # createdAt=datetime.now()
+            createdAt=self._get_current_datetime(),
         )
         logger.debug(
             f"AI_APPS [{self.app_name}]: Instance Details: {instance_details_model.dict()}"
         )
         return instance_details_model
 
-    def create_ai_app_model(
-        self, ai_app, instance_details, chain_details, retrievals_details
+    def create_app_obj(
+        self, ai_app, instance_details, chain_details, retrievals_details, app_type
     ):
         """
         Create an AI App Model and return the corresponding model object
         """
-        logger.debug("Creating AI App model")
+        logger.debug("Creating App model object")
         # Initialize Variables
-        # last_used = datetime.now()
+        current_time = self._get_current_datetime()
+        last_used = current_time
 
-        # metadata = Metadata(createdAt=datetime.now(), modifiedAt=datetime.now())
-        # client_version = FrameworkInfo(
-        #     name=self.data.get("client_version", {}).get("name"),
-        #     version=self.data.get("client_version", {}).get("version"),
-        # )
+        metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
+        client_version = FrameworkInfo(
+            name=self.data.get("client_version", {}).get("name"),
+            version=self.data.get("client_version", {}).get("version"),
+        )
         ai_app_obj = {
-            # "metadata": metadata,
+            "metadata": metadata,
             "description": self.data.get("description", "-"),
             "owner": self.data.get("owner", ""),
             "pluginVersion": self.data.get("plugin_version"),
             "instanceDetails": instance_details,
             "framework": self.data.get("framework"),
-            # "lastUsed": last_used,
+            "lastUsed": last_used,
             "pebbloServerVersion": get_pebblo_server_version(),
             "pebbloClientVersion": self.data.get("plugin_version", ""),
-            "clientVersion": None,  # client_version,
+            "clientVersion": client_version,
             "chains": chain_details,
             "retrievals": retrievals_details,
         }
         ai_app.update(ai_app_obj)
-        ai_apps_model = AiApp(**ai_app)
-        return ai_apps_model.dict()
 
-    def _get_app_class(self):
+        AppModel = None
+        if app_type == ApplicationTypes.LOADER.value:
+            AppModel = AiDataLoader
+        elif app_type == ApplicationTypes.RETRIEVAL.value:
+            AppModel = AiApp
+        model_obj = AppModel(**ai_app)
+        return model_obj.dict()
+
+    def _get_app_type_and_class(self):
         AppClass = None
+        app_type = None
         load_id = self.data.get("load_id") or None
-        run_id = self.data.get("run_id") or None
         if load_id:
             AppClass = AiDataLoaderTable
-        elif run_id:
+            app_type = ApplicationTypes.LOADER.value
+        else:
             AppClass = AiAppTable
+            app_type = ApplicationTypes.RETRIEVAL.value
 
-        return AppClass
+        return app_type, AppClass
 
     def model_to_dict(self, instance):
         """Convert SQLAlchemy model instance to dictionary."""
@@ -176,24 +188,29 @@ class AppDiscover:
 
         return retrievals_details
 
-    def process_request(self):
+    def process_request(self, data):
         try:
-            logger.info("Discovery API Request.")
-            chain_details = []
-            retrievals_details = []
-            load_id = self.data.get("load_id") or None
-            run_id = self.data.get("run_id") or None
+            self.db = SQLiteClient()
+            self.data = data
+            self.app_name = data.get("name")
 
-            AppClass = self._get_app_class()
-            if not AppClass:
-                message = "No load_id's or run_id's are present, Invalid Request"
-                return return_response(message=message, status_code=404)
+            logger.info("Discovery API Request.")
 
             # create session
             self.db.create_session()
 
+            chain_details = []
+            retrievals_details = []
+            load_id = self.data.get("load_id") or None
+            app_type, AppClass = self._get_app_type_and_class()
+            if not AppClass:
+                message = "No load_id's or run_id's are present, Invalid Request"
+                return return_response(message=message, status_code=404)
+
+
+
             # get or create app
-            ai_app_obj = get_or_create_app(self.db, self.app_name, load_id, AppClass)
+            ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass, self.data)
             if not ai_app_obj:
                 message = "Unable to get or create aiapp details"
                 return return_response(message=message, status_code=500)
@@ -203,7 +220,7 @@ class AppDiscover:
             # Get instance details
             instance_details = self._fetch_runtime_instance_details()
 
-            if run_id:
+            if app_type == ApplicationTypes.RETRIEVAL.value:
                 # its retrieval application
 
                 # Get chain details
@@ -213,11 +230,12 @@ class AppDiscover:
                 retrievals_details = self._fetch_retrievals_details(ai_app)
 
             # Create AiApp Model
-            ai_apps_data = self.create_ai_app_model(
+            ai_apps_data = self.create_app_obj(
                 ai_app,
                 instance_details=instance_details,
                 chain_details=chain_details,
                 retrievals_details=retrievals_details,
+                app_type=app_type,
             )
 
             status, message = self.db.update_data(

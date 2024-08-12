@@ -1,8 +1,14 @@
 from sqlalchemy import JSON, Column, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
+from pebblo.app.enums.enums import CacheDir
+from pebblo.app.utils.utils import get_full_path
+
 # Create an engine that stores data in the local directory's my_database.db file.
-engine = create_engine("sqlite:///pebblo.db", echo=True)
+
+full_path = get_full_path(CacheDir.HOME_DIR.value)
+sqlite_db_path = CacheDir.SQLITE_ENGINE.value.format(full_path)
+engine = create_engine(sqlite_db_path, echo=True)
 
 Base = declarative_base()
 

@@ -1,6 +1,6 @@
 import pathlib
 from contextvars import ContextVar
-from typing import Tuple
+from typing import Tuple, Union
 
 import yaml
 from pydantic import BaseSettings, Field
@@ -48,6 +48,7 @@ class ClassifierConfig(BaseSettings):
 
 class StorageConfig(BaseSettings):
     type: str = Field(default=StorageTypes.FILE.value)
+    db: Union[str, None] = Field(default=StorageTypes.DATABASE.value)
     # This is default value for current version(0.1.18), it needs to be changed in next version to db.
 
 
@@ -74,7 +75,7 @@ def load_config(path: str) -> Tuple[dict, Config]:
             ),
             logging=LoggingConfig(),
             classifier=ClassifierConfig(anonymizeSnippets=False),
-            storage=StorageConfig(type="file"),
+            storage=StorageConfig(type="file", db=None),
         )
         if not path:
             # Setting Default config details

@@ -1,6 +1,6 @@
 # Prompt API with database implementation.
 
-from pebblo.app.models.models import RetrievalContext, RetrievalData
+from pebblo.app.models.db_models import RetrievalContext, RetrievalData
 from pebblo.app.models.sqltable import AiAppTable, AiRetrievalTable
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import return_response
@@ -12,10 +12,10 @@ logger = get_logger(__name__)
 
 
 class Prompt:
-    def __init__(self, data):
-        self.db = SQLiteClient()
-        self.data = data
-        self.application_name = self.data.get("name")
+    def __init__(self):
+        self.db = None
+        self.data = None
+        self.app_name = None
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 
@@ -83,9 +83,16 @@ class Prompt:
             logger.error("message")
             return return_response(message=message, status_code=500)
 
-    def process_request(self):
+    def process_request(self, data):
         try:
+            self.db = SQLiteClient()
+            self.data = data
+            self.application_name = self.data.get("name")
+
             logger.info("Prompt API request processing started")
+
+            # create session
+            self.db.create_session()
 
             # getting prompt data
             prompt_data = self._fetch_classified_data(

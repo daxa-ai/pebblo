@@ -1,9 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from pebblo.app.config.config import var_server_config_dict
-from pebblo.app.enums.common import StorageTypes
 from pebblo.app.service.prompt_gov import PromptGov
-from pebblo.app.storage.storage_config import Storage
+from pebblo.app.utils.handler_mapper import get_handler
 
 config_details = var_server_config_dict.get()
 
@@ -17,42 +16,30 @@ class App:
         self.router = APIRouter(prefix=prefix)
 
     @staticmethod
-    def discover(data: dict):
+    def discover(
+        data: dict, discover_obj=Depends(lambda: get_handler(handler_name="discover"))
+    ):
         # "/app/discover" API entrypoint
         # Execute discover object based on a storage type
-        storage_type = config_details.get("storage", {}).get(
-            "type", StorageTypes.FILE.value
-        )
-
-        storage_obj = Storage()
-        discovery_obj = storage_obj.get_discovery_object(storage_type, data)
-        response = discovery_obj.process_request()
+        response = discover_obj.process_request(data)
         return response
 
     @staticmethod
-    def loader_doc(data: dict):
+    def loader_doc(
+        data: dict, loader_doc_obj=Depends(lambda: get_handler(handler_name="loader"))
+    ):
         # "/loader/doc" API entrypoint
         # Execute loader doc object based on a storage type
-        storage_type = config_details.get("storage", {}).get(
-            "type", StorageTypes.FILE.value
-        )
-
-        storage_obj = Storage()
-        loader_doc_obj = storage_obj.get_loader_doc_object(storage_type, data)
-        response = loader_doc_obj.process_request()
+        response = loader_doc_obj.process_request(data)
         return response
 
     @staticmethod
-    def prompt(data: dict):
+    def prompt(
+        data: dict, prompt_obj=Depends(lambda: get_handler(handler_name="prompt"))
+    ):
         # "/prompt" API entrypoint
-        # Execute discover object based on a storage type
-        storage_type = config_details.get("storage", {}).get(
-            "type", StorageTypes.FILE.value
-        )
-
-        storage_obj = Storage()
-        prompt_obj = storage_obj.get_prompt_obj(storage_type, data)
-        response = prompt_obj.process_request()
+        # Execute a prompt object based on a storage type
+        response = prompt_obj.process_request(data)
         return response
 
     @staticmethod

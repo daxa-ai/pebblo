@@ -1,19 +1,27 @@
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 
+from pebblo.app.enums.enums import CacheDir
+from pebblo.app.storage.database import Database
+from pebblo.app.utils.utils import get_full_path
 from pebblo.log import get_logger
-
-from .database import Database
 
 logger = get_logger(__name__)
 
 
 class SQLiteClient(Database):
     def __init__(self):
-        super().__init__()
-        # Create an engine that stores data in the local directory's my_database.db file.
-        self.engine = create_engine("sqlite:///pebblo.db", echo=True)
+        engine = self._create_engine()
+        super().__init__(engine=engine)
         self.session = None
+
+    @staticmethod
+    def _create_engine():
+        # Create an engine that stores data in the local directory's db file.
+        full_path = get_full_path(CacheDir.HOME_DIR.value)
+        sqlite_db_path = CacheDir.SQLITE_ENGINE.value.format(full_path)
+        engine = create_engine(sqlite_db_path, echo=True)
+        return engine
 
     def create_session(self):
         Session = sessionmaker(bind=self.engine)

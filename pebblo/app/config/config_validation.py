@@ -51,6 +51,14 @@ class StorageConfig(ConfigValidator):
                 f"Error: Unsupported storage type '{storage_type}' specified in the configuration."
                 f"Valid values are {valid_storage_types}"
             )
+        if storage_type == "db":
+            db_type = self.config.get("db")
+            valid_db_types = ["sqlite"]
+            if db_type not in valid_db_types:
+                self.errors.append(
+                    f"Error: Unsupported db type '{db_type}' specified in the configuration."
+                    f"Valid values are {valid_db_types}"
+                )
 
 
 def expand_path(file_path: str) -> str:
