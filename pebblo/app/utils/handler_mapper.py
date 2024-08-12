@@ -2,8 +2,11 @@ from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import StorageTypes
 from pebblo.app.service import discovery_service as file_discovery_service
 from pebblo.app.service import service as file_loader_doc_service
+from pebblo.app.service import prompt_service as file_prompt_service
 from pebblo.app.service.discovery import discovery_service as db_discovery_service
 from pebblo.app.service.loader import loader_doc_service as db_loader_doc_service
+from pebblo.app.service.prompt import prompt_service as db_prompt_service
+
 
 api_handler_map = {
     "discover": {
@@ -14,6 +17,10 @@ api_handler_map = {
         "db": db_loader_doc_service.AppLoaderDoc,
         "file": file_loader_doc_service.AppLoaderDoc,
     },
+    "prompt": {
+        "db": db_prompt_service.Prompt,
+        "file": file_prompt_service.Prompt,
+    }
 }
 
 config_details = var_server_config_dict.get()

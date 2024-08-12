@@ -12,10 +12,10 @@ logger = get_logger(__name__)
 
 
 class Prompt:
-    def __init__(self, data):
-        self.db = SQLiteClient()
-        self.data = data
-        self.application_name = self.data.get("name")
+    def __init__(self):
+        self.db = None
+        self.data = None
+        self.app_name = None
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 
@@ -83,8 +83,12 @@ class Prompt:
             logger.error("message")
             return return_response(message=message, status_code=500)
 
-    def process_request(self):
+    def process_request(self, data):
         try:
+            self.db = SQLiteClient()
+            self.data = data
+            self.application_name = self.data.get("name")
+
             logger.info("Prompt API request processing started")
 
             # getting prompt data

@@ -24,6 +24,12 @@ logger = get_logger(__name__)
 
 
 class AppDiscover:
+
+    def __init__(self):
+        self.db = None
+        self.data = None
+        self.app_name = None
+
     @staticmethod
     def _get_current_datetime():
         """
