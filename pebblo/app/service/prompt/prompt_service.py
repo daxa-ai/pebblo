@@ -67,10 +67,6 @@ class Prompt:
         return retrieval_data_model
 
     def _add_retrieval_data(self, retrieval_data):
-        # create session
-        self.db.create_session()
-
-        # ai_app_obj = get_or_create_app(self.db, self.application_name, self.id, AppClass)
         app_exists, ai_app_obj = self.db.query(
             table_obj=AiAppTable, condition={"name": self.application_name}
         )
@@ -79,9 +75,13 @@ class Prompt:
             logger.error(message)
             return return_response(message=message, status_code=500)
 
-        insert_status, entry = self.db.insert_data(
-            AiRetrievalTable, retrieval_data, app_id=ai_app_obj.id
-        )
+        retrieval_data["ai_app"] = ai_app_obj.id
+        insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
+
+        if not insert_status:
+            message = "Saving retrieval entry failed"
+            logger.error("message")
+            return return_response(message=message, status_code=500)
 
     def process_request(self):
         try:
@@ -116,8 +116,12 @@ class Prompt:
             # creating retrieval data model object
             retrieval_data = self._create_retrieval_data(context_data)
 
+            # create session
+            self.db.create_session()
+
             # Add retrieval entry
             self._add_retrieval_data(retrieval_data.dict())
+
         except Exception as err:
             logger.error(f"Prompt API failed, Error: {err}")
             # Getting error, Rollback everything we did in this run.
