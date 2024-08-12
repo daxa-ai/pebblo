@@ -53,7 +53,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         current_date = datetime.datetime.now().strftime("%B %d, %Y")
         load_history_items = []
         findings_details = []
-        datastores: dict = {}    
+        datastores: dict = {}
         if "dataSources" in data and data["dataSources"]:
             datastores = data["dataSources"][0]
             if "findingsDetails" in datastores:
@@ -61,7 +61,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         if "loadHistory" in data and "history" in data["loadHistory"]:
             load_history_items = data["loadHistory"]["history"]
         findings_count = data["reportSummary"].get("findings", 0)
-        clientVersion = ''
+        clientVersion = ""
         versionObj = data.get("clientVersion", None)
         if versionObj != None and versionObj["version"] != None:
             clientVersion = (

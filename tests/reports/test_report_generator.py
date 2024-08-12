@@ -52,7 +52,7 @@ class TestReportGenerator(unittest.TestCase):
             "loadHistory": {"history": "history"},
             "pebbloClientVersion": "client_version",
             "pebbloServerVersion": "server_version",
-            "clientVersion": {},
+            "clientVersion": {"version": None, "name": None},
         }
         output_path = "output_path"
         template_name = "template_name"
