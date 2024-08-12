@@ -654,6 +654,11 @@
           <div class="surface-10 inter font-28">
             {{data.framework.name|capitalize}} {{data.framework.version}}
           </div>
+          {% if clientVersion %}
+          <div class="purple-10 inter font-22">
+            {{clientVersion|default(" ")}}
+          </div>
+          {% endif %}
         </div>
         <div class="mt-11">
           <div class="surface-10 font-13 inter font-thin">
@@ -667,7 +672,7 @@
           <span class="font-12">Pebblo By Daxa.ai | </span>
           <span class="font-12 mr-2">
             <span>Server: {{data.pebbloServerVersion|default(" ")}}</span>
-            | <span>Client: {{clientVersion|default(" ")}}</span>
+            | <span>Client: {{data.pebbloClientVersion|default(" ")}}</span>
           </span>
         </div>
       </div>

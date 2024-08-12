@@ -22,6 +22,11 @@
           <div class="purple-10 inter font-28 mt-2">
             {{data.framework.name|capitalize}} {{data.framework.version}}
           </div>
+          {% if clientVersion %}
+          <div class="purple-10 inter font-18 mt-2">
+            {{clientVersion|default(" ")}}
+          </div>
+          {% endif %}
         </div>
         <div class="mt-11">
           <div class="purple-10 font-13 inter font-thin">
@@ -47,7 +52,7 @@
         <div class="font-12 flex">
           <div>Server: {{data.pebbloServerVersion|default(" ")}}</div>
           <div class="divider bg-surface-30 mr-1 ml-1"></div>
-          <div>Client: {{clientVersion|default(" ")}}</div>
+          <div>Client: {{data.pebbloClientVersion|default(" ")}}</div>
         </div>
       </div>
     </section>
