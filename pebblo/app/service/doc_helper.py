@@ -124,8 +124,10 @@ class LoaderHelper:
             loaderSourcePath=loader_details.get("source_path"),
             lastModified=last_used,
             entityCount=doc_info.entityCount,
+            entityDetails=doc_info.entityDetails,
             entities=doc_info.entities,
             topicCount=doc_info.topicCount,
+            topicDetails=doc_info.topicDetails,
             topics=doc_info.topics,
             authorizedIdentities=doc.get("authorized_identities", []),
         )
@@ -177,8 +179,10 @@ class LoaderHelper:
             data=doc.get("doc", None),
             entities={},
             entityCount=0,
+            entityDetails={},
             topics={},
             topicCount=0,
+            topicDetails={},
         )
         try:
             if doc_info.data:
@@ -196,6 +200,8 @@ class LoaderHelper:
                 )
                 doc_info.topics = topics
                 doc_info.entities = entities
+                doc_info.entityDetails = entity_details
+                doc_info.topicDetails = topic_details
                 doc_info.topicCount = topic_count
                 doc_info.entityCount = entity_count
                 doc_info.data = anonymized_doc
@@ -244,6 +250,8 @@ class LoaderHelper:
         source_path = doc.get("sourcePath")
         snippet = Snippets(
             snippet=doc["doc"],
+            entityDetails=doc["entityDetails"],
+            topicDetails=doc["topicDetails"],
             sourcePath=source_path,
             fileOwner=doc.get("fileOwner", "-"),
             authorizedIdentities=doc.get("authorizedIdentities", []),
