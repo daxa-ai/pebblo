@@ -18,6 +18,7 @@ from pebblo.utils import get_confidence_score_label
 def get_entities(entities_list, response):
     entity_groups: dict = dict()
     entity_details: dict = dict()
+
     mapped_entity = None
     total_count = 0
     for entity in response:
@@ -33,6 +34,7 @@ def get_entities(entities_list, response):
                     entity["confidence_score"]
                 ),
                 "entity_group": entity_group_conf_mapping[mapped_entity][1],
+
             }
             if mapped_entity in entity_details.keys():
                 entity_details[mapped_entity].append(entity_data)

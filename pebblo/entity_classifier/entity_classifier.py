@@ -66,6 +66,7 @@ class EntityClassifier:
 
         return final_results
 
+
     def anonymize_response(self, analyzer_results, input_text):
         # Returns anonymized output
         anonymized_text = self.anonymizer.anonymize(
@@ -84,17 +85,20 @@ class EntityClassifier:
                 mapped_entity = Entities[value.entity_type].value
             elif value.entity_type in SecretEntities.__members__:
                 mapped_entity = SecretEntities[value.entity_type].value
+
+        for index, value in enumerate(data):
+
             location = f"{value.start}_{value.end}"
             if anonymized_response:
                 anonymized_data = anonymized_response[len(data) - index - 1]
                 location = f"{anonymized_data.start}_{anonymized_data.end}"
-
             response.append(
                 {
                     "entity_type": value.entity_type,
                     "location": location,
                     "confidence_score": value.score,
                     "entity_group": entity_group_conf_mapping[mapped_entity][1],
+
                 }
             )
         return response
