@@ -34,7 +34,6 @@ def get_entities(entities_list, response):
                     entity["confidence_score"]
                 ),
                 "entity_group": entity_group_conf_mapping[mapped_entity][1],
-
             }
             if mapped_entity in entity_details.keys():
                 entity_details[mapped_entity].append(entity_data)

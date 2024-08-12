@@ -235,7 +235,6 @@ def test_presidio_entity_classifier_and_anonymizer(
     assert total_count == 4
     assert anonymized_text == input_text1
     assert entity_details == {
-
         "us-ssn": [
             {
                 "location": "17_28",
@@ -263,7 +262,7 @@ def test_presidio_entity_classifier_and_anonymizer(
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
-        ]
+        ],
     }
 
     (
@@ -281,7 +280,6 @@ def test_presidio_entity_classifier_and_anonymizer(
     assert total_count == 4
     assert anonymized_text == mock_input_text1_anonymize_snippet_true
     assert entity_details == {
-
         "us-ssn": [
             {
                 "location": "17_25",
@@ -309,7 +307,7 @@ def test_presidio_entity_classifier_and_anonymizer(
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
-        ]
+        ],
     }
 
     (
@@ -331,7 +329,6 @@ def test_presidio_entity_classifier_and_anonymizer(
     assert total_count == 9
     assert anonymized_text == input_text2
     assert entity_details == {
-
         "credit-card-number": [
             {
                 "location": "1367_1382",
@@ -416,7 +413,6 @@ def test_presidio_entity_classifier_and_anonymizer(
     assert total_count == 9
     assert anonymized_text == mock_input_text2_anonymize_snippet_true
     assert entity_details == {
-
         "credit-card-number": [
             {
                 "location": "1178_1186",
