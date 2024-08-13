@@ -46,22 +46,22 @@ class PIIGroups(Enum):
 
 entity_group_conf_mapping = {
     # Identification
-    Entities.US_SSN.value: (0.8, PIIGroups.Identification.value),
-    Entities.US_PASSPORT.value: (0.4, PIIGroups.Identification.value),
-    Entities.US_DRIVER_LICENSE.value: (0.4, PIIGroups.Identification.value),
+    Entities.US_SSN.value: (0.8),
+    Entities.US_PASSPORT.value: (0.4),
+    Entities.US_DRIVER_LICENSE.value: (0.4),
     # Financial
-    Entities.US_ITIN.value: (0.8, PIIGroups.Financial.value),
-    Entities.CREDIT_CARD.value: (0.8, PIIGroups.Financial.value),
-    Entities.US_BANK_NUMBER.value: (0.4, PIIGroups.Financial.value),
-    Entities.IBAN_CODE.value: (0.8, PIIGroups.Financial.value),
+    Entities.US_ITIN.value: (0.8),
+    Entities.CREDIT_CARD.value: (0.8),
+    Entities.US_BANK_NUMBER.value: (0.4),
+    Entities.IBAN_CODE.value: (0.8),
     # Secret
-    SecretEntities.GITHUB_TOKEN.value: (0.8, PIIGroups.Secrets.value),
-    SecretEntities.SLACK_TOKEN.value: (0.8, PIIGroups.Secrets.value),
-    SecretEntities.AWS_ACCESS_KEY.value: (0.45, PIIGroups.Secrets.value),
-    SecretEntities.AWS_SECRET_KEY.value: (0.8, PIIGroups.Secrets.value),
-    SecretEntities.AZURE_KEY_ID.value: (0.8, PIIGroups.Secrets.value),
-    SecretEntities.AZURE_CLIENT_SECRET.value: (0.8, PIIGroups.Secrets.value),
-    SecretEntities.GOOGLE_API_KEY.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.GITHUB_TOKEN.value: (0.8),
+    SecretEntities.SLACK_TOKEN.value: (0.8),
+    SecretEntities.AWS_ACCESS_KEY.value: (0.45),
+    SecretEntities.AWS_SECRET_KEY.value: (0.8),
+    SecretEntities.AZURE_KEY_ID.value: (0.8),
+    SecretEntities.AZURE_CLIENT_SECRET.value: (0.8),
+    SecretEntities.GOOGLE_API_KEY.value: (0.8),
 }
 
 

@@ -78,13 +78,6 @@ class EntityClassifier:
     def get_analyzed_entities_response(data, anonymized_response=None):
         # Returns entities with its location i.e. start to end and confidence score
         response = []
-        mapped_entity = None
-        for index, value in enumerate(data):
-            if value.entity_type in Entities.__members__:
-                mapped_entity = Entities[value.entity_type].value
-            elif value.entity_type in SecretEntities.__members__:
-                mapped_entity = SecretEntities[value.entity_type].value
-
         for index, value in enumerate(data):
             location = f"{value.start}_{value.end}"
             if anonymized_response:
@@ -95,7 +88,6 @@ class EntityClassifier:
                     "entity_type": value.entity_type,
                     "location": location,
                     "confidence_score": value.score,
-                    "entity_group": entity_group_conf_mapping[mapped_entity][1],
                 }
             )
         return response
