@@ -26,6 +26,7 @@ class Entities(Enum):
     US_BANK_NUMBER = "us-bank-account-number"
     IBAN_CODE = "iban-code"
     US_ITIN = "us-itin"
+    SECRET_KEY_TOKEN = "gliner-entity"
 
 
 class SecretEntities(Enum):
@@ -48,6 +49,7 @@ entity_conf_mapping = {
     Entities.CREDIT_CARD.value: 0.8,
     Entities.US_BANK_NUMBER.value: 0.4,
     Entities.IBAN_CODE.value: 0.8,
+    Entities.SECRET_KEY_TOKEN.value: 0.5,
     # Secret
     SecretEntities.GITHUB_TOKEN.value: 0.8,
     SecretEntities.SLACK_TOKEN.value: 0.8,
