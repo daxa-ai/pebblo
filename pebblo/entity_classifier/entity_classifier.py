@@ -171,6 +171,3 @@ class EntityClassifier:
                 f"Presidio Entity Classifier and Anonymizer Failed, Exception: {e}"
             )
             return entities, total_count, input_text
-
-
-
