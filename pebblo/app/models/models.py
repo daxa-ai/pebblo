@@ -25,9 +25,12 @@ class LoaderMetadata(BaseModel):
 class AiDataModel(BaseModel):
     data: Optional[Union[list, str]]
     entityCount: int
+    entityDetails: Optional[dict] = dict()
     entities: dict
     topicCount: Optional[int] = None
     topics: Optional[dict] = None
+    promptGovEnabled: Optional[bool] = None
+    promptBlocked: Optional[bool] = None
 
     def dict(self, **kwargs):
         kwargs["exclude_none"] = True
@@ -284,4 +287,5 @@ class PromptResponseModel(BaseModel):
 class PromptGovResponseModel(BaseModel):
     entities: dict
     entityCount: int
+    entityDetails: dict
     message: Optional[str] = None

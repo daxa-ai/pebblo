@@ -51,6 +51,7 @@ class PromptGov:
                 )
                 doc_info.entities = entities
                 doc_info.entityCount = entity_count
+                doc_info.entityDetails = entity_details
                 doc_info.data = anonymized_doc
             return doc_info
         except Exception as e:
@@ -68,6 +69,7 @@ class PromptGov:
             response = PromptGovResponseModel(
                 entities=doc_info.entities,
                 entityCount=doc_info.entityCount,
+                entityDetails=doc_info.entityDetails,
                 message="Prompt Governance Processed Successfully",
             )
             return PebbloJsonResponse.build(
@@ -76,7 +78,10 @@ class PromptGov:
 
         except ValidationError as ex:
             response = PromptGovResponseModel(
-                entities={}, entityCount=0, message=f"Error : {str(ex)}"
+                entities={},
+                entityCount=0,
+                entityDetails={},
+                message=f"Error : {str(ex)}",
             )
             logger.error(
                 f"Error in Prompt API process_request. Error:{traceback.format_exc()}"
@@ -86,7 +91,10 @@ class PromptGov:
             )
         except Exception as ex:
             response = PromptGovResponseModel(
-                entities={}, entityCount=0, message=f"Error : {str(ex)}"
+                entities={},
+                entityCount=0,
+                entityDetails={},
+                message=f"Error : {str(ex)}",
             )
             logger.error(
                 f"Error in Prompt API process_request. Error:{traceback.format_exc()}"
