@@ -20,7 +20,7 @@ class Entities(Enum):
     US_SSN = "us-ssn"
     US_PASSPORT = "us-passport-number"
     US_DRIVER_LICENSE = "us-drivers-license"
-
+    IP_ADDRESS = "ip-address"
     # Financial
     CREDIT_CARD = "credit-card-number"
     US_BANK_NUMBER = "us-bank-account-number"
@@ -56,6 +56,7 @@ entity_conf_mapping = {
     SecretEntities.AZURE_KEY_ID.value: 0.8,
     SecretEntities.AZURE_CLIENT_SECRET.value: 0.8,
     SecretEntities.GOOGLE_API_KEY.value: 0.8,
+    Entities.IP_ADDRESS.value: 0.8,
 }
 
 
