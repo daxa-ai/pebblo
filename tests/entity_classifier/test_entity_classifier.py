@@ -337,7 +337,6 @@ def test_presidio_entity_classifier_and_anonymizer(
             {
                 "location": "1178_1189",
                 "confidence_score": "HIGH",
-                "entity_group": "pii-identification",
             }
         ],
         "us-itin": [
@@ -350,7 +349,6 @@ def test_presidio_entity_classifier_and_anonymizer(
             {
                 "location": "1545_1565",
                 "confidence_score": "HIGH",
-                "entity_group": "secrets_and_tokens",
             }
         ],
         "aws-secret-key": [
@@ -426,7 +424,6 @@ def test_presidio_entity_classifier_and_anonymizer(
             {
                 "location": "1521_1537",
                 "confidence_score": "HIGH",
-                "entity_group": "secrets_and_tokens",
             }
         ],
         "aws-secret-key": [
