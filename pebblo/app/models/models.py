@@ -111,7 +111,6 @@ class AiClassificationData(BaseModel):
 
 
 class RetrievalData(BaseModel):
-    ai_app: Optional[int]
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]

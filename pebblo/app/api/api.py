@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 
 from pebblo.app.config.config import var_server_config_dict
-from pebblo.app.service.prompt_gov import PromptGov
 from pebblo.app.utils.handler_mapper import get_handler
 
 config_details = var_server_config_dict.get()
@@ -43,8 +42,9 @@ class App:
         return response
 
     @staticmethod
-    def promptgov(data: dict):
+    def prompt_gov(
+        data: dict, prompt_obj=Depends(lambda: get_handler(handler_name="prompt_gov"))
+    ):
         # "/prompt/governance" API entrypoint
-        prompt_obj = PromptGov(data=data)
-        response = prompt_obj.process_request()
+        response = prompt_obj.process_request(data)
         return response

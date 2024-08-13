@@ -15,7 +15,7 @@ class Prompt:
     def __init__(self):
         self.db = None
         self.data = None
-        self.app_name = None
+        self.application_name = None
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 

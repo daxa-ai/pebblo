@@ -27,7 +27,7 @@ router_instance.router.add_api_route(
 )
 router_instance.router.add_api_route(
     "/prompt/governance",
-    App.promptgov,
+    App.prompt_gov,
     methods=["POST"],
     response_model=dict,
     response_model_exclude_none=True,
