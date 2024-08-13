@@ -8,8 +8,8 @@ from pydantic import ValidationError
 
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import AiDataModel, PromptGovResponseModel
-from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.app.storage.sqlite_db import SQLiteClient
+from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
