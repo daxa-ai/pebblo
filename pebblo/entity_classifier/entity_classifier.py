@@ -2,6 +2,7 @@ from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 from presidio_anonymizer import AnonymizerEngine
 
+from pebblo.entity_classifier.custom_analyzer.gliner_recognizer import GlinerRecognizer
 from pebblo.entity_classifier.utils.config import (
     ConfidenceScore,
     Entities,
@@ -20,6 +21,8 @@ logger = get_logger(__name__)
 class EntityClassifier:
     def __init__(self):
         self.analyzer = AnalyzerEngine()
+        # Create an instance of the GLiNER recognizer
+
         self.anonymizer = AnonymizerEngine()
         self.entities = list(Entities.__members__.keys())
         self.entities.extend(list(SecretEntities.__members__.keys()))
@@ -40,6 +43,9 @@ class EntityClassifier:
                 ),
             ),
         )
+        gliner_recognizer = GlinerRecognizer()
+        # Add the GLiNER recognizer to the Presidio Analyzer
+        self.analyzer.registry.add_recognizer(gliner_recognizer)
 
     def analyze_response(self, input_text, anonymize_all_entities=True):
         """
