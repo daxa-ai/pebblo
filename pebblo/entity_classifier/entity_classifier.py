@@ -173,8 +173,4 @@ class EntityClassifier:
             return entities, total_count, input_text
 
 
-if __name__ == "__main__":
-    text = "My name is John Doe, and my email is john.doe@example.com. My IP address is 192.168.1.100."
-    entity_classifier_obj = EntityClassifier()
-    entities = entity_classifier_obj.presidio_entity_classifier_and_anonymizer(text)
-    print(entities)
+
