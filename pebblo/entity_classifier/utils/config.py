@@ -21,6 +21,9 @@ class Entities(Enum):
     US_PASSPORT = "us-passport-number"
     US_DRIVER_LICENSE = "us-drivers-license"
 
+    # network
+    IP_ADDRESS = "ip-address"
+
     # Financial
     CREDIT_CARD = "credit-card-number"
     US_BANK_NUMBER = "us-bank-account-number"
@@ -42,6 +45,7 @@ class PIIGroups(Enum):
     Identification = "pii-identification"
     Financial = "pii-financial"
     Secrets = "secrets_and_tokens"
+    Network = "pii-network"
 
 
 entity_group_conf_mapping = {
@@ -62,6 +66,8 @@ entity_group_conf_mapping = {
     SecretEntities.AZURE_KEY_ID.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.AZURE_CLIENT_SECRET.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.GOOGLE_API_KEY.value: (0.8, PIIGroups.Secrets.value),
+    # Network
+    Entities.IP_ADDRESS.value: (0.4, PIIGroups.Network.value),
 }
 
 
