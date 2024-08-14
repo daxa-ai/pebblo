@@ -1,4 +1,4 @@
-from sqlalchemy import and_, create_engine, func, text
+from sqlalchemy import and_, create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 from pebblo.log import get_logger
@@ -47,88 +47,6 @@ class SQLiteClient(Database):
             logger.info(f"insert data into table {table_name} failed, Error: {err}")
             return False, err
 
-    def query_old(self, table_obj, condition: dict = None):
-        table_name = table_obj.__tablename__
-        try:
-            logger.info(f"Fetching data from table {table_name}")
-            # Initialize base query
-            logger.debug(f"Filter Condition: {condition}")
-            if condition:
-                query = self.session.query(table_obj)
-
-                for key, value in condition.items():
-                    # Build the filter condition dynamically using JSON path
-                    query = query.filter(
-                        func.json_extract(table_obj.data, f"$.{key}") == value
-                    )
-
-                # breakpoint()
-
-                query_str = str(
-                    query.statement.compile(compile_kwargs={"literal_binds": True})
-                )
-                logger.debug(f"Query: {query_str}")
-
-                # Execute the query and fetch results
-                output = query.first()
-                # breakpoint()
-            # if condition:
-            #     output = self.session.query(table_obj).filter_by(**condition).first()
-            else:
-                # Query the table
-                output = self.session.query(table_obj).first()
-                # breakpoint()
-            return True, output
-        except Exception as err:
-            logger.error(
-                f"Failed in fetching data from table {table_name}, Error: {err}"
-            )
-            return False, err
-
-    def query_row(self, table_obj, filter_query: dict):
-        table_name = table_obj.__tablename__
-        try:
-            logger.info(f"Fetching data from table {table_name}")
-            logger.debug(f"Filter Condition: {filter_query}")
-
-            json_column = "data"
-
-            # Construct the base query
-            query_str = f"SELECT * FROM {table_name} WHERE "
-
-            # Dynamically build the filter conditions and parameters
-            query_conditions = []
-
-            for key, value in filter_query.items():
-                # Format the JSON path for SQLite
-                json_path = f"$.{key}"
-                json_value = f"{value}"
-
-                # Construct condition string
-                condition_str = (
-                    f"json_extract({json_column}, '{json_path}') = '{json_value}'"
-                )
-                query_conditions.append(condition_str)
-
-            # Join all conditions with 'AND'
-            query_str += " AND ".join(query_conditions)
-
-            # Prepare the SQL query
-            sql_query = text(query_str)
-            # breakpoint()
-
-            # Execute the query with parameters
-            result = self.session.execute(sql_query)
-            # Fetch all results
-            output = result.first()
-
-            # Return the results
-            return True, output
-
-        except Exception as err:
-            logger.error(f"Failed in fetching data, Error: {err}")
-            return False, err
-
     def query(self, table_obj, filter_query: dict):
         table_name = table_obj.__tablename__
         try:
@@ -160,6 +78,7 @@ class SQLiteClient(Database):
             return False, err
 
     def query_by_id(self, table_obj, id):
+        # This function is not in use right now, But in local ui it will get used.
         table_name = table_obj.__tablename__
         try:
             logger.info(f"Fetching data from table {table_name}")
