@@ -24,7 +24,6 @@ logger = get_logger(__name__)
 
 
 class AppDiscover:
-
     def __init__(self):
         self.db = None
         self.data = None
@@ -201,16 +200,15 @@ class AppDiscover:
 
             chain_details = []
             retrievals_details = []
-            load_id = self.data.get("load_id") or None
             app_type, AppClass = self._get_app_type_and_class()
             if not AppClass:
                 message = "No load_id's or run_id's are present, Invalid Request"
                 return return_response(message=message, status_code=404)
 
-
-
             # get or create app
-            ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass, self.data, app_type)
+            ai_app_obj = get_or_create_app(
+                self.db, self.app_name, AppClass, self.data, app_type
+            )
             if not ai_app_obj:
                 message = "Unable to get or create aiapp details"
                 return return_response(message=message, status_code=500)

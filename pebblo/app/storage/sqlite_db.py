@@ -1,10 +1,6 @@
-from sqlalchemy import create_engine, func, and_
+from sqlalchemy import and_, create_engine, func, text
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
 
-from pebblo.app.enums.enums import CacheDir
-from pebblo.app.storage.database import Database
-from pebblo.app.utils.utils import get_full_path
 from pebblo.log import get_logger
 
 from ..enums.enums import CacheDir
@@ -68,7 +64,9 @@ class SQLiteClient(Database):
 
                 # breakpoint()
 
-                query_str = str(query.statement.compile(compile_kwargs={"literal_binds": True}))
+                query_str = str(
+                    query.statement.compile(compile_kwargs={"literal_binds": True})
+                )
                 logger.debug(f"Query: {query_str}")
 
                 # Execute the query and fetch results
@@ -82,7 +80,9 @@ class SQLiteClient(Database):
                 # breakpoint()
             return True, output
         except Exception as err:
-            logger.error(f"Failed in fetching data from table {table_name}, Error: {err}")
+            logger.error(
+                f"Failed in fetching data from table {table_name}, Error: {err}"
+            )
             return False, err
 
     def query_row(self, table_obj, filter_query: dict):
@@ -91,7 +91,7 @@ class SQLiteClient(Database):
             logger.info(f"Fetching data from table {table_name}")
             logger.debug(f"Filter Condition: {filter_query}")
 
-            json_column = 'data'
+            json_column = "data"
 
             # Construct the base query
             query_str = f"SELECT * FROM {table_name} WHERE "
@@ -105,11 +105,13 @@ class SQLiteClient(Database):
                 json_value = f"{value}"
 
                 # Construct condition string
-                condition_str = f"json_extract({json_column}, '{json_path}') = '{json_value}'"
+                condition_str = (
+                    f"json_extract({json_column}, '{json_path}') = '{json_value}'"
+                )
                 query_conditions.append(condition_str)
 
             # Join all conditions with 'AND'
-            query_str += ' AND '.join(query_conditions)
+            query_str += " AND ".join(query_conditions)
 
             # Prepare the SQL query
             sql_query = text(query_str)
@@ -133,7 +135,7 @@ class SQLiteClient(Database):
             logger.info(f"Fetching data from table {table_name}")
             logger.debug(f"Filter Condition: {filter_query}")
 
-            json_column = 'data'
+            json_column = "data"
 
             # Dynamically build the filter conditions and parameters
             query_conditions = []
@@ -143,7 +145,9 @@ class SQLiteClient(Database):
                 json_value = f"{value}"
 
                 # Construct condition string
-                condition_str = f"json_extract({json_column}, '{json_path}') = '{json_value}'"
+                condition_str = (
+                    f"json_extract({json_column}, '{json_path}') = '{json_value}'"
+                )
                 query_conditions.append(text(condition_str))
 
             query = self.session.query(table_obj).filter(and_(*query_conditions))
@@ -156,14 +160,16 @@ class SQLiteClient(Database):
             return False, err
 
     def query_by_id(self, table_obj, id):
-            table_name = table_obj.__tablename__
-            try:
-                logger.info(f"Fetching data from table {table_name}")
-                output = self.session.query(table_obj).filter_by(id=id).first()
-                return True, output
-            except Exception as err:
-                logger.error(f"Failed in fetching data from table {table_name}, Error: {err}")
-                return False, err
+        table_name = table_obj.__tablename__
+        try:
+            logger.info(f"Fetching data from table {table_name}")
+            output = self.session.query(table_obj.__class__).filter_by(id=id).first()
+            return True, output
+        except Exception as err:
+            logger.error(
+                f"Failed in fetching data from table {table_name}, Error: {err}"
+            )
+            return False, err
 
     def update_data(self, table_obj, data):
         table_name = table_obj.__tablename__
@@ -171,8 +177,11 @@ class SQLiteClient(Database):
             logger.info(f"Updating Table details, TableName: {table_name}")
             logger.debug(f"New Updated data: {data}")
             table_obj.data = data
+            self.session.add(table_obj)
             return True, "Data has been updated successfully"
         except Exception as err:
-            message = f"Failed in updating app object in table {table_name}, Error: {err}"
+            message = (
+                f"Failed in updating app object in table {table_name}, Error: {err}"
+            )
             logger.error(message)
             return False, message
