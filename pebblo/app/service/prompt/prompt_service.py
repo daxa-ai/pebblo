@@ -1,7 +1,7 @@
 # Prompt API with database implementation.
 
 from pebblo.app.models.db_models import RetrievalContext, RetrievalData
-from pebblo.app.models.sqltable import AiAppTable, AiRetrievalTable
+from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import return_response
 from pebblo.entity_classifier.entity_classifier import EntityClassifier

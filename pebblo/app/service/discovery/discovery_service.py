@@ -14,7 +14,7 @@ from pebblo.app.models.db_models import (
     PackageInfo,
     VectorDB,
 )
-from pebblo.app.models.sqltable import AiAppTable, AiDataLoaderTable
+from pebblo.app.models.sqltables import AiAppTable, AiDataLoaderTable
 from pebblo.app.service.discovery.common import get_or_create_app
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import get_pebblo_server_version, return_response

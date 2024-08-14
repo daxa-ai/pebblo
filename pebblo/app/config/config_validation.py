@@ -51,14 +51,34 @@ class StorageConfig(ConfigValidator):
                 f"Error: Unsupported storage type '{storage_type}' specified in the configuration."
                 f"Valid values are {valid_storage_types}"
             )
+
+        # Set deprecated warning message for file storage type
+        if storage_type == "file":
+            deprecate_error = "DeprecationWarning: 'File' Storage Type will be deprecated starting from Pebblo version 0.0.19, use 'DB' instead"
+            print(deprecate_error)
+
         if storage_type == "db":
             db_type = self.config.get("db")
+            default_location = self.config.get("location")
+            db_name = self.config.get("name")
+
             valid_db_types = ["sqlite"]
             if db_type not in valid_db_types:
                 self.errors.append(
                     f"Error: Unsupported db type '{db_type}' specified in the configuration."
                     f"Valid values are {valid_db_types}"
                 )
+
+            # db_name should be in string
+            if not isinstance(db_name, str):
+                self.errors.append(
+                    f"Error: Unsupported db name '{db_name} specified in the configuration"
+                    f"String values are allowed only"
+                )
+
+            # Check if the output directory exists, create if it doesn't
+            if not os.path.exists(expand_path(str(default_location))):
+                os.makedirs(expand_path(str(default_location)), exist_ok=True)
 
 
 def expand_path(file_path: str) -> str:

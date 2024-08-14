@@ -8,7 +8,7 @@ from pebblo.app.models.db_models import (
     LoaderDocResponseModel,
     LoaderMetadata,
 )
-from pebblo.app.models.sqltable import (
+from pebblo.app.models.sqltables import (
     AiDataLoaderTable,
     AiDataSourceTable,
     AiDocumentTable,
@@ -164,65 +164,6 @@ class AppLoaderDoc:
         _, data_source_obj = self.db.insert_data(AiDataSourceTable, ai_data_source)
         logger.info("Data Source Details has been updated successfully.")
         return data_source_obj.data
-
-    def process_request(self, data):
-        try:
-            self.db = SQLiteClient()
-            self.data = data
-            self.app_name = data.get("name")
-
-            # create session
-            self.db.create_session()
-            logger.info("Session Created.")
-
-            loader_obj = get_or_create_app(
-                self.db,
-                self.app_name,
-                AiDataLoaderTable,
-                self.data,
-                ApplicationTypes.LOADER.value,
-            )
-            if not loader_obj:
-                message = "Unable to get or create loader doc app"
-                return self._create_return_response(message=message, status_code=500)
-
-            app_loader_details = loader_obj.data
-            logger.debug(f"AppLoaderDetails: {app_loader_details}")
-            app_loader_details = self._update_loader_details(
-                loader_obj, app_loader_details
-            )
-
-            # Get each doc classification: Pre Processing
-            self._doc_pre_processing()
-
-            # Update dataSource Details: AIDataSource
-            data_source = self._create_data_source()
-
-            # Iterate Each doc & Update AIDocument, AISnippets
-            app_loader_details, documents, doc_obj = (
-                self._create_update_document_snippets(app_loader_details, data_source)
-            )
-
-        except Exception as err:
-            message = f"Loader Doc API Request failed, Error: {err}"
-            logger.error(message)
-            logger.info("Rollback the changes")
-            self.db.session.rollback()
-            return self._create_return_response(message, 500)
-        else:
-            self.db.session.commit()
-            # logger.info("Other changes commited.")
-
-            # Update loader details & Documents
-            loader_obj.data = app_loader_details
-
-            # logger.info("Commiting loader changes")
-            self.db.session.commit()
-
-            message = "Loader Doc API Request processed successfully"
-            return self._create_return_response(message)
-        finally:
-            self.db.session.close()
 
     def _create_update_document_snippets(self, app_loader_details, data_source):
         logger.info("Create update document snippet")
@@ -412,3 +353,62 @@ class AppLoaderDoc:
 
             _, doc_obj = self.db.insert_data(AiDocumentTable, ai_document_data)
             return doc_obj
+
+    def process_request(self, data):
+        try:
+            self.db = SQLiteClient()
+            self.data = data
+            self.app_name = data.get("name")
+
+            # create session
+            self.db.create_session()
+            logger.info("Session Created.")
+
+            loader_obj = get_or_create_app(
+                self.db,
+                self.app_name,
+                AiDataLoaderTable,
+                self.data,
+                ApplicationTypes.LOADER.value,
+            )
+            if not loader_obj:
+                message = "Unable to get or create loader doc app"
+                return self._create_return_response(message=message, status_code=500)
+
+            app_loader_details = loader_obj.data
+            logger.debug(f"AppLoaderDetails: {app_loader_details}")
+            app_loader_details = self._update_loader_details(
+                loader_obj, app_loader_details
+            )
+
+            # Get each doc classification: Pre Processing
+            self._doc_pre_processing()
+
+            # Update dataSource Details: AIDataSource
+            data_source = self._create_data_source()
+
+            # Iterate Each doc & Update AIDocument, AISnippets
+            app_loader_details, documents, doc_obj = (
+                self._create_update_document_snippets(app_loader_details, data_source)
+            )
+
+        except Exception as err:
+            message = f"Loader Doc API Request failed, Error: {err}"
+            logger.error(message)
+            logger.info("Rollback the changes")
+            self.db.session.rollback()
+            return self._create_return_response(message, 500)
+        else:
+            self.db.session.commit()
+            # logger.info("Other changes commited.")
+
+            # Update loader details & Documents
+            loader_obj.data = app_loader_details
+
+            # logger.info("Commiting loader changes")
+            self.db.session.commit()
+
+            message = "Loader Doc API Request processed successfully"
+            return self._create_return_response(message)
+        finally:
+            self.db.session.close()

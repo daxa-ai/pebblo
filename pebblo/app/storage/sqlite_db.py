@@ -78,7 +78,7 @@ class SQLiteClient(Database):
             return False, err
 
     def query_by_id(self, table_obj, id):
-        # This function is not in use right now, But in local ui it will get used.
+        # This function is not in use right now, But in the local_ui it will get used.
         table_name = table_obj.__tablename__
         try:
             logger.info(f"Fetching data from table {table_name}")

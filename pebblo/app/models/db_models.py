@@ -189,18 +189,3 @@ class LoaderDocs(BaseModel):
 class LoaderDocResponseModel(BaseModel):
     docs: List[LoaderDocs] = []
     message: Optional[str] = None
-
-
-class AiDocs(BaseModel):
-    id: Optional[str]
-    doc: str
-    sourceSize: int
-    fileOwner: str
-    sourcePath: str
-    loaderSourcePath: str
-    lastModified: Optional[str]
-    entityCount: Optional[int]
-    entities: Optional[dict]
-    topicCount: Optional[int]
-    topics: Optional[dict]
-    authorizedIdentities: list
