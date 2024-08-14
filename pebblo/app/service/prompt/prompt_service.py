@@ -60,7 +60,7 @@ class Prompt:
         """
         retrieval_data_model = RetrievalData(**self.data)
         retrieval_data_model.context = context_data
-        logger.debug(f"AiApp Name: [{self.application_name}]")
+        logger.debug(f"AiApps: [{self.application_name}]")
         return retrieval_data_model
 
     def _add_retrieval_data(self, retrieval_data):

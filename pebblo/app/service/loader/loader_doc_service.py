@@ -1,15 +1,14 @@
-from pebblo.app.enums.enums import ClassifierConstants
+from pebblo.app.enums.enums import ApplicationTypes, ClassifierConstants
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiDataModel,
-    AiDocs,
-    LoaderDocResponseModel,
-    LoaderMetadata,
     AiDataSource,
     AiDocument,
-    AiSnippet
+    AiSnippet,
+    LoaderDocResponseModel,
+    LoaderMetadata,
 )
-from pebblo.app.models.sqltable import (
+from pebblo.app.models.sqltables import (
     AiDataLoaderTable,
     AiDataSourceTable,
     AiDocumentTable,
@@ -40,12 +39,13 @@ class AppLoaderDoc:
             body=response.dict(exclude_none=True), status_code=status_code
         )
 
-    def _update_loader_details(self, table_obj, app_loader_details):
+    def _update_loader_details(self, app_loader_details):
         """
         Update loader details in the application if they already exist;
         otherwise, add loader details to the application.
         """
-        # logger.debug("Upsert loader details to exiting ai app details")
+        logger.debug("Upsert loader details to exiting ai app details")
+
         # Update loader details if it already exits in app
         logger.info("Update AiDataLoader loader details")
         loader_details = self.data.get("loader_details", {})
@@ -88,7 +88,7 @@ class AppLoaderDoc:
                 )
                 loader_list.append(new_loader_data.dict())
                 app_loader_details["loaders"] = loader_list
-        
+
         # self.db.update_data(table_obj, app_loader_details)
         logger.info("Loader details Updated successfully.")
         return app_loader_details
@@ -136,9 +136,8 @@ class AppLoaderDoc:
         doc["topics"] = doc_info.topics
         logger.info("Input doc updated with classification result")
 
-
     def _doc_pre_processing(self):
-        logger.info("Doc pre processing started.")
+        logger.info("input docs pre processing started.")
         input_doc_list = self.data.get("docs", [])
         for doc in input_doc_list:
             doc_info = self._get_doc_classification(doc)
@@ -146,90 +145,66 @@ class AppLoaderDoc:
 
         # Update input doc with updated one
         logger.info("Doc pre processing finished.")
-        logger.info(f"Updated docs: {self.data.get('docs')}")
 
     def _create_data_source(self):
         logger.info("Creating Data Source Details.")
         loader_details = self.data.get("loader_details") or {}
         data_source = {
             "app_name": self.app_name,
-            "metadata": {"createdAt": get_current_time(), "modifiedAt": get_current_time()},
+            "metadata": {
+                "createdAt": get_current_time(),
+                "modifiedAt": get_current_time(),
+            },
             "sourcePath": loader_details.get("source_path"),
             "sourceType": loader_details.get("source_type"),
             "loader": loader_details.get("loader"),
         }
         ai_data_source_obj = AiDataSource(**data_source)
         ai_data_source = ai_data_source_obj.dict()
-        self.db.insert_data(AiDataSourceTable, ai_data_source)
+        _, data_source_obj = self.db.insert_data(AiDataSourceTable, ai_data_source)
         logger.info("Data Source Details has been updated successfully.")
-        return ai_data_source
-
-    def process_request(self, data):
-        try:
-            self.db = SQLiteClient()
-            self.data = data
-            self.app_name = data.get("name")
-
-            # create session
-            self.db.create_session()
-            logger.info("Session Created.")
-
-            loader_obj = get_or_create_app(
-                self.db, self.app_name, AiDataLoaderTable, self.data
-            )
-            if not loader_obj:
-                message = "Unable to get or create loader doc app"
-                return self._create_return_response(message=message, status_code=500)
-
-
-            app_loader_details = loader_obj.data
-            logger.debug(f"AppLoaderDetails: {app_loader_details}")
-            app_loader_details = self._update_loader_details(loader_obj, app_loader_details)
-
-            # Get each doc classification: Pre Processing
-            self._doc_pre_processing()
-
-            # Update dataSource Details: AIDataSource
-            data_source = self._create_data_source()
-
-            # Iterate Each doc & Update AIDocument, AISnippets
-            app_loader_details, documents = self._create_update_document_snippets(app_loader_details, data_source)
-
-        except Exception as err:
-            message = f"Loader Doc API Request failed, Error: {err}"
-            logger.error(message)
-            logger.info("Rollback the changes")
-            self.db.session.rollback()
-            return self._create_return_response(message, 500)
-        else:
-            # Update loader details & Documents
-            self.db.update_data(AiDataLoaderTable, app_loader_details)
-            self.db.update_data(AiDocumentTable, documents)
-            message = "Loader Doc API Request processed successfully"
-            self.db.session.commit()
-            return self._create_return_response(message)
-        finally:
-            self.db.session.close()
+        return data_source_obj.data
 
     def _create_update_document_snippets(self, app_loader_details, data_source):
         logger.info("Create update document snippet")
         input_doc_list = self.data.get("docs", [])
         existing_document = None
+        doc_obj = None
         for doc in input_doc_list:
-            logger.info(f"ExistingDocument: {existing_document}")
-            # How to make it without commit
             if not existing_document:
-                existing_document = self._get_or_create_document(doc, data_source)
+                doc_obj = self._get_or_create_document(doc, data_source)
+                existing_document = doc_obj.data
             snippet = self._create_snippet(doc, data_source, existing_document)
             existing_document = self._update_document(existing_document, snippet)
-            app_loader_details = self._update_loader_documents(app_loader_details, existing_document)
-        return app_loader_details, existing_document
+            app_loader_details = self._update_loader_documents(
+                app_loader_details, existing_document, snippet
+            )
+        return app_loader_details, existing_document, doc_obj
 
-    def _update_loader_documents(self, app_loader_details, document):
+    @staticmethod
+    def _count_entities_topics(restricted_data, doc_restricted_data, snippet_id):
+        logger.info("counting entities and topics started")
+        for data in doc_restricted_data:
+            # If entity in apps coll
+            if data in restricted_data:
+                # updating existing count and appending doc id
+                restricted_data[data]["count"] += doc_restricted_data.get(data, 0)
+                restricted_data.get(data, {}).get("docIds", []).append(snippet_id)
+            else:
+                # If entity or topic does not exist in  app coll
+                restricted_data[data] = {
+                    "count": doc_restricted_data.get(data, 0),
+                    "docIds": [snippet_id],
+                }
+                # Adding count and docId in app coll
+        logger.info("counting entities and topics finished.")
+        return restricted_data
+
+    def _update_loader_documents(self, app_loader_details, document, snippet):
         logger.info("Updating Loader details with document and findings.")
+
         # Updating documents value for AiDataLoader
         documents = app_loader_details.get("documents", [])
-        logger.info(f"Documents: {documents}")
         documents.append(document.get("sourcePath"))
 
         documents = list(set(documents))
@@ -237,7 +212,6 @@ class AppLoaderDoc:
 
         # Updating documentsWithFindings value for AiDataLoader
         documents_with_findings = app_loader_details.get("documentsWithFindings", [])
-        logger.info(f"documents_with_findings: {documents_with_findings}")
         if document.get("topics") not in ({}, None) or document.get("entities") not in (
             {},
             None,
@@ -248,7 +222,6 @@ class AppLoaderDoc:
 
         # Updating source files in loaders
         loader_info = app_loader_details.get("loaders", [])
-        logger.info(f"LoaderInfo: {loader_info}")
         if loader_info:
             for loader in loader_info:
                 if loader.get("sourcePath") == document.get("loaderSourcePath"):
@@ -256,13 +229,31 @@ class AppLoaderDoc:
                         loader["sourceFiles"].append(document.get("sourcePath"))
                 loader["lastModified"] = get_current_time()
 
-        logger.info(f"FinalLoaderDetails: {app_loader_details}")
+        # Update doc entities & topics details from snippets
+        # Fetching entities and topics
+        entities_data = app_loader_details.get("docEntities", {})
+        topics_data = app_loader_details.get("docTopics", {})
+
+        if snippet.get("entities"):
+            # If entities exist in snippet
+            entities_data = self._count_entities_topics(
+                entities_data, snippet.get("entities"), snippet.get("id")
+            )
+        if snippet.get("topics"):
+            # If entities exist in snippet
+            topics_data = self._count_entities_topics(
+                topics_data, snippet.get("topics"), snippet.get("id")
+            )
+
+        app_loader_details["docEntities"] = entities_data
+        app_loader_details["docTopics"] = topics_data
+
         # self.db.update_data(AiDataLoaderTable, app_loader_details)
         logger.info("Loader details with document and findings updated successfully.")
         return app_loader_details
 
     def _update_document(self, document, snippet):
-        logger.info(f"Document: {document}")
+        logger.info("Updating AIDocument with snippet reference")
         existing_topics = document.get("topics")
         if not existing_topics:
             existing_topics = {}
@@ -272,8 +263,6 @@ class AppLoaderDoc:
 
         topics = snippet.get("topics")
         entities = snippet.get("entities")
-        logger.info(f"Snippet Topics: {topics}")
-        logger.info(f"Snippet Entities: {entities}")
         if entities:
             for entity in entities:
                 if entity in existing_entities.keys():
@@ -291,13 +280,8 @@ class AppLoaderDoc:
                 else:
                     existing_topics.update({topic: {"ref": [snippet.get("id")]}})
 
-        logger.info(f"Existing Entities: {existing_entities}")
-        logger.info(f"Existing topics: {existing_topics}")
-
         document["topics"] = existing_topics
         document["entities"] = existing_entities
-        logger.info(f"FinalUpdatedDocument: {document}")
-        # self.db.update_data(AiDocumentTable, document)
         logger.info("AIDocument Updated successfully with snippet reference")
         return document
 
@@ -319,14 +303,14 @@ class AppLoaderDoc:
         }
         ai_snippet_obj = AiSnippet(**snippet_details)
         ai_snippet = ai_snippet_obj.dict()
-        self.db.insert_data(AiSnippetsTable, ai_snippet)
+        status, snippet_obj = self.db.insert_data(AiSnippetsTable, ai_snippet)
         logger.info("AISnippet created successfully.")
-        return ai_snippet
+        return snippet_obj.data
 
     def _get_or_create_document(self, doc, data_source):
         logger.info("Create or Update AIDocument")
         filter_query = {
-            "appId": self.app_name, # loadId or AppId ( Doubt)
+            "appId": self.app_name,  # loadId or AppId ( Doubt)
             "sourcePath": doc.get("source_path"),
         }
         status, output = self.db.query(AiDocumentTable, filter_query)
@@ -335,9 +319,12 @@ class AppLoaderDoc:
             data["lastIngested"] = get_current_time()
             data["metadata"]["updatedAt"] = get_current_time()
             # self.db.update_data(AiDocumentTable, data)
-            return data
+            return output
         else:
-            metadata = {"createdAt": get_current_time(), "modifiedAt": get_current_time()}
+            metadata = {
+                "createdAt": get_current_time(),
+                "modifiedAt": get_current_time(),
+            }
             # Document is not present, need to create.
             ai_documents = {
                 "appId": self.app_name,
@@ -347,10 +334,62 @@ class AppLoaderDoc:
                 "loaderSourcePath": data_source.get("sourcePath"),
                 "owner": doc.get("file_owner"),
                 "userIdentities": doc.get("authorized_identities", []),
-                "lastIngested": get_current_time()
+                "lastIngested": get_current_time(),
             }
             ai_document_obj = AiDocument(**ai_documents)
             ai_document_data = ai_document_obj.dict()
-            
-            self.db.insert_data(AiDocumentTable, ai_document_data)
-            return ai_document_data
+
+            _, doc_obj = self.db.insert_data(AiDocumentTable, ai_document_data)
+            return doc_obj
+
+    def process_request(self, data):
+        try:
+            self.db = SQLiteClient()
+            self.data = data
+            self.app_name = data.get("name")
+
+            # create session
+            self.db.create_session()
+
+            loader_obj = get_or_create_app(
+                self.db,
+                self.app_name,
+                AiDataLoaderTable,
+                self.data,
+                ApplicationTypes.LOADER.value,
+            )
+            if not loader_obj:
+                message = "Unable to get or create loader doc app"
+                return self._create_return_response(message=message, status_code=500)
+
+            app_loader_details = loader_obj.data
+            app_loader_details = self._update_loader_details(app_loader_details)
+
+            # Get each doc classification: Pre Processing
+            self._doc_pre_processing()
+
+            # Update dataSource Details: AIDataSource
+            data_source = self._create_data_source()
+
+            # Iterate Each doc & Update AIDocument, AISnippets
+            app_loader_details, documents, doc_obj = (
+                self._create_update_document_snippets(app_loader_details, data_source)
+            )
+
+        except Exception as err:
+            message = f"Loader Doc API Request failed, Error: {err}"
+            logger.error(message)
+            logger.info("Rollback the changes")
+            self.db.session.rollback()
+            return self._create_return_response(message, 500)
+        else:
+            self.db.session.commit()
+
+            # Update loader details & Documents
+            loader_obj.data = app_loader_details
+            self.db.session.commit()
+
+            message = "Loader Doc API Request processed successfully"
+            return self._create_return_response(message)
+        finally:
+            self.db.session.close()

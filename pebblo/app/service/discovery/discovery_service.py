@@ -56,7 +56,7 @@ class AppDiscover:
             osVersion=runtime_dict.get("os_version"),
             createdAt=self._get_current_datetime(),
         )
-        logger.debug(f"AiApp Name [{self.app_name}]")
+        logger.debug(f"AiApp [{self.app_name}]")
         return instance_details_model
 
     def create_app_obj(
@@ -128,7 +128,7 @@ class AppDiscover:
         """
         # TODO: Discussion on the uniqueness of chains is not done yet,
         #  so for now we are appending chain to existing chains in the file for this app.
-        logger.debug("Updating app chains details from input chain details")
+        logger.info("updating app chains details from input chain details")
         chains = list()
 
         if app_metadata:
@@ -171,7 +171,7 @@ class AppDiscover:
         """
         Retrieve existing retrievals details from metadata file and append the new retrieval details
         """
-        logger.debug("Updating app retrievals details with input retrieval details")
+        logger.info("updating app retrievals details with input retrieval details")
         retrievals_details = list()
 
         if app_metadata:
