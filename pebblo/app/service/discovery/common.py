@@ -9,10 +9,10 @@ def get_or_create_app(db, app_name, app_class, data, app_type):
     Gets or creates an AiApp.
     """
     try:
-        logger.info(f"Fetching or creating {app_class.__tablename__} details")
+        logger.debug(f"Fetching or creating {app_class.__tablename__} details")
         exist, ai_app = db.query(app_class, {"name": app_name})
         if exist and ai_app:
-            logger.info(f"Application details exists in {app_class.__tablename__}")
+            logger.debug(f"Application details exists in {app_class.__tablename__}")
             return ai_app
 
         ai_app = {"name": app_name}
@@ -24,7 +24,7 @@ def get_or_create_app(db, app_name, app_class, data, app_type):
         response, app_object = db.insert_data(app_class, ai_app)
 
         if response:
-            logger.info(
+            logger.debug(
                 f"Fetching or creating {app_class.__tablename__} details finished."
             )
             return app_object
