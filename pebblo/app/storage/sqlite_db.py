@@ -38,7 +38,7 @@ class SQLiteClient(Database):
     def insert_data(self, table_obj, data, **kwargs):
         table_name = table_obj.__tablename__
         try:
-            logger.info(f"Insert data into table {table_name}, Data: {data}")
+            logger.info(f"Insert data into table {table_name}")
             new_record = table_obj(data=data)
             self.session.add(new_record)
             logger.info("Data inserted into the table.")
@@ -51,7 +51,6 @@ class SQLiteClient(Database):
         table_name = table_obj.__tablename__
         try:
             logger.info(f"Fetching data from table {table_name}")
-            logger.debug(f"Filter Condition: {filter_query}")
 
             json_column = "data"
 
@@ -94,7 +93,6 @@ class SQLiteClient(Database):
         table_name = table_obj.__tablename__
         try:
             logger.info(f"Updating Table details, TableName: {table_name}")
-            logger.debug(f"New Updated data: {data}")
             table_obj.data = data
             self.session.add(table_obj)
             return True, "Data has been updated successfully"

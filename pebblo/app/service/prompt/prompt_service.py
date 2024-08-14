@@ -58,12 +58,9 @@ class Prompt:
         """
         Create an RetrievalData Model and return the corresponding model object
         """
-        logger.debug(f"Creating RetrievalData model: {self.data}")
         retrieval_data_model = RetrievalData(**self.data)
         retrieval_data_model.context = context_data
-        logger.debug(
-            f"AI_APPS [{self.application_name}]: Retrieval Data Details: {retrieval_data_model.dict()}"
-        )
+        logger.debug(f"AiApps: [{self.application_name}]")
         return retrieval_data_model
 
     def _add_retrieval_data(self, retrieval_data):

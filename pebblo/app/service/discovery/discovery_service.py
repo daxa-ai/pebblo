@@ -56,9 +56,7 @@ class AppDiscover:
             osVersion=runtime_dict.get("os_version"),
             createdAt=self._get_current_datetime(),
         )
-        logger.debug(
-            f"AI_APPS [{self.app_name}]: Instance Details: {instance_details_model.dict()}"
-        )
+        logger.debug(f"AiApp [{self.app_name}]")
         return instance_details_model
 
     def create_app_obj(
@@ -130,14 +128,12 @@ class AppDiscover:
         """
         # TODO: Discussion on the uniqueness of chains is not done yet,
         #  so for now we are appending chain to existing chains in the file for this app.
-
+        logger.info("updating app chains details from input chain details")
         chains = list()
 
         if app_metadata:
             chains = app_metadata.get("chains", [])
-            logger.debug(f"Existing Chains : {chains}")
 
-        logger.debug(f"Input chains : {self.data.get('chains', [])}")
         for chain in self.data.get("chains", []):
             name = chain["name"]
             model = chain["model"]
@@ -168,21 +164,20 @@ class AppDiscover:
             chain_obj = Chain(name=name, model=model, vectorDbs=vector_db_details)
             chains.append(chain_obj.dict())
 
-        logger.debug(f"Application Name [{self.app_name}]: Chains: {chains}")
+        logger.debug(f"Application Name [{self.app_name}]")
         return chains
 
     def _fetch_retrievals_details(self, app_metadata) -> list:
         """
         Retrieve existing retrievals details from metadata file and append the new retrieval details
         """
-
+        logger.info("updating app retrievals details with input retrieval details")
         retrievals_details = list()
 
         if app_metadata:
             retrievals_details = app_metadata.get("retrievals", [])
 
         input_retrievals_details = self.data.get("retrievals", [])
-        logger.debug(f"Input retrievals : {input_retrievals_details}")
         retrievals_details.extend(input_retrievals_details)
 
         return retrievals_details
@@ -214,7 +209,6 @@ class AppDiscover:
                 return return_response(message=message, status_code=500)
 
             ai_app = ai_app_obj.data
-            logger.info(f"AiApp data: {ai_app}")
             # Get instance details
             instance_details = self._fetch_runtime_instance_details()
 
@@ -242,14 +236,6 @@ class AppDiscover:
             if not status:
                 logger.error(f"Process request failed: {message}")
                 return return_response(message=message, status_code=500)
-
-            # Fetch ai apps details
-            # status, output = self.db.get_objects(AiAppTable)
-            # if not status:
-            #     return return_response(message=output, status_code=500)
-            #
-            # for response in output:
-            #     logger.debug(f"Discovery Response: {response.data}")
 
         except Exception as err:
             logger.error(f"Discovery api failed, Error: {err}")

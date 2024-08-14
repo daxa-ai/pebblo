@@ -39,12 +39,13 @@ class AppLoaderDoc:
             body=response.dict(exclude_none=True), status_code=status_code
         )
 
-    def _update_loader_details(self, table_obj, app_loader_details):
+    def _update_loader_details(self, app_loader_details):
         """
         Update loader details in the application if they already exist;
         otherwise, add loader details to the application.
         """
-        # logger.debug("Upsert loader details to exiting ai app details")
+        logger.debug("Upsert loader details to exiting ai app details")
+
         # Update loader details if it already exits in app
         logger.info("Update AiDataLoader loader details")
         loader_details = self.data.get("loader_details", {})
@@ -136,7 +137,7 @@ class AppLoaderDoc:
         logger.info("Input doc updated with classification result")
 
     def _doc_pre_processing(self):
-        logger.info("Doc pre processing started.")
+        logger.info("input docs pre processing started.")
         input_doc_list = self.data.get("docs", [])
         for doc in input_doc_list:
             doc_info = self._get_doc_classification(doc)
@@ -144,7 +145,6 @@ class AppLoaderDoc:
 
         # Update input doc with updated one
         logger.info("Doc pre processing finished.")
-        logger.info(f"Updated docs: {self.data.get('docs')}")
 
     def _create_data_source(self):
         logger.info("Creating Data Source Details.")
@@ -171,8 +171,6 @@ class AppLoaderDoc:
         existing_document = None
         doc_obj = None
         for doc in input_doc_list:
-            logger.info(f"ExistingDocument: {existing_document}")
-            # How to make it without commit
             if not existing_document:
                 doc_obj = self._get_or_create_document(doc, data_source)
                 existing_document = doc_obj.data
@@ -204,9 +202,9 @@ class AppLoaderDoc:
 
     def _update_loader_documents(self, app_loader_details, document, snippet):
         logger.info("Updating Loader details with document and findings.")
+
         # Updating documents value for AiDataLoader
         documents = app_loader_details.get("documents", [])
-        logger.info(f"Documents: {documents}")
         documents.append(document.get("sourcePath"))
 
         documents = list(set(documents))
@@ -214,7 +212,6 @@ class AppLoaderDoc:
 
         # Updating documentsWithFindings value for AiDataLoader
         documents_with_findings = app_loader_details.get("documentsWithFindings", [])
-        logger.info(f"documents_with_findings: {documents_with_findings}")
         if document.get("topics") not in ({}, None) or document.get("entities") not in (
             {},
             None,
@@ -225,7 +222,6 @@ class AppLoaderDoc:
 
         # Updating source files in loaders
         loader_info = app_loader_details.get("loaders", [])
-        logger.info(f"LoaderInfo: {loader_info}")
         if loader_info:
             for loader in loader_info:
                 if loader.get("sourcePath") == document.get("loaderSourcePath"):
@@ -252,13 +248,12 @@ class AppLoaderDoc:
         app_loader_details["docEntities"] = entities_data
         app_loader_details["docTopics"] = topics_data
 
-        logger.info(f"FinalLoaderDetails: {app_loader_details}")
         # self.db.update_data(AiDataLoaderTable, app_loader_details)
         logger.info("Loader details with document and findings updated successfully.")
         return app_loader_details
 
     def _update_document(self, document, snippet):
-        logger.info(f"Document: {document}")
+        logger.info("Updating AIDocument with snippet reference")
         existing_topics = document.get("topics")
         if not existing_topics:
             existing_topics = {}
@@ -268,8 +263,6 @@ class AppLoaderDoc:
 
         topics = snippet.get("topics")
         entities = snippet.get("entities")
-        logger.info(f"Snippet Topics: {topics}")
-        logger.info(f"Snippet Entities: {entities}")
         if entities:
             for entity in entities:
                 if entity in existing_entities.keys():
@@ -287,13 +280,8 @@ class AppLoaderDoc:
                 else:
                     existing_topics.update({topic: {"ref": [snippet.get("id")]}})
 
-        logger.info(f"Existing Entities: {existing_entities}")
-        logger.info(f"Existing topics: {existing_topics}")
-
         document["topics"] = existing_topics
         document["entities"] = existing_entities
-        logger.info(f"FinalUpdatedDocument: {document}")
-        # self.db.update_data(AiDocumentTable, document)
         logger.info("AIDocument Updated successfully with snippet reference")
         return document
 
@@ -362,7 +350,6 @@ class AppLoaderDoc:
 
             # create session
             self.db.create_session()
-            logger.info("Session Created.")
 
             loader_obj = get_or_create_app(
                 self.db,
@@ -376,10 +363,7 @@ class AppLoaderDoc:
                 return self._create_return_response(message=message, status_code=500)
 
             app_loader_details = loader_obj.data
-            logger.debug(f"AppLoaderDetails: {app_loader_details}")
-            app_loader_details = self._update_loader_details(
-                loader_obj, app_loader_details
-            )
+            app_loader_details = self._update_loader_details(app_loader_details)
 
             # Get each doc classification: Pre Processing
             self._doc_pre_processing()
@@ -400,12 +384,9 @@ class AppLoaderDoc:
             return self._create_return_response(message, 500)
         else:
             self.db.session.commit()
-            # logger.info("Other changes commited.")
 
             # Update loader details & Documents
             loader_obj.data = app_loader_details
-
-            # logger.info("Commiting loader changes")
             self.db.session.commit()
 
             message = "Loader Doc API Request processed successfully"
