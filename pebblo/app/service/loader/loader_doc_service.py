@@ -194,8 +194,11 @@ class AppLoaderDoc:
 
             # Iterate Each doc & Update AIDocument, AISnippets
             document_handler = AiDocumentHandler(self.db, self.data)
-            app_loader_details, documents, doc_obj = document_handler.create_or_update_document(app_loader_details=app_loader_details,
-                                                                                                 data_source=data_source)
+            app_loader_details, documents, doc_obj = (
+                document_handler.create_or_update_document(
+                    app_loader_details=app_loader_details, data_source=data_source
+                )
+            )
 
         except Exception as err:
             message = f"Loader Doc API Request failed, Error: {err}"

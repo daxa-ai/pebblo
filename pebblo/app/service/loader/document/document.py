@@ -3,11 +3,11 @@ from pebblo.app.models.sqltables import AiDocumentTable
 from pebblo.app.service.loader.snippet.snippet import AiSnippetHandler
 from pebblo.app.utils.utils import get_current_time
 from pebblo.log import get_logger
+
 logger = get_logger(__name__)
 
 
 class AiDocumentHandler:
-
     def __init__(self, db, data):
         self.db = db
         self.data = data
@@ -124,11 +124,14 @@ class AiDocumentHandler:
             if not existing_document:
                 doc_obj = self._get_or_create_document(doc, data_source)
                 existing_document = doc_obj.data
-            snippet = self.snippet_handler.create_snippet(doc, data_source, existing_document)
+            snippet = self.snippet_handler.create_snippet(
+                doc, data_source, existing_document
+            )
             existing_document = self._update_document(existing_document, snippet)
             app_loader_details = self._update_loader_documents(
                 app_loader_details, existing_document
             )
-            app_loader_details = self.snippet_handler.update_loader_with_snippet(app_loader_details,
-                                                                                 snippet)
+            app_loader_details = self.snippet_handler.update_loader_with_snippet(
+                app_loader_details, snippet
+            )
         return app_loader_details, existing_document, doc_obj

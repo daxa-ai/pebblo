@@ -1,38 +1,16 @@
 from pebblo.app.models.db_models import AiSnippet
 from pebblo.app.models.sqltables import AiSnippetsTable
 from pebblo.app.utils.utils import get_current_time
-
 from pebblo.log import get_logger
+
 logger = get_logger(__name__)
 
-class AiSnippetHandler:
 
+class AiSnippetHandler:
     def __init__(self, db, data):
         self.db = db
         self.data = data
         self.app_name = self.data.get("name")
-
-    def create_snippet(self, doc, data_source, document):
-        snippet_details = {
-            "appId": self.app_name,
-            "dataSourceId": data_source.get("id"),
-            "documentId": document.get("id"),
-            "metadata": {
-                "createdAt": get_current_time(),
-                "modifiedAt": get_current_time(),
-            },
-            "doc": doc.get("doc"),
-            # 'checksum': checksum,
-            "sourcePath": doc.get("source_path"),
-            "loaderSourcePath": data_source.get("sourcePath"),
-            "entities": doc.get("entities", {}),
-            "topics": doc.get("topics", {}),
-        }
-        ai_snippet_obj = AiSnippet(**snippet_details)
-        ai_snippet = ai_snippet_obj.dict()
-        status, snippet_obj = self.db.insert_data(AiSnippetsTable, ai_snippet)
-        logger.info("AISnippet created successfully.")
-        return snippet_obj.data
 
     @staticmethod
     def _count_entities_topics(restricted_data, doc_restricted_data, snippet_id):
@@ -73,3 +51,25 @@ class AiSnippetHandler:
         app_loader_details["docEntities"] = entities_data
         app_loader_details["docTopics"] = topics_data
         return app_loader_details
+
+    def create_snippet(self, doc, data_source, document):
+        snippet_details = {
+            "appId": self.app_name,
+            "dataSourceId": data_source.get("id"),
+            "documentId": document.get("id"),
+            "metadata": {
+                "createdAt": get_current_time(),
+                "modifiedAt": get_current_time(),
+            },
+            "doc": doc.get("doc"),
+            # 'checksum': checksum,
+            "sourcePath": doc.get("source_path"),
+            "loaderSourcePath": data_source.get("sourcePath"),
+            "entities": doc.get("entities", {}),
+            "topics": doc.get("topics", {}),
+        }
+        ai_snippet_obj = AiSnippet(**snippet_details)
+        ai_snippet = ai_snippet_obj.dict()
+        status, snippet_obj = self.db.insert_data(AiSnippetsTable, ai_snippet)
+        logger.info("AISnippet created successfully.")
+        return snippet_obj.data
