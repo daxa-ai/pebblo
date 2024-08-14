@@ -26,6 +26,7 @@ def test_process_request_success(mock_entity_classifier):
                     "location": "16_27",
                     "confidence_score": "HIGH",
                     "entity_group": "pii-identification",
+
                 }
             ]
         },

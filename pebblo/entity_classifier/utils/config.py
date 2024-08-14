@@ -38,6 +38,7 @@ class SecretEntities(Enum):
     GOOGLE_API_KEY = "google-api-key"
 
 
+
 class PIIGroups(Enum):
     Identification = "pii-identification"
     Financial = "pii-financial"
@@ -62,6 +63,7 @@ entity_group_conf_mapping = {
     SecretEntities.AZURE_KEY_ID.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.AZURE_CLIENT_SECRET.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.GOOGLE_API_KEY.value: (0.8, PIIGroups.Secrets.value),
+
 }
 
 
