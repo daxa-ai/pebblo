@@ -6,7 +6,7 @@ import yaml
 from pydantic import BaseSettings, Field
 
 from pebblo.app.config.config_validation import validate_config, validate_input
-from pebblo.app.enums.common import StorageTypes, DBStorageTypes
+from pebblo.app.enums.common import DBStorageTypes, StorageTypes
 
 # Default config value
 dir_path = pathlib.Path().absolute()
