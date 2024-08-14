@@ -24,4 +24,5 @@ Google API key: &lt;PERSON&gt;&lt;PERSON&gt; is: &lt;SLACK_TOKEN&gt;
 Azure Client Secret - c4cb6f91-15a7-4e6d-a824-abcdef012345 
 &lt;PERSON&gt; - &lt;SLACK_TOKEN&gt; 
 Google API key- KLzaSyB_tWrbmfWx8g2bzL7Vhq7znuTUn0JPKmY"
+IP Address - &lt;IP_ADDRESS&gt;
 """

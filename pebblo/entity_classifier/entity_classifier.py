@@ -6,7 +6,7 @@ from pebblo.entity_classifier.utils.config import (
     ConfidenceScore,
     Entities,
     SecretEntities,
-    entity_conf_mapping,
+    entity_group_conf_mapping,
 )
 from pebblo.entity_classifier.utils.utils import (
     add_custom_regex_analyzer_registry,
@@ -55,32 +55,27 @@ class EntityClassifier:
         """
         # Analyze the text to detect entities using the Presidio analyzer
         analyzer_results = self.analyzer.analyze(text=input_text, language="en")
-
         # Initialize the list to hold the final classified entities
         final_results = []
-
         # Iterate through the detected entities
         for entity in analyzer_results:
             try:
                 mapped_entity = None
-
                 # Map entity type to predefined entities if it exists in the Entities enumeration
                 if entity.entity_type in Entities.__members__:
                     mapped_entity = Entities[entity.entity_type].value
-
                 # Check if the entity type exists in SecretEntities enumeration
                 elif entity.entity_type in SecretEntities.__members__:
                     mapped_entity = SecretEntities[entity.entity_type].value
-
                 # Append entity to final results if it meets the confidence threshold and is in the desired entities list
                 if (
                     mapped_entity
-                    and entity.score >= float(entity_conf_mapping[mapped_entity])
+                    and entity.score
+                    >= float(entity_group_conf_mapping[mapped_entity][0])
                     and entity.entity_type in self.entities
                 ):
                     final_results.append(entity)
 
-            # Handle any exceptions that occur during entity classification
             except Exception as ex:
                 logger.warning(
                     f"Error in analyze_response in entity classification. {str(ex)}"
@@ -101,8 +96,13 @@ class EntityClassifier:
     def get_analyzed_entities_response(data, anonymized_response=None):
         # Returns entities with its location i.e. start to end and confidence score
         response = []
-
         for index, value in enumerate(data):
+            mapped_entity = None
+            if value.entity_type in Entities.__members__:
+                mapped_entity = Entities[value.entity_type].value
+            elif value.entity_type in SecretEntities.__members__:
+                mapped_entity = SecretEntities[value.entity_type].value
+
             location = f"{value.start}_{value.end}"
             if anonymized_response:
                 anonymized_data = anonymized_response[len(data) - index - 1]
@@ -112,6 +112,7 @@ class EntityClassifier:
                     "entity_type": value.entity_type,
                     "location": location,
                     "confidence_score": value.score,
+                    "entity_group": entity_group_conf_mapping[mapped_entity][1],
                 }
             )
         return response
