@@ -210,7 +210,7 @@ class AppDiscover:
 
 
             # get or create app
-            ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass, self.data)
+            ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass, self.data, app_type)
             if not ai_app_obj:
                 message = "Unable to get or create aiapp details"
                 return return_response(message=message, status_code=500)

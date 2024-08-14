@@ -1,4 +1,4 @@
-from pebblo.app.enums.enums import ClassifierConstants
+from pebblo.app.enums.enums import ClassifierConstants, ApplicationTypes
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiDataModel,
@@ -175,7 +175,7 @@ class AppLoaderDoc:
             logger.info("Session Created.")
 
             loader_obj = get_or_create_app(
-                self.db, self.app_name, AiDataLoaderTable, self.data
+                self.db, self.app_name, AiDataLoaderTable, self.data, ApplicationTypes.LOADER.value
             )
             if not loader_obj:
                 message = "Unable to get or create loader doc app"
@@ -203,7 +203,7 @@ class AppLoaderDoc:
             return self._create_return_response(message, 500)
         else:
             # Update loader details & Documents
-            self.db.update_data(AiDataLoaderTable, app_loader_details)
+            self.db.update_data(loader_obj, app_loader_details)
             self.db.update_data(AiDocumentTable, documents)
             message = "Loader Doc API Request processed successfully"
             self.db.session.commit()
@@ -222,10 +222,26 @@ class AppLoaderDoc:
                 existing_document = self._get_or_create_document(doc, data_source)
             snippet = self._create_snippet(doc, data_source, existing_document)
             existing_document = self._update_document(existing_document, snippet)
-            app_loader_details = self._update_loader_documents(app_loader_details, existing_document)
+            app_loader_details = self._update_loader_documents(app_loader_details, existing_document, snippet)
         return app_loader_details, existing_document
 
-    def _update_loader_documents(self, app_loader_details, document):
+    @staticmethod
+    def _count_entities_topics(restricted_data, doc_restricted_data, snippet_id):
+        logger.info("counting entities and topics started")
+        for data in doc_restricted_data:
+            # If entity in apps coll
+            if data in restricted_data:
+                # updating existing count and appending doc id
+                restricted_data[data]['count'] += doc_restricted_data.get(data, 0)
+                restricted_data.get(data, {}).get('docIds', []).append(snippet_id)
+            else:
+                # If entity or topic does not exist in  app coll
+                restricted_data[data] = {"count": doc_restricted_data.get(data, 0), "docIds": [snippet_id]}
+                # Adding count and docId in app coll
+        logger.info("counting entities and topics finished.")
+        return restricted_data
+
+    def _update_loader_documents(self, app_loader_details, document, snippet):
         logger.info("Updating Loader details with document and findings.")
         # Updating documents value for AiDataLoader
         documents = app_loader_details.get("documents", [])
@@ -255,6 +271,24 @@ class AppLoaderDoc:
                     if document.get("sourcePath") not in loader["sourceFiles"]:
                         loader["sourceFiles"].append(document.get("sourcePath"))
                 loader["lastModified"] = get_current_time()
+
+
+        # Update doc entities & topics details from snippets
+        # Fetching entities and topics
+        entities_data = app_loader_details.get("docEntities", {})
+        topics_data = app_loader_details.get("docTopics", {})
+
+        if snippet.get('entities'):
+            # If entities exist in snippet
+            entities_data = self._count_entities_topics(entities_data, snippet.get('entities'),
+                                                       snippet.get("id"))
+        if snippet.get('topics'):
+            # If entities exist in snippet
+            topics_data = self._count_entities_topics(topics_data, snippet.get('topics'),
+                                                       snippet.get("id"))
+
+        app_loader_details["docEntities"] = entities_data
+        app_loader_details["docTopics"] = topics_data
 
         logger.info(f"FinalLoaderDetails: {app_loader_details}")
         # self.db.update_data(AiDataLoaderTable, app_loader_details)

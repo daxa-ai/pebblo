@@ -68,7 +68,7 @@ class Prompt:
 
     def _add_retrieval_data(self, retrieval_data):
         app_exists, ai_app_obj = self.db.query(
-            table_obj=AiAppTable, condition={"name": self.application_name}
+            table_obj=AiAppTable, filter_query={"name": self.application_name}
         )
         if not app_exists:
             message = f"{self.application_name} app doesn't exists"
@@ -122,9 +122,6 @@ class Prompt:
 
             # creating retrieval data model object
             retrieval_data = self._create_retrieval_data(context_data)
-
-            # create session
-            self.db.create_session()
 
             # Add retrieval entry
             self._add_retrieval_data(retrieval_data.dict())

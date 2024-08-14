@@ -1,9 +1,10 @@
+from pebblo.app.enums.enums import ApplicationTypes
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
 
 
-def get_or_create_app(db, app_name, app_class, data):
+def get_or_create_app(db, app_name, app_class, data, app_type):
     """
     Gets or creates an AiApp.
     """
@@ -15,10 +16,10 @@ def get_or_create_app(db, app_name, app_class, data):
             return ai_app
 
         ai_app = {"name": app_name}
-        if data.get("load_id"):
+        if app_type == ApplicationTypes.LOADER.value:
             ai_app["id"] = data["load_id"]
-        else:
-            ai_app["id"] = data["run_id"]
+        elif app_type == ApplicationTypes.RETRIEVAL.value:
+            pass
 
         response, app_object = db.insert_data(app_class, ai_app)
 
