@@ -240,7 +240,6 @@ def test_presidio_entity_classifier_and_anonymizer(
                 "location": "17_28",
                 "confidence_score": "HIGH",
                 "entity_group": "pii-identification",
-
             }
         ],
         "us-itin": [
@@ -255,7 +254,6 @@ def test_presidio_entity_classifier_and_anonymizer(
                 "location": "77_97",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
-
             }
         ],
         "github-token": [

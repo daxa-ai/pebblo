@@ -7,7 +7,6 @@ from pebblo.entity_classifier.utils.config import (
     Entities,
     SecretEntities,
     entity_group_conf_mapping,
-
 )
 from pebblo.entity_classifier.utils.utils import (
     add_custom_regex_analyzer_registry,
