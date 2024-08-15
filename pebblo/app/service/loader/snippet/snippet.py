@@ -14,7 +14,7 @@ class AiSnippetHandler:
 
     @staticmethod
     def _count_entities_topics(restricted_data, doc_restricted_data, snippet_id):
-        logger.info("counting entities and topics started")
+        logger.debug("Counting entities and topics started")
         for data in doc_restricted_data:
             # If entity in apps coll
             if data in restricted_data:
@@ -28,7 +28,7 @@ class AiSnippetHandler:
                     "docIds": [snippet_id],
                 }
                 # Adding count and docId in app coll
-        logger.info("counting entities and topics finished.")
+        logger.debug("Counting entities and topics finished.")
         return restricted_data
 
     def update_loader_with_snippet(self, app_loader_details, snippet):
@@ -71,5 +71,5 @@ class AiSnippetHandler:
         ai_snippet_obj = AiSnippet(**snippet_details)
         ai_snippet = ai_snippet_obj.dict()
         status, snippet_obj = self.db.insert_data(AiSnippetsTable, ai_snippet)
-        logger.info("AISnippet created successfully.")
+        logger.debug("AISnippet created successfully.")
         return snippet_obj.data

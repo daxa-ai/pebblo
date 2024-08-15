@@ -44,7 +44,6 @@ class AppLoaderDoc:
         logger.debug("Upsert loader details to exiting ai app details")
 
         # Update loader details if it already exits in app
-        logger.info("Update AiDataLoader loader details")
         loader_details = self.data.get("loader_details", {})
         loader_name = loader_details.get("loader", None)
         source_type = loader_details.get("source_type", None)
@@ -73,7 +72,7 @@ class AppLoaderDoc:
             # If loader does not exist, create new entry
             if not loader_exist:
                 logger.debug(
-                    "loader details does not exist in app details, adding details to app details"
+                    "Loader details does not exist in app details, adding details to app details"
                 )
                 new_loader_data = LoaderMetadata(
                     name=loader_name,
@@ -87,11 +86,11 @@ class AppLoaderDoc:
                 app_loader_details["loaders"] = loader_list
 
         # self.db.update_data(table_obj, app_loader_details)
-        logger.info("Loader details Updated successfully.")
+        logger.debug("Loader details Updated successfully.")
         return app_loader_details
 
     def _get_doc_classification(self, doc):
-        logger.info("Doc classification started.")
+        logger.debug("Doc classification started.")
         doc_info = AiDataModel(
             data=doc.get("doc", None),
             entities={},
@@ -118,7 +117,7 @@ class AppLoaderDoc:
                 doc_info.topicCount = topic_count
                 doc_info.entityCount = entity_count
                 doc_info.data = anonymized_doc
-            logger.info("Doc classification finished.")
+            logger.debug("Doc classification finished.")
             return doc_info
         except Exception as e:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
@@ -129,23 +128,23 @@ class AppLoaderDoc:
         """
         Create a doc model and return its object
         """
-        logger.info("Update doc details with classification result")
+        logger.debug("Update doc details with classification result")
         doc["entities"] = doc_info.entities
         doc["topics"] = doc_info.topics
-        logger.info("Input doc updated with classification result")
+        logger.debug("Input doc updated with classification result")
 
     def _doc_pre_processing(self):
-        logger.info("input docs pre processing started.")
+        logger.debug("Input docs pre processing started.")
         input_doc_list = self.data.get("docs", [])
         for doc in input_doc_list:
             doc_info = self._get_doc_classification(doc)
             self._update_doc_details(doc, doc_info)
 
         # Update input doc with updated one
-        logger.info("Doc pre processing finished.")
+        logger.debug("Doc pre processing finished.")
 
     def _create_data_source(self):
-        logger.info("Creating Data Source Details.")
+        logger.debug("Creating Data Source Details.")
         loader_details = self.data.get("loader_details") or {}
         data_source = {
             "app_name": self.app_name,
@@ -160,7 +159,7 @@ class AppLoaderDoc:
         ai_data_source_obj = AiDataSource(**data_source)
         ai_data_source = ai_data_source_obj.dict()
         _, data_source_obj = self.db.insert_data(AiDataSourceTable, ai_data_source)
-        logger.info("Data Source Details has been updated successfully.")
+        logger.debug("Data Source Details has been updated successfully.")
         return data_source_obj.data
 
     def process_request(self, data):

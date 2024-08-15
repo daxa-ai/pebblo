@@ -15,7 +15,7 @@ class AiDocumentHandler:
         self.snippet_handler = AiSnippetHandler(db, data)
 
     def _get_or_create_document(self, doc, data_source):
-        logger.info("Create or Update AIDocument")
+        logger.debug("Create or update AIDocument")
         filter_query = {
             "appId": self.app_name,  # loadId or AppId ( Doubt)
             "sourcePath": doc.get("source_path"),
@@ -50,7 +50,7 @@ class AiDocumentHandler:
 
     @staticmethod
     def _update_loader_documents(app_loader_details, document):
-        logger.info("Updating Loader details with document and findings.")
+        logger.debug("Updating Loader details with document and findings.")
 
         # Updating documents value for AiDataLoader
         documents = app_loader_details.get("documents", [])
@@ -78,12 +78,12 @@ class AiDocumentHandler:
                         loader["sourceFiles"].append(document.get("sourcePath"))
                 loader["lastModified"] = get_current_time()
 
-        logger.info("Loader details with document and findings updated successfully.")
+        logger.debug("Loader details with document and findings updated successfully.")
         return app_loader_details
 
     @staticmethod
     def _update_document(document, snippet):
-        logger.info("Updating AIDocument with snippet reference")
+        logger.debug("Updating AIDocument with snippet reference.")
         existing_topics = document.get("topics")
         if not existing_topics:
             existing_topics = {}
@@ -112,11 +112,11 @@ class AiDocumentHandler:
 
         document["topics"] = existing_topics
         document["entities"] = existing_entities
-        logger.info("AIDocument Updated successfully with snippet reference")
+        logger.debug("AIDocument Updated successfully with snippet reference")
         return document
 
     def create_or_update_document(self, app_loader_details, data_source):
-        logger.info("Create update document snippet")
+        logger.debug("Create or update document snippet")
         input_doc_list = self.data.get("docs", [])
         existing_document = None
         doc_obj = None

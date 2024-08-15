@@ -38,19 +38,19 @@ class SQLiteClient(Database):
     def insert_data(self, table_obj, data, **kwargs):
         table_name = table_obj.__tablename__
         try:
-            logger.info(f"Insert data into table {table_name}")
+            logger.debug(f"Insert data into table {table_name}")
             new_record = table_obj(data=data)
             self.session.add(new_record)
-            logger.info("Data inserted into the table.")
+            logger.debug("Data inserted into the table.")
             return True, new_record
         except Exception as err:
-            logger.info(f"insert data into table {table_name} failed, Error: {err}")
+            logger.error(f"Insert data into table {table_name} failed, Error: {err}")
             return False, err
 
     def query(self, table_obj, filter_query: dict):
         table_name = table_obj.__tablename__
         try:
-            logger.info(f"Fetching data from table {table_name}")
+            logger.debug(f"Fetching data from table {table_name}")
 
             json_column = "data"
 
@@ -80,7 +80,7 @@ class SQLiteClient(Database):
         # This function is not in use right now, But in the local_ui it will get used.
         table_name = table_obj.__tablename__
         try:
-            logger.info(f"Fetching data from table {table_name}")
+            logger.debug(f"Fetching data from table {table_name}")
             output = self.session.query(table_obj.__class__).filter_by(id=id).first()
             return True, output
         except Exception as err:
@@ -92,7 +92,7 @@ class SQLiteClient(Database):
     def update_data(self, table_obj, data):
         table_name = table_obj.__tablename__
         try:
-            logger.info(f"Updating Table details, TableName: {table_name}")
+            logger.debug(f"Updating Table details, TableName: {table_name}")
             table_obj.data = data
             self.session.add(table_obj)
             return True, "Data has been updated successfully"

@@ -60,7 +60,7 @@ class Prompt:
         """
         retrieval_data_model = RetrievalData(**self.data)
         retrieval_data_model.context = context_data
-        logger.debug(f"AiApps: [{self.application_name}]")
+        logger.debug(f"AiApp Name: [{self.application_name}]")
         return retrieval_data_model
 
     def _add_retrieval_data(self, retrieval_data):
@@ -86,7 +86,7 @@ class Prompt:
             self.data = data
             self.application_name = self.data.get("name")
 
-            logger.info("Prompt API request processing started")
+            logger.debug("Prompt API request processing started")
 
             # create session
             self.db.create_session()
@@ -133,7 +133,7 @@ class Prompt:
         else:
             # Commit will only happen when everything went well.
             message = "Prompt Request Processed Successfully"
-            logger.info(message)
+            logger.debug(message)
             self.db.session.commit()
             return return_response(message=message, status_code=200)
         finally:
