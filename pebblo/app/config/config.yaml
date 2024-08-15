@@ -13,4 +13,4 @@ storage:
   type: db
   db: sqlite
   location: ~/.pebblo
-  name: pebblo_a
+  name: pebblo
