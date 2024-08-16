@@ -1,7 +1,7 @@
 # Prompt API with database implementation.
 
 from pebblo.app.models.db_models import RetrievalContext, RetrievalData
-from pebblo.app.models.sqltable import AiAppTable, AiRetrievalTable
+from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import return_response
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
@@ -58,17 +58,14 @@ class Prompt:
         """
         Create an RetrievalData Model and return the corresponding model object
         """
-        logger.debug(f"Creating RetrievalData model: {self.data}")
         retrieval_data_model = RetrievalData(**self.data)
         retrieval_data_model.context = context_data
-        logger.debug(
-            f"AI_APPS [{self.application_name}]: Retrieval Data Details: {retrieval_data_model.dict()}"
-        )
+        logger.debug(f"AiApp Name: [{self.application_name}]")
         return retrieval_data_model
 
     def _add_retrieval_data(self, retrieval_data):
         app_exists, ai_app_obj = self.db.query(
-            table_obj=AiAppTable, condition={"name": self.application_name}
+            table_obj=AiAppTable, filter_query={"name": self.application_name}
         )
         if not app_exists:
             message = f"{self.application_name} app doesn't exists"
@@ -89,7 +86,7 @@ class Prompt:
             self.data = data
             self.application_name = self.data.get("name")
 
-            logger.info("Prompt API request processing started")
+            logger.debug("Prompt API request processing started")
 
             # create session
             self.db.create_session()
@@ -123,9 +120,6 @@ class Prompt:
             # creating retrieval data model object
             retrieval_data = self._create_retrieval_data(context_data)
 
-            # create session
-            self.db.create_session()
-
             # Add retrieval entry
             self._add_retrieval_data(retrieval_data.dict())
 
@@ -139,7 +133,7 @@ class Prompt:
         else:
             # Commit will only happen when everything went well.
             message = "Prompt Request Processed Successfully"
-            logger.info(message)
+            logger.debug(message)
             self.db.session.commit()
             return return_response(message=message, status_code=200)
         finally:

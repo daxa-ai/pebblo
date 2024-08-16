@@ -43,7 +43,7 @@ class AiBaseApp(BaseModel):
     instanceDetails: Optional[InstanceDetails]
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     policyViolations: Optional[
-        List[dict]
+        List[Dict]
     ] = []  # list of policy id, title and other details
     pebbloServerVersion: Optional[str] = None
     pebbloClientVersion: Optional[str] = None
@@ -72,7 +72,7 @@ class VectorDB(BaseModel):
     version: Optional[str] = None
     location: Optional[str] = None
     embeddingModel: Optional[str] = None
-    pkgInfo: Optional[PackageInfo]
+    pkgInfo: Optional[PackageInfo] = []
 
 
 class Chain(BaseModel):
@@ -85,8 +85,8 @@ class AiDataModel(BaseModel):
     data: Optional[Union[list, str]]
     entityCount: int
     entities: dict
-    topicCount: Optional[int] = None
-    topics: Optional[dict] = None
+    topicCount: Optional[int] = 0
+    topics: Optional[dict] = {}
 
     def dict(self, **kwargs):
         kwargs["exclude_none"] = True
@@ -133,3 +133,59 @@ class AiDataLoader(AiBaseApp):
     docTopics: Optional[Dict] = {}
     documents: Optional[List[str]] = []
     documentsWithFindings: Optional[List[str]] = []
+
+
+class AiDataSource(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    app_name: str
+    metadata: Metadata
+    sourcePath: str
+    sourceType: str
+    loader: str
+
+
+class AiDocument(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    appId: str
+    dataSourceId: str
+    loaderSourcePath: str
+    metadata: Metadata
+    sourcePath: str
+    lastIngested: str
+    owner: str
+    userIdentities: Optional[List[str]] = []
+    topics: Optional[dict] = {}
+    entities: Optional[dict] = {}
+
+
+class AiSnippet(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    appId: str
+    dataSourceId: str
+    documentId: str
+    metadata: Metadata
+    doc: Optional[str] = None
+    checksum: Optional[str] = None
+    sourcePath: str
+    loaderSourcePath: str
+    lastModified: Optional[str] = str
+    entities: dict
+    topics: dict
+    policyViolations: Optional[List[dict]] = []
+    # label_feedback: Optional[List[LabelFeedback]] = []
+
+
+class LoaderDocs(BaseModel):
+    pb_id: Optional[str]
+    pb_checksum: str
+    source_path: str
+    loader_source_path: str
+    entity_count: Optional[int]
+    entities: Optional[dict]
+    topic_count: Optional[int]
+    topics: Optional[dict]
+
+
+class LoaderDocResponseModel(BaseModel):
+    docs: List[LoaderDocs] = []
+    message: Optional[str] = None

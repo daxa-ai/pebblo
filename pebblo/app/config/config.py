@@ -6,7 +6,7 @@ import yaml
 from pydantic import BaseSettings, Field
 
 from pebblo.app.config.config_validation import validate_config, validate_input
-from pebblo.app.enums.common import StorageTypes
+from pebblo.app.enums.common import DBStorageTypes, StorageTypes
 
 # Default config value
 dir_path = pathlib.Path().absolute()
@@ -48,7 +48,9 @@ class ClassifierConfig(BaseSettings):
 
 class StorageConfig(BaseSettings):
     type: str = Field(default=StorageTypes.FILE.value)
-    db: Union[str, None] = Field(default=StorageTypes.DATABASE.value)
+    db: Union[str, None] = Field(default=DBStorageTypes.SQLITE.value)
+    location: Union[str, None] = Field(default=str(dir_path))
+    name: Union[str, None] = Field(default=str("pebblo"))
     # This is default value for current version(0.1.18), it needs to be changed in next version to db.
 
 
@@ -76,6 +78,7 @@ def load_config(path: str) -> Tuple[dict, Config]:
             logging=LoggingConfig(),
             classifier=ClassifierConfig(anonymizeSnippets=False),
             storage=StorageConfig(type="file", db=None),
+            # for now, a default storage type is FILE, but in the next release DB will be the default storage type.
         )
         if not path:
             # Setting Default config details

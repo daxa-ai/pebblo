@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 from json import JSONEncoder, dump
 from os import getcwd, makedirs, path, remove
 from shutil import rmtree
@@ -294,3 +295,11 @@ def return_response(message, status_code, pebblo_server_version=None):
     return PebbloJsonResponse.build(
         body=response.dict(exclude_none=True), status_code=status_code
     )
+
+
+def get_current_time():
+    """
+    Return current time in isoformat
+    :return:
+    """
+    return datetime.now().isoformat()

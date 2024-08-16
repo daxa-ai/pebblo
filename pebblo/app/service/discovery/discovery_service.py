@@ -14,7 +14,7 @@ from pebblo.app.models.db_models import (
     PackageInfo,
     VectorDB,
 )
-from pebblo.app.models.sqltable import AiAppTable, AiDataLoaderTable
+from pebblo.app.models.sqltables import AiAppTable, AiDataLoaderTable
 from pebblo.app.service.discovery.common import get_or_create_app
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import get_pebblo_server_version, return_response
@@ -24,7 +24,6 @@ logger = get_logger(__name__)
 
 
 class AppDiscover:
-
     def __init__(self):
         self.db = None
         self.data = None
@@ -41,7 +40,7 @@ class AppDiscover:
         """
         Retrieve instance details from input data and return its corresponding model object.
         """
-        logger.debug("Retrieving instance details from input data")
+        logger.debug("Retrieving instance details from input data.")
         # Fetching runtime instance details
         runtime_dict = self.data.get("runtime", {})
         instance_details_model = InstanceDetails(
@@ -57,9 +56,7 @@ class AppDiscover:
             osVersion=runtime_dict.get("os_version"),
             createdAt=self._get_current_datetime(),
         )
-        logger.debug(
-            f"AI_APPS [{self.app_name}]: Instance Details: {instance_details_model.dict()}"
-        )
+        logger.debug(f"AiApp Name [{self.app_name}]")
         return instance_details_model
 
     def create_app_obj(
@@ -131,14 +128,12 @@ class AppDiscover:
         """
         # TODO: Discussion on the uniqueness of chains is not done yet,
         #  so for now we are appending chain to existing chains in the file for this app.
-
+        logger.debug("Updating app chains details from input chain details")
         chains = list()
 
         if app_metadata:
             chains = app_metadata.get("chains", [])
-            logger.debug(f"Existing Chains : {chains}")
 
-        logger.debug(f"Input chains : {self.data.get('chains', [])}")
         for chain in self.data.get("chains", []):
             name = chain["name"]
             model = chain["model"]
@@ -169,21 +164,20 @@ class AppDiscover:
             chain_obj = Chain(name=name, model=model, vectorDbs=vector_db_details)
             chains.append(chain_obj.dict())
 
-        logger.debug(f"Application Name [{self.app_name}]: Chains: {chains}")
+        logger.debug(f"Application Name [{self.app_name}]")
         return chains
 
     def _fetch_retrievals_details(self, app_metadata) -> list:
         """
         Retrieve existing retrievals details from metadata file and append the new retrieval details
         """
-
+        logger.debug("Updating app retrievals details with input retrieval details")
         retrievals_details = list()
 
         if app_metadata:
             retrievals_details = app_metadata.get("retrievals", [])
 
         input_retrievals_details = self.data.get("retrievals", [])
-        logger.debug(f"Input retrievals : {input_retrievals_details}")
         retrievals_details.extend(input_retrievals_details)
 
         return retrievals_details
@@ -194,29 +188,27 @@ class AppDiscover:
             self.data = data
             self.app_name = data.get("name")
 
-            logger.info("Discovery API Request.")
+            logger.debug("Discovery API request started")
 
             # create session
             self.db.create_session()
 
             chain_details = []
             retrievals_details = []
-            load_id = self.data.get("load_id") or None
             app_type, AppClass = self._get_app_type_and_class()
             if not AppClass:
                 message = "No load_id's or run_id's are present, Invalid Request"
                 return return_response(message=message, status_code=404)
 
-
-
             # get or create app
-            ai_app_obj = get_or_create_app(self.db, self.app_name, AppClass, self.data)
+            ai_app_obj = get_or_create_app(
+                self.db, self.app_name, AppClass, self.data, app_type
+            )
             if not ai_app_obj:
                 message = "Unable to get or create aiapp details"
                 return return_response(message=message, status_code=500)
 
             ai_app = ai_app_obj.data
-            logger.info(f"AiApp data: {ai_app}")
             # Get instance details
             instance_details = self._fetch_runtime_instance_details()
 
@@ -245,14 +237,6 @@ class AppDiscover:
                 logger.error(f"Process request failed: {message}")
                 return return_response(message=message, status_code=500)
 
-            # Fetch ai apps details
-            # status, output = self.db.get_objects(AiAppTable)
-            # if not status:
-            #     return return_response(message=output, status_code=500)
-            #
-            # for response in output:
-            #     logger.debug(f"Discovery Response: {response.data}")
-
         except Exception as err:
             logger.error(f"Discovery api failed, Error: {err}")
             # Getting error, We are rollback everything we did in this run.
@@ -264,7 +248,7 @@ class AppDiscover:
         else:
             # Commit will only happen when everything went well.
             message = "App Discover Request Processed Successfully"
-            logger.info(message)
+            logger.debug(message)
             self.db.session.commit()
 
             return return_response(message=message, status_code=200)

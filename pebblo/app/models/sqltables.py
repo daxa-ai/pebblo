@@ -34,5 +34,26 @@ class AiRetrievalTable(Base):
     data = Column(JSON)
 
 
+class AiDataSourceTable(Base):
+    __tablename__ = "aidatasource"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    data = Column(JSON)
+
+
+class AiDocumentTable(Base):
+    __tablename__ = "aidocument"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    data = Column(JSON)
+
+
+class AiSnippetsTable(Base):
+    __tablename__ = "aisnippets"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    data = Column(JSON)
+
+
 # Create all tables in the engine. This is equivalent to "Create Table" statements in raw SQL.
 Base.metadata.create_all(engine)
