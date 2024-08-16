@@ -52,9 +52,13 @@ export const SERVER_VERSION = APP_DATA_RESP?.pebbloServerVersion || "";
 export const CLIENT_VERSION = APP_DATA?.clientVersion?.version || "";
 const CLIENT_NAME = APP_DATA?.clientVersion?.name || "";
 
+const langchainVersion = APP_DATA?.framework?.version
+  ? `${APP_DATA?.framework?.name}: ${APP_DATA?.framework?.version}`
+  : "";
+
 const PEBBLO_CLIENT_VERSION = CLIENT_VERSION
   ? `${CLIENT_NAME} ${CLIENT_VERSION}`
-  : APP_DATA?.pebbloClientVersion;
+  : `Client Version: ${APP_DATA?.pebbloClientVersion}`;
 
 export const NO_APPLICATIONS_FOUND = APP_DATA
   ? Object.keys(APP_DATA)?.length === 0
@@ -137,7 +141,10 @@ export const APP_DETAILS = [
   },
   {
     label: "Pebblo Client",
-    value: PEBBLO_CLIENT_VERSION,
+    value: `<div class="flex flex-col">
+      <div>${PEBBLO_CLIENT_VERSION}</div>
+      <div>${langchainVersion}</div>
+    </div>`,
   },
   {
     label: "Path",
