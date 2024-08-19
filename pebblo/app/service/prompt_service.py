@@ -149,10 +149,16 @@ class Prompt:
 
             # getting prompt data
             prompt_data = self.data.get("prompt", {})
-            logger.info(f"Pronpt Data {prompt_data}")
             is_prompt_gov_enabled = self.data.get("prompt", {}).get(
                 "promptGovEnabled", None
             )
+
+            # Added for backward compatibility.
+            # Needs to be removed after pebblo 0.20
+            if is_prompt_gov_enabled is None:
+                is_prompt_gov_enabled = self.data.get("prompt", {}).get(
+                    "prompt_gov_enabled", False
+                )
 
             if is_prompt_gov_enabled is None:
                 prompt_data = self._fetch_classified_data(

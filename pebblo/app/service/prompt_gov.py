@@ -64,8 +64,6 @@ class PromptGov:
         """
         try:
             doc_info = self._get_classifier_response()
-            logger.debug(f"Entities {doc_info.entities}")
-            logger.debug(f"Entity Count {doc_info.entityCount}")
             response = PromptGovResponseModel(
                 entities=doc_info.entities,
                 entityCount=doc_info.entityCount,
