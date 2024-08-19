@@ -18,7 +18,8 @@ class AiDocumentHandler:
     def _get_or_create_document(self, doc, data_source):
         logger.debug("Create or update AIDocument")
         filter_query = {
-            "appId": self.app_name,  # loadId or AppId ( Doubt)
+            "appName": self.app_name,
+            "loadId": self.data.get("load_id"),
             "sourcePath": doc.get("source_path"),
         }
         status, output = self.db.query(AiDocumentTable, filter_query)
@@ -34,7 +35,8 @@ class AiDocumentHandler:
             }
             # Document is not present, need to create.
             ai_documents = {
-                "appId": self.app_name,
+                "appName": self.app_name,
+                "loadId": self.data.get("load_id"),
                 "dataSourceId": data_source.get("id"),
                 "metadata": metadata,
                 "sourcePath": doc.get("source_path"),
@@ -50,7 +52,6 @@ class AiDocumentHandler:
             return doc_obj
 
     @staticmethod
-    @timeit
     def _update_loader_documents(app_loader_details, document):
         logger.debug("Updating Loader details with document and findings.")
 
@@ -84,7 +85,6 @@ class AiDocumentHandler:
         return app_loader_details
 
     @staticmethod
-    @timeit
     def _update_document(document, snippet):
         logger.debug("Updating AIDocument with snippet reference.")
         existing_topics = document.get("topics")

@@ -13,8 +13,7 @@ class AiSnippetHandler:
         self.app_name = self.data.get("name")
 
     @staticmethod
-    @timeit
-    def _count_entities_topics(restricted_data, doc_restricted_data, snippet_id):
+    def _count_and_update_entities_topics(restricted_data, doc_restricted_data, snippet_id):
         logger.debug("Counting entities and topics started")
         for data in doc_restricted_data:
             # If entity in apps coll
@@ -32,7 +31,6 @@ class AiSnippetHandler:
         logger.debug("Counting entities and topics finished.")
         return restricted_data
 
-    @timeit
     def update_loader_with_snippet(self, app_loader_details, snippet):
         # Update doc entities & topics details from snippets
         # Fetching entities and topics
@@ -41,12 +39,12 @@ class AiSnippetHandler:
 
         if snippet.get("entities"):
             # If entities exist in snippet
-            entities_data = self._count_entities_topics(
+            entities_data = self._count_and_update_entities_topics(
                 entities_data, snippet.get("entities"), snippet.get("id")
             )
         if snippet.get("topics"):
             # If entities exist in snippet
-            topics_data = self._count_entities_topics(
+            topics_data = self._count_and_update_entities_topics(
                 topics_data, snippet.get("topics"), snippet.get("id")
             )
 
@@ -57,7 +55,8 @@ class AiSnippetHandler:
     @timeit
     def create_snippet(self, doc, data_source, document):
         snippet_details = {
-            "appId": self.app_name,
+            "appName": self.app_name,
+            "loadId": self.data.get("load_id"),
             "dataSourceId": data_source.get("id"),
             "documentId": document.get("id"),
             "metadata": {

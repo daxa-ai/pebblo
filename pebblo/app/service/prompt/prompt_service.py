@@ -50,7 +50,6 @@ class Prompt:
         return data
 
     @staticmethod
-    @timeit
     def _fetch_context_data(context_list):
         retrieval_context_data = []
         if context_list:
@@ -63,7 +62,6 @@ class Prompt:
                 retrieval_context_data.append(retrieval_context_obj)
         return retrieval_context_data
 
-    @timeit
     def _create_retrieval_data(self, context_data):
         """
         Create an RetrievalData Model and return the corresponding model object

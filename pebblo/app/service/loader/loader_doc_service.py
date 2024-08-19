@@ -155,9 +155,10 @@ class AppLoaderDoc:
         loader_details = self.data.get("loader_details") or {}
 
         filter_query = {
-            "app_name": self.app_name,
+            "appName": self.app_name,
             "sourcePath": loader_details.get("source_path"),
             "sourceType": loader_details.get("source_type"),
+            "loadId": self.data.get("load_id")
         }
         status, output = self.db.query(AiDataSourceTable, filter_query)
         if status and output:
@@ -169,7 +170,8 @@ class AppLoaderDoc:
 
         # Data Source details are not present, Creating data source details
         data_source = {
-            "app_name": self.app_name,
+            "appName": self.app_name,
+            "loadId": self.data.get("load_id"),
             "metadata": {
                 "createdAt": get_current_time(),
                 "modifiedAt": get_current_time(),

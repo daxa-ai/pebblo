@@ -31,7 +31,6 @@ class AppDiscover:
         self.data = None
         self.app_name = None
 
-    @timeit
     @staticmethod
     def _get_current_datetime():
         """
@@ -39,7 +38,6 @@ class AppDiscover:
         """
         return datetime.now().isoformat()
 
-    @timeit
     @staticmethod
     def return_response(message, status_code, pebblo_server_version=None):
         response = DiscoverAIAppsResponseModel(
@@ -50,7 +48,6 @@ class AppDiscover:
             body=response.dict(exclude_none=True), status_code=status_code
         )
 
-    @timeit
     def _fetch_runtime_instance_details(self) -> InstanceDetails:
         """
         Retrieve instance details from input data and return its corresponding model object.
@@ -74,7 +71,6 @@ class AppDiscover:
         logger.debug(f"AiApp Name [{self.app_name}]")
         return instance_details_model
 
-    @timeit
     def create_app_obj(
         self, ai_app, instance_details, chain_details, retrievals_details, app_type
     ):
@@ -115,7 +111,6 @@ class AppDiscover:
         model_obj = AppModel(**ai_app)
         return model_obj.dict()
 
-    @timeit
     def _get_app_type_and_class(self):
         AppClass = None
         app_type = None
@@ -129,18 +124,6 @@ class AppDiscover:
 
         return app_type, AppClass
 
-    @timeit
-    def model_to_dict(self, instance):
-        """Convert SQLAlchemy model instance to dictionary."""
-        if instance:
-            # Use SQLAlchemy's inspection to get the column attributes
-            mapper = inspect(instance).mapper
-            return {
-                column.key: getattr(instance, column.key) for column in mapper.columns
-            }
-        return {}
-
-    @timeit
     def _fetch_chain_details(self, app_metadata) -> list[Chain]:
         """
         Retrieve chain details from input data and return its corresponding model object.
@@ -186,7 +169,6 @@ class AppDiscover:
         logger.debug(f"Application Name [{self.app_name}]")
         return chains
 
-    @timeit
     def _fetch_retrievals_details(self, app_metadata) -> list:
         """
         Retrieve existing retrievals details from metadata file and append the new retrieval details

@@ -137,7 +137,8 @@ class AiDataLoader(AiBaseApp):
 
 class AiDataSource(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
-    app_name: str
+    appName: str
+    loadId: str
     metadata: Metadata
     sourcePath: str
     sourceType: str
@@ -146,7 +147,8 @@ class AiDataSource(BaseModel):
 
 class AiDocument(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
-    appId: str
+    appName: str
+    loadId: str
     dataSourceId: str
     loaderSourcePath: str
     metadata: Metadata
@@ -160,7 +162,8 @@ class AiDocument(BaseModel):
 
 class AiSnippet(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
-    appId: str
+    appName: str
+    loadId: str
     dataSourceId: str
     documentId: str
     metadata: Metadata
