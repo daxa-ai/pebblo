@@ -68,6 +68,7 @@ class EntityClassifier:
                 elif entity.entity_type in SecretEntities.__members__:
                     mapped_entity = SecretEntities[entity.entity_type].value
                 # Append entity to final results if it meets the confidence threshold and is in the desired entities list
+
                 if (
                     mapped_entity
                     and entity.score
@@ -75,7 +76,6 @@ class EntityClassifier:
                     and entity.entity_type in self.entities
                 ):
                     final_results.append(entity)
-
             except Exception as ex:
                 logger.warning(
                     f"Error in analyze_response in entity classification. {str(ex)}"
@@ -96,6 +96,13 @@ class EntityClassifier:
     def get_analyzed_entities_response(data, anonymized_response=None):
         # Returns entities with its location i.e. start to end and confidence score
         response = []
+        mapped_entity = None
+        for index, value in enumerate(data):
+            if value.entity_type in Entities.__members__:
+                mapped_entity = Entities[value.entity_type].value
+            elif value.entity_type in SecretEntities.__members__:
+                mapped_entity = SecretEntities[value.entity_type].value
+
         for index, value in enumerate(data):
             mapped_entity = None
             if value.entity_type in Entities.__members__:

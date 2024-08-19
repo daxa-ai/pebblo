@@ -45,12 +45,17 @@ class Prompt:
             entities,
             entity_count,
             _,
-            _,
+            entity_details,
         ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
             input_data
         )
 
-        data = {"data": input_data, "entityCount": entity_count, "entities": entities}
+        data = {
+            "data": input_data,
+            "entityCount": entity_count,
+            "entities": entities,
+            "entityDetails": entity_details,
+        }
 
         # Topic classification is performed only for the response.
         if input_type == "response":
@@ -143,15 +148,19 @@ class Prompt:
             logger.debug("AI App prompt request processing started")
 
             # getting prompt data
-            prompt_data = self._fetch_classified_data(
-                self.data.get("prompt", {}).get("data"), input_type="prompt"
-            )
-
+            prompt_data = self.data.get("prompt", {})
             is_prompt_gov_enabled = self.data.get("prompt", {}).get(
-                "prompt_gov_enabled", False
+                "promptGovEnabled", None
             )
 
-            if is_prompt_gov_enabled is False:
+            # Added for backward compatibility.
+            # Needs to be removed after pebblo 0.20
+            if is_prompt_gov_enabled is None:
+                is_prompt_gov_enabled = self.data.get("prompt", {}).get(
+                    "prompt_gov_enabled"
+                )
+
+            if is_prompt_gov_enabled is None:
                 prompt_data = self._fetch_classified_data(
                     prompt_data.get("data", ""), input_type="prompt"
                 )

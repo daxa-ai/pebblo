@@ -37,6 +37,15 @@ def test_process_request_success(mock_entity_classifier):
     expected_response = PromptGovResponseModel(
         entities={"us-ssn": 1},
         entityCount=1,
+        entityDetails={
+            "us-ssn": [
+                {
+                    "location": "16_27",
+                    "confidence_score": "HIGH",
+                    "entity_group": "pii-identification",
+                }
+            ]
+        },
         message="Prompt Governance Processed Successfully",
     )
     expected_response = PebbloJsonResponse.build(
