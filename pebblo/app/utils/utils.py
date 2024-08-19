@@ -7,8 +7,6 @@ from shutil import rmtree
 
 from fastapi import status
 
-from pebblo.app.libs.responses import PebbloJsonResponse
-from pebblo.app.models.models import DiscoverAIAppsResponseModel
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
@@ -287,19 +285,22 @@ def delete_directory(app_path, app_name=None):
         return result
 
 
-def return_response(message, status_code, pebblo_server_version=None):
-    response = DiscoverAIAppsResponseModel(
-        pebblo_server_version=pebblo_server_version,
-        message=str(message),
-    )
-    return PebbloJsonResponse.build(
-        body=response.dict(exclude_none=True), status_code=status_code
-    )
-
-
 def get_current_time():
     """
     Return current time in isoformat
     :return:
     """
     return datetime.now().isoformat()
+
+
+def timeit(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        response = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        logger.debug(
+            f"Execution time of function <{func.__name__}> is {end_time-start_time} seconds."
+        )
+        return response
+
+    return wrapper

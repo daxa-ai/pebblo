@@ -1,6 +1,6 @@
 from pebblo.app.models.db_models import AiSnippet
 from pebblo.app.models.sqltables import AiSnippetsTable
-from pebblo.app.utils.utils import get_current_time
+from pebblo.app.utils.utils import get_current_time, timeit
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
@@ -13,6 +13,7 @@ class AiSnippetHandler:
         self.app_name = self.data.get("name")
 
     @staticmethod
+    @timeit
     def _count_entities_topics(restricted_data, doc_restricted_data, snippet_id):
         logger.debug("Counting entities and topics started")
         for data in doc_restricted_data:
@@ -20,17 +21,18 @@ class AiSnippetHandler:
             if data in restricted_data:
                 # updating existing count and appending doc id
                 restricted_data[data]["count"] += doc_restricted_data.get(data, 0)
-                restricted_data.get(data, {}).get("docIds", []).append(snippet_id)
+                restricted_data.get(data, {}).get("snippetIds", []).append(snippet_id)
             else:
                 # If entity or topic does not exist in  app coll
                 restricted_data[data] = {
                     "count": doc_restricted_data.get(data, 0),
-                    "docIds": [snippet_id],
+                    "snippetIds": [snippet_id],
                 }
                 # Adding count and docId in app coll
         logger.debug("Counting entities and topics finished.")
         return restricted_data
 
+    @timeit
     def update_loader_with_snippet(self, app_loader_details, snippet):
         # Update doc entities & topics details from snippets
         # Fetching entities and topics
@@ -52,6 +54,7 @@ class AiSnippetHandler:
         app_loader_details["docTopics"] = topics_data
         return app_loader_details
 
+    @timeit
     def create_snippet(self, doc, data_source, document):
         snippet_details = {
             "appId": self.app_name,

@@ -1,9 +1,10 @@
 # Prompt API with database implementation.
-
+from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import RetrievalContext, RetrievalData
+from pebblo.app.models.models import PromptResponseModel
 from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable
 from pebblo.app.storage.sqlite_db import SQLiteClient
-from pebblo.app.utils.utils import return_response
+from pebblo.app.utils.utils import timeit
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.log import get_logger
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
@@ -19,6 +20,13 @@ class Prompt:
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 
+    def _return_response(self, data=None, message="", status_code=200):
+        response = PromptResponseModel(retrieval_data=data, message=str(message))
+        return PebbloJsonResponse.build(
+            body=response.dict(exclude_none=True), status_code=status_code
+        )
+
+    @timeit
     def _fetch_classified_data(self, input_data, input_type=""):
         """
         Retrieve input data and return its corresponding model object with classification.
@@ -42,6 +50,7 @@ class Prompt:
         return data
 
     @staticmethod
+    @timeit
     def _fetch_context_data(context_list):
         retrieval_context_data = []
         if context_list:
@@ -54,6 +63,7 @@ class Prompt:
                 retrieval_context_data.append(retrieval_context_obj)
         return retrieval_context_data
 
+    @timeit
     def _create_retrieval_data(self, context_data):
         """
         Create an RetrievalData Model and return the corresponding model object
@@ -63,6 +73,7 @@ class Prompt:
         logger.debug(f"AiApp Name: [{self.application_name}]")
         return retrieval_data_model
 
+    @timeit
     def _add_retrieval_data(self, retrieval_data):
         app_exists, ai_app_obj = self.db.query(
             table_obj=AiAppTable, filter_query={"name": self.application_name}
@@ -70,7 +81,7 @@ class Prompt:
         if not app_exists:
             message = f"{self.application_name} app doesn't exists"
             logger.error(message)
-            return return_response(message=message, status_code=500)
+            return self._return_response(message=message, status_code=500)
 
         retrieval_data["ai_app"] = ai_app_obj.id
         insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
@@ -78,8 +89,9 @@ class Prompt:
         if not insert_status:
             message = "Saving retrieval entry failed"
             logger.error("message")
-            return return_response(message=message, status_code=500)
+            return self._return_response(message=message, status_code=500)
 
+    @timeit
     def process_request(self, data):
         try:
             self.db = SQLiteClient()
@@ -127,7 +139,7 @@ class Prompt:
             logger.error(f"Prompt API failed, Error: {err}")
             # Getting error, Rollback everything we did in this run.
             self.db.session.rollback()
-            return return_response(
+            return self._return_response(
                 message=f"Prompt API failed, Error: {err}", status_code=500
             )
         else:
@@ -135,7 +147,9 @@ class Prompt:
             message = "Prompt Request Processed Successfully"
             logger.debug(message)
             self.db.session.commit()
-            return return_response(message=message, status_code=200)
+            return self._return_response(
+                data=self.data, message=message, status_code=200
+            )
         finally:
             logger.debug("Closing database session for Prompt API.")
             # Closing the session

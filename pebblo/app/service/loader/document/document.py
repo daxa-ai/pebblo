@@ -1,7 +1,7 @@
 from pebblo.app.models.db_models import AiDocument
 from pebblo.app.models.sqltables import AiDocumentTable
 from pebblo.app.service.loader.snippet.snippet import AiSnippetHandler
-from pebblo.app.utils.utils import get_current_time
+from pebblo.app.utils.utils import get_current_time, timeit
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
@@ -14,6 +14,7 @@ class AiDocumentHandler:
         self.app_name = self.data.get("name")
         self.snippet_handler = AiSnippetHandler(db, data)
 
+    @timeit
     def _get_or_create_document(self, doc, data_source):
         logger.debug("Create or update AIDocument")
         filter_query = {
@@ -49,6 +50,7 @@ class AiDocumentHandler:
             return doc_obj
 
     @staticmethod
+    @timeit
     def _update_loader_documents(app_loader_details, document):
         logger.debug("Updating Loader details with document and findings.")
 
@@ -82,6 +84,7 @@ class AiDocumentHandler:
         return app_loader_details
 
     @staticmethod
+    @timeit
     def _update_document(document, snippet):
         logger.debug("Updating AIDocument with snippet reference.")
         existing_topics = document.get("topics")
@@ -115,15 +118,14 @@ class AiDocumentHandler:
         logger.debug("AIDocument Updated successfully with snippet reference")
         return document
 
+    @timeit
     def create_or_update_document(self, app_loader_details, data_source):
         logger.debug("Create or update document snippet")
         input_doc_list = self.data.get("docs", [])
-        existing_document = None
         doc_obj = None
         for doc in input_doc_list:
-            if not existing_document:
-                doc_obj = self._get_or_create_document(doc, data_source)
-                existing_document = doc_obj.data
+            doc_obj = self._get_or_create_document(doc, data_source)
+            existing_document = doc_obj.data
             snippet = self.snippet_handler.create_snippet(
                 doc, data_source, existing_document
             )
@@ -134,4 +136,4 @@ class AiDocumentHandler:
             app_loader_details = self.snippet_handler.update_loader_with_snippet(
                 app_loader_details, snippet
             )
-        return app_loader_details, existing_document, doc_obj
+        return app_loader_details, doc_obj.data, doc_obj

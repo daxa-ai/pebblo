@@ -13,7 +13,7 @@ from pebblo.app.models.sqltables import (
 from pebblo.app.service.discovery.common import get_or_create_app
 from pebblo.app.service.loader.document.document import AiDocumentHandler
 from pebblo.app.storage.sqlite_db import SQLiteClient
-from pebblo.app.utils.utils import get_current_time
+from pebblo.app.utils.utils import get_current_time, timeit
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.log import get_logger
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
@@ -36,6 +36,7 @@ class AppLoaderDoc:
             body=response.dict(exclude_none=True), status_code=status_code
         )
 
+    @timeit
     def _update_loader_details(self, app_loader_details):
         """
         Update loader details in the application if they already exist;
@@ -89,6 +90,7 @@ class AppLoaderDoc:
         logger.debug("Loader details Updated successfully.")
         return app_loader_details
 
+    @timeit
     def _get_doc_classification(self, doc):
         logger.debug("Doc classification started.")
         doc_info = AiDataModel(
@@ -120,10 +122,13 @@ class AppLoaderDoc:
             logger.debug("Doc classification finished.")
             return doc_info
         except Exception as e:
-            logger.error(f"Get Classifier Response Failed, Exception: {e}")
+            logger.error(
+                f"Get Classifier Response Failed for doc: {doc}, Exception: {e}"
+            )
             return doc_info
 
     @staticmethod
+    @timeit
     def _update_doc_details(doc, doc_info):
         """
         Create a doc model and return its object
@@ -133,6 +138,7 @@ class AppLoaderDoc:
         doc["topics"] = doc_info.topics
         logger.debug("Input doc updated with classification result")
 
+    @timeit
     def _doc_pre_processing(self):
         logger.debug("Input docs pre processing started.")
         input_doc_list = self.data.get("docs", [])
@@ -143,9 +149,25 @@ class AppLoaderDoc:
         # Update input doc with updated one
         logger.debug("Doc pre processing finished.")
 
-    def _create_data_source(self):
-        logger.debug("Creating Data Source Details.")
+    @timeit
+    def _get_or_create_data_source(self):
+        logger.debug("Getting or Creating Data Source Details.")
         loader_details = self.data.get("loader_details") or {}
+
+        filter_query = {
+            "app_name": self.app_name,
+            "sourcePath": loader_details.get("source_path"),
+            "sourceType": loader_details.get("source_type"),
+        }
+        status, output = self.db.query(AiDataSourceTable, filter_query)
+        if status and output:
+            logger.debug("Data Source details are already existed.")
+            data = output.data
+            if data["loader"] == loader_details.get("loader"):
+                logger.debug("Same loader details")
+            return data
+
+        # Data Source details are not present, Creating data source details
         data_source = {
             "app_name": self.app_name,
             "metadata": {
@@ -159,9 +181,10 @@ class AppLoaderDoc:
         ai_data_source_obj = AiDataSource(**data_source)
         ai_data_source = ai_data_source_obj.dict()
         _, data_source_obj = self.db.insert_data(AiDataSourceTable, ai_data_source)
-        logger.debug("Data Source Details has been updated successfully.")
+        logger.debug("Data Source has been created successfully.")
         return data_source_obj.data
 
+    @timeit
     def process_request(self, data):
         try:
             self.db = SQLiteClient()
@@ -189,7 +212,7 @@ class AppLoaderDoc:
             self._doc_pre_processing()
 
             # Update dataSource Details: AIDataSource
-            data_source = self._create_data_source()
+            data_source = self._get_or_create_data_source()
 
             # Iterate Each doc & Update AIDocument, AISnippets
             document_handler = AiDocumentHandler(self.db, self.data)
