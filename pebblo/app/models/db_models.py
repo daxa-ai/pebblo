@@ -109,6 +109,15 @@ class RetrievalData(BaseModel):
     linked_groups: list[str] = []
 
 
+class AiUser(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    name: str
+    metadata: Metadata
+    userAuthGroup: Optional[List]
+    documentsAccessed: Optional[List] = []
+    lastUsed: str
+
+
 class AiApp(AiBaseApp):
     chains: Optional[List[Chain]] = []
     retrievals: Optional[List[RetrievalData]] = []

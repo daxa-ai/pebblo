@@ -1,7 +1,15 @@
 # Prompt API with database implementation.
+from datetime import datetime
 
-from pebblo.app.models.db_models import RetrievalContext, RetrievalData
-from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable
+from pebblo.app.models.db_models import (
+    AiUser as aiuser,
+)
+from pebblo.app.models.db_models import (
+    Metadata,
+    RetrievalContext,
+    RetrievalData,
+)
+from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable, AiUser
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import return_response
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
@@ -18,6 +26,13 @@ class Prompt:
         self.app_name = None
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
+
+    @staticmethod
+    def _get_current_datetime():
+        """
+        Return current datetime
+        """
+        return datetime.now().isoformat()
 
     def _fetch_classified_data(self, input_data, input_type=""):
         """
@@ -60,19 +75,67 @@ class Prompt:
         """
         retrieval_data_model = RetrievalData(**self.data)
         retrieval_data_model.context = context_data
-        logger.debug(f"AiApp Name: [{self.application_name}]")
+        logger.debug(f"AiApp Name: [{self.app_name}]")
         return retrieval_data_model
 
     def _add_retrieval_data(self, retrieval_data):
         app_exists, ai_app_obj = self.db.query(
-            table_obj=AiAppTable, filter_query={"name": self.application_name}
+            table_obj=AiAppTable, filter_query={"name": self.app_name}
         )
         if not app_exists:
-            message = f"{self.application_name} app doesn't exists"
+            message = f"{self.app_name} app doesn't exists"
+            logger.error(message)
+            return return_response(message=message, status_code=500)
+        if ai_app_obj and len(ai_app_obj) > 0:
+            ai_app_data = ai_app_obj[0]
+        else:
+            message = f"{self.app_name} app doesn't exists"
             logger.error(message)
             return return_response(message=message, status_code=500)
 
-        retrieval_data["ai_app"] = ai_app_obj[0].id
+        document_accessed = []
+        for data in retrieval_data["context"]:
+            doc_name = data.get("retrieved_from")
+            if doc_name not in document_accessed:
+                document_accessed.append(doc_name)
+
+        # Update entry in AiUser if exists else create
+        if retrieval_data.get("user"):
+            _, ai_user = self.db.query(
+                table_obj=AiUser, filter_query={"name": retrieval_data["user"]}
+            )
+            if ai_user and len(ai_user) > 0:
+                ai_user = ai_user[0]
+                retrieval_data["user"] = ai_user.data.id
+                existing_document_accessed = ai_user.data.get("documentsAccessed", [])
+                for doc_name in document_accessed:
+                    if doc_name not in existing_document_accessed:
+                        existing_document_accessed.append(doc_name)
+                ai_user.data["documentsAccessed"] = existing_document_accessed
+                status, message = self.db.update_data(
+                    table_obj=ai_user, data=ai_user.data
+                )
+                if not status:
+                    logger.error(f"Failed during updating AiUser: {message}")
+                    return return_response(message=message, status_code=500)
+            else:
+                # Initialize Variables
+                current_time = self._get_current_datetime()
+                last_used = current_time
+                metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
+                ai_user_obj = aiuser(
+                    name=retrieval_data["user"],
+                    metadata=metadata,
+                    userAuthGroup=retrieval_data.get("linked_groups", []),
+                    documentsAccessed=document_accessed,
+                    lastUsed=last_used,
+                )
+                insert_status, entry = self.db.insert_data(AiUser, ai_user_obj.dict())
+                if insert_status:
+                    logger.debug(f"Entry: {entry} in AiUser completed")
+                retrieval_data["user"] = entry.data["id"]
+
+        retrieval_data["ai_app"] = ai_app_data.id
         insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
 
         if not insert_status:
@@ -84,7 +147,7 @@ class Prompt:
         try:
             self.db = SQLiteClient()
             self.data = data
-            self.application_name = self.data.get("name")
+            self.app_name = self.data.get("name")
 
             logger.debug("Prompt API request processing started")
 
