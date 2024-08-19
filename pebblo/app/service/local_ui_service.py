@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Tuple
 from dateutil import parser
 from fastapi import status
 
+from pebblo.app.config.config import var_server_config_dict
+from pebblo.app.enums.common import StorageTypes
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.models.models import (
     LoaderAppListDetails,
@@ -17,6 +19,8 @@ from pebblo.app.models.models import (
     RetrievalAppList,
     RetrievalAppListDetails,
 )
+from pebblo.app.models.sqltables import AiAppTable, AiDataLoaderTable, AiSnippetsTable
+from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import (
     delete_directory,
     get_document_with_findings_data,
@@ -28,6 +32,8 @@ from pebblo.app.utils.utils import (
 )
 from pebblo.log import get_logger
 
+config_details = var_server_config_dict.get()
+
 logger = get_logger(__name__)
 
 
@@ -37,6 +43,7 @@ class AppData:
     """
 
     def __init__(self):
+        self.db = None
         self.loader_apps_at_risk = 0
         self.loader_findings = 0
         self.loader_files_findings = 0
@@ -168,7 +175,7 @@ class AppData:
                         prompt_details[app_name][key]["total_prompts"] += 1
                         prompt_details[app_name][key]["total_entity_count"] += value
 
-                        # Get the user name from the retrieval data
+                        # Get the username from the retrieval data
                         user_name = retrieval.get("user", "")
 
                         if (
@@ -266,130 +273,365 @@ class AppData:
         )
         return app_details.dict(), prompt_details, total_prompt_with_findings
 
+    def get_all_apps(self):
+        _, ai_app_obj = self.db.query(table_obj=AiAppTable)
+        _, ai_loader_app_obj = self.db.query(table_obj=AiDataLoaderTable)
+        return ai_loader_app_obj, ai_app_obj
+
+    def get_files(self, doc_ids):
+        return []
+
+    def get_findings_for_loader_app(self, app_data):
+        # self.loader_document_with_findings_list = []
+        # self.loader_files_findings
+        document_with_findings = []
+        document_ids_with_findings = []
+        if app_data.get("docEntities"):
+            for entity, entity_data in app_data.get("docEntities").items():
+                self.loader_findings += entity_data.get("count")
+                findings = {
+                    "labelName": entity,
+                    "findings": entity_data["count"],
+                    "findingsType": "entities",
+                    "snippetCount": len(entity_data["docIds"]),
+                    "fileCount": len(self.get_files(entity_data["docIds"])),
+                    "appName": app_data.get("name"),
+                }
+                self.loader_findings_list.append(findings)
+                # doc_ids = entity_data["docIds"]
+                # for doc_id in doc_ids:
+                #     if doc_id not in document_ids_with_findings:
+                #         document_ids_with_findings.append(doc_id)
+                findings_exists = False
+                for findings in self.loader_findings_list:
+                    if findings.get("labelName") == entity:
+                        findings_exists = True
+                        findings["findings"] += entity_data["count"]
+                        findings["snippetCount"] += len(entity_data["docIds"])
+                        findings["fileCount"] += len(
+                            self.get_files(entity_data["docIds"])
+                        )
+                        break
+                if not findings_exists:
+                    findings = {
+                        "labelName": entity,
+                        "findings": entity_data["count"],
+                        "findingsType": "entities",
+                        "snippetCount": "count of no. of snippets",  # TODO
+                        "fileCount": len(entity_data["docIds"]),
+                        "appName": app_data.get("name"),
+                    }
+                    self.loader_findings_list.append(findings)
+        if app_data.get("docTopics"):
+            for topic, topic_data in app_data.get("docTopics").items():
+                self.loader_findings += topic_data.get("count")
+                doc_ids = topic_data["docIds"]
+                for doc_id in doc_ids:
+                    if doc_id not in document_ids_with_findings:
+                        document_ids_with_findings.append(doc_id)
+                findings_exists = False
+                for findings in self.loader_findings_list:
+                    if findings.get("labelName") == topic:
+                        findings_exists = True
+                        findings["findings"] += topic_data["count"]
+                        findings["snippetCount"] += "count of no. of snippets"  # TODO
+                        findings["fileCount"] += len(topic_data["docIds"])
+                        break
+                if not findings_exists:
+                    findings = {
+                        "labelName": topic,
+                        "findings": topic_data["count"],
+                        "findingsType": "entities",
+                        "snippetCount": "count of no. of snippets",  # TODO
+                        "fileCount": len(topic_data["docIds"]),
+                        "appName": app_data.get("name"),
+                    }
+                    self.loader_findings_list.append(findings)
+        # finding documents with findings
+        for doc_id in document_ids_with_findings:
+            exists, documents = self.db.query(
+                table_obj=AiSnippetsTable, filter_query={"id": doc_id}
+            )
+            logger.info(documents)
+
     def get_all_apps_details(self):
         """
         Returns all necessary app details required for list app functionality.
         """
-        try:
-            dir_full_path = get_full_path(CacheDir.HOME_DIR.value)
-            # List all apps in the directory
-            dir_path = os.listdir(dir_full_path)
+        storage_type = config_details.get("storage", {}).get(
+            "type", StorageTypes.FILE.value
+        )
+        if storage_type == StorageTypes.FILE.value:
+            try:
+                dir_full_path = get_full_path(CacheDir.HOME_DIR.value)
+                # List all apps in the directory
+                dir_path = os.listdir(dir_full_path)
 
-            all_loader_apps: list = []
-            all_retrieval_apps: list = []
-            prompt_details: dict = {}
-            total_prompt_with_findings = 0
-            # Iterating through each app in the directory
-            for app_dir in dir_path:
-                try:
-                    # Skip hidden folders
-                    if app_dir.startswith("."):
-                        logger.debug(f"[Dashboard]: Skipping hidden folder {app_dir}")
-                        continue
-                    # Path to metadata.json
-                    app_path = (
-                        f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                        f"{CacheDir.METADATA_FILE_PATH.value}"
-                    )
-
-                    logger.debug(f"[Dashboard]: Metadata file path {app_path}")
-                    app_json = read_json_file(app_path)
-
-                    if not app_json:
-                        # Unable to find json file
-                        logger.debug(
-                            f"[Dashboard]: Metadata file {CacheDir.METADATA_FILE_PATH.value} "
-                            f"not found for app: {app_dir}."
+                all_loader_apps: list = []
+                all_retrieval_apps: list = []
+                prompt_details: dict = {}
+                total_prompt_with_findings = 0
+                # Iterating through each app in the directory
+                for app_dir in dir_path:
+                    try:
+                        # Skip hidden folders
+                        if app_dir.startswith("."):
+                            logger.debug(
+                                f"[Dashboard]: Skipping hidden folder {app_dir}"
+                            )
+                            continue
+                        # Path to metadata.json
+                        app_path = (
+                            f"{CacheDir.HOME_DIR.value}/{app_dir}/"
+                            f"{CacheDir.METADATA_FILE_PATH.value}"
                         )
-                        logger.warning(
-                            f"[Dashboard]: Metadata file is not present for application: {app_dir},"
-                            f"skipping application"
-                        )
-                        continue
 
-                    app_type = app_json.get("app_type", None)
-                    if app_type in ["loader", None]:
-                        loader_app = self.prepare_loader_response(app_dir, app_json)
-                        if loader_app:
-                            all_loader_apps.append(loader_app)
-                    elif app_type == "retrieval":
-                        retrieval_app, prompt_details, total_prompt_with_findings = (
-                            self.prepare_retrieval_response(
+                        logger.debug(f"[Dashboard]: Metadata file path {app_path}")
+                        app_json = read_json_file(app_path)
+
+                        if not app_json:
+                            # Unable to find json file
+                            logger.debug(
+                                f"[Dashboard]: Metadata file {CacheDir.METADATA_FILE_PATH.value} "
+                                f"not found for app: {app_dir}."
+                            )
+                            logger.warning(
+                                f"[Dashboard]: Metadata file is not present for application: {app_dir},"
+                                f"skipping application"
+                            )
+                            continue
+
+                        app_type = app_json.get("app_type", None)
+                        if app_type in ["loader", None]:
+                            loader_app = self.prepare_loader_response(app_dir, app_json)
+                            if loader_app:
+                                all_loader_apps.append(loader_app)
+                        elif app_type == "retrieval":
+                            (
+                                retrieval_app,
+                                prompt_details,
+                                total_prompt_with_findings,
+                            ) = self.prepare_retrieval_response(
                                 app_dir,
                                 app_json,
                                 prompt_details,
                                 total_prompt_with_findings,
                             )
+                            if retrieval_app:
+                                all_retrieval_apps.append(retrieval_app)
+
+                    except Exception as err:
+                        logger.warning(
+                            f"[Dashboard]: Error processing app {app_dir}: {err}"
                         )
-                        if retrieval_app:
-                            all_retrieval_apps.append(retrieval_app)
+                final_prompt_details = []
+                for key, value in prompt_details.items():
+                    try:
+                        for k1, v1 in value.items():
+                            try:
+                                prompt_dict = {}
+                                prompt_dict = {"app_name": key}
+                                prompt_dict["entity_name"] = k1
+                                prompt_dict["total_prompts"] = v1["total_prompts"]
+                                prompt_dict["total_entity_count"] = v1[
+                                    "total_entity_count"
+                                ]
+                                prompt_dict["users"] = v1["users"]
+                                prompt_dict["total_users"] = v1["total_users"]
+                                final_prompt_details.append(prompt_dict)
+                            except Exception as ex:
+                                logger.warning(
+                                    f"[Dashboard]: Error in iterating key value pair in retrieval app list. Error: {ex}"
+                                )
+                    except Exception as ex:
+                        logger.warning(
+                            f"[Dashboard]: Error in iterating prompt details for all retrieval apps: {ex}"
+                        )
 
-                except Exception as err:
-                    logger.warning(
-                        f"[Dashboard]: Error processing app {app_dir}: {err}"
-                    )
-            final_prompt_details = []
-            for key, value in prompt_details.items():
-                try:
-                    for k1, v1 in value.items():
-                        try:
-                            prompt_dict = {}
-                            prompt_dict = {"app_name": key}
-                            prompt_dict["entity_name"] = k1
-                            prompt_dict["total_prompts"] = v1["total_prompts"]
-                            prompt_dict["total_entity_count"] = v1["total_entity_count"]
-                            prompt_dict["users"] = v1["users"]
-                            prompt_dict["total_users"] = v1["total_users"]
-                            final_prompt_details.append(prompt_dict)
-                        except Exception as ex:
-                            logger.warning(
-                                f"[Dashboard]: Error in iterating key value pair in retrieval app list. Error: {ex}"
-                            )
-                except Exception as ex:
-                    logger.warning(
-                        f"[Dashboard]: Error in iterating prompt details for all retrieval apps: {ex}"
-                    )
+                # Sort loader apps
+                sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
 
-            # Sort loader apps
-            sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
+                logger.debug("[Dashboard]: Preparing loader app response object")
+                loader_response = LoaderAppModel(
+                    applicationsAtRiskCount=self.loader_apps_at_risk,
+                    findingsCount=self.loader_findings,
+                    documentsWithFindingsCount=self.loader_files_findings,
+                    dataSourceCount=self.loader_data_source,
+                    appList=sorted_loader_apps,
+                    findings=self.loader_findings_list,
+                    documentsWithFindings=self.loader_document_with_findings_list,
+                    dataSource=self.loader_data_source_list,
+                )
 
-            logger.debug("[Dashboard]: Preparing loader app response object")
-            loader_response = LoaderAppModel(
-                applicationsAtRiskCount=self.loader_apps_at_risk,
-                findingsCount=self.loader_findings,
-                documentsWithFindingsCount=self.loader_files_findings,
-                dataSourceCount=self.loader_data_source,
-                appList=sorted_loader_apps,
-                findings=self.loader_findings_list,
-                documentsWithFindings=self.loader_document_with_findings_list,
-                dataSource=self.loader_data_source_list,
-            )
+                # Sort retrievals data
+                sorted_retrievals_apps = self._sort_retrievals_with_retrieval_count(
+                    all_retrieval_apps
+                )
 
-            # Sort retrievals data
-            sorted_retrievals_apps = self._sort_retrievals_with_retrieval_count(
-                all_retrieval_apps
-            )
+                logger.debug("[Dashboard]: Preparing retrieval app response object")
+                retrieval_response = RetrievalAppList(
+                    appList=sorted_retrievals_apps,
+                    retrievals=self.total_retrievals,
+                    activeUsers=self.retrieval_active_users,
+                    violations=[],
+                    promptDetails=final_prompt_details,
+                    total_prompt_with_findings=total_prompt_with_findings,
+                )
 
-            logger.debug("[Dashboard]: Preparing retrieval app response object")
-            retrieval_response = RetrievalAppList(
-                appList=sorted_retrievals_apps,
-                retrievals=self.total_retrievals,
-                activeUsers=self.retrieval_active_users,
-                violations=[],
-                promptDetails=final_prompt_details,
-                total_prompt_with_findings=total_prompt_with_findings,
-            )
+                logger.info(f"retrieval_response {retrieval_response.__dict__}")
+                response = {
+                    "pebbloServerVersion": get_pebblo_server_version(),
+                    "loaderApps": loader_response.dict(),
+                    "retrievalApps": retrieval_response.dict(),
+                }
+                return json.dumps(response, indent=4)
+            except Exception as ex:
+                logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
+                return json.dumps({})
+        elif storage_type == StorageTypes.DATABASE.value:
+            try:
+                self.db = SQLiteClient()
 
-            logger.info(f"retrieval_response {retrieval_response.__dict__}")
-            response = {
-                "pebbloServerVersion": get_pebblo_server_version(),
-                "loaderApps": loader_response.dict(),
-                "retrievalApps": retrieval_response.dict(),
-            }
-            return json.dumps(response, indent=4)
-        except Exception as ex:
-            logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
-            return json.dumps({})
+                # create session
+                self.db.create_session()
+
+                ai_loader_apps, ai_retriever_apps = self.get_all_apps()
+                all_loader_apps: list = []
+                all_retrieval_apps: list = []
+                prompt_details: dict = {}
+                total_prompt_with_findings = 0
+
+                # Preparing all loader apps
+                all_loader_apps: list = []
+                for loader_app in ai_loader_apps:
+                    app_data = loader_app.data
+                    if app_data.get("docEntities") not in [None, {}] or app_data.get(
+                        "docTopics"
+                    ) not in [None, {}]:
+                        self.loader_apps_at_risk += 1
+                        self.get_findings_for_loader_app(app_data)
+                        # TODO: need to clarify
+                        # self.loader_document_with_findings_list = app_data.get('documentsWithFindings')
+                        # self.loader_files_findings = len(self.loader_document_with_findings_list)
+                    print(loader_app)
+                    logger.info(loader_app)
+
+                # Sort loader apps
+                sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
+
+                logger.debug("[Dashboard]: Preparing loader app response object")
+                loader_response = LoaderAppModel(
+                    applicationsAtRiskCount=self.loader_apps_at_risk,
+                    findingsCount=self.loader_findings,
+                    documentsWithFindingsCount=self.loader_files_findings,
+                    dataSourceCount=self.loader_data_source,
+                    appList=sorted_loader_apps,
+                    findings=self.loader_findings_list,
+                    documentsWithFindings=self.loader_document_with_findings_list,
+                    dataSource=self.loader_data_source_list,
+                )
+
+                response = {
+                    "pebbloServerVersion": get_pebblo_server_version(),
+                    "loaderApps": loader_response.dict(),
+                    # "retrievalApps": retrieval_response.dict(),
+                }
+
+                # for app_dir in all_apps:
+                #     try:
+                #         if app_type in ["loader", None]:
+                #             loader_app = self.prepare_loader_response(app_dir, app_json)
+                #             if loader_app:
+                #                 all_loader_apps.append(loader_app)
+                #         elif app_type == "retrieval":
+                #             retrieval_app, prompt_details, total_prompt_with_findings = (
+                #                 self.prepare_retrieval_response(
+                #                     app_dir,
+                #                     app_json,
+                #                     prompt_details,
+                #                     total_prompt_with_findings,
+                #                 )
+                #             )
+                #             if retrieval_app:
+                #                 all_retrieval_apps.append(retrieval_app)
+                #     except Exception as err:
+                #         logger.warning(
+                #             f"[Dashboard]: Error processing app {app_dir}: {err}"
+                #         )
+                # final_prompt_details = []
+                # for key, value in prompt_details.items():
+                #     try:
+                #         for k1, v1 in value.items():
+                #             try:
+                #                 prompt_dict = {}
+                #                 prompt_dict = {"app_name": key}
+                #                 prompt_dict["entity_name"] = k1
+                #                 prompt_dict["total_prompts"] = v1["total_prompts"]
+                #                 prompt_dict["total_entity_count"] = v1["total_entity_count"]
+                #                 prompt_dict["users"] = v1["users"]
+                #                 prompt_dict["total_users"] = v1["total_users"]
+                #                 final_prompt_details.append(prompt_dict)
+                #             except Exception as ex:
+                #                 logger.warning(
+                #                     f"[Dashboard]: Error in iterating key value pair in retrieval app list. Error: {ex}"
+                #                 )
+                #     except Exception as ex:
+                #         logger.warning(
+                #             f"[Dashboard]: Error in iterating prompt details for all retrieval apps: {ex}"
+                #         )
+                #
+                # # Sort loader apps
+                # sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
+                #
+                # logger.debug("[Dashboard]: Preparing loader app response object")
+                # loader_response = LoaderAppModel(
+                #     applicationsAtRiskCount=self.loader_apps_at_risk,
+                #     findingsCount=self.loader_findings,
+                #     documentsWithFindingsCount=self.loader_files_findings,
+                #     dataSourceCount=self.loader_data_source,
+                #     appList=sorted_loader_apps,
+                #     findings=self.loader_findings_list,
+                #     documentsWithFindings=self.loader_document_with_findings_list,
+                #     dataSource=self.loader_data_source_list,
+                # )
+                #
+                # # Sort retrievals data
+                # sorted_retrievals_apps = self._sort_retrievals_with_retrieval_count(
+                #     all_retrieval_apps
+                # )
+                #
+                # logger.debug("[Dashboard]: Preparing retrieval app response object")
+                # retrieval_response = RetrievalAppList(
+                #     appList=sorted_retrievals_apps,
+                #     retrievals=self.total_retrievals,
+                #     activeUsers=self.retrieval_active_users,
+                #     violations=[],
+                #     promptDetails=final_prompt_details,
+                #     total_prompt_with_findings=total_prompt_with_findings,
+                # )
+                #
+                # logger.info(f"retrieval_response {retrieval_response.__dict__}")
+                # response = {
+                #     "pebbloServerVersion": get_pebblo_server_version(),
+                #     "loaderApps": loader_response.dict(),
+                #     "retrievalApps": retrieval_response.dict(),
+                # }
+                # return json.dumps(response, indent=4)
+            except Exception as ex:
+                logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
+                # Getting error, Rollback everything we did in this run.
+                self.db.session.rollback()
+            else:
+                # Commit will only happen when everything went well.
+                message = "Prompt Request Processed Successfully"
+                logger.debug(message)
+                self.db.session.commit()
+                return json.dumps(response, indent=4)
+            finally:
+                logger.debug("Closing database session for Prompt API.")
+                # Closing the session
+                self.db.session.close()
+                return json.dumps({})
 
     def get_loader_app_details(self, app_dir, load_ids):
         # Fetching latest loadId

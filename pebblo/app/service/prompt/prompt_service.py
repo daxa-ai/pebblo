@@ -72,7 +72,7 @@ class Prompt:
             logger.error(message)
             return return_response(message=message, status_code=500)
 
-        retrieval_data["ai_app"] = ai_app_obj.id
+        retrieval_data["ai_app"] = ai_app_obj[0].id
         insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
 
         if not insert_status:

@@ -18,11 +18,11 @@ class AiDocumentHandler:
         logger.debug("Create or update AIDocument")
         filter_query = {
             "appId": self.app_name,  # loadId or AppId ( Doubt)
-            "sourcePath": doc.get("source_path"),
+            "loaderSourcePath": doc.get("source_path"),
         }
         status, output = self.db.query(AiDocumentTable, filter_query)
         if output:
-            data = output.data
+            data = output[0].data
             data["lastIngested"] = get_current_time()
             data["metadata"]["updatedAt"] = get_current_time()
             return output

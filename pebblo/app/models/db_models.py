@@ -36,6 +36,7 @@ class FrameworkInfo(BaseModel):
 class AiBaseApp(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     name: str
+    owner: str
     description: Optional[str]
     pluginVersion: Optional[str]
     lastUsed: str
