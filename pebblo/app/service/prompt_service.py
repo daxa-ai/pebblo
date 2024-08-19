@@ -157,7 +157,7 @@ class Prompt:
             # Needs to be removed after pebblo 0.20
             if is_prompt_gov_enabled is None:
                 is_prompt_gov_enabled = self.data.get("prompt", {}).get(
-                    "prompt_gov_enabled", False
+                    "prompt_gov_enabled"
                 )
 
             if is_prompt_gov_enabled is None:
