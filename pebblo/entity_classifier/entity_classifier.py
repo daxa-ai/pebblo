@@ -42,8 +42,20 @@ class EntityClassifier:
         )
 
     def analyze_response(self, input_text, anonymize_all_entities=True):
-        # Returns analyzed output
+        """
+        Analyze the given input text to detect and classify entities based on predefined criteria.
+
+        Args:
+            input_text (str): The text to be analyzed for detecting entities.
+            anonymize_all_entities (bool): Flag to determine if all detected entities should be anonymized.
+                                            (Currently not used in the function logic.)
+
+        Returns:
+            list: A list of detected entities that meet the criteria for classification.
+        """
+        # Analyze the text to detect entities using the Presidio analyzer
         analyzer_results = self.analyzer.analyze(text=input_text, language="en")
+
         final_results = []
         for entity in analyzer_results:
             try:
@@ -52,6 +64,21 @@ class EntityClassifier:
                     mapped_entity = Entities[entity.entity_type].value
                 elif entity.entity_type in SecretEntities.__members__:
                     mapped_entity = SecretEntities[entity.entity_type].value
+
+        # Initialize the list to hold the final classified entities
+        final_results = []
+        # Iterate through the detected entities
+        for entity in analyzer_results:
+            try:
+                mapped_entity = None
+                # Map entity type to predefined entities if it exists in the Entities enumeration
+                if entity.entity_type in Entities.__members__:
+                    mapped_entity = Entities[entity.entity_type].value
+                # Check if the entity type exists in SecretEntities enumeration
+                elif entity.entity_type in SecretEntities.__members__:
+                    mapped_entity = SecretEntities[entity.entity_type].value
+                # Append entity to final results if it meets the confidence threshold and is in the desired entities list
+
                 if (
                     mapped_entity
                     and entity.score
@@ -64,6 +91,8 @@ class EntityClassifier:
                     f"Error in analyze_response in entity classification. {str(ex)}"
                 )
 
+
+        # Return the list of classified entities that met the criteria
         return final_results
 
     def anonymize_response(self, analyzer_results, input_text):
@@ -86,6 +115,12 @@ class EntityClassifier:
                 mapped_entity = SecretEntities[value.entity_type].value
 
         for index, value in enumerate(data):
+            mapped_entity = None
+            if value.entity_type in Entities.__members__:
+                mapped_entity = Entities[value.entity_type].value
+            elif value.entity_type in SecretEntities.__members__:
+                mapped_entity = SecretEntities[value.entity_type].value
+
             location = f"{value.start}_{value.end}"
             if anonymized_response:
                 anonymized_data = anonymized_response[len(data) - index - 1]

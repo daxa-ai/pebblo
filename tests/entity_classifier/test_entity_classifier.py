@@ -62,6 +62,7 @@ def mocked_entity_classifier_response(mocker):
             TestAnonymizerResult("IBAN_CODE"),
             TestAnonymizerResult("CREDIT_CARD"),
             TestAnonymizerResult("US_SSN"),
+            TestAnonymizerResult("IP_ADDRESS"),
         ],
         mock_input_text2_anonymize_snippet_true,
     )
@@ -144,6 +145,7 @@ def mocked_entity_classifier_response(mocker):
             "location": "1911_1968",
             "confidence_score": 0.8,
         },
+        {"entity_type": "IP_ADDRESS", "location": "1339_1355", "confidence_score": 0.8},
     ]
     analyzed_entities_response4: List[dict] = [
         {
@@ -183,6 +185,7 @@ def mocked_entity_classifier_response(mocker):
             "location": "1772_1785",
             "confidence_score": 0.8,
         },
+        {"entity_type": "IP_ADDRESS", "location": "1339_1355", "confidence_score": 0.8},
     ]
     analyzed_entities_negative_response1: List = []
     analyzed_entities_negative_response2: List = []
@@ -325,8 +328,9 @@ def test_presidio_entity_classifier_and_anonymizer(
         "iban-code": 1,
         "credit-card-number": 1,
         "us-ssn": 1,
+        "ip-address": 1,
     }
-    assert total_count == 9
+    assert total_count == 10
     assert anonymized_text == input_text2
     assert entity_details == {
         "credit-card-number": [
@@ -390,6 +394,13 @@ def test_presidio_entity_classifier_and_anonymizer(
                 "entity_group": "secrets_and_tokens",
             },
         ],
+        "ip-address": [
+            {
+                "location": "1339_1355",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-network",
+            }
+        ],
     }
 
     (
@@ -409,8 +420,9 @@ def test_presidio_entity_classifier_and_anonymizer(
         "iban-code": 1,
         "credit-card-number": 1,
         "us-ssn": 1,
+        "ip-address": 1,
     }
-    assert total_count == 9
+    assert total_count == 10
     assert anonymized_text == mock_input_text2_anonymize_snippet_true
     assert entity_details == {
         "credit-card-number": [
@@ -473,6 +485,14 @@ def test_presidio_entity_classifier_and_anonymizer(
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
+        ],
+        "ip-address": [
+            {
+                "location": "1339_1355",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-network",
+            }
+
         ],
     }
 
