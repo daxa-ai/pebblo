@@ -492,7 +492,6 @@ def test_presidio_entity_classifier_and_anonymizer(
                 "confidence_score": "HIGH",
                 "entity_group": "pii-network",
             }
-
         ],
     }
 

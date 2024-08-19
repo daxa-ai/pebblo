@@ -55,16 +55,6 @@ class EntityClassifier:
         """
         # Analyze the text to detect entities using the Presidio analyzer
         analyzer_results = self.analyzer.analyze(text=input_text, language="en")
-
-        final_results = []
-        for entity in analyzer_results:
-            try:
-                mapped_entity = None
-                if entity.entity_type in Entities.__members__:
-                    mapped_entity = Entities[entity.entity_type].value
-                elif entity.entity_type in SecretEntities.__members__:
-                    mapped_entity = SecretEntities[entity.entity_type].value
-
         # Initialize the list to hold the final classified entities
         final_results = []
         # Iterate through the detected entities
@@ -90,7 +80,6 @@ class EntityClassifier:
                 logger.warning(
                     f"Error in analyze_response in entity classification. {str(ex)}"
                 )
-
 
         # Return the list of classified entities that met the criteria
         return final_results

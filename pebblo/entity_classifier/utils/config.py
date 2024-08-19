@@ -48,7 +48,6 @@ class PIIGroups(Enum):
     Network = "pii-network"
 
 
-
 entity_group_conf_mapping = {
     # Identification
     Entities.US_SSN.value: (0.8, PIIGroups.Identification.value),
@@ -69,7 +68,6 @@ entity_group_conf_mapping = {
     SecretEntities.GOOGLE_API_KEY.value: (0.8, PIIGroups.Secrets.value),
     # Network
     Entities.IP_ADDRESS.value: (0.4, PIIGroups.Network.value),
-
 }
 
 
