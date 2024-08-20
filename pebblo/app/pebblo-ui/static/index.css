@@ -1278,6 +1278,10 @@ dialog::backdrop {
   position: relative;
 }
 
+.tooltip-inline {
+  display: inline;
+}
+
 .tooltip-heading {
   color: var(--main);
   font-weight: 400;
@@ -1403,4 +1407,11 @@ dialog::backdrop {
     top: 0;
     opacity: 0;
   }
+}
+
+/*Confidence score*/
+
+.confidence-score {
+  background-color: var(--surface-70);
+  font-weight: bold;
 }
