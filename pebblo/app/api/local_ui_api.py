@@ -1,11 +1,12 @@
 from pathlib import Path
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.service.local_ui_service import AppData
+from pebblo.app.utils.handler_mapper import get_local_ui_api_handler
 from pebblo.app.utils.utils import get_full_path
 
 templates = Jinja2Templates(
@@ -23,7 +24,7 @@ class App:
 
     @staticmethod
     def dashboard(request: Request):
-        app_data = AppData()
+        app_data = Depends(lambda: get_local_ui_api_handler(handler_name="dashboard"))
         return templates.TemplateResponse(
             "index.html",
             {
