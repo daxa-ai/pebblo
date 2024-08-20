@@ -6,6 +6,7 @@ import json
 from typing import Any, Dict, List, Tuple
 
 from dateutil import parser
+from fastapi import status
 
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.models.db_models import (
@@ -511,3 +512,50 @@ class RetrieverApp:
             logger.debug("Closing database session for preparing all retriever apps")
             # Closing the session
             self.db.session.close()
+
+    @staticmethod
+    def delete_retrieval_app(db, app_name):
+        try:
+            # delete entry from AiRetrieval Table
+            _, ai_retriever_apps = db.query(
+                table_obj=AiRetrievalTable, filter_query={"app_name": app_name}
+            )
+            if ai_retriever_apps and len(ai_retriever_apps) > 0:
+                db.delete(ai_retriever_apps)
+
+            # delete entry from AiUser table if needed # TODO: discussion needed
+
+            # delete entry from AiApp table
+            _, ai_app_obj = db.query(
+                table_obj=AiAppTable, filter_query={"name": app_name}
+            )
+            db.delete(ai_app_obj)
+
+            message = f"Application {app_name} has been deleted."
+            logger.info(message)
+            result = {"message": message, "status_code": status.HTTP_200_OK}
+        except FileNotFoundError:
+            message = f"Application {app_name} does not exist."
+            logger.exception(message)
+            # Getting error, We are rollback everything we did in this run.
+            db.session.rollback()
+        except PermissionError:
+            message = f"Permission denied: Unable to delete application {app_name}."
+            logger.exception(message)
+            # Getting error, We are rollback everything we did in this run.
+            db.session.rollback()
+        except Exception as e:
+            message = f"Unable to delete application {app_name}, Error: {e}"
+            logger.exception(message)
+            # Getting error, We are rollback everything we did in this run.
+            db.session.rollback()
+        else:
+            # Commit will only happen when everything went well.
+            message = "App deletion processed Successfully"
+            logger.debug(message)
+            db.session.commit()
+            return result
+        finally:
+            logger.debug("Closing database session.")
+            # Closing the session
+            db.session.close()

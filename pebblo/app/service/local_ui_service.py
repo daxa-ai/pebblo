@@ -11,7 +11,7 @@ from fastapi import status
 
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import StorageTypes
-from pebblo.app.enums.enums import CacheDir
+from pebblo.app.enums.enums import ApplicationTypes, CacheDir
 from pebblo.app.models.models import (
     LoaderAppListDetails,
     LoaderAppModel,
@@ -20,6 +20,8 @@ from pebblo.app.models.models import (
     RetrievalAppListDetails,
 )
 from pebblo.app.service.local_ui.retriever_apps import RetrieverApp
+from pebblo.app.service.local_ui.utils import get_app_type
+from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import (
     delete_directory,
     get_document_with_findings_data,
@@ -52,6 +54,7 @@ class AppData:
         self.retrieval_active_users = {}
         self.retrieval_vectordbs = []
         self.total_retrievals = []
+        self.db = None
 
     def prepare_loader_response(self, app_dir, app_json):
         # Default values
@@ -513,24 +516,65 @@ class AppData:
                     f"[App Details]: Error in getting app details. Error: {ex}"
                 )
 
-    @staticmethod
-    def delete_application(app_name):
+    def delete_application(self, app_name):
         """
         Delete an app
         """
-        try:
-            # Path to application directory
-            app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
-            logger.debug(f"[Delete App]: Path: {app_dir_path}")
-            response = delete_directory(app_dir_path, app_name)
-            return response
-        except Exception as ex:
-            error_message = f"[Delete App]: Error in delete application. Error: {ex}"
-            logger.error(error_message)
-            return {
-                "message": error_message,
-                "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
-            }
+        storage_type = config_details.get("storage", {}).get(
+            "type", StorageTypes.FILE.value
+        )
+        if storage_type == StorageTypes.FILE.value:
+            try:
+                # Path to application directory
+                app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
+                logger.debug(f"[Delete App]: Path: {app_dir_path}")
+                response = delete_directory(app_dir_path, app_name)
+                return response
+            except Exception as ex:
+                error_message = (
+                    f"[Delete App]: Error in delete application. Error: {ex}"
+                )
+                logger.error(error_message)
+                return {
+                    "message": error_message,
+                    "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                }
+        elif storage_type == StorageTypes.DATABASE.value:
+            try:
+                self.db = SQLiteClient()
+
+                # create session
+                self.db.create_session()
+
+                app_type = get_app_type(self.db, app_name)
+                if app_type == ApplicationTypes.LOADER.value:
+                    pass  # TODO: delete loader apps
+                elif app_type == ApplicationTypes.RETRIEVAL.value:
+                    retriever_app_obj = RetrieverApp()
+                    retriever_app_obj.delete_retrieval_app(self.db, app_name)
+                message = f"Application {app_name} has been deleted."
+                response = {"message": message, "status_code": status.HTTP_200_OK}
+            except Exception as ex:
+                error_message = (
+                    f"[Delete App]: Error in delete application. Error: {ex}"
+                )
+                logger.error(error_message)
+                # Getting error, Rollback everything we did in this run.
+                self.db.session.rollback()
+                return {
+                    "message": error_message,
+                    "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                }
+            else:
+                message = f"Ai Retriever app {app_name} deleted successfully"
+                logger.debug(message)
+                return response
+            finally:
+                logger.debug(
+                    "Closing database session for preparing all retriever apps"
+                )
+                # Closing the session
+                self.db.session.close()
 
     @staticmethod
     def get_latest_load_id(load_ids, app_dir):
