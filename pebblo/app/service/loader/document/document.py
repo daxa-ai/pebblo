@@ -18,7 +18,7 @@ class AiDocumentHandler:
         logger.debug("Create or update AIDocument")
         filter_query = {
             "appId": self.app_name,  # loadId or AppId ( Doubt)
-            "loaderSourcePath": doc.get("source_path"),
+            "sourcePath": doc.get("source_path"),
         }
         status, output = self.db.query(AiDocumentTable, filter_query)
         if output and len(output) > 0:

@@ -146,7 +146,7 @@ class Prompt:
                         logger.debug(f"Entry: {entry} in AiUser completed")
                     retrieval_data["user"] = entry.data["id"]
 
-            retrieval_data["appId"] = ai_app_data.id
+            retrieval_data["appId"] = ai_app_data.data["id"]
             insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
 
             if not insert_status:
