@@ -23,9 +23,9 @@ class AppLoaderDoc:
     This class handles app loader/doc API business logic.
     """
 
-    def __init__(self, data):
-        self.data = data
-        self.app_name = self.data.get("name")
+    def __init__(self):
+        self.data = None
+        self.app_name = None
 
     def _write_pdf_report(self, final_report):
         """
@@ -114,10 +114,12 @@ class AppLoaderDoc:
                 loader_list.append(new_loader_data.dict())
                 app_details["loaders"] = loader_list
 
-    def process_request(self):
+    def process_request(self, data):
         """
         This process is entrypoint function for loader doc API implementation.
         """
+        self.data = data
+        self.app_name = data.get("name")
         try:
             logger.debug("Loader doc request processing started")
             logger.debug(f"Loader Doc, Application Name: {self.app_name}")
