@@ -4,12 +4,23 @@ import { SearchIcon } from "../icons/index.js";
 import { waitForElement } from "../util.js";
 import { EmptyState } from "./emptyState.js";
 import { KeyValue } from "./index.js";
+import { Tooltip } from "./tooltip.js";
 
-// PROPS {
-//   title: string,
-//   data: Array<unknown>,
-//   searchField: Array<string>
-// }
+function DisplaySnippet(props) {
+  const { formattedString } = props;
+  return `<div>
+      ${formattedString.myMap((item, index) =>
+        item?.score
+          ? Tooltip({
+              children: `<span class="confidence-score">${item.string}</span>`,
+              title: `Confidence: ${item?.score}`,
+              variant: "top",
+              inline: true,
+            })
+          : `<span >${item.string}</span>`
+      )}
+    </div>`;
+}
 
 export function SnippetDetails(props) {
   const { title, data, searchField, inputPlaceholder, error } = props;
@@ -75,6 +86,85 @@ export function SnippetDetails(props) {
       : /*html*/ `<div class="text-center pt-3 pb-3 pl-3 pr-3 inter surface-10 font-13 medium">No Data Found!!</div>`;
   }
 
+  let snippetList = [];
+
+  const splitStringByPivots = (longString, pivots, groups, scores) => {
+    return pivots
+      .reduce((result, end, index) => {
+        const start = index === 0 ? 0 : pivots[index - 1];
+        result.push({
+          string: longString.slice(start, end),
+          isEntity: groups.includes(`${start}_${end}`),
+          score: scores[groups.indexOf(`${start}_${end}`)] || "",
+        });
+        return result;
+      }, [])
+      .concat({
+        string: longString.slice(pivots[pivots.length - 1]),
+      });
+  };
+
+  const extractLocations = (entityDetails) => {
+    return Object.values(entityDetails || {})
+      .flatMap((entries) =>
+        entries.map((entry) => entry.location.split("_").map(Number))
+      )
+      .flat();
+  };
+
+  const extractLocationStrings = (entityDetails) => {
+    return Object.values(entityDetails || {}).flatMap((entries) =>
+      entries.map((entry) => entry.location)
+    );
+  };
+
+  const extractConfidenceScore = (entityDetails) => {
+    return Object.values(entityDetails || {}).flatMap((entries) =>
+      entries.map((entry) => entry.confidence_score)
+    );
+  };
+
+  if (data?.snippets?.length > 0) {
+    snippetList = data?.snippets?.map((snippetObj) => {
+      let snippetStrings = {};
+      snippetStrings = snippetObj?.snippets?.map((snippetDetails) => {
+        const { snippet, entityDetails } = snippetDetails;
+        const locations = extractLocations(entityDetails);
+        const locationStrings = extractLocationStrings(entityDetails);
+        const confidenceScores = extractConfidenceScore(entityDetails);
+        let string = "";
+        if (locations && locationStrings && snippet)
+          string = splitStringByPivots(
+            snippet,
+            locations,
+            locationStrings,
+            confidenceScores
+          );
+        if (string) return { string, ...snippetDetails };
+        else return snippetDetails;
+      });
+      return { ...snippetObj, snippetStrings };
+    });
+  }
+
+  const getConfidenceScoreForTopic = (label, snippets) => {
+    let confidenceScore = "";
+    if (snippets?.length) {
+      const score = snippets.find((snippet) => {
+        if (snippet?.topicDetails) {
+          const labelScore = snippet?.topicDetails[label];
+          if (labelScore?.length > 0) {
+            confidenceScore = labelScore[0]?.confidence_score;
+            return confidenceScore;
+          }
+          return false;
+        }
+      });
+      return confidenceScore;
+    }
+    return confidenceScore;
+  };
+
   return /*html*/ `
       <div class="tab_panel snippet-details-container flex flex-col gap-4">
       <div class="flex justify-between">
@@ -95,8 +185,8 @@ export function SnippetDetails(props) {
         !error
           ? `<div id="snippet_body" class="flex flex-col gap-10 h-full">
       ${
-        data?.snippets?.length
-          ? data?.snippets?.myMap(
+        snippetList
+          ? snippetList?.myMap(
               (item) => /*html*/ `        
          <div class="flex flex-col gap-1">
            <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
@@ -106,11 +196,23 @@ export function SnippetDetails(props) {
              <div class="surface-10-opacity-50 font-12">Showing ${
                item?.snippets?.length
              } out of ${item?.snippetCount}</div>
+            ${
+              item?.findingsType === "topics" &&
+              `<div class="surface-10-opacity-65 font-14 medium ml-auto">Confidence: ${getConfidenceScoreForTopic(
+                item?.labelName,
+                item?.snippets
+              )}</div>`
+            }
            </div>
-           ${item?.snippets?.myMap(
+           ${item?.snippetStrings?.myMap(
              (snipp) => `
                 <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
-                 ${KeyValue({ key: "Snippets", value: snipp?.snippet })}
+                 ${KeyValue({
+                   key: "Snippets",
+                   value: DisplaySnippet({
+                     formattedString: snipp?.string || [],
+                   }),
+                 })}
                  ${KeyValue({
                    key: "Retrieved from",
                    value: snipp?.sourcePath,
