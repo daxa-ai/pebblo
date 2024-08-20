@@ -2,12 +2,14 @@
 This module handles business logic for local UI for Safe Retriever DB Apps
 """
 
-from typing import Any, Dict, Tuple
+import json
+from typing import Any, Dict, List, Tuple
 
 from dateutil import parser
 
 from pebblo.app.config.config import var_server_config_dict
-from pebblo.app.models.models import (
+from pebblo.app.models.db_models import (
+    RetrievalAppDetails,
     RetrievalAppList,
     RetrievalAppListDetails,
 )
@@ -35,7 +37,7 @@ class RetrieverApp:
         self.total_retrievals = []
 
     @staticmethod
-    def get_db_sorted_users(retrieval_data: list) -> dict:
+    def get_db_sorted_users(retrieval_data: list, all_apps: bool = False) -> dict:
         """
         This function returns sorted active users per app in sorted descending order
         based on number of times it appeared in retrievals.
@@ -45,7 +47,8 @@ class RetrieverApp:
 
         # fetch active users wise retrievals
         for data in retrieval_data:
-            data = data.data
+            if all_apps:
+                data = data.data
             user_name = data.get("user")
             if user_name in active_users.keys():
                 active_users[user_name].append(data)
@@ -154,7 +157,7 @@ class RetrieverApp:
             )
             return ""
 
-    def get_db_active_users(self, retrieval_data: list) -> dict:
+    def get_db_active_users(self, retrieval_data: list, all_apps: bool = False) -> dict:
         """
         This function returns active users per app with its metadata in following format:
         {
@@ -163,7 +166,7 @@ class RetrieverApp:
             "linked_groups": [user groups]
         }
         """
-        sorted_active_users = self.get_db_sorted_users(retrieval_data)
+        sorted_active_users = self.get_db_sorted_users(retrieval_data, all_apps)
         response = {}
         for user_name, user_data in sorted_active_users.items():
             accessed_time = []
@@ -198,7 +201,9 @@ class RetrieverApp:
         return list(set(vector_dbs))
 
     @staticmethod
-    def sort_db_retrievals(retrieval_data: list, search_key: str) -> dict:
+    def sort_db_retrievals(
+        retrieval_data: list, search_key: str, all_apps: bool = False
+    ) -> dict:
         """
         This function returns data based on search key per app in sorted descending order
         based on number of times it appeared in retrievals.
@@ -207,7 +212,8 @@ class RetrieverApp:
         sorted_resp: dict = {}
         # fetch data wise retrievals
         for data in retrieval_data:
-            data = data.data
+            if all_apps:
+                data = data.data
             data_context = data.get("context")
             for context in data_context:
                 data_name = context[search_key]
@@ -230,7 +236,9 @@ class RetrieverApp:
 
         return sorted_resp
 
-    def get_all_db_documents(self, retrieval_data: list) -> dict:
+    def get_all_db_documents(
+        self, retrieval_data: list, all_apps: bool = False
+    ) -> dict:
         """
         This function returns documents per app with its metadata in following format:
         {
@@ -239,7 +247,9 @@ class RetrieverApp:
         }
         """
 
-        sorted_document = self.sort_db_retrievals(retrieval_data, "retrieved_from")
+        sorted_document = self.sort_db_retrievals(
+            retrieval_data, "retrieved_from", all_apps
+        )
         response = {}
         for user_name, user_data in sorted_document.items():
             accessed_time = []
@@ -281,7 +291,7 @@ class RetrieverApp:
                 )
 
         # fetch active users per app
-        active_users = self.get_db_active_users(ai_retrievals)
+        active_users = self.get_db_active_users(ai_retrievals, all_apps=True)
         self.add_accumulate_active_users(active_users)
 
         # fetch vector dbs per app
@@ -289,7 +299,7 @@ class RetrieverApp:
         self.retrieval_vectordbs.extend(vector_dbs)
 
         # fetch documents name per app
-        documents = self.get_all_db_documents(ai_retrievals)
+        documents = self.get_all_db_documents(ai_retrievals, all_apps=True)
 
         app_details = RetrievalAppListDetails(
             name=app_name,
@@ -312,6 +322,66 @@ class RetrieverApp:
             retrievals, key=lambda item: len(item["retrievals"]), reverse=True
         )
         return sorted_data
+
+    @staticmethod
+    def _sort_db_retrievals_data(retrieval: list):
+        """
+        Sort the retrievals based on prompt_time in descending order
+        :param retrieval: retrievals list
+        :return: sorted retrievals list
+        """
+        sorted_data = sorted(retrieval, key=lambda x: x["prompt_time"])
+        return sorted_data
+
+    def get_all_vector_dbs(self, retrieval_data: list) -> dict:
+        """
+        This function returns vector dbs per app in sorted descending order
+        based on number of times it appeared in retrievals.
+        """
+        sorted_vector_dbs = self.sort_db_retrievals(retrieval_data, "vector_db")
+        return sorted_vector_dbs
+
+    @staticmethod
+    def get_prompts_with_findings(retrieval_data: List[Dict[str, Any]]) -> int:
+        """
+        Counts the number of prompts with findings in the retrieval data.
+
+        Args:
+            retrieval_data (List[Dict[str, Any]]): A list of dictionaries containing the retrieval data.
+                Each dictionary is expected to have a "prompt" key with another dictionary that contains an "entityCount" key.
+
+        Returns:
+            int: The total number of prompts with findings (where "entityCount" > 0).
+        """
+        return sum(
+            1
+            for data in retrieval_data
+            if data.get("prompt", {}).get("entityCount", 0) > 0
+        )
+
+    def prepare_retrieval_app_response(self, app_data, retrieval_data):
+        retrieval_data = self._sort_db_retrievals_data(retrieval_data)
+
+        active_users = self.get_db_active_users(retrieval_data)
+        documents = self.get_all_db_documents(retrieval_data)
+        vector_dbs = self.get_all_vector_dbs(retrieval_data)
+        prompt_with_findings = self.get_prompts_with_findings(retrieval_data)
+        # prepare app response
+        response = RetrievalAppDetails(
+            name=app_data["name"],
+            description=app_data.get("description"),
+            framework=app_data.get("framework"),
+            instanceDetails=app_data.get("instanceDetails"),
+            pebbloServerVersion=app_data.get("pebbloServerVersion"),
+            pebbloClientVersion=app_data.get("pebbloClientVersion"),
+            clientVersion=app_data.get("clientVersion"),
+            total_prompt_with_findings=prompt_with_findings,
+            retrievals=retrieval_data,
+            activeUsers=active_users,
+            vectorDbs=vector_dbs,
+            documents=documents,
+        )
+        return json.dumps(response.dict(), default=str, indent=4)
 
     def get_all_retriever_apps(self):
         try:
@@ -382,10 +452,60 @@ class RetrieverApp:
             # Getting error, Rollback everything we did in this run.
             self.db.session.rollback()
         else:
-            # Commit will only happen when everything went well.
             message = "All retriever app response prepared successfully"
             logger.debug(message)
-            self.db.session.commit()
+            return response
+        finally:
+            logger.debug("Closing database session for preparing all retriever apps")
+            # Closing the session
+            self.db.session.close()
+
+    def get_retriever_app_details(self, app_name):
+        try:
+            retrieval_data = []
+
+            self.db = SQLiteClient()
+
+            # create session
+            self.db.create_session()
+
+            _, app_obj = self.db.query(
+                table_obj=AiAppTable, filter_query={"name": app_name}
+            )
+
+            if app_obj and len(app_obj) > 0:
+                app_obj = app_obj[0]
+            else:
+                pass
+            app_data = app_obj.data
+
+            # fetch retrieval data
+            _, ai_retrieval_obj = self.db.query(
+                table_obj=AiRetrievalTable, filter_query={"app_name": app_name}
+            )
+
+            if ai_retrieval_obj and len(ai_retrieval_obj) > 0:
+                for retrieval_obj in ai_retrieval_obj:
+                    retrieval_obj = retrieval_obj.data
+                    data = {
+                        "prompt": retrieval_obj.get("prompt", {}),
+                        "response": retrieval_obj.get("response", {}),
+                        "context": retrieval_obj.get("context", []),
+                        "prompt_time": retrieval_obj.get("prompt_time", None),
+                        "user": retrieval_obj.get("user", ""),
+                        "linked_groups": retrieval_obj.get("linked_groups", []),
+                    }
+                    retrieval_data.append(data)
+
+            # prepare retrieval app response
+            response = self.prepare_retrieval_app_response(app_data, retrieval_data)
+        except Exception as ex:
+            logger.error(f"[Dashboard]: Error in all retriever app listing. Error:{ex}")
+            # Getting error, Rollback everything we did in this run.
+            self.db.session.rollback()
+        else:
+            message = "All retriever app response prepared successfully"
+            logger.debug(message)
             return response
         finally:
             logger.debug("Closing database session for preparing all retriever apps")

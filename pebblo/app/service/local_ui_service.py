@@ -445,61 +445,73 @@ class AppData:
         """
         Returns app details for an app.
         """
-        try:
-            # Path to metadata.json
-            app_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
-            logger.debug(f"[App Details]: Metadata file path: {app_path}")
-            # Reading metadata.json
-            app_json = read_json_file(app_path)
-            # Condition for handling loadId
-            if not app_json:
-                # Unable to fetch loadId details
-                logger.debug(
-                    f"[App Details]: Error: Report Json {CacheDir.METADATA_FILE_PATH.value}"
-                    f"not found for app {app_path}"
-                )
-                logger.warning(
-                    f"[App Details]: Metadata file is not present for application: {app_dir}, skipping application"
-                )
-                return json.dumps({})
-
-            app_type = app_json.get("app_type", None)
-            app_name = app_json.get("name")
-            if app_type in ["loader", None]:
-                load_ids = app_json.get("load_ids", [])
-                if not load_ids:
+        storage_type = config_details.get("storage", {}).get(
+            "type", StorageTypes.FILE.value
+        )
+        if storage_type == StorageTypes.FILE.value:
+            try:
+                # Path to metadata.json
+                app_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
+                logger.debug(f"[App Details]: Metadata file path: {app_path}")
+                # Reading metadata.json
+                app_json = read_json_file(app_path)
+                # Condition for handling loadId
+                if not app_json:
                     # Unable to fetch loadId details
                     logger.debug(
-                        f"[App Details]: Error: Details not found for app {app_path}"
+                        f"[App Details]: Error: Report Json {CacheDir.METADATA_FILE_PATH.value}"
+                        f"not found for app {app_path}"
                     )
                     logger.warning(
-                        f"[App Details]: No valid loadIs found for the application: {app_name}, skipping application."
+                        f"[App Details]: Metadata file is not present for application: {app_dir}, skipping application"
                     )
                     return json.dumps({})
-                response = self.get_loader_app_details(app_dir, load_ids)
-                return response
-            elif app_type == "retrieval":
-                app_metadata_path = (
-                    f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                    f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
+                app_type = app_json.get("app_type", None)
+                app_name = app_json.get("name")
+                if app_type in ["loader", None]:
+                    load_ids = app_json.get("load_ids", [])
+                    if not load_ids:
+                        # Unable to fetch loadId details
+                        logger.debug(
+                            f"[App Details]: Error: Details not found for app {app_path}"
+                        )
+                        logger.warning(
+                            f"[App Details]: No valid loadIs found for the application: {app_name}, skipping application."
+                        )
+                        return json.dumps({})
+                    response = self.get_loader_app_details(app_dir, load_ids)
+                    return response
+                elif app_type == "retrieval":
+                    app_metadata_path = (
+                        f"{CacheDir.HOME_DIR.value}/{app_dir}/"
+                        f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
+                    )
+                    app_metadata_content = read_json_file(app_metadata_path)
+                    # Skip app if app_metadata details are not present for some reason.
+                    if not app_metadata_content:
+                        logger.debug(
+                            f"[App Details]: Error: Unable to fetch app_metadata.json content for {app_dir} app"
+                        )
+                        logger.warning(
+                            f"[App Details]: Application metadata file is not present for application: {app_name},"
+                            f"skipping application."
+                        )
+                        return json.dumps({})
+                    response = self.get_retrieval_app_details(app_metadata_content)
+                    return response
+            except Exception as ex:
+                logger.error(
+                    f"[App Details]: Error in getting app details. Error: {ex}"
                 )
-                app_metadata_content = read_json_file(app_metadata_path)
-
-                # Skip app if app_metadata details are not present for some reason.
-                if not app_metadata_content:
-                    logger.debug(
-                        f"[App Details]: Error: Unable to fetch app_metadata.json content for {app_dir} app"
-                    )
-                    logger.warning(
-                        f"[App Details]: Application metadata file is not present for application: {app_name},"
-                        f"skipping application."
-                    )
-                    return json.dumps({})
-                response = self.get_retrieval_app_details(app_metadata_content)
+        elif storage_type == StorageTypes.DATABASE.value:
+            try:
+                retriever_app_obj = RetrieverApp()
+                response = retriever_app_obj.get_retriever_app_details(app_name=app_dir)
                 return response
-
-        except Exception as ex:
-            logger.error(f"[App Details]: Error in getting app details. Error: {ex}")
+            except Exception as ex:
+                logger.error(
+                    f"[App Details]: Error in getting app details. Error: {ex}"
+                )
 
     @staticmethod
     def delete_application(app_name):
