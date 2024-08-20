@@ -12,5 +12,3 @@ classifier:
 storage:
   type: db
   db: sqlite
-  location: ~/.pebblo
-  name: pebblo
