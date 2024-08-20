@@ -1,12 +1,11 @@
 from pathlib import Path
 
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
 
 from pebblo.app.enums.enums import CacheDir
-
-from pebblo.app.utils.handler_mapper import get_local_ui_api_handler
+from pebblo.app.service.local_ui_service import AppData
 from pebblo.app.utils.utils import get_full_path
 
 templates = Jinja2Templates(
@@ -23,7 +22,8 @@ class App:
         self.router = APIRouter(prefix=prefix)
 
     @staticmethod
-    def dashboard(request: Request, app_data=Depends(lambda: get_local_ui_api_handler(handler_name="dashboard"))):
+    def dashboard(request: Request):
+        app_data = AppData()
         return templates.TemplateResponse(
             "index.html",
             {
@@ -34,7 +34,8 @@ class App:
         )
 
     @staticmethod
-    def app_details(request: Request, app_name: str, app_data=Depends(lambda: get_local_ui_api_handler(handler_name="app_details"))):
+    def app_details(request: Request, app_name: str):
+        app_data = AppData()
         return templates.TemplateResponse(
             "index.html",
             {
@@ -61,7 +62,8 @@ class App:
         return response
 
     @staticmethod
-    def delete_app(request: Request, app_name: str, app_data=Depends(lambda: get_local_ui_api_handler(handler_name="delete_app"))):
+    def delete_app(request: Request, app_name: str):
+        app_data = AppData()
         result = app_data.delete_application(app_name)
         return result
 

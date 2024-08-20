@@ -448,6 +448,7 @@ class RetrieverApp:
             )
 
             response = retrieval_response.dict()
+            logger.debug(f"RetrievalAppResponse: {response}")
         except Exception as ex:
             logger.error(f"[Dashboard]: Error in all retriever app listing. Error:{ex}")
             # Getting error, Rollback everything we did in this run.

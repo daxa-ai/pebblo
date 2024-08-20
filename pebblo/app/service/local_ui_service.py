@@ -19,6 +19,7 @@ from pebblo.app.models.models import (
     RetrievalAppList,
     RetrievalAppListDetails,
 )
+from pebblo.app.service.local_ui.loader_apps import LoaderApp
 from pebblo.app.service.local_ui.retriever_apps import RetrieverApp
 from pebblo.app.service.local_ui.utils import get_app_type
 from pebblo.app.storage.sqlite_db import SQLiteClient
@@ -410,6 +411,7 @@ class AppData:
                         "retrievalApps": retrieval_response.dict(),
                     }
                 )
+                logger.debug(f"File Level Response: {response}")
                 return json.dumps(response, indent=4)
             except Exception as ex:
                 logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
@@ -417,9 +419,10 @@ class AppData:
         elif storage_type == StorageTypes.DATABASE.value:
             try:
                 retriever_app_obj = RetrieverApp()
+                loader_app_obj = LoaderApp()
                 response.update(
                     {
-                        # "loaderApps": loader_response.dict(),
+                        "loaderApps": loader_app_obj.get_all_loader_apps(),
                         "retrievalApps": retriever_app_obj.get_all_retriever_apps(),
                     }
                 )
