@@ -26,8 +26,10 @@ class AiDataModel(BaseModel):
     data: Optional[Union[list, str]]
     entityCount: int
     entities: dict
+    entityDetails: Optional[dict]
     topicCount: Optional[int] = None
     topics: Optional[dict] = None
+    topicDetails: Optional[dict]
 
     def dict(self, **kwargs):
         kwargs["exclude_none"] = True
@@ -43,8 +45,10 @@ class AiDocs(BaseModel):
     loaderSourcePath: str
     lastModified: Optional[datetime]
     entityCount: Optional[int]
+    entityDetails: Optional[dict]
     entities: Optional[dict]
     topicCount: Optional[int]
+    topicDetails: Optional[dict]
     topics: Optional[dict]
     authorizedIdentities: list
 
@@ -159,6 +163,8 @@ class TopFindings(BaseModel):
 
 class Snippets(BaseModel):
     snippet: str
+    entityDetails: Optional[dict]
+    topicDetails: Optional[dict]
     sourcePath: str
     fileOwner: str
     authorizedIdentities: list
