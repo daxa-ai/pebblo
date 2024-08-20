@@ -571,6 +571,7 @@ class AppData:
             instanceDetails=app_content.get("instanceDetails"),
             pebbloServerVersion=app_content.get("pebbloServerVersion"),
             pebbloClientVersion=app_content.get("pebbloClientVersion"),
+            clientVersion=app_content.get("clientVersion"),
             total_prompt_with_findings=prompt_with_findings,
             retrievals=retrieval_data,
             activeUsers=active_users,

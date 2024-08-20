@@ -62,6 +62,7 @@ def mocked_entity_classifier_response(mocker):
             TestAnonymizerResult("IBAN_CODE"),
             TestAnonymizerResult("CREDIT_CARD"),
             TestAnonymizerResult("US_SSN"),
+            TestAnonymizerResult("IP_ADDRESS"),
         ],
         mock_input_text2_anonymize_snippet_true,
     )
@@ -144,6 +145,11 @@ def mocked_entity_classifier_response(mocker):
             "location": "1911_1968",
             "confidence_score": 0.8,
         },
+        {
+            "entity_type": "IP_ADDRESS",
+            "location": "1339_1355",
+            "confidence_score": 0.8
+        },
     ]
     analyzed_entities_response4: List[dict] = [
         {
@@ -182,6 +188,11 @@ def mocked_entity_classifier_response(mocker):
             "entity_type": "SLACK_TOKEN",
             "location": "1772_1785",
             "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "IP_ADDRESS",
+            "location": "1339_1355",
+            "confidence_score": 0.8
         },
     ]
     analyzed_entities_negative_response1: List = []
@@ -235,10 +246,34 @@ def test_presidio_entity_classifier_and_anonymizer(
     assert total_count == 4
     assert anonymized_text == input_text1
     assert entity_details == {
-        "us-ssn": [{"location": "17_28", "confidence_score": "HIGH"}],
-        "us-itin": [{"location": "42_53", "confidence_score": "HIGH"}],
-        "aws-access-key": [{"location": "77_97", "confidence_score": "HIGH"}],
-        "github-token": [{"location": "120_210", "confidence_score": "HIGH"}],
+        "us-ssn": [
+            {
+                "location": "17_28",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-identification",
+            }
+        ],
+        "us-itin": [
+            {
+                "location": "42_53",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "aws-access-key": [
+            {
+                "location": "77_97",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "github-token": [
+            {
+                "location": "120_210",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
     }
 
     (
@@ -256,10 +291,34 @@ def test_presidio_entity_classifier_and_anonymizer(
     assert total_count == 4
     assert anonymized_text == mock_input_text1_anonymize_snippet_true
     assert entity_details == {
-        "us-ssn": [{"location": "17_25", "confidence_score": "HIGH"}],
-        "us-itin": [{"location": "39_48", "confidence_score": "HIGH"}],
-        "aws-access-key": [{"location": "72_88", "confidence_score": "HIGH"}],
-        "github-token": [{"location": "111_125", "confidence_score": "HIGH"}],
+        "us-ssn": [
+            {
+                "location": "17_25",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-identification",
+            }
+        ],
+        "us-itin": [
+            {
+                "location": "39_48",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "aws-access-key": [
+            {
+                "location": "72_88",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "github-token": [
+            {
+                "location": "111_125",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
     }
 
     (
@@ -277,20 +336,78 @@ def test_presidio_entity_classifier_and_anonymizer(
         "iban-code": 1,
         "credit-card-number": 1,
         "us-ssn": 1,
+        "ip-address": 1,
     }
-    assert total_count == 9
+    assert total_count == 10
     assert anonymized_text == input_text2
     assert entity_details == {
-        "credit-card-number": [{"location": "1367_1382", "confidence_score": "HIGH"}],
-        "iban-code": [{"location": "1406_1434", "confidence_score": "HIGH"}],
-        "us-ssn": [{"location": "1178_1189", "confidence_score": "HIGH"}],
-        "us-itin": [{"location": "1450_1461", "confidence_score": "HIGH"}],
-        "aws-access-key": [{"location": "1545_1565", "confidence_score": "HIGH"}],
-        "aws-secret-key": [{"location": "1587_1628", "confidence_score": "HIGH"}],
-        "github-token": [{"location": "1646_1736", "confidence_score": "HIGH"}],
+        "credit-card-number": [
+            {
+                "location": "1367_1382",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "iban-code": [
+            {
+                "location": "1406_1434",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "us-ssn": [
+            {
+                "location": "1178_1189",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-identification",
+            }
+        ],
+        "us-itin": [
+            {
+                "location": "1450_1461",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "aws-access-key": [
+            {
+                "location": "1545_1565",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "aws-secret-key": [
+            {
+                "location": "1587_1628",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "github-token": [
+            {
+                "location": "1646_1736",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
         "slack-token": [
-            {"location": "1812_1835", "confidence_score": "HIGH"},
-            {"location": "1911_1968", "confidence_score": "HIGH"},
+            {
+                "location": "1812_1835",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            },
+            {
+                "location": "1911_1968",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            },
+        ],
+        "ip-address": [
+            {
+                "location": "1339_1355",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-network",
+            }
         ],
     }
 
@@ -311,20 +428,78 @@ def test_presidio_entity_classifier_and_anonymizer(
         "iban-code": 1,
         "credit-card-number": 1,
         "us-ssn": 1,
+        "ip-address": 1,
     }
-    assert total_count == 9
+    assert total_count == 10
     assert anonymized_text == mock_input_text2_anonymize_snippet_true
     assert entity_details == {
-        "credit-card-number": [{"location": "1178_1186", "confidence_score": "HIGH"}],
-        "iban-code": [{"location": "1364_1377", "confidence_score": "HIGH"}],
-        "us-ssn": [{"location": "1401_1412", "confidence_score": "HIGH"}],
-        "us-itin": [{"location": "1428_1437", "confidence_score": "HIGH"}],
-        "aws-access-key": [{"location": "1521_1537", "confidence_score": "HIGH"}],
-        "aws-secret-key": [{"location": "1559_1575", "confidence_score": "HIGH"}],
-        "github-token": [{"location": "1593_1607", "confidence_score": "HIGH"}],
+        "credit-card-number": [
+            {
+                "location": "1178_1186",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "iban-code": [
+            {
+                "location": "1364_1377",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "us-ssn": [
+            {
+                "location": "1401_1412",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-identification",
+            }
+        ],
+        "us-itin": [
+            {
+                "location": "1428_1437",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "aws-access-key": [
+            {
+                "location": "1521_1537",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "aws-secret-key": [
+            {
+                "location": "1559_1575",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "github-token": [
+            {
+                "location": "1593_1607",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
         "slack-token": [
-            {"location": "1683_1696", "confidence_score": "HIGH"},
-            {"location": "1772_1785", "confidence_score": "HIGH"},
+            {
+                "location": "1683_1696",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            },
+            {
+                "location": "1772_1785",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            },
+        ],
+        "ip-address": [
+            {
+                "location": "1339_1355",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-network",
+            }
         ],
     }
 
