@@ -113,7 +113,9 @@ class Prompt:
                 )
                 if ai_user and len(ai_user) > 0:
                     ai_user = ai_user[0]
-                    retrieval_data["user"] = ai_user.data.get("id")
+                    user_id = ai_user.data.get("id")
+                    retrieval_data["user"] = ai_user.data.get("name")
+                    retrieval_data["user_id"] = user_id
                     existing_document_accessed = ai_user.data.get(
                         "documentsAccessed", []
                     )
@@ -144,7 +146,7 @@ class Prompt:
                     )
                     if insert_status:
                         logger.debug(f"Entry: {entry} in AiUser completed")
-                    retrieval_data["user"] = entry.data["id"]
+                    retrieval_data["user"] = entry.data["name"]
 
             retrieval_data["appId"] = ai_app_data.data["id"]
             insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
@@ -156,7 +158,8 @@ class Prompt:
 
             # Update AiApp with retrieval ID
             existing_retrieval = ai_app_data.data["retrievals"]
-            existing_retrieval.append(entry.data["id"])
+            ai_retrieval_id = entry.data["id"]
+            existing_retrieval.append(ai_retrieval_id)
             ai_app_data.data["retrievals"] = existing_retrieval
             status, message = self.db.update_data(
                 table_obj=ai_app_data, data=ai_app_data.data

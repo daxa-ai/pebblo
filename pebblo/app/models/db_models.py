@@ -108,6 +108,7 @@ class RetrievalData(BaseModel):
     context: list[RetrievalContext]
     prompt_time: str
     user: str
+    user_id: Optional[str]
     linked_groups: list[str] = []
 
 
