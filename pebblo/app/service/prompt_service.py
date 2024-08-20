@@ -143,9 +143,7 @@ class Prompt:
             logger.debug("AI App prompt request processing started")
 
             # getting prompt data
-            prompt_data = self._fetch_classified_data(
-                self.data.get("prompt", {}).get("data"), input_type="prompt"
-            )
+            prompt_data = self.data.get("prompt", {})
 
             is_prompt_gov_enabled = self.data.get("prompt", {}).get(
                 "prompt_gov_enabled", False
