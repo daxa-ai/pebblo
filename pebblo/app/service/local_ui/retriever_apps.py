@@ -1,8 +1,7 @@
 """
-This module handles business logic for local UI for DB Apps
+This module handles business logic for local UI for Safe Retriever DB Apps
 """
 
-import json
 from typing import Any, Dict, Tuple
 
 from dateutil import parser
@@ -14,13 +13,9 @@ from pebblo.app.models.models import (
 )
 from pebblo.app.models.sqltables import (
     AiAppTable,
-    AiDataLoaderTable,
     AiRetrievalTable,
 )
 from pebblo.app.storage.sqlite_db import SQLiteClient
-from pebblo.app.utils.utils import (
-    get_pebblo_server_version,
-)
 from pebblo.log import get_logger
 
 config_details = var_server_config_dict.get()
@@ -28,28 +23,16 @@ config_details = var_server_config_dict.get()
 logger = get_logger(__name__)
 
 
-class AppData:
+class RetrieverApp:
     """
-    This class handles business logic for local UI
+    This class handles business logic for local UI Safe Retriever Apps
     """
 
     def __init__(self):
         self.db = None
-        self.loader_apps_at_risk = 0
-        self.loader_findings = 0
-        self.loader_files_findings = 0
-        self.loader_data_source = 0
-        self.loader_findings_list = []
-        self.loader_data_source_list = []
-        self.loader_document_with_findings_list = []
         self.retrieval_active_users = {}
         self.retrieval_vectordbs = []
         self.total_retrievals = []
-
-    def get_all_apps(self):
-        _, ai_app_obj = self.db.query(table_obj=AiAppTable)
-        _, ai_loader_app_obj = self.db.query(table_obj=AiDataLoaderTable)
-        return ai_loader_app_obj, ai_app_obj
 
     @staticmethod
     def get_db_sorted_users(retrieval_data: list) -> dict:
@@ -330,51 +313,19 @@ class AppData:
         )
         return sorted_data
 
-    def get_all_apps_details(self):
+    def get_all_retriever_apps(self):
         try:
             self.db = SQLiteClient()
 
             # create session
             self.db.create_session()
 
-            ai_loader_apps, ai_retriever_apps = self.get_all_apps()
-            # all_loader_apps: list = []
+            _, ai_retriever_apps = self.db.query(table_obj=AiAppTable)
             all_retrieval_apps: list = []
             prompt_details: dict = {}
             total_prompt_with_findings = 0
             final_prompt_details = []
 
-            # # Preparing all loader apps
-            # all_loader_apps: list = []
-            # for loader_app in ai_loader_apps:
-            #     app_data = loader_app.data
-            #     if app_data.get("docEntities") not in [None, {}] or app_data.get(
-            #         "docTopics"
-            #     ) not in [None, {}]:
-            #         self.loader_apps_at_risk += 1
-            #         self.get_findings_for_loader_app(app_data)
-            #         # TODO: need to clarify
-            #         # self.loader_document_with_findings_list = app_data.get('documentsWithFindings')
-            #         # self.loader_files_findings = len(self.loader_document_with_findings_list)
-            #     print(loader_app)
-            #     logger.info(loader_app)
-            #
-            # # Sort loader apps
-            # sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
-            #
-            # logger.debug("[Dashboard]: Preparing loader app response object")
-            # loader_response = LoaderAppModel(
-            #     applicationsAtRiskCount=self.loader_apps_at_risk,
-            #     findingsCount=self.loader_findings,
-            #     documentsWithFindingsCount=self.loader_files_findings,
-            #     dataSourceCount=self.loader_data_source,
-            #     appList=sorted_loader_apps,
-            #     findings=self.loader_findings_list,
-            #     documentsWithFindings=self.loader_document_with_findings_list,
-            #     dataSource=self.loader_data_source_list,
-            # )
-
-            # Preparing all retrieval apps
             for retriever_app in ai_retriever_apps:
                 (
                     retrieval_app,
@@ -425,23 +376,18 @@ class AppData:
                 total_prompt_with_findings=total_prompt_with_findings,
             )
 
-            response = {
-                "pebbloServerVersion": get_pebblo_server_version(),
-                # "loaderApps": loader_response.dict(),
-                "retrievalApps": retrieval_response.dict(),
-            }
+            response = retrieval_response.dict()
         except Exception as ex:
-            logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
+            logger.error(f"[Dashboard]: Error in all retriever app listing. Error:{ex}")
             # Getting error, Rollback everything we did in this run.
             self.db.session.rollback()
         else:
             # Commit will only happen when everything went well.
-            message = "Prompt Request Processed Successfully"
+            message = "All retriever app response prepared successfully"
             logger.debug(message)
             self.db.session.commit()
-            return json.dumps(response, indent=4)
+            return response
         finally:
-            logger.debug("Closing database session for Prompt API.")
+            logger.debug("Closing database session for preparing all retriever apps")
             # Closing the session
             self.db.session.close()
-            return json.dumps({})
