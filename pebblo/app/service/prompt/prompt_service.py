@@ -74,85 +74,121 @@ class Prompt:
         Create an RetrievalData Model and return the corresponding model object
         """
         retrieval_data_model = RetrievalData(**self.data)
+        retrieval_data_model.app_name = self.app_name
         retrieval_data_model.context = context_data
         logger.debug(f"AiApp Name: [{self.app_name}]")
         return retrieval_data_model
 
     def _add_retrieval_data(self, retrieval_data):
-        app_exists, ai_app_obj = self.db.query(
-            table_obj=AiAppTable, filter_query={"name": self.app_name}
-        )
-        if not app_exists:
-            message = f"{self.app_name} app doesn't exists"
-            logger.error(message)
-            return return_response(message=message, status_code=500)
-        if ai_app_obj and len(ai_app_obj) > 0:
-            ai_app_data = ai_app_obj[0]
-        else:
-            message = f"{self.app_name} app doesn't exists"
-            logger.error(message)
-            return return_response(message=message, status_code=500)
+        try:
+            self.db = SQLiteClient()
 
-        document_accessed = []
-        for data in retrieval_data["context"]:
-            doc_name = data.get("retrieved_from")
-            if doc_name not in document_accessed:
-                document_accessed.append(doc_name)
+            # create session
+            self.db.create_session()
 
-        # Update entry in AiUser if exists else create
-        if retrieval_data.get("user"):
-            _, ai_user = self.db.query(
-                table_obj=AiUser, filter_query={"name": retrieval_data["user"]}
+            app_exists, ai_app_obj = self.db.query(
+                table_obj=AiAppTable, filter_query={"name": self.app_name}
             )
-            if ai_user and len(ai_user) > 0:
-                ai_user = ai_user[0]
-                retrieval_data["user"] = ai_user.data.id
-                existing_document_accessed = ai_user.data.get("documentsAccessed", [])
-                for doc_name in document_accessed:
-                    if doc_name not in existing_document_accessed:
-                        existing_document_accessed.append(doc_name)
-                ai_user.data["documentsAccessed"] = existing_document_accessed
-                status, message = self.db.update_data(
-                    table_obj=ai_user, data=ai_user.data
-                )
-                if not status:
-                    logger.error(f"Failed during updating AiUser: {message}")
-                    return return_response(message=message, status_code=500)
+            if not app_exists and ai_app_obj:
+                message = f"{self.app_name} app doesn't exists"
+                logger.error(message)
+                return return_response(message=message, status_code=500)
+            if ai_app_obj and len(ai_app_obj) > 0:
+                ai_app_data = ai_app_obj[0]
             else:
-                # Initialize Variables
-                current_time = self._get_current_datetime()
-                last_used = current_time
-                metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
-                ai_user_obj = aiuser(
-                    name=retrieval_data["user"],
-                    metadata=metadata,
-                    userAuthGroup=retrieval_data.get("linked_groups", []),
-                    documentsAccessed=document_accessed,
-                    lastUsed=last_used,
+                message = f"{self.app_name} app doesn't exists"
+                logger.error(message)
+                return return_response(message=message, status_code=500)
+
+            document_accessed = []
+            for data in retrieval_data["context"]:
+                doc_name = data.get("retrieved_from")
+                if doc_name not in document_accessed:
+                    document_accessed.append(doc_name)
+
+            # Update entry in AiUser if exists else create
+            if retrieval_data.get("user"):
+                _, ai_user = self.db.query(
+                    table_obj=AiUser, filter_query={"name": retrieval_data["user"]}
                 )
-                insert_status, entry = self.db.insert_data(AiUser, ai_user_obj.dict())
-                if insert_status:
-                    logger.debug(f"Entry: {entry} in AiUser completed")
-                retrieval_data["user"] = entry.data["id"]
+                if ai_user and len(ai_user) > 0:
+                    ai_user = ai_user[0]
+                    retrieval_data["user"] = ai_user.data.get("id")
+                    existing_document_accessed = ai_user.data.get(
+                        "documentsAccessed", []
+                    )
+                    for doc_name in document_accessed:
+                        if doc_name not in existing_document_accessed:
+                            existing_document_accessed.append(doc_name)
+                    ai_user.data["documentsAccessed"] = existing_document_accessed
+                    status, message = self.db.update_data(
+                        table_obj=ai_user, data=ai_user.data
+                    )
+                    if not status:
+                        logger.error(f"Failed during updating AiUser: {message}")
+                        return return_response(message=message, status_code=500)
+                else:
+                    # Initialize Variables
+                    current_time = self._get_current_datetime()
+                    last_used = current_time
+                    metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
+                    ai_user_obj = aiuser(
+                        name=retrieval_data["user"],
+                        metadata=metadata,
+                        userAuthGroup=retrieval_data.get("linked_groups", []),
+                        documentsAccessed=document_accessed,
+                        lastUsed=last_used,
+                    )
+                    insert_status, entry = self.db.insert_data(
+                        AiUser, ai_user_obj.dict()
+                    )
+                    if insert_status:
+                        logger.debug(f"Entry: {entry} in AiUser completed")
+                    retrieval_data["user"] = entry.data["id"]
 
-        retrieval_data["ai_app"] = ai_app_data.id
-        insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
+            retrieval_data["appId"] = ai_app_data.id
+            insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
 
-        if not insert_status:
-            message = "Saving retrieval entry failed"
-            logger.error("message")
-            return return_response(message=message, status_code=500)
+            if not insert_status:
+                message = "Saving retrieval entry failed"
+                logger.error("message")
+                return return_response(message=message, status_code=500)
+
+            # Update AiApp with retrieval ID
+            existing_retrieval = ai_app_data.data["retrievals"]
+            existing_retrieval.append(entry.data["id"])
+            ai_app_data.data["retrievals"] = existing_retrieval
+            status, message = self.db.update_data(
+                table_obj=ai_app_data, data=ai_app_data.data
+            )
+            self.db.session.commit()
+            if not status:
+                logger.error(f"Process request failed: {message}")
+                return return_response(message=message, status_code=500)
+        except Exception as err:
+            logger.error(f"Prompt API failed, Error: {err}")
+            # Getting error, Rollback everything we did in this run.
+            self.db.session.rollback()
+            return return_response(
+                message=f"Prompt API failed, Error: {err}", status_code=500
+            )
+        else:
+            # Commit will only happen when everything went well.
+            message = "Prompt Request Processed Successfully"
+            logger.debug(message)
+            self.db.session.commit()
+            return return_response(message=message, status_code=200)
+        finally:
+            logger.debug("Closing database session for Prompt API.")
+            # Closing the session
+            self.db.session.close()
 
     def process_request(self, data):
         try:
-            self.db = SQLiteClient()
             self.data = data
             self.app_name = self.data.get("name")
 
             logger.debug("Prompt API request processing started")
-
-            # create session
-            self.db.create_session()
 
             # getting prompt data
             prompt_data = self._fetch_classified_data(
@@ -184,22 +220,10 @@ class Prompt:
             retrieval_data = self._create_retrieval_data(context_data)
 
             # Add retrieval entry
-            self._add_retrieval_data(retrieval_data.dict())
-
+            response = self._add_retrieval_data(retrieval_data.dict())
+            return response
         except Exception as err:
             logger.error(f"Prompt API failed, Error: {err}")
-            # Getting error, Rollback everything we did in this run.
-            self.db.session.rollback()
             return return_response(
                 message=f"Prompt API failed, Error: {err}", status_code=500
             )
-        else:
-            # Commit will only happen when everything went well.
-            message = "Prompt Request Processed Successfully"
-            logger.debug(message)
-            self.db.session.commit()
-            return return_response(message=message, status_code=200)
-        finally:
-            logger.debug("Closing database session for Prompt API.")
-            # Closing the session
-            self.db.session.close()

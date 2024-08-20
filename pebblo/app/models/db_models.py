@@ -101,6 +101,8 @@ class RetrievalContext(BaseModel):
 
 
 class RetrievalData(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    app_name: Optional[str]
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]
