@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy.inspection import inspect
 
 from pebblo.app.enums.enums import ApplicationTypes
+from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiApp,
     AiDataLoader,
@@ -14,10 +15,11 @@ from pebblo.app.models.db_models import (
     PackageInfo,
     VectorDB,
 )
+from pebblo.app.models.models import DiscoverAIAppsResponseModel
 from pebblo.app.models.sqltables import AiAppTable, AiDataLoaderTable
 from pebblo.app.service.discovery.common import get_or_create_app
 from pebblo.app.storage.sqlite_db import SQLiteClient
-from pebblo.app.utils.utils import get_pebblo_server_version, return_response
+from pebblo.app.utils.utils import get_pebblo_server_version, timeit
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
@@ -35,6 +37,16 @@ class AppDiscover:
         Return current datetime
         """
         return datetime.now().isoformat()
+
+    @staticmethod
+    def return_response(message, status_code, pebblo_server_version=None):
+        response = DiscoverAIAppsResponseModel(
+            pebblo_server_version=pebblo_server_version,
+            message=str(message),
+        )
+        return PebbloJsonResponse.build(
+            body=response.dict(exclude_none=True), status_code=status_code
+        )
 
     def _fetch_runtime_instance_details(self) -> InstanceDetails:
         """
@@ -112,16 +124,6 @@ class AppDiscover:
 
         return app_type, AppClass
 
-    def model_to_dict(self, instance):
-        """Convert SQLAlchemy model instance to dictionary."""
-        if instance:
-            # Use SQLAlchemy's inspection to get the column attributes
-            mapper = inspect(instance).mapper
-            return {
-                column.key: getattr(instance, column.key) for column in mapper.columns
-            }
-        return {}
-
     def _fetch_chain_details(self, app_metadata) -> list[Chain]:
         """
         Retrieve chain details from input data and return its corresponding model object.
@@ -182,6 +184,7 @@ class AppDiscover:
 
         return retrievals_details
 
+    @timeit
     def process_request(self, data):
         try:
             self.db = SQLiteClient()
@@ -198,7 +201,7 @@ class AppDiscover:
             app_type, AppClass = self._get_app_type_and_class()
             if not AppClass:
                 message = "No load_id's or run_id's are present, Invalid Request"
-                return return_response(message=message, status_code=404)
+                return self.return_response(message=message, status_code=404)
 
             # get or create app
             ai_app_obj = get_or_create_app(
@@ -206,7 +209,7 @@ class AppDiscover:
             )
             if not ai_app_obj:
                 message = "Unable to get or create aiapp details"
-                return return_response(message=message, status_code=500)
+                return self.return_response(message=message, status_code=500)
 
             ai_app = ai_app_obj.data
             # Get instance details
@@ -235,13 +238,13 @@ class AppDiscover:
             )
             if not status:
                 logger.error(f"Process request failed: {message}")
-                return return_response(message=message, status_code=500)
+                return self.return_response(message=message, status_code=500)
 
         except Exception as err:
             logger.error(f"Discovery api failed, Error: {err}")
             # Getting error, We are rollback everything we did in this run.
             self.db.session.rollback()
-            return return_response(
+            return self.return_response(
                 message=f"Discovery api failed, Error: {err}", status_code=500
             )
 
@@ -251,7 +254,7 @@ class AppDiscover:
             logger.debug(message)
             self.db.session.commit()
 
-            return return_response(message=message, status_code=200)
+            return self.return_response(message=message, status_code=200)
         finally:
             logger.debug("Closing database session.")
             # Closing the session

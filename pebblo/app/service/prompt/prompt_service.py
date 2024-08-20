@@ -1,4 +1,5 @@
 # Prompt API with database implementation.
+from pebblo.app.libs.responses import PebbloJsonResponse
 from datetime import datetime
 
 from pebblo.app.models.db_models import (
@@ -11,7 +12,7 @@ from pebblo.app.models.db_models import (
 )
 from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable, AiUser
 from pebblo.app.storage.sqlite_db import SQLiteClient
-from pebblo.app.utils.utils import return_response
+from pebblo.app.utils.utils import timeit
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.log import get_logger
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
@@ -26,6 +27,12 @@ class Prompt:
         self.app_name = None
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
+
+    def _return_response(self, data=None, message="", status_code=200):
+        response = PromptResponseModel(retrieval_data=data, message=str(message))
+        return PebbloJsonResponse.build(
+            body=response.dict(exclude_none=True), status_code=status_code
+        )
 
     @staticmethod
     def _get_current_datetime():
@@ -79,6 +86,7 @@ class Prompt:
         logger.debug(f"AiApp Name: [{self.app_name}]")
         return retrieval_data_model
 
+    @timeit
     def _add_retrieval_data(self, retrieval_data):
         try:
             self.db = SQLiteClient()
@@ -186,6 +194,7 @@ class Prompt:
             # Closing the session
             self.db.session.close()
 
+    @timeit
     def process_request(self, data):
         try:
             self.data = data

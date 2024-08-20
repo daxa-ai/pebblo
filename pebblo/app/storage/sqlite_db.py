@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.storage.database import Database
-from pebblo.app.utils.utils import get_full_path
+from pebblo.app.utils.utils import get_full_path, timeit
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
@@ -34,6 +34,7 @@ class SQLiteClient(Database):
     def delete(self, query):
         pass
 
+    @timeit
     def insert_data(self, table_obj, data, **kwargs):
         table_name = table_obj.__tablename__
         try:
@@ -46,7 +47,8 @@ class SQLiteClient(Database):
             logger.error(f"Insert data into table {table_name} failed, Error: {err}")
             return False, err
 
-    def query(self, table_obj, filter_query={}):
+    @timeit
+    def query(self, table_obj, filter_query: dict = {}):
         table_name = table_obj.__tablename__
         try:
             logger.debug(f"Fetching data from table {table_name}")
@@ -75,6 +77,7 @@ class SQLiteClient(Database):
             logger.error(f"Failed in fetching data, Error: {err}")
             return False, err
 
+    @timeit
     def query_by_id(self, table_obj, id):
         # This function is not in use right now, But in the local_ui it will get used.
         table_name = table_obj.__tablename__
@@ -88,6 +91,7 @@ class SQLiteClient(Database):
             )
             return False, err
 
+    @timeit
     def update_data(self, table_obj, data):
         table_name = table_obj.__tablename__
         try:
