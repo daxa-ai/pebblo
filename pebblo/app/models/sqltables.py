@@ -55,5 +55,12 @@ class AiSnippetsTable(Base):
     data = Column(JSON)
 
 
+class AiUser(Base):
+    __tablename__ = "aiuser"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    data = Column(JSON)
+
+
 # Create all tables in the engine. This is equivalent to "Create Table" statements in raw SQL.
 Base.metadata.create_all(engine)

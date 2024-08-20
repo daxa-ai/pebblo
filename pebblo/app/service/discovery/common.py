@@ -12,6 +12,11 @@ def get_or_create_app(db, app_name, app_class, data, app_type):
     """
     try:
         logger.debug(f"Fetching or creating {app_class.__tablename__} details")
+        exist, ai_app = db.query(app_class, {"name": app_name})
+        if exist and ai_app and len(ai_app) > 0:
+            logger.debug(f"Application details exists in {app_class.__tablename__}")
+            return ai_app[0]
+
         ai_app = {"name": app_name}
 
         if app_type == ApplicationTypes.LOADER.value:

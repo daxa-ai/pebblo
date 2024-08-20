@@ -48,7 +48,7 @@ class SQLiteClient(Database):
             return False, err
 
     @timeit
-    def query(self, table_obj, filter_query: dict):
+    def query(self, table_obj, filter_query: dict = {}):
         table_name = table_obj.__tablename__
         try:
             logger.debug(f"Fetching data from table {table_name}")
@@ -69,7 +69,7 @@ class SQLiteClient(Database):
                 query_conditions.append(text(condition_str))
 
             query = self.session.query(table_obj).filter(and_(*query_conditions))
-            output = query.first()
+            output = query.all()
             # Return the results
             return True, output
 

@@ -23,8 +23,8 @@ class AiDocumentHandler:
             "sourcePath": doc.get("source_path"),
         }
         status, output = self.db.query(AiDocumentTable, filter_query)
-        if output:
-            data = output.data
+        if output and len(output) > 0:
+            data = output[0].data
             data["lastIngested"] = get_current_time()
             data["metadata"]["updatedAt"] = get_current_time()
             return output

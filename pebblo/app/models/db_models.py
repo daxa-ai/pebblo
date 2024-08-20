@@ -36,6 +36,7 @@ class FrameworkInfo(BaseModel):
 class AiBaseApp(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     name: str
+    owner: str
     description: Optional[str]
     pluginVersion: Optional[str]
     lastUsed: str
@@ -100,12 +101,24 @@ class RetrievalContext(BaseModel):
 
 
 class RetrievalData(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    app_name: Optional[str]
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]
     prompt_time: str
     user: str
+    user_id: Optional[str]
     linked_groups: list[str] = []
+
+
+class AiUser(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    name: str
+    metadata: Metadata
+    userAuthGroup: Optional[List]
+    documentsAccessed: Optional[List] = []
+    lastUsed: str
 
 
 class AiApp(AiBaseApp):
