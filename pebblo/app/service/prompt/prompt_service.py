@@ -1,7 +1,7 @@
 # Prompt API with database implementation.
-from pebblo.app.libs.responses import PebbloJsonResponse
 from datetime import datetime
 
+from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiUser as aiuser,
 )
@@ -10,8 +10,8 @@ from pebblo.app.models.db_models import (
     RetrievalContext,
     RetrievalData,
 )
-from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable, AiUser
 from pebblo.app.models.models import PromptResponseModel
+from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable, AiUser
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import timeit
 from pebblo.entity_classifier.entity_classifier import EntityClassifier

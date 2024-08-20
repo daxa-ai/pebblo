@@ -13,7 +13,9 @@ class AiSnippetHandler:
         self.app_name = self.data.get("name")
 
     @staticmethod
-    def _count_and_update_entities_topics(restricted_data, doc_restricted_data, snippet_id):
+    def _count_and_update_entities_topics(
+        restricted_data, doc_restricted_data, snippet_id
+    ):
         logger.debug("Counting entities and topics started")
         for data in doc_restricted_data:
             # If entity in apps coll

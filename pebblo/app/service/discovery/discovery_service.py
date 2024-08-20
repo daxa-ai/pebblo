@@ -1,8 +1,6 @@
 # Discovery API with database implementation.
 from datetime import datetime
 
-from sqlalchemy.inspection import inspect
-
 from pebblo.app.enums.enums import ApplicationTypes
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
