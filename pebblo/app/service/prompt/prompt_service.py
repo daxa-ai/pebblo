@@ -1,7 +1,7 @@
 # Prompt API with database implementation.
-from pebblo.app.libs.responses import PebbloJsonResponse
 from datetime import datetime
 
+from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiUser as aiuser,
 )
@@ -10,6 +10,7 @@ from pebblo.app.models.db_models import (
     RetrievalContext,
     RetrievalData,
 )
+from pebblo.app.models.models import PromptResponseModel
 from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable, AiUser
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import timeit
@@ -100,13 +101,13 @@ class Prompt:
             if not app_exists and ai_app_obj:
                 message = f"{self.app_name} app doesn't exists"
                 logger.error(message)
-                return return_response(message=message, status_code=500)
+                return self._return_response(message=message, status_code=500)
             if ai_app_obj and len(ai_app_obj) > 0:
                 ai_app_data = ai_app_obj[0]
             else:
                 message = f"{self.app_name} app doesn't exists"
                 logger.error(message)
-                return return_response(message=message, status_code=500)
+                return self._return_response(message=message, status_code=500)
 
             document_accessed = []
             for data in retrieval_data["context"]:
@@ -136,7 +137,7 @@ class Prompt:
                     )
                     if not status:
                         logger.error(f"Failed during updating AiUser: {message}")
-                        return return_response(message=message, status_code=500)
+                        return self._return_response(message=message, status_code=500)
                 else:
                     # Initialize Variables
                     current_time = self._get_current_datetime()
@@ -162,7 +163,7 @@ class Prompt:
             if not insert_status:
                 message = "Saving retrieval entry failed"
                 logger.error("message")
-                return return_response(message=message, status_code=500)
+                return self._return_response(message=message, status_code=500)
 
             # Update AiApp with retrieval ID
             existing_retrieval = ai_app_data.data["retrievals"]
@@ -175,12 +176,12 @@ class Prompt:
             self.db.session.commit()
             if not status:
                 logger.error(f"Process request failed: {message}")
-                return return_response(message=message, status_code=500)
+                return self._return_response(message=message, status_code=500)
         except Exception as err:
             logger.error(f"Prompt API failed, Error: {err}")
             # Getting error, Rollback everything we did in this run.
             self.db.session.rollback()
-            return return_response(
+            return self._return_response(
                 message=f"Prompt API failed, Error: {err}", status_code=500
             )
         else:
@@ -188,7 +189,7 @@ class Prompt:
             message = "Prompt Request Processed Successfully"
             logger.debug(message)
             self.db.session.commit()
-            return return_response(message=message, status_code=200)
+            return self._return_response(message=message, status_code=200)
         finally:
             logger.debug("Closing database session for Prompt API.")
             # Closing the session
@@ -236,6 +237,6 @@ class Prompt:
             return response
         except Exception as err:
             logger.error(f"Prompt API failed, Error: {err}")
-            return return_response(
+            return self._return_response(
                 message=f"Prompt API failed, Error: {err}", status_code=500
             )

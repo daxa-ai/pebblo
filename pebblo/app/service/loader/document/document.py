@@ -27,7 +27,7 @@ class AiDocumentHandler:
             data = output[0].data
             data["lastIngested"] = get_current_time()
             data["metadata"]["updatedAt"] = get_current_time()
-            return output
+            return output[0]
         else:
             metadata = {
                 "createdAt": get_current_time(),
