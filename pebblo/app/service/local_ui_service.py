@@ -285,7 +285,7 @@ class AppData:
             "retrievalApps": {},
         }
         storage_type = config_details.get("storage", {}).get(
-            "type", StorageTypes.FILE.value
+            "type", StorageTypes.DATABASE.value
         )
         if storage_type == StorageTypes.FILE.value:
             try:
@@ -511,13 +511,26 @@ class AppData:
                 )
         elif storage_type == StorageTypes.DATABASE.value:
             try:
-                retriever_app_obj = RetrieverApp()
-                response = retriever_app_obj.get_retriever_app_details(app_name=app_dir)
+                self.db = SQLiteClient()
+
+                # create session
+                self.db.create_session()
+                app_type = get_app_type(self.db, app_dir)
+                response = {}
+                if app_type == ApplicationTypes.LOADER.value:
+                    loader_app_obj = LoaderApp()
+                    response = loader_app_obj.get_app_loader_details(app_dir)
+                elif app_type == ApplicationTypes.RETRIEVAL.value:
+                    retriever_app_obj = RetrieverApp()
+                    response = retriever_app_obj.get_retriever_app_details(app_name=app_dir)
                 return response
             except Exception as ex:
                 logger.error(
                     f"[App Details]: Error in getting app details. Error: {ex}"
                 )
+            finally:
+                logger.debug("[App Details] get app details finished.")
+                self.db.session.close()
 
     def delete_application(self, app_name):
         """
