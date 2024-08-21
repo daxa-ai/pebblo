@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import List, Tuple
 from unittest.mock import Mock, patch
 
 import pytest
@@ -44,18 +44,6 @@ def mocked_entity_classifier_response(mocker):
 
     anonymize_response1: Tuple[list, str] = (
         [
-            TestAnonymizerResult("PERSON"),
-            TestAnonymizerResult("GITHUB_TOKEN"),
-            TestAnonymizerResult("AWS_ACCESS_KEY"),
-            TestAnonymizerResult("PERSON"),
-            TestAnonymizerResult("US_ITIN"),
-            TestAnonymizerResult("US_SSN"),
-        ],
-        input_text1,
-    )
-
-    anonymize_response2: Tuple[list, str] = (
-        [
             TestAnonymizerResult("GITHUB_TOKEN"),
             TestAnonymizerResult("AWS_ACCESS_KEY"),
             TestAnonymizerResult("US_ITIN"),
@@ -63,8 +51,7 @@ def mocked_entity_classifier_response(mocker):
         ],
         mock_input_text1_anonymize_snippet_true,
     )
-
-    anonymize_response3: Tuple[list, str] = (
+    anonymize_response2: Tuple[list, str] = (
         [
             TestAnonymizerResult("SLACK_TOKEN"),
             TestAnonymizerResult("SLACK_TOKEN"),
@@ -75,58 +62,142 @@ def mocked_entity_classifier_response(mocker):
             TestAnonymizerResult("IBAN_CODE"),
             TestAnonymizerResult("CREDIT_CARD"),
             TestAnonymizerResult("US_SSN"),
-        ],
-        input_text2,
-    )
-
-    anonymize_response4: Tuple[list, str] = (
-        [
-            TestAnonymizerResult("SLACK_TOKEN"),
-            TestAnonymizerResult("PERSON"),
-            TestAnonymizerResult("SLACK_TOKEN"),
-            TestAnonymizerResult("PERSON"),
-            TestAnonymizerResult("PERSON"),
-            TestAnonymizerResult("GITHUB_TOKEN"),
-            TestAnonymizerResult("AWS_SECRET_KEY"),
-            TestAnonymizerResult("AWS_ACCESS_KEY"),
-            TestAnonymizerResult("US_ITIN"),
-            TestAnonymizerResult("IBAN_CODE"),
-            TestAnonymizerResult("CREDIT_CARD"),
-            TestAnonymizerResult("NRP"),
-            TestAnonymizerResult("PERSON"),
-            TestAnonymizerResult("NRP"),
-            TestAnonymizerResult("PERSON"),
-            TestAnonymizerResult("US_SSN"),
-            TestAnonymizerResult("DATE_TIME"),
-            TestAnonymizerResult("PERSON"),
-            TestAnonymizerResult("DATE_TIME"),
-            TestAnonymizerResult("DATE_TIME"),
-            TestAnonymizerResult("DATE_TIME"),
-            TestAnonymizerResult("DATE_TIME"),
-            TestAnonymizerResult("PERSON"),
+            TestAnonymizerResult("IP_ADDRESS"),
         ],
         mock_input_text2_anonymize_snippet_true,
     )
-
-    anonymize_negative_response1: Tuple[list, str] = (
+    anonymize_negative_response: Tuple[list, str] = (
         [],
         negative_data,
     )
-
-    anonymize_negative_response2: Tuple[list, str] = (
-        [],
-        negative_data,
-    )
-
     mocker.patch(
         "pebblo.entity_classifier.entity_classifier.EntityClassifier.anonymize_response",
         side_effect=[
             anonymize_response1,
             anonymize_response2,
-            anonymize_response3,
-            anonymize_response4,
-            anonymize_negative_response1,
-            anonymize_negative_response2,
+            anonymize_negative_response,
+        ],
+    )
+
+    analyzed_entities_response1: List[dict] = [
+        {"entity_type": "US_SSN", "location": "17_28", "confidence_score": 0.85},
+        {"entity_type": "US_ITIN", "location": "42_53", "confidence_score": 0.85},
+        {
+            "entity_type": "AWS_ACCESS_KEY",
+            "location": "77_97",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "GITHUB_TOKEN",
+            "location": "120_210",
+            "confidence_score": 0.8,
+        },
+    ]
+    analyzed_entities_response2: List[dict] = [
+        {"entity_type": "US_SSN", "location": "17_25", "confidence_score": 0.85},
+        {"entity_type": "US_ITIN", "location": "39_48", "confidence_score": 0.85},
+        {
+            "entity_type": "AWS_ACCESS_KEY",
+            "location": "72_88",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "GITHUB_TOKEN",
+            "location": "111_125",
+            "confidence_score": 0.8,
+        },
+    ]
+    analyzed_entities_response3: List[dict] = [
+        {
+            "entity_type": "CREDIT_CARD",
+            "location": "1367_1382",
+            "confidence_score": 1.0,
+        },
+        {
+            "entity_type": "IBAN_CODE",
+            "location": "1406_1434",
+            "confidence_score": 1.0,
+        },
+        {"entity_type": "US_SSN", "location": "1178_1189", "confidence_score": 0.85},
+        {"entity_type": "US_ITIN", "location": "1450_1461", "confidence_score": 0.85},
+        {
+            "entity_type": "AWS_ACCESS_KEY",
+            "location": "1545_1565",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "AWS_SECRET_KEY",
+            "location": "1587_1628",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "GITHUB_TOKEN",
+            "location": "1646_1736",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "SLACK_TOKEN",
+            "location": "1812_1835",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "SLACK_TOKEN",
+            "location": "1911_1968",
+            "confidence_score": 0.8,
+        },
+        {"entity_type": "IP_ADDRESS", "location": "1339_1355", "confidence_score": 0.8},
+    ]
+    analyzed_entities_response4: List[dict] = [
+        {
+            "entity_type": "CREDIT_CARD",
+            "location": "1178_1186",
+            "confidence_score": 1.0,
+        },
+        {
+            "entity_type": "IBAN_CODE",
+            "location": "1364_1377",
+            "confidence_score": 1.0,
+        },
+        {"entity_type": "US_SSN", "location": "1401_1412", "confidence_score": 0.85},
+        {"entity_type": "US_ITIN", "location": "1428_1437", "confidence_score": 0.85},
+        {
+            "entity_type": "AWS_ACCESS_KEY",
+            "location": "1521_1537",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "AWS_SECRET_KEY",
+            "location": "1559_1575",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "GITHUB_TOKEN",
+            "location": "1593_1607",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "SLACK_TOKEN",
+            "location": "1683_1696",
+            "confidence_score": 0.8,
+        },
+        {
+            "entity_type": "SLACK_TOKEN",
+            "location": "1772_1785",
+            "confidence_score": 0.8,
+        },
+        {"entity_type": "IP_ADDRESS", "location": "1339_1355", "confidence_score": 0.8},
+    ]
+    analyzed_entities_negative_response1: List = []
+    analyzed_entities_negative_response2: List = []
+    mocker.patch(
+        "pebblo.entity_classifier.entity_classifier.EntityClassifier.get_analyzed_entities_response",
+        side_effect=[
+            analyzed_entities_response1,
+            analyzed_entities_response2,
+            analyzed_entities_response3,
+            analyzed_entities_response4,
+            analyzed_entities_negative_response1,
+            analyzed_entities_negative_response2,
         ],
     )
 
@@ -156,6 +227,7 @@ def test_presidio_entity_classifier_and_anonymizer(
         entities,
         total_count,
         anonymized_text,
+        entity_details,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(input_text1)
     assert entities == {
         "github-token": 1,
@@ -165,14 +237,43 @@ def test_presidio_entity_classifier_and_anonymizer(
     }
     assert total_count == 4
     assert anonymized_text == input_text1
+    assert entity_details == {
+        "us-ssn": [
+            {
+                "location": "17_28",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-identification",
+            }
+        ],
+        "us-itin": [
+            {
+                "location": "42_53",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "aws-access-key": [
+            {
+                "location": "77_97",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "github-token": [
+            {
+                "location": "120_210",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+    }
 
     (
         entities,
         total_count,
         anonymized_text,
-    ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        input_text1, anonymize_snippets=True
-    )
+        entity_details,
+    ) = entity_classifier.presidio_entity_classifier_and_anonymizer(input_text1, True)
     assert entities == {
         "github-token": 1,
         "aws-access-key": 1,
@@ -181,11 +282,42 @@ def test_presidio_entity_classifier_and_anonymizer(
     }
     assert total_count == 4
     assert anonymized_text == mock_input_text1_anonymize_snippet_true
+    assert entity_details == {
+        "us-ssn": [
+            {
+                "location": "17_25",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-identification",
+            }
+        ],
+        "us-itin": [
+            {
+                "location": "39_48",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "aws-access-key": [
+            {
+                "location": "72_88",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "github-token": [
+            {
+                "location": "111_125",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+    }
 
     (
         entities,
         total_count,
         anonymized_text,
+        entity_details,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(input_text2)
     assert entities == {
         "slack-token": 2,
@@ -196,17 +328,88 @@ def test_presidio_entity_classifier_and_anonymizer(
         "iban-code": 1,
         "credit-card-number": 1,
         "us-ssn": 1,
+        "ip-address": 1,
     }
-
-    assert total_count == 9
+    assert total_count == 10
     assert anonymized_text == input_text2
+    assert entity_details == {
+        "credit-card-number": [
+            {
+                "location": "1367_1382",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "iban-code": [
+            {
+                "location": "1406_1434",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "us-ssn": [
+            {
+                "location": "1178_1189",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-identification",
+            }
+        ],
+        "us-itin": [
+            {
+                "location": "1450_1461",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "aws-access-key": [
+            {
+                "location": "1545_1565",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "aws-secret-key": [
+            {
+                "location": "1587_1628",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "github-token": [
+            {
+                "location": "1646_1736",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "slack-token": [
+            {
+                "location": "1812_1835",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            },
+            {
+                "location": "1911_1968",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            },
+        ],
+        "ip-address": [
+            {
+                "location": "1339_1355",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-network",
+            }
+        ],
+    }
 
     (
         entities,
         total_count,
         anonymized_text,
+        entity_details,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
-        input_text1, anonymize_snippets=True
+        input_text2, anonymize_snippets=True
     )
     assert entities == {
         "slack-token": 2,
@@ -217,14 +420,86 @@ def test_presidio_entity_classifier_and_anonymizer(
         "iban-code": 1,
         "credit-card-number": 1,
         "us-ssn": 1,
+        "ip-address": 1,
     }
-    assert total_count == 9
+    assert total_count == 10
     assert anonymized_text == mock_input_text2_anonymize_snippet_true
+    assert entity_details == {
+        "credit-card-number": [
+            {
+                "location": "1178_1186",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "iban-code": [
+            {
+                "location": "1364_1377",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "us-ssn": [
+            {
+                "location": "1401_1412",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-identification",
+            }
+        ],
+        "us-itin": [
+            {
+                "location": "1428_1437",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-financial",
+            }
+        ],
+        "aws-access-key": [
+            {
+                "location": "1521_1537",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "aws-secret-key": [
+            {
+                "location": "1559_1575",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "github-token": [
+            {
+                "location": "1593_1607",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ],
+        "slack-token": [
+            {
+                "location": "1683_1696",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            },
+            {
+                "location": "1772_1785",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            },
+        ],
+        "ip-address": [
+            {
+                "location": "1339_1355",
+                "confidence_score": "HIGH",
+                "entity_group": "pii-network",
+            }
+        ],
+    }
 
     (
         entities,
         total_count,
         anonymized_text,
+        entity_details,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(negative_data)
     assert entities == {}
     assert total_count == 0
@@ -234,6 +509,7 @@ def test_presidio_entity_classifier_and_anonymizer(
         entities,
         total_count,
         anonymized_text,
+        entity_details,
     ) = entity_classifier.presidio_entity_classifier_and_anonymizer(
         negative_data, anonymize_snippets=True
     )

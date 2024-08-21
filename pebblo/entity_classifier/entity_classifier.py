@@ -6,6 +6,7 @@ from pebblo.entity_classifier.utils.config import (
     ConfidenceScore,
     Entities,
     SecretEntities,
+    entity_group_conf_mapping,
 )
 from pebblo.entity_classifier.utils.utils import (
     add_custom_regex_analyzer_registry,
@@ -41,20 +42,47 @@ class EntityClassifier:
         )
 
     def analyze_response(self, input_text, anonymize_all_entities=True):
-        # Returns analyzed output
+        """
+        Analyze the given input text to detect and classify entities based on predefined criteria.
+
+        Args:
+            input_text (str): The text to be analyzed for detecting entities.
+            anonymize_all_entities (bool): Flag to determine if all detected entities should be anonymized.
+                                            (Currently not used in the function logic.)
+
+        Returns:
+            list: A list of detected entities that meet the criteria for classification.
+        """
+        # Analyze the text to detect entities using the Presidio analyzer
         analyzer_results = self.analyzer.analyze(text=input_text, language="en")
-        analyzer_results = [
-            result
-            for result in analyzer_results
-            if result.score >= float(ConfidenceScore.Entity.value)
-        ]
-        if not anonymize_all_entities:  # Condition for anonymized document
-            analyzer_results = [
-                result
-                for result in analyzer_results
-                if result.entity_type in self.entities
-            ]
-        return analyzer_results
+        # Initialize the list to hold the final classified entities
+        final_results = []
+        # Iterate through the detected entities
+        for entity in analyzer_results:
+            try:
+                mapped_entity = None
+                # Map entity type to predefined entities if it exists in the Entities enumeration
+                if entity.entity_type in Entities.__members__:
+                    mapped_entity = Entities[entity.entity_type].value
+                # Check if the entity type exists in SecretEntities enumeration
+                elif entity.entity_type in SecretEntities.__members__:
+                    mapped_entity = SecretEntities[entity.entity_type].value
+                # Append entity to final results if it meets the confidence threshold and is in the desired entities list
+                if (
+                    mapped_entity
+                    and entity.score
+                    >= float(entity_group_conf_mapping[mapped_entity][0])
+                    and entity.entity_type in self.entities
+                ):
+                    final_results.append(entity)
+
+            except Exception as ex:
+                logger.warning(
+                    f"Error in analyze_response in entity classification. {str(ex)}"
+                )
+
+        # Return the list of classified entities that met the criteria
+        return final_results
 
     def anonymize_response(self, analyzer_results, input_text):
         # Returns anonymized output
@@ -64,17 +92,43 @@ class EntityClassifier:
 
         return anonymized_text.items, anonymized_text.text
 
+    @staticmethod
+    def get_analyzed_entities_response(data, anonymized_response=None):
+        # Returns entities with its location i.e. start to end and confidence score
+        response = []
+        for index, value in enumerate(data):
+            mapped_entity = None
+            if value.entity_type in Entities.__members__:
+                mapped_entity = Entities[value.entity_type].value
+            elif value.entity_type in SecretEntities.__members__:
+                mapped_entity = SecretEntities[value.entity_type].value
+
+            location = f"{value.start}_{value.end}"
+            if anonymized_response:
+                anonymized_data = anonymized_response[len(data) - index - 1]
+                location = f"{anonymized_data.start}_{anonymized_data.end}"
+            response.append(
+                {
+                    "entity_type": value.entity_type,
+                    "location": location,
+                    "confidence_score": value.score,
+                    "entity_group": entity_group_conf_mapping[mapped_entity][1],
+                }
+            )
+        return response
+
     def presidio_entity_classifier_and_anonymizer(
         self, input_text, anonymize_snippets=False
     ):
         """
         Perform classification on the input data and return a dictionary with the count of each entity group.
         And also returns plain input text as anonymized text output
-        :param anonymize_snippets: Flag whether to anonymize snippets in report.
         :param input_text: Input string / document snippet
+        :param anonymize_snippets: Flag whether to anonymize snippets in report.
         :return: entities: containing the entity group Name as key and its count as value.
                  total_count: Total count of entity groupsInput text in anonymized form.
                  anonymized_text: Input text in anonymized form.
+                 entity_details: Entities with its details such as location and confidence score.
         Example:
 
         input_text = " My SSN is 222-85-4836.
@@ -89,21 +143,30 @@ class EntityClassifier:
         """
         entities = {}
         total_count = 0
-        anonymized_text = ""
         try:
             logger.debug("Presidio Entity Classifier and Anonymizer Started.")
 
             analyzer_results = self.analyze_response(input_text)
-            anonymized_response, anonymized_text = self.anonymize_response(
-                analyzer_results, input_text
-            )
+
             if anonymize_snippets:  # If Document snippet needs to be anonymized
+                anonymized_response, anonymized_text = self.anonymize_response(
+                    analyzer_results, input_text
+                )
                 input_text = anonymized_text.replace("<", "&lt;").replace(">", "&gt;")
-            entities, total_count = get_entities(self.entities, anonymized_response)
+                entities_response = self.get_analyzed_entities_response(
+                    analyzer_results, anonymized_response
+                )
+            else:
+                entities_response = self.get_analyzed_entities_response(
+                    analyzer_results
+                )
+            entities, entity_details, total_count = get_entities(
+                self.entities, entities_response
+            )
             logger.debug("Presidio Entity Classifier and Anonymizer Finished")
             logger.debug(f"Entities: {entities}")
             logger.debug(f"Entity Total count: {total_count}")
-            return entities, total_count, input_text
+            return entities, total_count, input_text, entity_details
         except Exception as e:
             logger.error(
                 f"Presidio Entity Classifier and Anonymizer Failed, Exception: {e}"

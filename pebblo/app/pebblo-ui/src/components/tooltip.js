@@ -5,10 +5,12 @@
 // }
 
 export function Tooltip(props) {
-  const { children, title, variant = "top" } = props;
+  const { children, title, variant = "top", inline, width } = props;
   return /*html*/ `
-  <div class="tooltip">
-  <div class="tooltip-content">${children}</div>
-  <span class="tooltip-wrapper tooltip-wrapper-${variant}"><span class="tooltip-title-${variant}">${title}</span></span></div>
+  <span class="tooltip ${inline ? "tooltip-inline" : ""}">
+  <span class="tooltip-content">${children}</span>
+  <span class="tooltip-wrapper tooltip-wrapper-${variant} ${
+    width || ""
+  }"><span class="tooltip-title-${variant}">${title}</span></span></span>
    `;
 }

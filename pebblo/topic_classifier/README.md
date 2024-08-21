@@ -31,7 +31,7 @@ from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 text =  "Your sample text here."
 topic_classifier_obj = TopicClassifier()
-topics, total_topic_count = topic_classifier_obj.predict(text)
+topics, total_topic_count, topic_details = topic_classifier_obj.predict(text)
 print(f"Topic Response: {topics}")
 print(f"Topic Count: {total_topic_count}")
 ```
