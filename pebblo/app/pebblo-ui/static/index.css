@@ -1176,7 +1176,7 @@ dialog::backdrop {
   content: "";
   position: absolute;
   top: -10px;
-  left: 50%;
+  left: 10%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
@@ -1414,4 +1414,8 @@ dialog::backdrop {
 .confidence-score {
   background-color: var(--surface-70);
   font-weight: bold;
+}
+
+.width-max-content {
+  width: 200px;
 }
