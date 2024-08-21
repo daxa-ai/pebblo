@@ -209,8 +209,7 @@ class AppLoaderDoc:
                 message = "Unable to get or create loader doc app"
                 return self._create_return_response(message=message, status_code=500)
 
-            app_loader_details = loader_obj.data
-            app_loader_details = self._update_loader_details(app_loader_details)
+            loader_obj.data = self._update_loader_details(loader_obj.data)
 
             # Get each doc classification: Pre Processing
             self._doc_pre_processing()
@@ -220,11 +219,10 @@ class AppLoaderDoc:
 
             # Iterate Each doc & Update AIDocument, AISnippets
             document_handler = AiDocumentHandler(self.db, self.data)
-            app_loader_details, documents, doc_obj = (
-                document_handler.create_or_update_document(
-                    app_loader_details=app_loader_details, data_source=data_source
-                )
+            app_loader_details = document_handler.create_or_update_document(
+                app_loader_details=loader_obj.data, data_source=data_source
             )
+            self.db.update_data(loader_obj, app_loader_details)
 
         except Exception as err:
             message = f"Loader Doc API Request failed, Error: {err}"
@@ -233,10 +231,6 @@ class AppLoaderDoc:
             self.db.session.rollback()
             return self._create_return_response(message, 500)
         else:
-            self.db.session.commit()
-
-            # Update loader details & Documents
-            loader_obj.data = app_loader_details
             self.db.session.commit()
 
             message = "Loader Doc API Request processed successfully"

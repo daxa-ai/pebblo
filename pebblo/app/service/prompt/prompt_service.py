@@ -173,7 +173,6 @@ class Prompt:
             status, message = self.db.update_data(
                 table_obj=ai_app_data, data=ai_app_data.data
             )
-            self.db.session.commit()
             if not status:
                 logger.error(f"Process request failed: {message}")
                 return self._return_response(message=message, status_code=500)

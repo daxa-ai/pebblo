@@ -136,4 +136,7 @@ class AiDocumentHandler:
             app_loader_details = self.snippet_handler.update_loader_with_snippet(
                 app_loader_details, snippet
             )
-        return app_loader_details, doc_obj.data, doc_obj
+
+        self.db.update_data(doc_obj, doc_obj.data)
+
+        return app_loader_details
