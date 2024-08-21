@@ -16,6 +16,7 @@ function DisplaySnippet(props) {
               title: `Confidence: ${item?.score}`,
               variant: "top",
               inline: true,
+              width: "width-max-content",
             })
           : `<span >${item.string}</span>`
       )}
@@ -29,62 +30,6 @@ export function SnippetDetails(props) {
     const inputEl = document.getElementById("snippet_search");
     if (inputEl) inputEl?.addEventListener(KEYUP, onChange);
   });
-
-  function onChange(evt) {
-    let filteredData;
-    if (evt.target.value) {
-      filteredData = data?.snippets?.filter((item) =>
-        eval(
-          searchField
-            ?.map((sch) =>
-              item[sch]
-                ?.toLocaleLowerCase()
-                ?.includes(evt.target.value.toLocaleLowerCase())
-            )
-            .join(" || ")
-        )
-      );
-    } else {
-      filteredData = data?.snippets;
-    }
-    const snippet_body = document.getElementById("snippet_body");
-    snippet_body.innerHTML = "";
-    snippet_body.innerHTML = filteredData?.length
-      ? filteredData?.myMap(
-          (item) => /*html*/ `        
-       <div class="flex flex-col gap-1">
-         <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
-           <div class="surface-10-opacity-65 font-14 medium">${
-             KEYWORD_MAPPING[item?.labelName] || item?.labelName
-           }</div>
-           <div class="surface-10-opacity-50 font-12">Showing ${
-             item?.snippetCount
-           } out of ${item?.findings}</div>
-         </div>
-         ${item?.snippets?.myMap(
-           (snipp) => `
-              <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
-               ${KeyValue({ key: "Snippets", value: snipp?.snippet })}
-               ${KeyValue({
-                 key: "Retrieved from",
-                 value: snipp?.sourcePath,
-               })}
-               ${KeyValue({
-                 key: "Identity",
-                 value:
-                   snipp?.authorizedIdentities?.length > 0
-                     ? snipp?.authorizedIdentities.join(", ")
-                     : "-",
-               })}
-              <div class="divider-horizontal"></div>
-             </div>
-           `
-         )}
-     </div>
-   `
-        )
-      : /*html*/ `<div class="text-center pt-3 pb-3 pl-3 pr-3 inter surface-10 font-13 medium">No Data Found!!</div>`;
-  }
 
   let snippetList = [];
 
@@ -147,23 +92,83 @@ export function SnippetDetails(props) {
     });
   }
 
-  const getConfidenceScoreForTopic = (label, snippets) => {
-    let confidenceScore = "";
-    if (snippets?.length) {
-      const score = snippets.find((snippet) => {
-        if (snippet?.topicDetails) {
-          const labelScore = snippet?.topicDetails[label];
-          if (labelScore?.length > 0) {
-            confidenceScore = labelScore[0]?.confidence_score;
-            return confidenceScore;
-          }
-          return false;
-        }
-      });
-      return confidenceScore;
+  const getSnippetConfidenceScore = (item, snipp) => {
+    const topic = item?.labelName;
+    if (item && topic && snipp?.topicDetails && snipp?.topicDetails[topic]) {
+      const topicDetails = snipp?.topicDetails[topic];
+      if (topicDetails?.length > 0) {
+        return `Confidence: ${topicDetails[0]?.confidence_score}`;
+      }
     }
-    return confidenceScore;
+    return "";
   };
+
+  function onChange(evt) {
+    let filteredData;
+    if (evt.target.value) {
+      filteredData = snippetList?.filter((item) =>
+        eval(
+          searchField
+            ?.map((sch) =>
+              item[sch]
+                ?.toLocaleLowerCase()
+                ?.includes(evt.target.value.toLocaleLowerCase())
+            )
+            .join(" || ")
+        )
+      );
+    } else {
+      filteredData = snippetList;
+    }
+    const snippet_body = document.getElementById("snippet_body");
+    snippet_body.innerHTML = "";
+    snippet_body.innerHTML = filteredData?.length
+      ? filteredData?.myMap(
+          (item) => /*html*/ `        
+       <div class="flex flex-col gap-1">
+         <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
+           <div class="surface-10-opacity-65 font-14 medium">${
+             KEYWORD_MAPPING[item?.labelName] || item?.labelName
+           }</div>
+           <div class="surface-10-opacity-50 font-12">Showing ${
+             item?.snippetCount
+           } out of ${item?.findings}</div>
+         </div>
+         ${item?.snippetStrings?.myMap((snipp) => {
+           const snippetConfidenceScore = getSnippetConfidenceScore(
+             item,
+             snipp
+           );
+           return `
+              <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
+               ${KeyValue({
+                 key: `Snippets ${
+                   snippetConfidenceScore ? `| ${snippetConfidenceScore}` : ""
+                 }`,
+                 value: DisplaySnippet({
+                   formattedString: snipp?.string || [],
+                 }),
+               })}
+               ${KeyValue({
+                 key: "Retrieved from",
+                 value: snipp?.sourcePath,
+               })}
+               ${KeyValue({
+                 key: "Identity",
+                 value:
+                   snipp?.authorizedIdentities?.length > 0
+                     ? snipp?.authorizedIdentities.join(", ")
+                     : "-",
+               })}
+              <div class="divider-horizontal"></div>
+             </div>
+           `;
+         })}
+     </div>
+   `
+        )
+      : /*html*/ `<div class="text-center pt-3 pb-3 pl-3 pr-3 inter surface-10 font-13 medium">No Data Found!!</div>`;
+  }
 
   return /*html*/ `
       <div class="tab_panel snippet-details-container flex flex-col gap-4">
@@ -196,19 +201,19 @@ export function SnippetDetails(props) {
              <div class="surface-10-opacity-50 font-12">Showing ${
                item?.snippets?.length
              } out of ${item?.snippetCount}</div>
-            ${
-              item?.findingsType === "topics" &&
-              `<div class="surface-10-opacity-65 font-14 medium ml-auto">Confidence: ${getConfidenceScoreForTopic(
-                item?.labelName,
-                item?.snippets
-              )}</div>`
-            }
+            
            </div>
-           ${item?.snippetStrings?.myMap(
-             (snipp) => `
+           ${item?.snippetStrings?.myMap((snipp) => {
+             const snippetConfidenceScore = getSnippetConfidenceScore(
+               item,
+               snipp
+             );
+             return `
                 <div class="snippet-body flex flex-col gap-3 pr-3 pl-3 pt-3 pb-3">
                  ${KeyValue({
-                   key: "Snippets",
+                   key: `Snippets ${
+                     snippetConfidenceScore ? `| ${snippetConfidenceScore}` : ""
+                   }`,
                    value: DisplaySnippet({
                      formattedString: snipp?.string || [],
                    }),
@@ -226,8 +231,8 @@ export function SnippetDetails(props) {
                 })}
                 <div class="divider-horizontal"></div>
                </div>
-             `
-           )}
+             `;
+           })}
        </div>
         `
             )
