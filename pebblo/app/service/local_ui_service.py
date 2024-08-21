@@ -522,7 +522,9 @@ class AppData:
                     response = loader_app_obj.get_app_loader_details(app_dir)
                 elif app_type == ApplicationTypes.RETRIEVAL.value:
                     retriever_app_obj = RetrieverApp()
-                    response = retriever_app_obj.get_retriever_app_details(app_name=app_dir)
+                    response = retriever_app_obj.get_retriever_app_details(
+                        app_name=app_dir
+                    )
                 return response
             except Exception as ex:
                 logger.error(

@@ -25,6 +25,7 @@ api_handler_map = {
 
 config_details = var_server_config_dict.get()
 
+
 def get_handler(handler_name: str):
     try:
         storage_type = config_details.get("storage", {}).get(
