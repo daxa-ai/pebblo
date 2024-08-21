@@ -145,11 +145,7 @@ def mocked_entity_classifier_response(mocker):
             "location": "1911_1968",
             "confidence_score": 0.8,
         },
-        {
-            "entity_type": "IP_ADDRESS",
-            "location": "1339_1355",
-            "confidence_score": 0.8
-        },
+        {"entity_type": "IP_ADDRESS", "location": "1339_1355", "confidence_score": 0.8},
     ]
     analyzed_entities_response4: List[dict] = [
         {
@@ -189,11 +185,7 @@ def mocked_entity_classifier_response(mocker):
             "location": "1772_1785",
             "confidence_score": 0.8,
         },
-        {
-            "entity_type": "IP_ADDRESS",
-            "location": "1339_1355",
-            "confidence_score": 0.8
-        },
+        {"entity_type": "IP_ADDRESS", "location": "1339_1355", "confidence_score": 0.8},
     ]
     analyzed_entities_negative_response1: List = []
     analyzed_entities_negative_response2: List = []

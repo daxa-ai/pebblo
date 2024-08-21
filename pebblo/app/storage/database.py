@@ -25,7 +25,7 @@ class Database(ABC):
         pass
 
     @abstractmethod
-    def delete(self, query):
+    def delete(self, entry_obj):
         pass
 
     @abstractmethod
