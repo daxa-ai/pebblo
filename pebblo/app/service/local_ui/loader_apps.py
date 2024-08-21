@@ -55,13 +55,10 @@ class LoaderApp:
         return response
 
     def get_findings_for_loader_app(self, app_data):
-        document_with_findings = []
-        document_ids_with_findings = []
         topic_count = 0
         entity_count = 0
         total_snippet_count = 0
         snippets = []
-        logger.debug("In Findings Loader App")
         if app_data.get("docEntities"):
             for entity, entity_data in app_data.get("docEntities").items():
                 entity_count += entity_data.get("count")
@@ -102,7 +99,6 @@ class LoaderApp:
                     self.loader_findings_summary_list.append(findings)
 
         if app_data.get("docTopics"):
-            logger.debug("In docTopics")
             for topic, topic_data in app_data.get("docTopics").items():
                 topic_count += topic_data.get("count")
                 self.loader_findings += topic_data.get("count")
@@ -116,7 +112,7 @@ class LoaderApp:
                         findings["fileCount"] = len(app_data["documents"])
                         total_snippet_count += findings["snippetCount"]
                         snippets.extend(
-                            self._get_snippet_details(entity_data["snippetIds"])
+                            self._get_snippet_details(topic_data["snippetIds"])
                         )
                         break
                 if not findings_exists:
@@ -127,7 +123,7 @@ class LoaderApp:
                         "snippetCount": len(topic_data["snippetIds"]),
                         "fileCount": len(app_data["documents"]),
                         "snippets": self._get_snippet_details(
-                            entity_data["snippetIds"]
+                            topic_data["snippetIds"]
                         ),
                     }
                     total_snippet_count += findings["snippetCount"]
@@ -292,7 +288,7 @@ class LoaderApp:
         current_load_report_file_path = f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/{CacheDir.REPORT_FILE_NAME.value}"
         self._pdf_writer(current_load_report_file_path, final_report)
 
-    def get_app_loader_details(self, app_name):
+    def get_loader_app_details(self, app_name):
         try:
             logger.debug(f"Loader App Input: {app_name}")
             self.db = SQLiteClient()

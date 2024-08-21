@@ -519,7 +519,7 @@ class AppData:
                 response = {}
                 if app_type == ApplicationTypes.LOADER.value:
                     loader_app_obj = LoaderApp()
-                    response = loader_app_obj.get_app_loader_details(app_dir)
+                    response = loader_app_obj.get_loader_app_details(app_dir)
                 elif app_type == ApplicationTypes.RETRIEVAL.value:
                     retriever_app_obj = RetrieverApp()
                     response = retriever_app_obj.get_retriever_app_details(
