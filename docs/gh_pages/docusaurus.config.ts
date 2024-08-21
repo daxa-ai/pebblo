@@ -31,6 +31,13 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/daxa-ai/pebblo/tree/main/docs/gh_pages/",
+          lastVersion: "current",
+          versions: {
+            current: {
+              label: "latest",
+              path: "",
+            },
+          },
         },
         blog: false,
         theme: {
@@ -49,6 +56,11 @@ const config: Config = {
         width: 32,
       },
       items: [
+        {
+          type: "docsVersionDropdown",
+          position: "left",
+          dropdownActiveClassDisabled: true,
+        },
         {
           type: "docSidebar",
           sidebarId: "sidebar",
