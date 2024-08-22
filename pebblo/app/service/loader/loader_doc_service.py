@@ -3,9 +3,9 @@ from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiDataModel,
     AiDataSource,
-    LoaderDocResponseModel,
     LoaderMetadata,
 )
+from pebblo.app.models.db_response_models import LoaderDocResponseModel
 from pebblo.app.models.sqltables import (
     AiDataLoaderTable,
     AiDataSourceTable,

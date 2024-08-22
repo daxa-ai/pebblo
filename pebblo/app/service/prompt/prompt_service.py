@@ -7,10 +7,10 @@ from pebblo.app.models.db_models import (
 )
 from pebblo.app.models.db_models import (
     Metadata,
-    PromptResponseModel,
     RetrievalContext,
     RetrievalData,
 )
+from pebblo.app.models.db_response_models import PromptResponseModel
 from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable, AiUser
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import timeit
@@ -29,7 +29,8 @@ class Prompt:
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 
-    def _return_response(self, data=None, message="", status_code=200):
+    @staticmethod
+    def _return_response(data=None, message="", status_code=200):
         response = PromptResponseModel(retrieval_data=data, message=str(message))
         return PebbloJsonResponse.build(
             body=response.dict(exclude_none=True), status_code=status_code
@@ -70,9 +71,9 @@ class Prompt:
         if context_list:
             for context in context_list:
                 retrieval_context_obj = RetrievalContext(
-                    retrieved_from=context.get("retrieved_from"),
+                    retrievedFrom=context.get("retrieved_from"),
                     doc=context.get("doc"),
-                    vector_db=context.get("vector_db"),
+                    vectorDb=context.get("vector_db"),
                 )
                 retrieval_context_data.append(retrieval_context_obj)
         return retrieval_context_data
@@ -81,9 +82,15 @@ class Prompt:
         """
         Create an RetrievalData Model and return the corresponding model object
         """
-        retrieval_data_model = RetrievalData(**self.data)
-        retrieval_data_model.app_name = self.app_name
-        retrieval_data_model.context = context_data
+        retrieval_data_model = RetrievalData(
+            appName=self.app_name,
+            prompt=self.data.get("prompt"),
+            response=self.data.get("response"),
+            context=context_data,
+            promptTime=self.data.get("prompt_time"),
+            user=self.data.get("user"),
+            linkedGroups=self.data.get("user_identities"),
+        )
         logger.debug(f"AiApp Name: [{self.app_name}]")
         return retrieval_data_model
 
@@ -111,10 +118,11 @@ class Prompt:
 
             document_accessed = []
             for data in retrieval_data["context"]:
-                doc_name = data.get("retrieved_from")
+                doc_name = data.get("retrievedFrom")
                 if doc_name not in document_accessed:
                     document_accessed.append(doc_name)
 
+            user_id = None
             # Update entry in AiUser if exists else create
             if retrieval_data.get("user"):
                 _, ai_user = self.db.query(
@@ -124,7 +132,7 @@ class Prompt:
                     ai_user = ai_user[0]
                     user_id = ai_user.data.get("id")
                     retrieval_data["user"] = ai_user.data.get("name")
-                    retrieval_data["user_id"] = user_id
+                    retrieval_data["userId"] = user_id
                     existing_document_accessed = ai_user.data.get(
                         "documentsAccessed", []
                     )
@@ -132,6 +140,10 @@ class Prompt:
                         if doc_name not in existing_document_accessed:
                             existing_document_accessed.append(doc_name)
                     ai_user.data["documentsAccessed"] = existing_document_accessed
+                    existing_apps = ai_user.data.get("appName", [])
+                    if self.app_name not in existing_apps:
+                        existing_apps.append(self.app_name)
+                        ai_user.data["appName"] = existing_apps
                     status, message = self.db.update_data(
                         table_obj=ai_user, data=ai_user.data
                     )
@@ -145,6 +157,7 @@ class Prompt:
                     metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
                     ai_user_obj = aiuser(
                         name=retrieval_data["user"],
+                        appName=[self.app_name],
                         metadata=metadata,
                         userAuthGroup=retrieval_data.get("linked_groups", []),
                         documentsAccessed=document_accessed,
@@ -156,8 +169,10 @@ class Prompt:
                     if insert_status:
                         logger.debug(f"Entry: {entry} in AiUser completed")
                     retrieval_data["user"] = entry.data["name"]
+                    user_id = entry.data["id"]
 
             retrieval_data["appId"] = ai_app_data.data["id"]
+            retrieval_data["userId"] = user_id
             insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
 
             if not insert_status:
@@ -165,11 +180,15 @@ class Prompt:
                 logger.error("message")
                 return self._return_response(message=message, status_code=500)
 
-            # Update AiApp with retrieval ID
+            # Update AiApp with retrieval ID and user ID
             existing_retrieval = ai_app_data.data["retrievals"]
             ai_retrieval_id = entry.data["id"]
             existing_retrieval.append(ai_retrieval_id)
             ai_app_data.data["retrievals"] = existing_retrieval
+            existing_user_id = ai_app_data.data["users"]
+            if user_id not in existing_user_id:
+                existing_user_id.append(user_id)
+                ai_app_data.data["users"] = existing_user_id
             status, message = self.db.update_data(
                 table_obj=ai_app_data, data=ai_app_data.data
             )

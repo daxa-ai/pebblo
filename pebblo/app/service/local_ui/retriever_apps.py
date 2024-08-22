@@ -9,7 +9,7 @@ from dateutil import parser
 from fastapi import status
 
 from pebblo.app.config.config import var_server_config_dict
-from pebblo.app.models.db_models import (
+from pebblo.app.models.db_response_models import (
     RetrievalAppDetails,
     RetrievalAppList,
     RetrievalAppListDetails,
@@ -17,6 +17,7 @@ from pebblo.app.models.db_models import (
 from pebblo.app.models.sqltables import (
     AiAppTable,
     AiRetrievalTable,
+    AiUser,
 )
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.log import get_logger
@@ -173,9 +174,9 @@ class RetrieverApp:
             accessed_time = []
             user_groups = []
             for data in user_data:
-                accessed_time.append(parser.parse(data.get("prompt_time")))
-                if data.get("linked_groups"):
-                    user_groups.extend(data.get("linked_groups"))
+                accessed_time.append(parser.parse(data.get("promptTime")))
+                if data.get("linkedGroups"):
+                    user_groups.extend(data.get("linkedGroups"))
             response[user_name] = {
                 "retrievals": user_data,
                 "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
@@ -249,13 +250,13 @@ class RetrieverApp:
         """
 
         sorted_document = self.sort_db_retrievals(
-            retrieval_data, "retrieved_from", all_apps
+            retrieval_data, "retrievedFrom", all_apps
         )
         response = {}
         for user_name, user_data in sorted_document.items():
             accessed_time = []
             for data in user_data:
-                accessed_time.append(parser.parse(data.get("prompt_time")))
+                accessed_time.append(parser.parse(data.get("promptTime")))
             response[user_name] = {
                 "retrievals": user_data,
                 "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
@@ -272,7 +273,7 @@ class RetrieverApp:
 
         # fetch total retrievals
         _, ai_retrievals = self.db.query(
-            table_obj=AiRetrievalTable, filter_query={"app_name": app_name}
+            table_obj=AiRetrievalTable, filter_query={"appName": app_name}
         )
         for ai_retrieval in ai_retrievals:
             try:
@@ -331,7 +332,7 @@ class RetrieverApp:
         :param retrieval: retrievals list
         :return: sorted retrievals list
         """
-        sorted_data = sorted(retrieval, key=lambda x: x["prompt_time"])
+        sorted_data = sorted(retrieval, key=lambda x: x["promptTime"])
         return sorted_data
 
     def get_all_vector_dbs(self, retrieval_data: list) -> dict:
@@ -339,7 +340,7 @@ class RetrieverApp:
         This function returns vector dbs per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        sorted_vector_dbs = self.sort_db_retrievals(retrieval_data, "vector_db")
+        sorted_vector_dbs = self.sort_db_retrievals(retrieval_data, "vectorDb")
         return sorted_vector_dbs
 
     @staticmethod
@@ -483,7 +484,7 @@ class RetrieverApp:
 
             # fetch retrieval data
             _, ai_retrieval_obj = self.db.query(
-                table_obj=AiRetrievalTable, filter_query={"app_name": app_name}
+                table_obj=AiRetrievalTable, filter_query={"appName": app_name}
             )
 
             if ai_retrieval_obj and len(ai_retrieval_obj) > 0:
@@ -493,9 +494,9 @@ class RetrieverApp:
                         "prompt": retrieval_obj.get("prompt", {}),
                         "response": retrieval_obj.get("response", {}),
                         "context": retrieval_obj.get("context", []),
-                        "prompt_time": retrieval_obj.get("prompt_time", None),
+                        "promptTime": retrieval_obj.get("promptTime", None),
                         "user": retrieval_obj.get("user", ""),
-                        "linked_groups": retrieval_obj.get("linked_groups", []),
+                        "linkedGroups": retrieval_obj.get("linkedGroups", []),
                     }
                     retrieval_data.append(data)
 
@@ -517,6 +518,10 @@ class RetrieverApp:
     @staticmethod
     def delete_retrieval_app(db, app_name):
         try:
+            _, ai_app_obj = db.query(
+                table_obj=AiAppTable, filter_query={"name": app_name}
+            )
+
             # delete entry from AiRetrieval Table
             _, ai_retriever_apps = db.query(
                 table_obj=AiRetrievalTable, filter_query={"app_name": app_name}
@@ -524,39 +529,40 @@ class RetrieverApp:
             if ai_retriever_apps and len(ai_retriever_apps) > 0:
                 db.delete(ai_retriever_apps)
 
-            # delete entry from AiUser table if needed # TODO: discussion needed
+            # delete entry from AiUser table if needed
+            user_ids = ai_app_obj[0].data.get("users")
+            for user_id in user_ids:
+                _, ai_user_obj = db.query(
+                    table_obj=AiUser, filter_query={"id": user_id}
+                )
+                if ai_user_obj and len(ai_user_obj) > 0:
+                    ai_user_obj = ai_user_obj[0]
+                    user_data = ai_user_obj.data
+                    if app_name in user_data.get("appName"):
+                        if len(user_data.get("appName")) > 1:
+                            existing_apps = user_data.get("appName")
+                            existing_apps.remove(app_name)
+                            user_data["appName"] = existing_apps
+                            update_status, message = db.update_data(
+                                table_obj=ai_user_obj, data=user_data
+                            )
+                            if not update_status:
+                                message = f"Exception occurred while deleting {app_name} application"
+                                logger.exception(message)
+                        else:
+                            db.delete(ai_user_obj)
 
             # delete entry from AiApp table
-            _, ai_app_obj = db.query(
-                table_obj=AiAppTable, filter_query={"name": app_name}
-            )
             db.delete(ai_app_obj)
 
             message = f"Application {app_name} has been deleted."
             logger.info(message)
             result = {"message": message, "status_code": status.HTTP_200_OK}
-        except FileNotFoundError:
-            message = f"Application {app_name} does not exist."
-            logger.exception(message)
-            # Getting error, We are rollback everything we did in this run.
-            db.session.rollback()
-        except PermissionError:
-            message = f"Permission denied: Unable to delete application {app_name}."
-            logger.exception(message)
-            # Getting error, We are rollback everything we did in this run.
-            db.session.rollback()
         except Exception as e:
             message = f"Unable to delete application {app_name}, Error: {e}"
             logger.exception(message)
-            # Getting error, We are rollback everything we did in this run.
-            db.session.rollback()
         else:
             # Commit will only happen when everything went well.
             message = "App deletion processed Successfully"
             logger.debug(message)
-            db.session.commit()
             return result
-        finally:
-            logger.debug("Closing database session.")
-            # Closing the session
-            db.session.close()
