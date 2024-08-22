@@ -29,7 +29,8 @@ class Prompt:
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 
-    def _return_response(self, data=None, message="", status_code=200):
+    @staticmethod
+    def _return_response(data=None, message="", status_code=200):
         response = PromptResponseModel(retrieval_data=data, message=str(message))
         return PebbloJsonResponse.build(
             body=response.dict(exclude_none=True), status_code=status_code
@@ -184,7 +185,6 @@ class Prompt:
             status, message = self.db.update_data(
                 table_obj=ai_app_data, data=ai_app_data.data
             )
-            self.db.session.commit()
             if not status:
                 logger.error(f"Process request failed: {message}")
                 return self._return_response(message=message, status_code=500)
