@@ -37,7 +37,7 @@ class Prompt:
 
     def _initialize_data(self, data):
         self.data = data
-        self.app_name = data.get("name")
+        self.application_name = data.get("name")
 
     def _fetch_classified_data(self, input_data, input_type=""):
         """

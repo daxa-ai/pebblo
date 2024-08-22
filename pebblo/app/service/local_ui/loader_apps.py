@@ -82,6 +82,7 @@ class LoaderApp:
                 if not findings_exists:
                     logger.debug("finding not exist")
                     findings = {
+                        "appName": app_data["name"],
                         "labelName": entity,
                         "findings": entity_data["count"],
                         "findingsType": "entities",
@@ -118,6 +119,7 @@ class LoaderApp:
                         break
                 if not findings_exists:
                     findings = {
+                        "appName": app_data["name"],
                         "labelName": topic,
                         "findings": topic_data["count"],
                         "findingsType": "topics",
