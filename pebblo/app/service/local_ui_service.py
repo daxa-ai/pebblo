@@ -9,7 +9,9 @@ from typing import Any, Dict, List, Tuple
 from dateutil import parser
 from fastapi import status
 
-from pebblo.app.enums.enums import CacheDir
+from pebblo.app.config.config import var_server_config_dict
+from pebblo.app.enums.common import StorageTypes
+from pebblo.app.enums.enums import ApplicationTypes, CacheDir
 from pebblo.app.models.models import (
     LoaderAppListDetails,
     LoaderAppModel,
@@ -17,6 +19,10 @@ from pebblo.app.models.models import (
     RetrievalAppList,
     RetrievalAppListDetails,
 )
+from pebblo.app.service.local_ui.loader_apps import LoaderApp
+from pebblo.app.service.local_ui.retriever_apps import RetrieverApp
+from pebblo.app.service.local_ui.utils import get_app_type
+from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import (
     delete_directory,
     get_document_with_findings_data,
@@ -27,6 +33,8 @@ from pebblo.app.utils.utils import (
     update_findings_summary,
 )
 from pebblo.log import get_logger
+
+config_details = var_server_config_dict.get()
 
 logger = get_logger(__name__)
 
@@ -47,6 +55,7 @@ class AppData:
         self.retrieval_active_users = {}
         self.retrieval_vectordbs = []
         self.total_retrievals = []
+        self.db = None
 
     def prepare_loader_response(self, app_dir, app_json):
         # Default values
@@ -270,126 +279,155 @@ class AppData:
         """
         Returns all necessary app details required for list app functionality.
         """
-        try:
-            dir_full_path = get_full_path(CacheDir.HOME_DIR.value)
-            # List all apps in the directory
-            dir_path = os.listdir(dir_full_path)
+        response = {
+            "pebbloServerVersion": get_pebblo_server_version(),
+            "loaderApps": {},
+            "retrievalApps": {},
+        }
+        storage_type = config_details.get("storage", {}).get(
+            "type", StorageTypes.DATABASE.value
+        )
+        if storage_type == StorageTypes.FILE.value:
+            try:
+                dir_full_path = get_full_path(CacheDir.HOME_DIR.value)
+                # List all apps in the directory
+                dir_path = os.listdir(dir_full_path)
 
-            all_loader_apps: list = []
-            all_retrieval_apps: list = []
-            prompt_details: dict = {}
-            total_prompt_with_findings = 0
-            # Iterating through each app in the directory
-            for app_dir in dir_path:
-                try:
-                    # Skip hidden folders
-                    if app_dir.startswith("."):
-                        logger.debug(f"[Dashboard]: Skipping hidden folder {app_dir}")
-                        continue
-                    # Path to metadata.json
-                    app_path = (
-                        f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                        f"{CacheDir.METADATA_FILE_PATH.value}"
-                    )
-
-                    logger.debug(f"[Dashboard]: Metadata file path {app_path}")
-                    app_json = read_json_file(app_path)
-
-                    if not app_json:
-                        # Unable to find json file
-                        logger.debug(
-                            f"[Dashboard]: Metadata file {CacheDir.METADATA_FILE_PATH.value} "
-                            f"not found for app: {app_dir}."
+                all_loader_apps: list = []
+                all_retrieval_apps: list = []
+                prompt_details: dict = {}
+                total_prompt_with_findings = 0
+                # Iterating through each app in the directory
+                for app_dir in dir_path:
+                    try:
+                        # Skip hidden folders
+                        if app_dir.startswith("."):
+                            logger.debug(
+                                f"[Dashboard]: Skipping hidden folder {app_dir}"
+                            )
+                            continue
+                        # Path to metadata.json
+                        app_path = (
+                            f"{CacheDir.HOME_DIR.value}/{app_dir}/"
+                            f"{CacheDir.METADATA_FILE_PATH.value}"
                         )
-                        logger.warning(
-                            f"[Dashboard]: Metadata file is not present for application: {app_dir},"
-                            f"skipping application"
-                        )
-                        continue
 
-                    app_type = app_json.get("app_type", None)
-                    if app_type in ["loader", None]:
-                        loader_app = self.prepare_loader_response(app_dir, app_json)
-                        if loader_app:
-                            all_loader_apps.append(loader_app)
-                    elif app_type == "retrieval":
-                        retrieval_app, prompt_details, total_prompt_with_findings = (
-                            self.prepare_retrieval_response(
+                        logger.debug(f"[Dashboard]: Metadata file path {app_path}")
+                        app_json = read_json_file(app_path)
+
+                        if not app_json:
+                            # Unable to find json file
+                            logger.debug(
+                                f"[Dashboard]: Metadata file {CacheDir.METADATA_FILE_PATH.value} "
+                                f"not found for app: {app_dir}."
+                            )
+                            logger.warning(
+                                f"[Dashboard]: Metadata file is not present for application: {app_dir},"
+                                f"skipping application"
+                            )
+                            continue
+
+                        app_type = app_json.get("app_type", None)
+                        if app_type in ["loader", None]:
+                            loader_app = self.prepare_loader_response(app_dir, app_json)
+                            if loader_app:
+                                all_loader_apps.append(loader_app)
+                        elif app_type == "retrieval":
+                            (
+                                retrieval_app,
+                                prompt_details,
+                                total_prompt_with_findings,
+                            ) = self.prepare_retrieval_response(
                                 app_dir,
                                 app_json,
                                 prompt_details,
                                 total_prompt_with_findings,
                             )
+                            if retrieval_app:
+                                all_retrieval_apps.append(retrieval_app)
+
+                    except Exception as err:
+                        logger.warning(
+                            f"[Dashboard]: Error processing app {app_dir}: {err}"
                         )
-                        if retrieval_app:
-                            all_retrieval_apps.append(retrieval_app)
+                final_prompt_details = []
+                for key, value in prompt_details.items():
+                    try:
+                        for k1, v1 in value.items():
+                            try:
+                                prompt_dict = {}
+                                prompt_dict = {"app_name": key}
+                                prompt_dict["entity_name"] = k1
+                                prompt_dict["total_prompts"] = v1["total_prompts"]
+                                prompt_dict["total_entity_count"] = v1[
+                                    "total_entity_count"
+                                ]
+                                prompt_dict["users"] = v1["users"]
+                                prompt_dict["total_users"] = v1["total_users"]
+                                final_prompt_details.append(prompt_dict)
+                            except Exception as ex:
+                                logger.warning(
+                                    f"[Dashboard]: Error in iterating key value pair in retrieval app list. Error: {ex}"
+                                )
+                    except Exception as ex:
+                        logger.warning(
+                            f"[Dashboard]: Error in iterating prompt details for all retrieval apps: {ex}"
+                        )
 
-                except Exception as err:
-                    logger.warning(
-                        f"[Dashboard]: Error processing app {app_dir}: {err}"
-                    )
-            final_prompt_details = []
-            for key, value in prompt_details.items():
-                try:
-                    for k1, v1 in value.items():
-                        try:
-                            prompt_dict = {}
-                            prompt_dict = {"app_name": key}
-                            prompt_dict["entity_name"] = k1
-                            prompt_dict["total_prompts"] = v1["total_prompts"]
-                            prompt_dict["total_entity_count"] = v1["total_entity_count"]
-                            prompt_dict["users"] = v1["users"]
-                            prompt_dict["total_users"] = v1["total_users"]
-                            final_prompt_details.append(prompt_dict)
-                        except Exception as ex:
-                            logger.warning(
-                                f"[Dashboard]: Error in iterating key value pair in retrieval app list. Error: {ex}"
-                            )
-                except Exception as ex:
-                    logger.warning(
-                        f"[Dashboard]: Error in iterating prompt details for all retrieval apps: {ex}"
-                    )
+                # Sort loader apps
+                sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
 
-            # Sort loader apps
-            sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
+                logger.debug("[Dashboard]: Preparing loader app response object")
+                loader_response = LoaderAppModel(
+                    applicationsAtRiskCount=self.loader_apps_at_risk,
+                    findingsCount=self.loader_findings,
+                    documentsWithFindingsCount=self.loader_files_findings,
+                    dataSourceCount=self.loader_data_source,
+                    appList=sorted_loader_apps,
+                    findings=self.loader_findings_list,
+                    documentsWithFindings=self.loader_document_with_findings_list,
+                    dataSource=self.loader_data_source_list,
+                )
 
-            logger.debug("[Dashboard]: Preparing loader app response object")
-            loader_response = LoaderAppModel(
-                applicationsAtRiskCount=self.loader_apps_at_risk,
-                findingsCount=self.loader_findings,
-                documentsWithFindingsCount=self.loader_files_findings,
-                dataSourceCount=self.loader_data_source,
-                appList=sorted_loader_apps,
-                findings=self.loader_findings_list,
-                documentsWithFindings=self.loader_document_with_findings_list,
-                dataSource=self.loader_data_source_list,
-            )
+                # Sort retrievals data
+                sorted_retrievals_apps = self._sort_retrievals_with_retrieval_count(
+                    all_retrieval_apps
+                )
 
-            # Sort retrievals data
-            sorted_retrievals_apps = self._sort_retrievals_with_retrieval_count(
-                all_retrieval_apps
-            )
+                logger.debug("[Dashboard]: Preparing retrieval app response object")
+                retrieval_response = RetrievalAppList(
+                    appList=sorted_retrievals_apps,
+                    retrievals=self.total_retrievals,
+                    activeUsers=self.retrieval_active_users,
+                    violations=[],
+                    promptDetails=final_prompt_details,
+                    total_prompt_with_findings=total_prompt_with_findings,
+                )
 
-            logger.debug("[Dashboard]: Preparing retrieval app response object")
-            retrieval_response = RetrievalAppList(
-                appList=sorted_retrievals_apps,
-                retrievals=self.total_retrievals,
-                activeUsers=self.retrieval_active_users,
-                violations=[],
-                promptDetails=final_prompt_details,
-                total_prompt_with_findings=total_prompt_with_findings,
-            )
-
-            logger.info(f"retrieval_response {retrieval_response.__dict__}")
-            response = {
-                "pebbloServerVersion": get_pebblo_server_version(),
-                "loaderApps": loader_response.dict(),
-                "retrievalApps": retrieval_response.dict(),
-            }
-            return json.dumps(response, indent=4)
-        except Exception as ex:
-            logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
-            return json.dumps({})
+                response.update(
+                    {
+                        "loaderApps": loader_response.dict(),
+                        "retrievalApps": retrieval_response.dict(),
+                    }
+                )
+                return json.dumps(response, indent=4)
+            except Exception as ex:
+                logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
+                return json.dumps({})
+        elif storage_type == StorageTypes.DATABASE.value:
+            try:
+                retriever_app_obj = RetrieverApp()
+                loader_app_obj = LoaderApp()
+                response.update(
+                    {
+                        "loaderApps": loader_app_obj.get_all_loader_apps(),
+                        "retrievalApps": retriever_app_obj.get_all_retriever_apps(),
+                    }
+                )
+                return json.dumps(response, indent=4)
+            except Exception as ex:
+                logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
+                return json.dumps({})
 
     def get_loader_app_details(self, app_dir, load_ids):
         # Fetching latest loadId
@@ -411,80 +449,147 @@ class AppData:
         """
         Returns app details for an app.
         """
-        try:
-            # Path to metadata.json
-            app_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
-            logger.debug(f"[App Details]: Metadata file path: {app_path}")
-            # Reading metadata.json
-            app_json = read_json_file(app_path)
-            # Condition for handling loadId
-            if not app_json:
-                # Unable to fetch loadId details
-                logger.debug(
-                    f"[App Details]: Error: Report Json {CacheDir.METADATA_FILE_PATH.value}"
-                    f"not found for app {app_path}"
-                )
-                logger.warning(
-                    f"[App Details]: Metadata file is not present for application: {app_dir}, skipping application"
-                )
-                return json.dumps({})
-
-            app_type = app_json.get("app_type", None)
-            app_name = app_json.get("name")
-            if app_type in ["loader", None]:
-                load_ids = app_json.get("load_ids", [])
-                if not load_ids:
+        storage_type = config_details.get("storage", {}).get(
+            "type", StorageTypes.FILE.value
+        )
+        if storage_type == StorageTypes.FILE.value:
+            try:
+                # Path to metadata.json
+                app_path = f"{CacheDir.HOME_DIR.value}/{app_dir}/{CacheDir.METADATA_FILE_PATH.value}"
+                logger.debug(f"[App Details]: Metadata file path: {app_path}")
+                # Reading metadata.json
+                app_json = read_json_file(app_path)
+                # Condition for handling loadId
+                if not app_json:
                     # Unable to fetch loadId details
                     logger.debug(
-                        f"[App Details]: Error: Details not found for app {app_path}"
+                        f"[App Details]: Error: Report Json {CacheDir.METADATA_FILE_PATH.value}"
+                        f"not found for app {app_path}"
                     )
                     logger.warning(
-                        f"[App Details]: No valid loadIs found for the application: {app_name}, skipping application."
+                        f"[App Details]: Metadata file is not present for application: {app_dir}, skipping application"
                     )
                     return json.dumps({})
-                response = self.get_loader_app_details(app_dir, load_ids)
-                return response
-            elif app_type == "retrieval":
-                app_metadata_path = (
-                    f"{CacheDir.HOME_DIR.value}/{app_dir}/"
-                    f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
+                app_type = app_json.get("app_type", None)
+                app_name = app_json.get("name")
+                if app_type in ["loader", None]:
+                    load_ids = app_json.get("load_ids", [])
+                    if not load_ids:
+                        # Unable to fetch loadId details
+                        logger.debug(
+                            f"[App Details]: Error: Details not found for app {app_path}"
+                        )
+                        logger.warning(
+                            f"[App Details]: No valid loadIs found for the application: {app_name}, skipping application."
+                        )
+                        return json.dumps({})
+                    response = self.get_loader_app_details(app_dir, load_ids)
+                    return response
+                elif app_type == "retrieval":
+                    app_metadata_path = (
+                        f"{CacheDir.HOME_DIR.value}/{app_dir}/"
+                        f"{CacheDir.APPLICATION_METADATA_FILE_PATH.value}"
+                    )
+                    app_metadata_content = read_json_file(app_metadata_path)
+                    # Skip app if app_metadata details are not present for some reason.
+                    if not app_metadata_content:
+                        logger.debug(
+                            f"[App Details]: Error: Unable to fetch app_metadata.json content for {app_dir} app"
+                        )
+                        logger.warning(
+                            f"[App Details]: Application metadata file is not present for application: {app_name},"
+                            f"skipping application."
+                        )
+                        return json.dumps({})
+                    response = self.get_retrieval_app_details(app_metadata_content)
+                    return response
+            except Exception as ex:
+                logger.error(
+                    f"[App Details]: Error in getting app details. Error: {ex}"
                 )
-                app_metadata_content = read_json_file(app_metadata_path)
+        elif storage_type == StorageTypes.DATABASE.value:
+            try:
+                self.db = SQLiteClient()
 
-                # Skip app if app_metadata details are not present for some reason.
-                if not app_metadata_content:
-                    logger.debug(
-                        f"[App Details]: Error: Unable to fetch app_metadata.json content for {app_dir} app"
+                # create session
+                self.db.create_session()
+                app_type = get_app_type(self.db, app_dir)
+                response = {}
+                if app_type == ApplicationTypes.LOADER.value:
+                    loader_app_obj = LoaderApp()
+                    response = loader_app_obj.get_loader_app_details(self.db, app_dir)
+                elif app_type == ApplicationTypes.RETRIEVAL.value:
+                    retriever_app_obj = RetrieverApp()
+                    response = retriever_app_obj.get_retriever_app_details(
+                        app_name=app_dir
                     )
-                    logger.warning(
-                        f"[App Details]: Application metadata file is not present for application: {app_name},"
-                        f"skipping application."
-                    )
-                    return json.dumps({})
-                response = self.get_retrieval_app_details(app_metadata_content)
                 return response
+            except Exception as ex:
+                logger.error(
+                    f"[App Details]: Error in getting app details. Error: {ex}"
+                )
+            finally:
+                logger.debug("[App Details] get app details finished.")
+                self.db.session.close()
 
-        except Exception as ex:
-            logger.error(f"[App Details]: Error in getting app details. Error: {ex}")
-
-    @staticmethod
-    def delete_application(app_name):
+    def delete_application(self, app_name):
         """
         Delete an app
         """
-        try:
-            # Path to application directory
-            app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
-            logger.debug(f"[Delete App]: Path: {app_dir_path}")
-            response = delete_directory(app_dir_path, app_name)
-            return response
-        except Exception as ex:
-            error_message = f"[Delete App]: Error in delete application. Error: {ex}"
-            logger.error(error_message)
-            return {
-                "message": error_message,
-                "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
-            }
+        storage_type = config_details.get("storage", {}).get(
+            "type", StorageTypes.FILE.value
+        )
+        if storage_type == StorageTypes.FILE.value:
+            try:
+                # Path to application directory
+                app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
+                logger.debug(f"[Delete App]: Path: {app_dir_path}")
+                response = delete_directory(app_dir_path, app_name)
+                return response
+            except Exception as ex:
+                error_message = (
+                    f"[Delete App]: Error in delete application. Error: {ex}"
+                )
+                logger.error(error_message)
+                return {
+                    "message": error_message,
+                    "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                }
+        elif storage_type == StorageTypes.DATABASE.value:
+            try:
+                self.db = SQLiteClient()
+
+                # create session
+                self.db.create_session()
+
+                app_type = get_app_type(self.db, app_name)
+                if app_type == ApplicationTypes.LOADER.value:
+                    loader_app_obj = LoaderApp()
+                    loader_app_obj.delete_loader_app(self.db, app_name)
+                elif app_type == ApplicationTypes.RETRIEVAL.value:
+                    retriever_app_obj = RetrieverApp()
+                    retriever_app_obj.delete_retrieval_app(self.db, app_name)
+            except Exception as ex:
+                error_message = (
+                    f"[Delete App]: Error in delete application. Error: {ex}"
+                )
+                logger.error(error_message)
+                # Getting error, Rollback everything we did in this run.
+                self.db.session.rollback()
+                return {
+                    "message": error_message,
+                    "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                }
+            else:
+                self.db.session.commit()
+                message = f"Application {app_name} has been deleted."
+                response = {"message": message, "status_code": status.HTTP_200_OK}
+                logger.debug(message)
+                return response
+            finally:
+                logger.debug("Closing database session for delete application")
+                # Closing the session
+                self.db.session.close()
 
     @staticmethod
     def get_latest_load_id(load_ids, app_dir):
@@ -497,7 +602,7 @@ class AppData:
             logger.debug(f"[App Details]: Report File path: {app_detail_path}")
             app_detail_json = read_json_file(app_detail_path)
             if app_detail_json:
-                # If report is found, proceed with this load_id
+                # If a report is found, proceed with this load_id
                 latest_load_id = load_id
                 return latest_load_id, app_detail_json
 

@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 from json import JSONEncoder, dump
 from os import getcwd, makedirs, path, remove
 from shutil import rmtree
@@ -282,3 +283,24 @@ def delete_directory(app_path, app_name=None):
         logger.exception(message)
     finally:
         return result
+
+
+def get_current_time():
+    """
+    Return current time in isoformat
+    :return:
+    """
+    return datetime.now().isoformat()
+
+
+def timeit(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        response = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        logger.debug(
+            f"Execution time of function <{func.__name__}> is {end_time-start_time} seconds."
+        )
+        return response
+
+    return wrapper

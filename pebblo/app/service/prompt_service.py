@@ -29,11 +29,15 @@ class Prompt:
     This class handles prompt API business logic.
     """
 
-    def __init__(self, data: dict):
-        self.data = data
-        self.application_name = self.data.get("name")
+    def __init__(self):
+        self.data = None
+        self.application_name = None
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
+
+    def _initialize_data(self, data):
+        self.data = data
+        self.application_name = data.get("name")
 
     def _fetch_classified_data(self, input_data, input_type=""):
         """
@@ -45,6 +49,7 @@ class Prompt:
             entities,
             entity_count,
             _,
+            _,
         ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
             input_data
         )
@@ -53,7 +58,9 @@ class Prompt:
 
         # Topic classification is performed only for the response.
         if input_type == "response":
-            topics, topic_count = self.topic_classifier_obj.predict(input_data)
+            topics, topic_count, topic_details = self.topic_classifier_obj.predict(
+                input_data
+            )
             data["topicCount"] = topic_count
             data["topics"] = topics
 
@@ -132,17 +139,16 @@ class Prompt:
         finally:
             release_lock(app_metadata_lock_file)
 
-    def process_request(self):
+    def process_request(self, data):
         """
         Process Prompt Request
         """
+        self._initialize_data(data)
         try:
             logger.debug("AI App prompt request processing started")
 
             # getting prompt data
-            prompt_data = self._fetch_classified_data(
-                self.data.get("prompt", {}).get("data"), input_type="prompt"
-            )
+            prompt_data = self.data.get("prompt", {})
 
             is_prompt_gov_enabled = self.data.get("prompt", {}).get(
                 "prompt_gov_enabled", False
