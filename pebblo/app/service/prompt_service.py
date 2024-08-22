@@ -29,11 +29,15 @@ class Prompt:
     This class handles prompt API business logic.
     """
 
-    def __init__(self, data: dict):
-        self.data = data
-        self.application_name = self.data.get("name")
+    def __init__(self):
+        self.data = None
+        self.application_name = None
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
+
+    def _initialize_data(self, data):
+        self.data = data
+        self.app_name = data.get("name")
 
     def _fetch_classified_data(self, input_data, input_type=""):
         """
@@ -135,10 +139,11 @@ class Prompt:
         finally:
             release_lock(app_metadata_lock_file)
 
-    def process_request(self):
+    def process_request(self, data):
         """
         Process Prompt Request
         """
+        self._initialize_data(data)
         try:
             logger.debug("AI App prompt request processing started")
 

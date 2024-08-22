@@ -182,7 +182,7 @@ export function SnippetDetails(props) {
         <div class="flex">
           <div class="search">
             <input type="text" id="snippet_search" placeholder="${inputPlaceholder}" autocomplete="off" />
-              ${SearchIcon({ color: "grey" })}  
+              ${SearchIcon({ color: "grey" })}
           </div>
         </div>
       </div>
@@ -192,7 +192,7 @@ export function SnippetDetails(props) {
       ${
         snippetList
           ? snippetList?.myMap(
-              (item) => /*html*/ `        
+              (item) => /*html*/ `
          <div class="flex flex-col gap-1">
            <div class="snippet-header bg-main flex gap-2 pt-3 pb-3 pl-3 pr-3 inter items-center">
              <div class="surface-10-opacity-65 font-14 medium">${
@@ -201,7 +201,7 @@ export function SnippetDetails(props) {
              <div class="surface-10-opacity-50 font-12">Showing ${
                item?.snippets?.length
              } out of ${item?.snippetCount}</div>
-            
+
            </div>
            ${item?.snippetStrings?.myMap((snipp) => {
              const snippetConfidenceScore = getSnippetConfidenceScore(

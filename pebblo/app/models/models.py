@@ -116,6 +116,7 @@ class AiClassificationData(BaseModel):
 
 
 class RetrievalData(BaseModel):
+    ai_app: Optional[int]
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]
@@ -125,8 +126,9 @@ class RetrievalData(BaseModel):
 
 
 class AiApp(BaseModel):
-    metadata: Metadata
+    # metadata: Metadata
     name: str
+    run_id: Optional[UUID]
     description: Optional[str]
     owner: str
     pluginVersion: Optional[str]

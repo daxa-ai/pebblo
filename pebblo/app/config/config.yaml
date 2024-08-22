@@ -9,3 +9,5 @@ reports:
   cacheDir: ~/.pebblo
 classifier:
   anonymizeSnippets: False
+storage:
+  type: file

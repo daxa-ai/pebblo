@@ -76,7 +76,6 @@ class TopicClassifier:
 
     @staticmethod
     def _get_topics(topic_model_response):
-        logger.debug(f"Topics model response: {topic_model_response}")
         topic_model_response = topic_model_response[0]
         topics = dict()
         for topic in topic_model_response:

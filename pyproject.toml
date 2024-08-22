@@ -117,6 +117,7 @@ dependencies = [
   "xhtml2pdf==0.2.15",
   "python-bidi==0.4.2",
   "python-dateutil==2.9.0",
+  "sqlalchemy==2.0.32",
 ]
 
 # List additional groups of dependencies here (e.g. development
