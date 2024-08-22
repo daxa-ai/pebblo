@@ -71,9 +71,9 @@ class Prompt:
         if context_list:
             for context in context_list:
                 retrieval_context_obj = RetrievalContext(
-                    retrieved_from=context.get("retrieved_from"),
+                    retrievedFrom=context.get("retrieved_from"),
                     doc=context.get("doc"),
-                    vector_db=context.get("vector_db"),
+                    vectorDb=context.get("vector_db"),
                 )
                 retrieval_context_data.append(retrieval_context_obj)
         return retrieval_context_data
@@ -82,9 +82,15 @@ class Prompt:
         """
         Create an RetrievalData Model and return the corresponding model object
         """
-        retrieval_data_model = RetrievalData(**self.data)
-        retrieval_data_model.app_name = self.app_name
-        retrieval_data_model.context = context_data
+        retrieval_data_model = RetrievalData(
+            appName=self.app_name,
+            prompt=self.data.get("prompt"),
+            response=self.data.get("response"),
+            context=context_data,
+            prompt_time=self.data.get("prompt_time"),
+            user=self.data.get("user"),
+            linked_groups=self.data.get("user_identities"),
+        )
         logger.debug(f"AiApp Name: [{self.app_name}]")
         return retrieval_data_model
 
@@ -112,7 +118,7 @@ class Prompt:
 
             document_accessed = []
             for data in retrieval_data["context"]:
-                doc_name = data.get("retrieved_from")
+                doc_name = data.get("retrievedFrom")
                 if doc_name not in document_accessed:
                     document_accessed.append(doc_name)
 
@@ -126,7 +132,7 @@ class Prompt:
                     ai_user = ai_user[0]
                     user_id = ai_user.data.get("id")
                     retrieval_data["user"] = ai_user.data.get("name")
-                    retrieval_data["user_id"] = user_id
+                    retrieval_data["userId"] = user_id
                     existing_document_accessed = ai_user.data.get(
                         "documentsAccessed", []
                     )
@@ -166,6 +172,7 @@ class Prompt:
                     user_id = entry.data["id"]
 
             retrieval_data["appId"] = ai_app_data.data["id"]
+            retrieval_data["userId"] = user_id
             insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
 
             if not insert_status:

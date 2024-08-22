@@ -250,7 +250,7 @@ class RetrieverApp:
         """
 
         sorted_document = self.sort_db_retrievals(
-            retrieval_data, "retrieved_from", all_apps
+            retrieval_data, "retrievedFrom", all_apps
         )
         response = {}
         for user_name, user_data in sorted_document.items():
@@ -273,7 +273,7 @@ class RetrieverApp:
 
         # fetch total retrievals
         _, ai_retrievals = self.db.query(
-            table_obj=AiRetrievalTable, filter_query={"app_name": app_name}
+            table_obj=AiRetrievalTable, filter_query={"appName": app_name}
         )
         for ai_retrieval in ai_retrievals:
             try:
@@ -340,7 +340,7 @@ class RetrieverApp:
         This function returns vector dbs per app in sorted descending order
         based on number of times it appeared in retrievals.
         """
-        sorted_vector_dbs = self.sort_db_retrievals(retrieval_data, "vector_db")
+        sorted_vector_dbs = self.sort_db_retrievals(retrieval_data, "vectorDb")
         return sorted_vector_dbs
 
     @staticmethod
@@ -484,7 +484,7 @@ class RetrieverApp:
 
             # fetch retrieval data
             _, ai_retrieval_obj = self.db.query(
-                table_obj=AiRetrievalTable, filter_query={"app_name": app_name}
+                table_obj=AiRetrievalTable, filter_query={"appName": app_name}
             )
 
             if ai_retrieval_obj and len(ai_retrieval_obj) > 0:

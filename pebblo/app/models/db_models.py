@@ -95,20 +95,20 @@ class AiDataModel(BaseModel):
 
 
 class RetrievalContext(BaseModel):
-    retrieved_from: str
+    retrievedFrom: str
     doc: str
-    vector_db: str
+    vectorDb: str
 
 
 class RetrievalData(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
-    app_name: Optional[str]
+    appName: Optional[str]
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]
     prompt_time: str
     user: str
-    user_id: Optional[str]
+    userId: Optional[str]
     linked_groups: list[str] = []
 
 
