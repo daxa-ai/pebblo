@@ -1,9 +1,8 @@
 import json
-from os import makedirs, path
 
 from fastapi import status
 
-from pebblo.app.enums.enums import CacheDir, ReportConstants
+from pebblo.app.enums.enums import ReportConstants
 from pebblo.app.models.models import (
     DataSource,
     LoaderAppListDetails,
@@ -20,11 +19,9 @@ from pebblo.app.models.sqltables import (
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import (
     get_current_time,
-    get_full_path,
     get_pebblo_server_version,
 )
 from pebblo.log import get_logger
-from pebblo.reports.reports import Reports
 
 logger = get_logger(__name__)
 
@@ -70,9 +67,6 @@ class LoaderApp:
 
                 findings_exists = False
                 for findings in self.loader_findings_list:
-                    logger.debug(f"Entity: {findings.get('labelName')}")
-                    logger.debug(f"Findings: {findings}")
-                    logger.debug(f"EntityData: {entity_data}")
                     if findings.get("labelName") == entity:
                         findings_exists = True
                         findings["findings"] += entity_data["count"]
@@ -87,7 +81,6 @@ class LoaderApp:
                         break
                 if not findings_exists:
                     logger.debug("finding not exist")
-                    logger.debug(f"Entity2: {entity_data}")
                     findings = {
                         "labelName": entity,
                         "findings": entity_data["count"],
@@ -144,7 +137,6 @@ class LoaderApp:
         status, data_sources = self.db.query(
             AiDataSourceTable, {"loadId": app_data.get("id")}
         )
-        logger.info(f"DS: {data_sources}")
         for data_source in data_sources:
             ds_data = data_source.data
             ds_obj = {
@@ -197,7 +189,6 @@ class LoaderApp:
             owner=app_data.get("owner"),
             loadId=app_data.get("id"),
         )
-        logger.info(f"AppDetails: {app_details.dict()}")
         return app_details.dict()
 
     def get_all_loader_apps(self):
@@ -211,13 +202,11 @@ class LoaderApp:
             self.db.create_session()
 
             _, ai_loader_apps = self.db.query(table_obj=AiDataLoaderTable)
-            logger.debug(f"LoaderAppDetailsObject; {ai_loader_apps}")
 
             # Preparing all loader apps
             all_loader_apps: list = []
             for loader_app in ai_loader_apps:
                 app_data = loader_app.data
-                logger.debug(f"LoaderEachApp: {app_data}")
                 if app_data.get("docEntities") not in [None, {}] or app_data.get(
                     "docTopics"
                 ) not in [None, {}]:
@@ -239,7 +228,6 @@ class LoaderApp:
                 documentsWithFindings=self.loader_document_with_findings_list,
                 dataSource=self.loader_data_source_list,
             )
-            logger.debug(f"LoaderAppResponse: {loader_response.dict()}")
 
         except Exception as ex:
             logger.error(f"[Dashboard]: Error in all loader app listing. Error:{ex}")
@@ -257,48 +245,9 @@ class LoaderApp:
             # Closing the session
             self.db.session.close()
 
-    def _pdf_writer(self, file_path, data):
-        report_obj = Reports()
-        report_format = CacheDir.FORMAT.value
-        renderer = CacheDir.RENDERER.value
-
-        full_file_path = get_full_path(file_path)
-
-        # Create parent directories if needed
-        dir_path = path.dirname(full_file_path)
-        makedirs(dir_path, exist_ok=True)
-
-        status, result = report_obj.generate_report(
-            data=data,
-            output_path=full_file_path,
-            format_string=report_format,
-            renderer=renderer,
-        )
-
-        if not status:
-            logger.error(f"PDF report is not generated. {result}")
-        else:
-            logger.info(f"PDF report generated, please check path : {full_file_path}")
-
-    def _write_pdf_report(self, final_report, app_name, load_id):
-        """
-        Calling PDF report generator to write a report in PDF format
-        """
-        logger.debug("Generating report in pdf format")
-
-        # Writing a PDF report to app directory
-        app_report_file_path = (
-            f"{CacheDir.HOME_DIR.value}/{app_name}/{CacheDir.REPORT_FILE_NAME.value}"
-        )
-        self._pdf_writer(app_report_file_path, final_report)
-
-        # Writing a PDF report to current load id directory
-        current_load_report_file_path = f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/{CacheDir.REPORT_FILE_NAME.value}"
-        self._pdf_writer(current_load_report_file_path, final_report)
-
     def get_loader_app_details(self, db, app_name):
         try:
-            logger.debug(f"Loader App Input: {app_name}")
+            logger.debug(f"Loader App: {app_name}")
             self.db = db
             filter_query = {"name": app_name}
             _, ai_loader_apps = self.db.query(
@@ -321,13 +270,6 @@ class LoaderApp:
             report_data = self._generate_final_report(
                 loader_app, loader_response.dict()
             )
-            logger.debug(f"ReportData: {report_data}")
-
-            # Writing a report in PDF format
-            # app_name = loader_app["name"]
-            # load_id = loader_app["id"]
-            # self._write_pdf_report(report_data, app_name, load_id)
-
         except Exception as ex:
             message = f"[App Detail]: Error in loader app listing. Error:{ex}"
             logger.error(message)
@@ -337,19 +279,6 @@ class LoaderApp:
             message = "loader app response prepared successfully"
             logger.debug(message)
             return json.dumps(report_data, default=str, indent=4)
-
-    def _count_files_with_findings(self, app_data):
-        """
-        Return the count of files that have associated findings.
-        """
-        logger.debug("Fetching the count of files that have associated findings")
-        files_with_findings_count = 0
-        loader_details = app_data.get("loaders", {})
-        for loader in loader_details:
-            for file_dict in loader["sourceFiles"]:
-                if "findings" in file_dict.keys() and file_dict["findings"] > 0:
-                    files_with_findings_count += 1
-        return files_with_findings_count
 
     def _create_report_summary(self, raw_data, app_data):
         """
@@ -376,12 +305,9 @@ class LoaderApp:
         """
         logger.debug("Getting top N findings details and aggregate them")
         documents_with_findings = raw_data["documentsWithFindings"]
-        logger.debug(f"Doc: {len(documents_with_findings)}")
         top_n_findings_list = documents_with_findings[
             : ReportConstants.TOP_FINDINGS_LIMIT.value
         ]
-        logger.debug(f"NFindigns: {top_n_findings_list}")
-        logger.debug(len(top_n_findings_list))
         top_n_findings = []
         for findings in top_n_findings_list:
             finding_obj = {
@@ -399,32 +325,6 @@ class LoaderApp:
             }
             top_n_findings.append(finding_obj)
         return top_n_findings
-
-    @staticmethod
-    def _create_data_source_findings_summary(data_source_findings):
-        """
-        Creating data source findings summary and return it findings summary list
-        """
-        logger.debug("Creating data source summary")
-        data_source_findings_summary = []
-        for ds_findings in data_source_findings:
-            label_name = ds_findings.get("labelName", "")
-            findings = ds_findings.get("findings", 0)
-            findings_type = ds_findings.get("findingsType")
-            snippet_count = ds_findings.get("snippetCount", 0)
-            file_count = ds_findings.get("fileCount", 0)
-
-            data_source_findings_summary.append(
-                {
-                    "labelName": label_name,
-                    "findings": findings,
-                    "findingsType": findings_type,
-                    "snippetCount": snippet_count,
-                    "fileCount": file_count,
-                }
-            )
-
-        return data_source_findings_summary
 
     def _get_data_source_details(self, app_data, raw_data):
         """
@@ -462,9 +362,6 @@ class LoaderApp:
         Aggregating all input, processing the data, and generating the final report
         """
         logger.debug("Generating final report")
-        logger.debug(f"LoaderApp: {app_data}")
-        logger.debug(f"LoaderResponse: {raw_data}")
-
         # Create report summary
         report_summary = self._create_report_summary(raw_data, app_data)
 

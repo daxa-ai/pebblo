@@ -571,9 +571,6 @@ class AppData:
                 elif app_type == ApplicationTypes.RETRIEVAL.value:
                     retriever_app_obj = RetrieverApp()
                     retriever_app_obj.delete_retrieval_app(self.db, app_name)
-                self.db.session.commit()
-                message = f"Application {app_name} has been deleted."
-                response = {"message": message, "status_code": status.HTTP_200_OK}
             except Exception as ex:
                 error_message = (
                     f"[Delete App]: Error in delete application. Error: {ex}"
@@ -586,7 +583,9 @@ class AppData:
                     "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
                 }
             else:
-                message = f"Ai {app_type} app {app_name} deleted successfully"
+                self.db.session.commit()
+                message = f"Application {app_name} has been deleted."
+                response = {"message": message, "status_code": status.HTTP_200_OK}
                 logger.debug(message)
                 return response
             finally:
@@ -605,7 +604,7 @@ class AppData:
             logger.debug(f"[App Details]: Report File path: {app_detail_path}")
             app_detail_json = read_json_file(app_detail_path)
             if app_detail_json:
-                # If report is found, proceed with this load_id
+                # If a report is found, proceed with this load_id
                 latest_load_id = load_id
                 return latest_load_id, app_detail_json
 

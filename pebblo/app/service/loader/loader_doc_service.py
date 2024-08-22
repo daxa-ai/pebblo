@@ -69,7 +69,7 @@ class AppLoaderDoc:
             else:
                 raise Exception(result)
         except Exception as err:
-            message = f"PDF report is not generated. {err}"
+            message = f"PDF report is not generated. Error: {err}"
             logger.error(message)
             raise Exception(message)
 
@@ -93,7 +93,7 @@ class AppLoaderDoc:
             logger.debug("Generating report in pdf format")
             logger.debug(f"Fetching report data for app: {app_name}")
             loader_report = LoaderApp()
-            report_data = loader_report.get_app_loader_details(db, app_name)
+            report_data = loader_report.get_loader_app_details(db, app_name)
             final_report = json.loads(report_data, object_hook=self._datetime_decoder)
 
             # Writing a PDF report to app directory
@@ -234,8 +234,6 @@ class AppLoaderDoc:
         if status and output:
             logger.debug("Data Source details are already existed.")
             data = output.data
-            if data["loader"] == loader_details.get("loader"):
-                logger.debug("Same loader details")
             return data
 
         # Data Source details are not present, Creating data source details

@@ -10,5 +10,4 @@ reports:
 classifier:
   anonymizeSnippets: False
 storage:
-  type: db
-  db: sqlite
+  type: file
