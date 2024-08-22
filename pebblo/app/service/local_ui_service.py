@@ -21,7 +21,6 @@ from pebblo.app.models.models import (
 )
 from pebblo.app.service.local_ui.loader_apps import LoaderApp
 from pebblo.app.service.local_ui.retriever_apps import RetrieverApp
-
 from pebblo.app.service.local_ui.utils import get_app_type
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import (
