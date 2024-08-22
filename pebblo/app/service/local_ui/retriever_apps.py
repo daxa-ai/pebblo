@@ -17,6 +17,7 @@ from pebblo.app.models.db_models import (
 from pebblo.app.models.sqltables import (
     AiAppTable,
     AiRetrievalTable,
+    AiUser,
 )
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.log import get_logger
@@ -517,6 +518,10 @@ class RetrieverApp:
     @staticmethod
     def delete_retrieval_app(db, app_name):
         try:
+            _, ai_app_obj = db.query(
+                table_obj=AiAppTable, filter_query={"name": app_name}
+            )
+
             # delete entry from AiRetrieval Table
             _, ai_retriever_apps = db.query(
                 table_obj=AiRetrievalTable, filter_query={"app_name": app_name}
@@ -524,12 +529,30 @@ class RetrieverApp:
             if ai_retriever_apps and len(ai_retriever_apps) > 0:
                 db.delete(ai_retriever_apps)
 
-            # delete entry from AiUser table if needed # TODO: discussion needed
+            # delete entry from AiUser table if needed
+            user_ids = ai_app_obj[0].data.get("users")
+            for user_id in user_ids:
+                _, ai_user_obj = db.query(
+                    table_obj=AiUser, filter_query={"id": user_id}
+                )
+                if ai_user_obj and len(ai_user_obj) > 0:
+                    ai_user_obj = ai_user_obj[0]
+                    user_data = ai_user_obj.data
+                    if app_name in user_data.get("appName"):
+                        if len(user_data.get("appName")) > 1:
+                            existing_apps = user_data.get("appName")
+                            existing_apps.remove(app_name)
+                            user_data["appName"] = existing_apps
+                            update_status, message = db.update_data(
+                                table_obj=ai_user_obj, data=user_data
+                            )
+                            if not update_status:
+                                message = f"Exception occurred while deleting {app_name} application"
+                                logger.exception(message)
+                        else:
+                            db.delete(ai_user_obj)
 
             # delete entry from AiApp table
-            _, ai_app_obj = db.query(
-                table_obj=AiAppTable, filter_query={"name": app_name}
-            )
             db.delete(ai_app_obj)
 
             message = f"Application {app_name} has been deleted."

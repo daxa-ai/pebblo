@@ -115,6 +115,7 @@ class Prompt:
                 if doc_name not in document_accessed:
                     document_accessed.append(doc_name)
 
+            user_id = None
             # Update entry in AiUser if exists else create
             if retrieval_data.get("user"):
                 _, ai_user = self.db.query(
@@ -132,6 +133,10 @@ class Prompt:
                         if doc_name not in existing_document_accessed:
                             existing_document_accessed.append(doc_name)
                     ai_user.data["documentsAccessed"] = existing_document_accessed
+                    existing_apps = ai_user.data.get("appName", [])
+                    if self.app_name not in existing_apps:
+                        existing_apps.append(self.app_name)
+                        ai_user.data["appName"] = existing_apps
                     status, message = self.db.update_data(
                         table_obj=ai_user, data=ai_user.data
                     )
@@ -145,6 +150,7 @@ class Prompt:
                     metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
                     ai_user_obj = aiuser(
                         name=retrieval_data["user"],
+                        appName=[self.app_name],
                         metadata=metadata,
                         userAuthGroup=retrieval_data.get("linked_groups", []),
                         documentsAccessed=document_accessed,
@@ -156,6 +162,7 @@ class Prompt:
                     if insert_status:
                         logger.debug(f"Entry: {entry} in AiUser completed")
                     retrieval_data["user"] = entry.data["name"]
+                    user_id = entry.data["id"]
 
             retrieval_data["appId"] = ai_app_data.data["id"]
             insert_status, entry = self.db.insert_data(AiRetrievalTable, retrieval_data)
@@ -165,14 +172,19 @@ class Prompt:
                 logger.error("message")
                 return self._return_response(message=message, status_code=500)
 
-            # Update AiApp with retrieval ID
+            # Update AiApp with retrieval ID and user ID
             existing_retrieval = ai_app_data.data["retrievals"]
             ai_retrieval_id = entry.data["id"]
             existing_retrieval.append(ai_retrieval_id)
             ai_app_data.data["retrievals"] = existing_retrieval
+            existing_user_id = ai_app_data.data["users"]
+            if user_id not in existing_user_id:
+                existing_user_id.append(user_id)
+                ai_app_data.data["users"] = existing_user_id
             status, message = self.db.update_data(
                 table_obj=ai_app_data, data=ai_app_data.data
             )
+            self.db.session.commit()
             if not status:
                 logger.error(f"Process request failed: {message}")
                 return self._return_response(message=message, status_code=500)

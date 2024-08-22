@@ -115,6 +115,7 @@ class RetrievalData(BaseModel):
 class AiUser(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     name: str
+    appName: List
     metadata: Metadata
     userAuthGroup: Optional[List]
     documentsAccessed: Optional[List] = []
