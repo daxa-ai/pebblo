@@ -1,5 +1,6 @@
 from sqlalchemy import and_, create_engine, text
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.attributes import flag_modified
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.storage.database import Database
@@ -103,7 +104,8 @@ class SQLiteClient(Database):
         try:
             logger.debug(f"Updating Table details, TableName: {table_name}")
             table_obj.data = data
-            self.session.add(table_obj)
+            # Mark the data field as modified, so that it gets updated in the db with commit operation
+            flag_modified(table_obj, "data")
             return True, "Data has been updated successfully"
         except Exception as err:
             message = (
