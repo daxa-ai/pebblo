@@ -95,26 +95,27 @@ class AiDataModel(BaseModel):
 
 
 class RetrievalContext(BaseModel):
-    retrieved_from: str
+    retrievedFrom: str
     doc: str
-    vector_db: str
+    vectorDb: str
 
 
 class RetrievalData(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
-    app_name: Optional[str]
+    appName: Optional[str]
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]
-    prompt_time: str
+    promptTime: str
     user: str
-    user_id: Optional[str]
-    linked_groups: list[str] = []
+    userId: Optional[str]
+    linkedGroups: list[str] = []
 
 
 class AiUser(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     name: str
+    appName: List
     metadata: Metadata
     userAuthGroup: Optional[List]
     documentsAccessed: Optional[List] = []
@@ -123,7 +124,7 @@ class AiUser(BaseModel):
 
 class AiApp(AiBaseApp):
     chains: Optional[List[Chain]] = []
-    retrievals: Optional[List[RetrievalData]] = []
+    retrievals: Optional[list] = []
     entities: Optional[Dict] = {}
     topics: Optional[Dict] = {}
     documents: Optional[List[str]] = []  # list of doc ids, TODO: need confirmation
@@ -189,67 +190,3 @@ class AiSnippet(BaseModel):
     topics: dict
     policyViolations: Optional[List[dict]] = []
     # label_feedback: Optional[List[LabelFeedback]] = []
-
-
-class RetrievalAppDetails(BaseModel):
-    name: str
-    description: Optional[str]
-    framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    instanceDetails: Optional[InstanceDetails]
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
-    clientVersion: Optional[dict]
-    total_prompt_with_findings: int = 0
-    retrievals: list[RetrievalData] = []
-    activeUsers: dict = {}
-    vectorDbs: dict = {}
-    documents: dict = {}
-
-
-class RetrievalAppListDetails(BaseModel):
-    name: str = ""
-    owner: str = ""
-    retrievals: list[RetrievalData] = []
-    active_users: list[str] = []
-    vector_dbs: list[str] = []
-    documents: list[str] = []
-
-
-class RetrievalAppList(BaseModel):
-    appList: list = []
-    retrievals: list = []
-    activeUsers: dict = {}
-    violations: list = []
-    promptDetails: list = []
-    total_prompt_with_findings: int = 0
-
-
-class LoaderDocs(BaseModel):
-    pb_id: Optional[str]
-    pb_checksum: str
-    source_path: str
-    loader_source_path: str
-    entity_count: Optional[int]
-    entities: Optional[dict]
-    topic_count: Optional[int]
-    topics: Optional[dict]
-
-
-class LoaderDocResponseModel(BaseModel):
-    docs: List[LoaderDocs] = []
-    message: Optional[str] = None
-
-
-class AiClassificationData(BaseModel):
-    entities: dict
-    topics: Optional[dict] = None
-
-
-class RetrievalResponse(BaseModel):
-    prompt: AiClassificationData
-    response: AiClassificationData
-
-
-class PromptResponseModel(BaseModel):
-    retrieval_data: Union[RetrievalResponse, None] = None
-    message: Optional[str] = None

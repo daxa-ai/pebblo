@@ -68,6 +68,7 @@ class TopicClassifier:
 
             topic_model_response = self.classifier(input_text)
             topics, total_count, topic_details = self._get_topics(topic_model_response)
+            logger.debug(f"Topics: {topics}")
             return topics, total_count, topic_details
         except Exception as e:
             logger.error(f"Error in topic_classifier. Exception: {e}")
