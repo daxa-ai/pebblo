@@ -150,6 +150,9 @@ def test_validate_config(setup_and_teardown):
         "classifier": {
             "anonymizeSnippets": True,
         },
+        "storage":{
+            "type": "file"
+        },
     }
     validate_config(config)
     # If the configuration is valid, validate_config should not raise any exceptions

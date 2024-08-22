@@ -27,6 +27,11 @@ class AppLoaderDoc:
         self.data = None
         self.app_name = None
 
+
+    def _initialize_data(self, data):
+        self.data = data
+        self.app_name = data.get("name")
+
     def _write_pdf_report(self, final_report):
         """
         Calling pdf report generator to write report in pdf format
@@ -118,8 +123,8 @@ class AppLoaderDoc:
         """
         This process is entrypoint function for loader doc API implementation.
         """
-        self.data = data
-        self.app_name = data.get("name")
+        self._initialize_data(data)
+
         try:
             logger.debug("Loader doc request processing started")
             logger.debug(f"Loader Doc, Application Name: {self.app_name}")
@@ -218,3 +223,4 @@ class AppLoaderDoc:
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=500
             )
+

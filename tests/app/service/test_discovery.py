@@ -56,7 +56,9 @@ data = {
 
 @pytest.fixture
 def discovery():
-    return AppDiscover(data)
+    app_obj = AppDiscover()
+    app_obj._initialize_data(data)
+    return app_obj
 
 
 @pytest.fixture
@@ -175,12 +177,9 @@ def test_create_ai_apps_model(discovery, mock_pebblo_server_version):
         }
     ]
     expected_output = {
-        "metadata": {
-            "createdAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
-            "modifiedAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
-        },
         "name": "pytest_app",
         "description": "",
+        "run_id": None,
         "owner": "Shreyas Damle",
         "pluginVersion": "0.1.1",
         "instanceDetails": {
