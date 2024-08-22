@@ -519,7 +519,7 @@ class AppData:
                 response = {}
                 if app_type == ApplicationTypes.LOADER.value:
                     loader_app_obj = LoaderApp()
-                    response = loader_app_obj.get_loader_app_details(app_dir)
+                    response = loader_app_obj.get_loader_app_details(self.db, app_dir)
                 elif app_type == ApplicationTypes.RETRIEVAL.value:
                     retriever_app_obj = RetrieverApp()
                     response = retriever_app_obj.get_retriever_app_details(
@@ -566,10 +566,12 @@ class AppData:
 
                 app_type = get_app_type(self.db, app_name)
                 if app_type == ApplicationTypes.LOADER.value:
-                    pass  # TODO: delete loader apps
+                    loader_app_obj = LoaderApp()
+                    loader_app_obj.delete_loader_app(self.db, app_name)
                 elif app_type == ApplicationTypes.RETRIEVAL.value:
                     retriever_app_obj = RetrieverApp()
                     retriever_app_obj.delete_retrieval_app(self.db, app_name)
+                self.db.session.commit()
                 message = f"Application {app_name} has been deleted."
                 response = {"message": message, "status_code": status.HTTP_200_OK}
             except Exception as ex:
@@ -584,13 +586,11 @@ class AppData:
                     "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
                 }
             else:
-                message = f"Ai Retriever app {app_name} deleted successfully"
+                message = f"Ai {app_type} app {app_name} deleted successfully"
                 logger.debug(message)
                 return response
             finally:
-                logger.debug(
-                    "Closing database session for preparing all retriever apps"
-                )
+                logger.debug("Closing database session for delete application")
                 # Closing the session
                 self.db.session.close()
 
