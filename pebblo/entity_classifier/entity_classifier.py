@@ -164,6 +164,8 @@ class EntityClassifier:
                 self.entities, entities_response
             )
             logger.debug("Presidio Entity Classifier and Anonymizer Finished")
+            logger.debug(f"Entities: {entities}")
+            logger.debug(f"Entity Total count: {total_count}")
             return entities, total_count, input_text, entity_details
         except Exception as e:
             logger.error(
