@@ -7,10 +7,10 @@ from pebblo.app.models.db_models import (
 )
 from pebblo.app.models.db_models import (
     Metadata,
-    PromptResponseModel,
     RetrievalContext,
     RetrievalData,
 )
+from pebblo.app.models.db_response_models import PromptResponseModel
 from pebblo.app.models.sqltables import AiAppTable, AiRetrievalTable, AiUser
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import timeit
