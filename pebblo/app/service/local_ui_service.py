@@ -404,14 +404,12 @@ class AppData:
                     total_prompt_with_findings=total_prompt_with_findings,
                 )
 
-                logger.info(f"retrieval_response {retrieval_response.__dict__}")
                 response.update(
                     {
                         "loaderApps": loader_response.dict(),
                         "retrievalApps": retrieval_response.dict(),
                     }
                 )
-                logger.debug(f"File Level Response: {response}")
                 return json.dumps(response, indent=4)
             except Exception as ex:
                 logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")

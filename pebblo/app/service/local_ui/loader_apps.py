@@ -247,7 +247,7 @@ class LoaderApp:
 
     def get_loader_app_details(self, db, app_name):
         try:
-            logger.debug(f"Loader App: {app_name}")
+            logger.debug(f"Getting loader app details, App: {app_name}")
             self.db = db
             filter_query = {"name": app_name}
             _, ai_loader_apps = self.db.query(

@@ -70,7 +70,6 @@ class AppDiscover:
         logger.debug("Creating App model object")
         # Initialize Variables
         current_time = get_current_time()
-        last_used = current_time
 
         metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
         client_version = FrameworkInfo(
@@ -84,7 +83,7 @@ class AppDiscover:
             "pluginVersion": self.data.get("plugin_version"),
             "instanceDetails": instance_details,
             "framework": self.data.get("framework"),
-            "lastUsed": last_used,
+            "lastUsed": current_time,
             "pebbloServerVersion": get_pebblo_server_version(),
             "pebbloClientVersion": self.data.get("plugin_version", ""),
             "clientVersion": client_version,
