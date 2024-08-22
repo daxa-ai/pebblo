@@ -39,6 +39,11 @@ class AppDiscover:
         self.data = None
         self.application_name = None
 
+    def _initialize_data(self, data):
+        self.data = data
+        self.application_name = data.get("name")
+        self.load_id = data.get("load_id", None)
+
     @staticmethod
     def _get_current_datetime():
         """
@@ -242,10 +247,7 @@ class AppDiscover:
         """
         Process App discovery Request. This handles discovery for loader as well as retrieval type applications.
         """
-        self.data = data
-        self.application_name = data.get("name")
-        self.load_id = data.get("load_id", None)
-
+        self._initialize_data(data)
         lock_file_path = ""
         chain_details = []
         retrievals_details = []

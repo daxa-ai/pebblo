@@ -35,6 +35,10 @@ class Prompt:
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 
+    def _initialize_data(self, data):
+        self.data = data
+        self.app_name = data.get("name")
+
     def _fetch_classified_data(self, input_data, input_type=""):
         """
         Retrieve input data and return its corresponding model object with classification.
@@ -139,8 +143,7 @@ class Prompt:
         """
         Process Prompt Request
         """
-        self.data = data
-        self.application_name = self.data.get("name")
+        self._initialize_data(data)
         try:
             logger.debug("AI App prompt request processing started")
 
