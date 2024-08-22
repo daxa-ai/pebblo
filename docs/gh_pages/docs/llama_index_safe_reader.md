@@ -1,8 +1,8 @@
 # Pebblo Safe DataReader for LlamaIndex
 
-This document describes how to augment your existing Llama DocumentReader with Pebblo Safe DocumentReader to get deep data visibility on the types of Topics and Entities ingested into the Gen-AI LlamaIndex application. For details on `Pebblo Daemon` see this [pebblo server](daemon.md) document.
+This document describes how to augment your existing LlamaIndex DocumentReader with Pebblo Safe DocumentReader to get deep data visibility on the types of Topics and Entities ingested into the Gen-AI LlamaIndex application. For details on `Pebblo Daemon` see this [pebblo server](daemon.md) document.
 
-Pebblo Safe DocumentReader enables safe data ingestion for Llama `DocumentReader`. This is done by wrapping the document reader call with `Pebblo Safe DocumentReader`
+Pebblo Safe DocumentReader enables safe data ingestion for LlamaIndex `DocumentReader`. This is done by wrapping the document reader call with `Pebblo Safe DocumentReader`
 
 ## How to Pebblo enable Document Reading?
 
