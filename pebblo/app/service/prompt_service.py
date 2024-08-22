@@ -35,7 +35,6 @@ class Prompt:
         self.entity_classifier_obj = EntityClassifier()
         self.topic_classifier_obj = TopicClassifier()
 
-
     def _initialize_data(self, data):
         self.data = data
         self.app_name = data.get("name")

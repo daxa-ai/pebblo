@@ -39,7 +39,7 @@ class AppDiscover:
         self.data = None
         self.application_name = None
 
-    def _initialize_data(self,data):
+    def _initialize_data(self, data):
         self.data = data
         self.application_name = data.get("name")
         self.load_id = data.get("load_id", None)

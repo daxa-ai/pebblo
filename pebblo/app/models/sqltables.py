@@ -1,5 +1,6 @@
 from sqlalchemy import JSON, Column, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
+
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import StorageTypes
 from pebblo.app.enums.enums import CacheDir
@@ -8,6 +9,7 @@ from pebblo.app.utils.utils import get_full_path
 Base = declarative_base()
 
 config_details = var_server_config_dict.get()
+
 
 class AiAppTable(Base):
     __tablename__ = "aiapp"
@@ -58,9 +60,7 @@ class AiUser(Base):
     data = Column(JSON)
 
 
-storage_type = config_details.get("storage", {}).get(
-            "type", StorageTypes.FILE.value
-        )
+storage_type = config_details.get("storage", {}).get("type", StorageTypes.FILE.value)
 
 if storage_type == StorageTypes.DATABASE.value:
     # Create an engine that stores data in the local directory's my_database.db file.

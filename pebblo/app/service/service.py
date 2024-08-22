@@ -27,7 +27,6 @@ class AppLoaderDoc:
         self.data = None
         self.app_name = None
 
-
     def _initialize_data(self, data):
         self.data = data
         self.app_name = data.get("name")
@@ -223,4 +222,3 @@ class AppLoaderDoc:
             return PebbloJsonResponse.build(
                 body=response.dict(exclude_none=True), status_code=500
             )
-
