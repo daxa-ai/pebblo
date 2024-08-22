@@ -1,4 +1,8 @@
-from pebblo.app.enums.enums import ApplicationTypes, ClassifierConstants
+import json
+from datetime import datetime
+from os import makedirs, path
+
+from pebblo.app.enums.enums import ApplicationTypes, CacheDir, ClassifierConstants
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiDataModel,
@@ -12,10 +16,12 @@ from pebblo.app.models.sqltables import (
 )
 from pebblo.app.service.discovery.common import get_or_create_app
 from pebblo.app.service.loader.document.document import AiDocumentHandler
+from pebblo.app.service.local_ui.loader_apps import LoaderApp
 from pebblo.app.storage.sqlite_db import SQLiteClient
-from pebblo.app.utils.utils import get_current_time, timeit
+from pebblo.app.utils.utils import get_current_time, get_full_path, timeit
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.log import get_logger
+from pebblo.reports.reports import Reports
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 logger = get_logger(__name__)
@@ -37,6 +43,68 @@ class AppLoaderDoc:
         return PebbloJsonResponse.build(
             body=response.dict(exclude_none=True), status_code=status_code
         )
+
+    def _pdf_writer(self, file_path, data):
+        try:
+            report_obj = Reports()
+            report_format = CacheDir.FORMAT.value
+            renderer = CacheDir.RENDERER.value
+
+            full_file_path = get_full_path(file_path)
+
+            # Create parent directories if needed
+            dir_path = path.dirname(full_file_path)
+            makedirs(dir_path, exist_ok=True)
+
+            status, result = report_obj.generate_report(
+                data=data,
+                output_path=full_file_path,
+                format_string=report_format,
+                renderer=renderer,
+            )
+            if status:
+                logger.info(
+                    f"PDF report generated, please check path : {full_file_path}"
+                )
+            else:
+                raise Exception(result)
+        except Exception as err:
+            message = f"PDF report is not generated. Error: {err}"
+            logger.error(message)
+            raise Exception(message)
+
+    @staticmethod
+    def _datetime_decoder(dct):
+        for key, value in dct.items():
+            if isinstance(value, str):
+                try:
+                    # Attempt to parse the date string
+                    dct[key] = datetime.strptime(value, "%Y-%m-%d %H:%M:%S.%f")
+                except (ValueError, TypeError):
+                    # If it fails, print the error and leave the value as is
+                    pass
+        return dct
+
+    def _write_pdf_report(self, db, app_name, load_id):
+        """
+        Calling PDF report generator to write a report in PDF format
+        """
+        try:
+            logger.debug("Generating report in pdf format")
+            logger.debug(f"Fetching report data for app: {app_name}")
+            loader_report = LoaderApp()
+            report_data = loader_report.get_loader_app_details(db, app_name)
+            final_report = json.loads(report_data, object_hook=self._datetime_decoder)
+
+            # Writing a PDF report to app directory
+            app_report_file_path = f"{CacheDir.HOME_DIR.value}/{app_name}/{CacheDir.REPORT_FILE_NAME.value}"
+            self._pdf_writer(app_report_file_path, final_report)
+
+            # Writing a PDF report to current load id directory
+            current_load_report_file_path = f"{CacheDir.HOME_DIR.value}/{app_name}/{load_id}/{CacheDir.REPORT_FILE_NAME.value}"
+            self._pdf_writer(current_load_report_file_path, final_report)
+        except Exception as err:
+            raise Exception(err)
 
     @timeit
     def _update_loader_details(self, app_loader_details):
@@ -166,8 +234,6 @@ class AppLoaderDoc:
         if status and output:
             logger.debug("Data Source details are already existed.")
             data = output.data
-            if data["loader"] == loader_details.get("loader"):
-                logger.debug("Same loader details")
             return data
 
         # Data Source details are not present, Creating data source details
@@ -223,6 +289,12 @@ class AppLoaderDoc:
                 app_loader_details=loader_obj.data, data_source=data_source
             )
             self.db.update_data(loader_obj, app_loader_details)
+
+            if self.data["loading_end"]:
+                # Get report data & Write PDF report
+                self._write_pdf_report(
+                    self.db, app_loader_details["name"], app_loader_details["id"]
+                )
 
         except Exception as err:
             message = f"Loader Doc API Request failed, Error: {err}"

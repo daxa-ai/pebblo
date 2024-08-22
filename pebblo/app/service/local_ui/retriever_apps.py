@@ -321,7 +321,7 @@ class RetrieverApp:
         :return:  sorted retrievals list
         """
         sorted_data = sorted(
-            retrievals, key=lambda item: len(item["retrievals"]), reverse=True
+            retrievals, key=lambda item: len(item.get("retrievals", [])), reverse=True
         )
         return sorted_data
 
@@ -332,7 +332,7 @@ class RetrieverApp:
         :param retrieval: retrievals list
         :return: sorted retrievals list
         """
-        sorted_data = sorted(retrieval, key=lambda x: x["promptTime"])
+        sorted_data = sorted(retrieval, key=lambda x: x.get("prompt_time", []))
         return sorted_data
 
     def get_all_vector_dbs(self, retrieval_data: list) -> dict:

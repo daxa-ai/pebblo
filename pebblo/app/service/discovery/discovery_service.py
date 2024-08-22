@@ -1,5 +1,4 @@
 # Discovery API with database implementation.
-from datetime import datetime
 
 from pebblo.app.enums.enums import ApplicationTypes
 from pebblo.app.libs.responses import PebbloJsonResponse
@@ -17,7 +16,7 @@ from pebblo.app.models.models import DiscoverAIAppsResponseModel
 from pebblo.app.models.sqltables import AiAppTable, AiDataLoaderTable
 from pebblo.app.service.discovery.common import get_or_create_app
 from pebblo.app.storage.sqlite_db import SQLiteClient
-from pebblo.app.utils.utils import get_pebblo_server_version, timeit
+from pebblo.app.utils.utils import get_current_time, get_pebblo_server_version, timeit
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
@@ -28,13 +27,6 @@ class AppDiscover:
         self.db = None
         self.data = None
         self.app_name = None
-
-    @staticmethod
-    def _get_current_datetime():
-        """
-        Return current datetime
-        """
-        return datetime.now().isoformat()
 
     @staticmethod
     def return_response(message, status_code, pebblo_server_version=None):
@@ -64,7 +56,7 @@ class AppDiscover:
             platform=runtime_dict.get("platform"),
             os=runtime_dict.get("os"),
             osVersion=runtime_dict.get("os_version"),
-            createdAt=self._get_current_datetime(),
+            createdAt=get_current_time(),
         )
         logger.debug(f"AiApp Name [{self.app_name}]")
         return instance_details_model
@@ -77,8 +69,7 @@ class AppDiscover:
         """
         logger.debug("Creating App model object")
         # Initialize Variables
-        current_time = self._get_current_datetime()
-        last_used = current_time
+        current_time = get_current_time()
 
         metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
         client_version = FrameworkInfo(
@@ -92,7 +83,7 @@ class AppDiscover:
             "pluginVersion": self.data.get("plugin_version"),
             "instanceDetails": instance_details,
             "framework": self.data.get("framework"),
-            "lastUsed": last_used,
+            "lastUsed": current_time,
             "pebbloServerVersion": get_pebblo_server_version(),
             "pebbloClientVersion": self.data.get("plugin_version", ""),
             "clientVersion": client_version,

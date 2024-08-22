@@ -404,14 +404,12 @@ class AppData:
                     total_prompt_with_findings=total_prompt_with_findings,
                 )
 
-                logger.info(f"retrieval_response {retrieval_response.__dict__}")
                 response.update(
                     {
                         "loaderApps": loader_response.dict(),
                         "retrievalApps": retrieval_response.dict(),
                     }
                 )
-                logger.debug(f"File Level Response: {response}")
                 return json.dumps(response, indent=4)
             except Exception as ex:
                 logger.error(f"[Dashboard]: Error in app listing. Error:{ex}")
@@ -519,7 +517,7 @@ class AppData:
                 response = {}
                 if app_type == ApplicationTypes.LOADER.value:
                     loader_app_obj = LoaderApp()
-                    response = loader_app_obj.get_loader_app_details(app_dir)
+                    response = loader_app_obj.get_loader_app_details(self.db, app_dir)
                 elif app_type == ApplicationTypes.RETRIEVAL.value:
                     retriever_app_obj = RetrieverApp()
                     response = retriever_app_obj.get_retriever_app_details(
@@ -566,12 +564,11 @@ class AppData:
 
                 app_type = get_app_type(self.db, app_name)
                 if app_type == ApplicationTypes.LOADER.value:
-                    pass  # TODO: delete loader apps
+                    loader_app_obj = LoaderApp()
+                    loader_app_obj.delete_loader_app(self.db, app_name)
                 elif app_type == ApplicationTypes.RETRIEVAL.value:
                     retriever_app_obj = RetrieverApp()
                     retriever_app_obj.delete_retrieval_app(self.db, app_name)
-                message = f"Application {app_name} has been deleted."
-                response = {"message": message, "status_code": status.HTTP_200_OK}
             except Exception as ex:
                 error_message = (
                     f"[Delete App]: Error in delete application. Error: {ex}"
@@ -584,13 +581,13 @@ class AppData:
                     "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
                 }
             else:
-                message = f"Ai Retriever app {app_name} deleted successfully"
+                self.db.session.commit()
+                message = f"Application {app_name} has been deleted."
+                response = {"message": message, "status_code": status.HTTP_200_OK}
                 logger.debug(message)
                 return response
             finally:
-                logger.debug(
-                    "Closing database session for preparing all retriever apps"
-                )
+                logger.debug("Closing database session for delete application")
                 # Closing the session
                 self.db.session.close()
 
@@ -605,7 +602,7 @@ class AppData:
             logger.debug(f"[App Details]: Report File path: {app_detail_path}")
             app_detail_json = read_json_file(app_detail_path)
             if app_detail_json:
-                # If report is found, proceed with this load_id
+                # If a report is found, proceed with this load_id
                 latest_load_id = load_id
                 return latest_load_id, app_detail_json
 

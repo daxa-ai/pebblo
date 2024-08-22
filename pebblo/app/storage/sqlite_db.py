@@ -38,8 +38,10 @@ class SQLiteClient(Database):
             for obj in entry_obj:
                 self.session.delete(obj)
                 logger.info(f"Entry deleted from {type(obj).__name__} table")
+            return True
         except Exception as err:
             logger.error(f"Failed in fetching data, Error: {err}")
+            return False
 
     @timeit
     def insert_data(self, table_obj, data, **kwargs):

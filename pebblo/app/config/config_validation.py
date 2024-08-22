@@ -3,6 +3,8 @@ import os
 import sys
 from abc import ABC, abstractmethod
 
+from pebblo.app.enums.common import DBStorageTypes, StorageTypes
+
 
 class ConfigValidator(ABC):
     def __init__(self, config):
@@ -45,7 +47,7 @@ class LoggingConfig(ConfigValidator):
 class StorageConfig(ConfigValidator):
     def validate(self):
         storage_type = self.config.get("type")
-        valid_storage_types = ["file", "db"]
+        valid_storage_types = [storage_type.value for storage_type in StorageTypes]
         if storage_type not in valid_storage_types:
             self.errors.append(
                 f"Error: Unsupported storage type '{storage_type}' specified in the configuration."
@@ -53,16 +55,16 @@ class StorageConfig(ConfigValidator):
             )
 
         # Set deprecated warning message for file storage type
-        if storage_type == "file":
-            deprecate_error = "DeprecationWarning: 'File' Storage Type will be deprecated starting from Pebblo version 0.0.19, use 'DB' instead"
+        if storage_type == StorageTypes.FILE.value:
+            deprecate_error = f"DeprecationWarning: '{storage_type}' Storage Type will be deprecated starting from Pebblo version 0.0.19, use '{StorageTypes.DATABASE.value}' instead"
             print(deprecate_error)
 
-        if storage_type == "db":
+        if storage_type == StorageTypes.DATABASE.value:
             db_type = self.config.get("db")
             default_location = self.config.get("location")
             db_name = self.config.get("name")
 
-            valid_db_types = ["sqlite"]
+            valid_db_types = [storage_type.value for storage_type in DBStorageTypes]
             if db_type not in valid_db_types:
                 self.errors.append(
                     f"Error: Unsupported db type '{db_type}' specified in the configuration."
