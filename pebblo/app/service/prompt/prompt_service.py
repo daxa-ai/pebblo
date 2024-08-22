@@ -87,9 +87,9 @@ class Prompt:
             prompt=self.data.get("prompt"),
             response=self.data.get("response"),
             context=context_data,
-            prompt_time=self.data.get("prompt_time"),
+            promptTime=self.data.get("prompt_time"),
             user=self.data.get("user"),
-            linked_groups=self.data.get("user_identities"),
+            linkedGroups=self.data.get("user_identities"),
         )
         logger.debug(f"AiApp Name: [{self.app_name}]")
         return retrieval_data_model

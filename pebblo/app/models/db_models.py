@@ -106,10 +106,10 @@ class RetrievalData(BaseModel):
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]
-    prompt_time: str
+    promptTime: str
     user: str
     userId: Optional[str]
-    linked_groups: list[str] = []
+    linkedGroups: list[str] = []
 
 
 class AiUser(BaseModel):
@@ -124,7 +124,7 @@ class AiUser(BaseModel):
 
 class AiApp(AiBaseApp):
     chains: Optional[List[Chain]] = []
-    retrievals: Optional[List[RetrievalData]] = []
+    retrievals: Optional[list] = []
     entities: Optional[Dict] = {}
     topics: Optional[Dict] = {}
     documents: Optional[List[str]] = []  # list of doc ids, TODO: need confirmation
@@ -190,36 +190,3 @@ class AiSnippet(BaseModel):
     topics: dict
     policyViolations: Optional[List[dict]] = []
     # label_feedback: Optional[List[LabelFeedback]] = []
-
-
-class RetrievalAppDetails(BaseModel):
-    name: str
-    description: Optional[str]
-    framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    instanceDetails: Optional[InstanceDetails]
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
-    clientVersion: Optional[dict]
-    total_prompt_with_findings: int = 0
-    retrievals: list[RetrievalData] = []
-    activeUsers: dict = {}
-    vectorDbs: dict = {}
-    documents: dict = {}
-
-
-class RetrievalAppListDetails(BaseModel):
-    name: str = ""
-    owner: str = ""
-    retrievals: list[RetrievalData] = []
-    active_users: list[str] = []
-    vector_dbs: list[str] = []
-    documents: list[str] = []
-
-
-class RetrievalAppList(BaseModel):
-    appList: list = []
-    retrievals: list = []
-    activeUsers: dict = {}
-    violations: list = []
-    promptDetails: list = []
-    total_prompt_with_findings: int = 0

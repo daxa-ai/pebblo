@@ -9,7 +9,7 @@ from dateutil import parser
 from fastapi import status
 
 from pebblo.app.config.config import var_server_config_dict
-from pebblo.app.models.db_models import (
+from pebblo.app.models.db_response_models import (
     RetrievalAppDetails,
     RetrievalAppList,
     RetrievalAppListDetails,
@@ -174,9 +174,9 @@ class RetrieverApp:
             accessed_time = []
             user_groups = []
             for data in user_data:
-                accessed_time.append(parser.parse(data.get("prompt_time")))
-                if data.get("linked_groups"):
-                    user_groups.extend(data.get("linked_groups"))
+                accessed_time.append(parser.parse(data.get("promptTime")))
+                if data.get("linkedGroups"):
+                    user_groups.extend(data.get("linkedGroups"))
             response[user_name] = {
                 "retrievals": user_data,
                 "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
@@ -256,7 +256,7 @@ class RetrieverApp:
         for user_name, user_data in sorted_document.items():
             accessed_time = []
             for data in user_data:
-                accessed_time.append(parser.parse(data.get("prompt_time")))
+                accessed_time.append(parser.parse(data.get("promptTime")))
             response[user_name] = {
                 "retrievals": user_data,
                 "last_accessed_time": self.fetch_last_accessed_time(accessed_time),
@@ -332,7 +332,7 @@ class RetrieverApp:
         :param retrieval: retrievals list
         :return: sorted retrievals list
         """
-        sorted_data = sorted(retrieval, key=lambda x: x["prompt_time"])
+        sorted_data = sorted(retrieval, key=lambda x: x["promptTime"])
         return sorted_data
 
     def get_all_vector_dbs(self, retrieval_data: list) -> dict:
@@ -494,9 +494,9 @@ class RetrieverApp:
                         "prompt": retrieval_obj.get("prompt", {}),
                         "response": retrieval_obj.get("response", {}),
                         "context": retrieval_obj.get("context", []),
-                        "prompt_time": retrieval_obj.get("prompt_time", None),
+                        "promptTime": retrieval_obj.get("promptTime", None),
                         "user": retrieval_obj.get("user", ""),
-                        "linked_groups": retrieval_obj.get("linked_groups", []),
+                        "linkedGroups": retrieval_obj.get("linkedGroups", []),
                     }
                     retrieval_data.append(data)
 
@@ -558,28 +558,11 @@ class RetrieverApp:
             message = f"Application {app_name} has been deleted."
             logger.info(message)
             result = {"message": message, "status_code": status.HTTP_200_OK}
-        except FileNotFoundError:
-            message = f"Application {app_name} does not exist."
-            logger.exception(message)
-            # Getting error, We are rollback everything we did in this run.
-            db.session.rollback()
-        except PermissionError:
-            message = f"Permission denied: Unable to delete application {app_name}."
-            logger.exception(message)
-            # Getting error, We are rollback everything we did in this run.
-            db.session.rollback()
         except Exception as e:
             message = f"Unable to delete application {app_name}, Error: {e}"
             logger.exception(message)
-            # Getting error, We are rollback everything we did in this run.
-            db.session.rollback()
         else:
             # Commit will only happen when everything went well.
             message = "App deletion processed Successfully"
             logger.debug(message)
-            db.session.commit()
             return result
-        finally:
-            logger.debug("Closing database session.")
-            # Closing the session
-            db.session.close()
