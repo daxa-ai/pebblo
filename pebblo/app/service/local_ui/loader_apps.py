@@ -88,9 +88,7 @@ class LoaderApp:
                         "findingsType": "entities",
                         "snippetCount": len(entity_data["snippetIds"]),
                         "fileCount": len(app_data["documents"]),
-                        "snippets": self._get_snippet_details(
-                            entity_data["snippetIds"]
-                        ),
+                        "snippets": self._get_snippet_details(entity_data["snippetIds"]),
                     }
                     total_snippet_count += findings["snippetCount"]
                     shallow_copy = findings.copy()
