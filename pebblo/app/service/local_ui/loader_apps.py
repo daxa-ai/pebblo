@@ -199,6 +199,8 @@ class LoaderApp:
                 "loader_data_source_list": [],
                 "loader_document_with_findings_list": [],
                 "loader_findings_summary_list": [],
+                "loader_files_with_findings_count": 0,
+                "loader_data_source_count": 0
             }
         return var_keys
 
@@ -385,7 +387,6 @@ class LoaderApp:
         load_history["history"] = list()
         load_history["moreReportsPath"] = "-"
         if len(all_loader_apps) <= 1:
-            logger.info("Len is Less than 2")
             return load_history
 
         load_history_limit = ReportConstants.LOADER_HISTORY__LIMIT.value + 1
@@ -439,7 +440,6 @@ class LoaderApp:
         # Generating DataSource
         data_source_obj_list = self._get_data_source_details(app_data, raw_data)
 
-        # TODO: Retrieve LoadHistory From previous executions
         load_history = self._get_load_history(app_data["name"],
                                               all_loader_app)
         report_dict = ReportModel(
@@ -453,7 +453,7 @@ class LoaderApp:
             dataSources=data_source_obj_list,
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=app_data.get("pluginVersion", ""),
-            clientVersion=app_data.get("clientVersion", {}),
+            clientVersion=app_data.get("clientVersion", None),
         )
         return report_dict.dict()
 
