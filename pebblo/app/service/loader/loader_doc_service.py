@@ -300,8 +300,8 @@ class AppLoaderDoc:
             for doc in docs:
                 doc_obj = LoaderDocs(
                     pb_id=doc["pb_id"],
-                    pb_checksum=hashlib.md5(doc["doc"].encode()).hexdigest(),
-                    source_path=doc["source_path_size"],
+                    pb_checksum=hashlib.md5(doc.get("doc", "").encode()).hexdigest(),
+                    source_path=doc.get("source_path"),
                     loader_source_path=loader_details.get("source_path"),
                     entity_count=sum(doc.get("entities", {}).values()),
                     topic_count=sum(doc.get("topics", {}).values()),
