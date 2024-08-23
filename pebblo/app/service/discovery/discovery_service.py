@@ -244,8 +244,11 @@ class AppDiscover:
             logger.debug(message)
             self.db.session.commit()
 
-            return self.return_response(message=message, status_code=200,
-                                        pebblo_server_version=ai_app.get("pebbloServerVersion"))
+            return self.return_response(
+                message=message,
+                status_code=200,
+                pebblo_server_version=ai_app.get("pebbloServerVersion"),
+            )
         finally:
             logger.debug("Closing database session.")
             # Closing the session
