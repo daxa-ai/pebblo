@@ -394,11 +394,11 @@ class RetrieverApp:
 
             _, ai_retriever_apps = self.db.query(table_obj=AiAppTable)
             all_retrieval_apps: list = []
-            prompt_details: dict = {}
             total_prompt_with_findings = 0
             final_prompt_details = []
 
             for retriever_app in ai_retriever_apps:
+                prompt_details: dict = {}
                 (
                     retrieval_app,
                     prompt_details,
