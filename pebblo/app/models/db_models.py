@@ -185,3 +185,71 @@ class AiSnippet(BaseModel):
     topics: dict
     policyViolations: Optional[List[dict]] = []
     # label_feedback: Optional[List[LabelFeedback]] = []
+
+class Summary(BaseModel):
+    findings: int
+    findingsEntities: int
+    findingsTopics: int
+    totalFiles: int
+    filesWithFindings: int
+    dataSources: int
+    owner: str
+    createdAt: str
+
+class LoadHistory(BaseModel):
+    loadId: str
+    reportName: str
+    findings: int
+    filesWithFindings: int
+    generatedOn: str
+
+
+class DataSource(BaseModel):
+    name: str
+    sourcePath: str
+    sourceType: str
+    sourceSize: int
+    totalSnippetCount: int
+    displayedSnippetCount: int
+    findingsSummary: list
+    findingsDetails: Optional[list]
+    # snippets: Optional[List[Snippets]]
+
+class TopFindings(BaseModel):
+    fileName: str
+    fileOwner: str
+    sourceSize: int
+    findingsEntities: int
+    findingsTopics: int
+    findings: int
+    authorizedIdentities: list
+
+class LoaderAppListDetails(BaseModel):
+    name: str
+    topics: int
+    entities: int
+    owner: Optional[str]
+    loadId: Optional[str]
+
+class LoaderAppModel(BaseModel):
+    applicationsAtRiskCount: int
+    findingsCount: int
+    documentsWithFindingsCount: int
+    dataSourceCount: int
+    appList: List[LoaderAppListDetails]
+    findings: list
+    documentsWithFindings: list
+    dataSource: list
+
+class ReportModel(BaseModel):
+    name: str
+    description: Optional[str]
+    framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
+    reportSummary: Optional[Summary]
+    loadHistory: Optional[dict]
+    topFindings: Optional[List[TopFindings]]
+    instanceDetails: Optional[InstanceDetails]
+    dataSources: Optional[List[DataSource]]
+    pebbloServerVersion: Optional[str]
+    pebbloClientVersion: Optional[str]
+    clientVersion: Optional[dict]
