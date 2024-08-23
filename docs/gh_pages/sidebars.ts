@@ -52,20 +52,30 @@ const sidebars: SidebarsConfig = {
       ],
     },
     {
-      type: "doc",
-      id: "rag", // document ID
-      label: "Safe DataLoader for Langchain", // sidebar label
-    },
-    {
-      type: "doc",
-      id: "retrieval_chain", // document ID
-      label: "Safe Retriever for Langchain", // sidebar label
+      type: "category",
+      label: "LangChain",
+      items: [
+        {
+          type: "doc",
+          id: "rag", // document ID
+          label: "Safe DataLoader", // sidebar label
+        },
+        {
+          type: "doc",
+          id: "retrieval_chain", // document ID
+          label: "Safe Retriever", // sidebar label
+        },
+      ],
     },
     {
       type: "category",
       label: "LlamaIndex", // sidebar label
       items: [
-        { type: "doc", label: "Safe DataReader", id: "llama_index_safe_reader" },
+        {
+          type: "doc",
+          label: "Safe DataReader",
+          id: "llama_index_safe_reader",
+        },
       ],
     },
     {
@@ -74,31 +84,31 @@ const sidebars: SidebarsConfig = {
       label: "Reports", // sidebar label
     },
     {
-        type: "category",
-        label: "Samples", // sidebar label
-        items: [
+      type: "category",
+      label: "Samples", // sidebar label
+      items: [
+        {
+          type: "category",
+          label: "Safe Loader Samples",
+          items: [
             {
-              type: "category",
-              label: "Safe Loader Samples",
-              items: [
-                {
-                  type: "link",
-                  label: "1. Google Drive-Qdrant Safe Loader Sample",
-                  href: "https://github.com/daxa-ai/pebblo/tree/main/pebblo_safeloader/langchain/identity-rag",
-                },
-                {
-                  type: "link",
-                  label: "2. CSV Loader-Chroma Safe Loader Sample",
-                  href: "https://github.com/daxa-ai/pebblo/tree/main/pebblo_safeloader/langchain/acme-corp-rag",
-                },
-              ],
+              type: "link",
+              label: "1. Google Drive-Qdrant Safe Loader Sample",
+              href: "https://github.com/daxa-ai/pebblo/tree/main/pebblo_safeloader/langchain/identity-rag",
             },
             {
-              type: "doc",
-              label: "Safe Retriever Samples",
-              id: "safe_retriever_samples",
-            }
-        ]
+              type: "link",
+              label: "2. CSV Loader-Chroma Safe Loader Sample",
+              href: "https://github.com/daxa-ai/pebblo/tree/main/pebblo_safeloader/langchain/acme-corp-rag",
+            },
+          ],
+        },
+        {
+          type: "doc",
+          label: "Safe Retriever Samples",
+          id: "safe_retriever_samples",
+        },
+      ],
     },
     {
       type: "doc",
