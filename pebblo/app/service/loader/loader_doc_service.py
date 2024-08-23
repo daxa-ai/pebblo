@@ -1,3 +1,4 @@
+import hashlib
 import json
 from datetime import datetime
 from os import makedirs, path
@@ -9,7 +10,7 @@ from pebblo.app.models.db_models import (
     AiDataSource,
     LoaderMetadata,
 )
-from pebblo.app.models.db_response_models import LoaderDocResponseModel
+from pebblo.app.models.db_response_models import LoaderDocResponseModel, LoaderDocs
 from pebblo.app.models.sqltables import (
     AiDataLoaderTable,
     AiDataSourceTable,
@@ -38,8 +39,10 @@ class AppLoaderDoc:
         self.entity_classifier_obj = EntityClassifier()
 
     @staticmethod
-    def _create_return_response(message, status_code=200):
-        response = LoaderDocResponseModel(docs=[], message=message)
+    def _create_return_response(message, output=None, status_code=200):
+        if output is None:
+            output = []
+        response = LoaderDocResponseModel(docs=output, message=message)
         return PebbloJsonResponse.build(
             body=response.dict(exclude_none=True), status_code=status_code
         )
@@ -290,6 +293,23 @@ class AppLoaderDoc:
             )
             self.db.update_data(loader_obj, app_loader_details)
 
+            # Creating loader response
+            loader_details = self.data.get("loader_details", {})
+            docs = self.data.get("docs", [])
+            loader_response_output = []
+            for doc in docs:
+                doc_obj = LoaderDocs(
+                    pb_id=doc["pb_id"],
+                    pb_checksum=hashlib.md5(doc["doc"].encode()).hexdigest(),
+                    source_path=doc["source_path_size"],
+                    loader_source_path=loader_details.get("source_path"),
+                    entity_count=sum(doc.get("entities", {}).values()),
+                    topic_count=sum(doc.get("topics", {}).values()),
+                    entities=doc.get("entities"),
+                    topics=doc.get("topics"),
+                )
+                loader_response_output.append(doc_obj)
+
             if self.data["loading_end"]:
                 # Get report data & Write PDF report
                 self._write_pdf_report(
@@ -306,6 +326,6 @@ class AppLoaderDoc:
             self.db.session.commit()
 
             message = "Loader Doc API Request processed successfully"
-            return self._create_return_response(message)
+            return self._create_return_response(message, output=loader_response_output)
         finally:
             self.db.session.close()
