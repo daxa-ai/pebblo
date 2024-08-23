@@ -240,6 +240,28 @@ class LoaderHelper:
         self.app_details["report_metadata"] = raw_data
 
     @staticmethod
+    def _create_data_source_findings(data_source_findings):
+        for data in data_source_findings:
+            for snippet in data.get("snippets"):
+                entity_details = {}
+                topic_details = {}
+                if data["labelName"] in snippet.get("entityDetails").keys():
+                    entity_details = {
+                        data["labelName"]: snippet.get("entityDetails")[
+                            data["labelName"]
+                        ]
+                    }
+                elif data["labelName"] in snippet.get("topicDetails").keys():
+                    topic_details = {
+                        data["labelName"]: snippet.get("topicDetails")[
+                            data["labelName"]
+                        ]
+                    }
+                snippet["entityDetails"] = entity_details
+                snippet["topicDetails"] = topic_details
+        return data_source_findings
+
+    @staticmethod
     def _get_finding_details(doc, data_source_findings, entity_type, raw_data):
         """
         Retrieve finding details from data source
@@ -335,6 +357,10 @@ class LoaderHelper:
 
             # Create data source findings summary from data source findings
             data_source_findings_summary = self._create_data_source_findings_summary(
+                data_source_findings
+            )
+
+            data_source_findings = self._create_data_source_findings(
                 data_source_findings
             )
 
