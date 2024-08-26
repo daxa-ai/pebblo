@@ -310,7 +310,10 @@ class AppLoaderDoc:
                 )
                 loader_response_output.append(doc_obj)
 
-            if self.data["loading_end"]:
+            # Commit before generating report, so that even if report generation fails then values would be in db.
+            self.db.session.commit()
+
+            if self.data.get("loading_end"):
                 # Get report data & Write PDF report
                 self._write_pdf_report(
                     self.db, app_loader_details["name"], app_loader_details["id"]
@@ -323,8 +326,6 @@ class AppLoaderDoc:
             self.db.session.rollback()
             return self._create_return_response(message, 500)
         else:
-            self.db.session.commit()
-
             message = "Loader Doc API Request processed successfully"
             return self._create_return_response(message, output=loader_response_output)
         finally:
