@@ -77,7 +77,11 @@ class SQLiteClient(Database):
                 )
                 query_conditions.append(text(condition_str))
 
-            query = self.session.query(table_obj).filter(and_(*query_conditions))
+            query = (
+                self.session.query(table_obj)
+                .filter(and_(*query_conditions))
+                .order_by(table_obj.id.desc())
+            )
             output = query.all()
             # Return the results
             return True, output
