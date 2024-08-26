@@ -313,7 +313,7 @@ class AppLoaderDoc:
             # Commit before generating report, so that even if report generation fails then values would be in db.
             self.db.session.commit()
 
-            if self.data.get("loading_end", False):
+            if self.data.get("loading_end"):
                 # Get report data & Write PDF report
                 self._write_pdf_report(
                     self.db, app_loader_details["name"], app_loader_details["id"]

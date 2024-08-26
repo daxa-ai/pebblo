@@ -210,9 +210,7 @@ class LoaderApp:
             all_loader_apps: list = []
             for loader_app in ai_loader_apps:
                 app_data = loader_app.data
-                if app_data.get("docEntities") not in [None, {}] or app_data.get(
-                    "docTopics"
-                ) not in [None, {}]:
+                if app_data.get("docEntities") or app_data.get("docTopics"):
                     if app_data["name"] in app_processed:
                         # This app is already processed with the latest loadId, skipping older one's
                         continue
