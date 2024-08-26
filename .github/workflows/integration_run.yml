@@ -87,8 +87,18 @@ jobs:
             echo "Unexpected issue detected at running sample app."
             cat /tmp/logs/pebblo.log
             exit 1 
-          fi
+          fi 
+
       - name: Upload Pebblo Report File
         run: |
-           cd /home/runner/.pebblo/Pebblo_Automation_Testing_CSVLoader
+           cd /home/runner/.pebblo/Pebblo_Automation_Testing_CSVLoader  
            curl -F file=@pebblo_report.pdf https://slack.com/api/files.upload -H "Authorization: Bearer $SLACK_TOKEN" -F channels=$SLACK_CH -F "initial_comment=Pebblo Nightly Report"
+
+      - name: Report Status if test case or build failure
+        if: always()
+        uses: ravsamhq/notify-slack-action@master
+        with:
+          status: ${{ job.status }}
+          notify_when: 'failure'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_SECRET }}            
