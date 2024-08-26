@@ -186,6 +186,7 @@ class AiSnippet(BaseModel):
     policyViolations: Optional[List[dict]] = []
     # label_feedback: Optional[List[LabelFeedback]] = []
 
+
 class Summary(BaseModel):
     findings: int
     findingsEntities: int
@@ -195,6 +196,7 @@ class Summary(BaseModel):
     dataSources: int
     owner: str
     createdAt: str
+
 
 class LoadHistory(BaseModel):
     loadId: str
@@ -215,6 +217,7 @@ class DataSource(BaseModel):
     findingsDetails: Optional[list]
     # snippets: Optional[List[Snippets]]
 
+
 class TopFindings(BaseModel):
     fileName: str
     fileOwner: str
@@ -224,12 +227,14 @@ class TopFindings(BaseModel):
     findings: int
     authorizedIdentities: list
 
+
 class LoaderAppListDetails(BaseModel):
     name: str
     topics: int
     entities: int
     owner: Optional[str]
     loadId: Optional[str]
+
 
 class LoaderAppModel(BaseModel):
     applicationsAtRiskCount: int
@@ -240,6 +245,7 @@ class LoaderAppModel(BaseModel):
     findings: list
     documentsWithFindings: list
     dataSource: list
+
 
 class ReportModel(BaseModel):
     name: str

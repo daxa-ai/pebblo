@@ -2,14 +2,14 @@ import json
 
 from fastapi import status
 
-from pebblo.app.enums.enums import ReportConstants, CacheDir
+from pebblo.app.enums.enums import CacheDir, ReportConstants
 from pebblo.app.models.db_models import (
-    LoadHistory,
-    Summary,
     DataSource,
     LoaderAppListDetails,
     LoaderAppModel,
-    ReportModel
+    LoadHistory,
+    ReportModel,
+    Summary,
 )
 from pebblo.app.models.sqltables import (
     AiDataLoaderTable,
@@ -19,8 +19,10 @@ from pebblo.app.models.sqltables import (
 )
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import (
+    delete_directory,
     get_current_time,
-    get_pebblo_server_version, get_full_path,
+    get_full_path,
+    get_pebblo_server_version,
 )
 from pebblo.log import get_logger
 
@@ -174,10 +176,14 @@ class LoaderApp:
                 }
                 documents_with_findings_data.append(document_obj)
 
-        var_keys["loader_document_with_findings_list"].extend(documents_with_findings_data)
+        var_keys["loader_document_with_findings_list"].extend(
+            documents_with_findings_data
+        )
 
         # Documents with findings Count
-        var_keys["loader_files_with_findings_count"] = len(var_keys["loader_document_with_findings_list"])
+        var_keys["loader_files_with_findings_count"] = len(
+            var_keys["loader_document_with_findings_list"]
+        )
 
         app_details = LoaderAppListDetails(
             name=app_data.get("name"),
@@ -191,17 +197,17 @@ class LoaderApp:
     def _initialize_variables(self):
         # Variable's initialization
         var_keys = {
-                "loader_apps_at_risk": 0,
-                "loader_findings": 0,
-                "loader_files_findings": 0,
-                "loader_data_source": 0,
-                "loader_findings_list": [],
-                "loader_data_source_list": [],
-                "loader_document_with_findings_list": [],
-                "loader_findings_summary_list": [],
-                "loader_files_with_findings_count": 0,
-                "loader_data_source_count": 0
-            }
+            "loader_apps_at_risk": 0,
+            "loader_findings": 0,
+            "loader_files_findings": 0,
+            "loader_data_source": 0,
+            "loader_findings_list": [],
+            "loader_data_source_list": [],
+            "loader_document_with_findings_list": [],
+            "loader_findings_summary_list": [],
+            "loader_files_with_findings_count": 0,
+            "loader_data_source_count": 0,
+        }
         return var_keys
 
     def get_all_loader_apps(self):
@@ -269,7 +275,6 @@ class LoaderApp:
         )
         return loader_response.dict()
 
-
     def get_loader_app_details(self, db, app_name):
         try:
             logger.debug(f"Getting loader app details, App: {app_name}")
@@ -285,7 +290,9 @@ class LoaderApp:
             var_keys = self._initialize_variables()
             loader_app_details = self.get_findings_for_loader_app(loader_app, var_keys)
 
-            loader_response = self._create_loader_app_model([loader_app_details], var_keys)
+            loader_response = self._create_loader_app_model(
+                [loader_app_details], var_keys
+            )
 
             self.loader_findings_summary_list = var_keys["loader_findings_summary_list"]
             self.loader_findings_list = var_keys["loader_findings_list"]
@@ -389,7 +396,7 @@ class LoaderApp:
         if len(all_loader_apps) <= 1:
             return load_history
 
-        load_history_limit = ReportConstants.LOADER_HISTORY__LIMIT.value + 1
+        load_history_limit = ReportConstants.LOADER_HISTORY__LIMIT.value
         limit_reached = False
         counter = 0
 
@@ -398,11 +405,14 @@ class LoaderApp:
             loader = loader_obj.data
             name = loader["name"]
             load_id = loader["id"]
-            if counter > load_history_limit:
+            if counter >= load_history_limit:
                 limit_reached = True
+                break
             var_keys = self._initialize_variables()
             loader_app_details = self.get_findings_for_loader_app(loader, var_keys)
-            loader_response = self._create_loader_app_model([loader_app_details], var_keys)
+            loader_response = self._create_loader_app_model(
+                [loader_app_details], var_keys
+            )
             report_summary = self._create_report_summary(loader_response, loader)
             report_summary = report_summary.dict()
             pdf_report_path = (
@@ -440,8 +450,7 @@ class LoaderApp:
         # Generating DataSource
         data_source_obj_list = self._get_data_source_details(app_data, raw_data)
 
-        load_history = self._get_load_history(app_data["name"],
-                                              all_loader_app)
+        load_history = self._get_load_history(app_data["name"], all_loader_app)
         report_dict = ReportModel(
             name=app_data["name"],
             description=app_data.get("description", "-"),
@@ -484,6 +493,16 @@ class LoaderApp:
             # delete entry from AiDataLoader Table
             self._delete(db, AiDataLoaderTable, filter_query={"name": app_name})
 
+            # Delete PDF report from storage
+            # Path to application directory
+            app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
+            logger.debug(
+                f"[Delete App]: Application directory to deleted, Path: {app_dir_path}"
+            )
+
+            response = delete_directory(app_dir_path, app_name)
+            if response["status_code"] != 200:
+                raise Exception(response["message"])
             message = f"Application {app_name} has been deleted."
             logger.info(message)
             result = {"message": message, "status_code": status.HTTP_200_OK}

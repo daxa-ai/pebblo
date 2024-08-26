@@ -82,7 +82,8 @@ class AppLoaderDoc:
             if isinstance(value, str):
                 try:
                     # Attempt to parse the date string
-                    dct[key] = datetime.strptime(value, "%Y-%m-%d %H:%M:%S.%f")
+                    dct[key] = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+
                 except (ValueError, TypeError):
                     # If it fails, print the error and leave the value as is
                     pass
