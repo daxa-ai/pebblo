@@ -234,9 +234,9 @@ class AppLoaderDoc:
             "loadId": self.data.get("load_id"),
         }
         status, output = self.db.query(AiDataSourceTable, filter_query)
-        if status and output:
+        if status and output and len(output) > 0:
             logger.debug("Data Source details are already existed.")
-            data = output.data
+            data = output[0].data
             return data
 
         # Data Source details are not present, Creating data source details
