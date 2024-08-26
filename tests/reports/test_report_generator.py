@@ -50,6 +50,9 @@ class TestReportGenerator(unittest.TestCase):
             "reportSummary": {"findings": "findings"},
             "dataSources": [{"findingsDetails": "details"}],
             "loadHistory": {"history": "history"},
+            "pebbloClientVersion": "client_version",
+            "pebbloServerVersion": "server_version",
+            "clientVersion": {"version": None, "name": None},
         }
         output_path = "output_path"
         template_name = "template_name"

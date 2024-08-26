@@ -4,6 +4,7 @@ from pebblo.app.config.config import (
     LoggingConfig,
     PortConfig,
     ReportConfig,
+    StorageConfig,
     var_server_config,
 )
 
@@ -13,5 +14,6 @@ config = Config(
     logging=LoggingConfig(),
     reports=ReportConfig(format="pdf", renderer="xhtml2pdf", cacheDir="~/.pebblo"),
     classifier=ClassifierConfig(anonymizeSnippets=False),
+    storage=StorageConfig(type="db"),
 )
 var_server_config.set(config)

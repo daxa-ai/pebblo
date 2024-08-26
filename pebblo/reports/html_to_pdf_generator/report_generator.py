@@ -61,6 +61,12 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
         if "loadHistory" in data and "history" in data["loadHistory"]:
             load_history_items = data["loadHistory"]["history"]
         findings_count = data["reportSummary"].get("findings", 0)
+        clientVersion = ""
+        versionObj = data.get("clientVersion")
+        if versionObj and versionObj.get("version"):
+            clientVersion = " ".join(
+                [versionObj.get("name", ""), versionObj.get("version", "")]
+            )
         source_html = template.render(
             data=data,
             date=current_date,
@@ -72,6 +78,7 @@ def convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
             findings_count=findings_count,
             identity_comma_separated=identity_comma_separated,
             topic_entity_mapping=topic_entity_mapping,
+            clientVersion=clientVersion,
         )
         pdf_converter = library_function_mapping[renderer]
         status, result = pdf_converter(source_html, output_path, search_path)

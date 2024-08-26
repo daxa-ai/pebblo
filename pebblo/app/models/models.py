@@ -26,8 +26,10 @@ class AiDataModel(BaseModel):
     data: Optional[Union[list, str]]
     entityCount: int
     entities: dict
+    entityDetails: Optional[dict]
     topicCount: Optional[int] = None
     topics: Optional[dict] = None
+    topicDetails: Optional[dict]
 
     def dict(self, **kwargs):
         kwargs["exclude_none"] = True
@@ -43,8 +45,10 @@ class AiDocs(BaseModel):
     loaderSourcePath: str
     lastModified: Optional[datetime]
     entityCount: Optional[int]
+    entityDetails: Optional[dict]
     entities: Optional[dict]
     topicCount: Optional[int]
+    topicDetails: Optional[dict]
     topics: Optional[dict]
     authorizedIdentities: list
 
@@ -112,6 +116,7 @@ class AiClassificationData(BaseModel):
 
 
 class RetrievalData(BaseModel):
+    ai_app: Optional[int]
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]
@@ -121,8 +126,9 @@ class RetrievalData(BaseModel):
 
 
 class AiApp(BaseModel):
-    metadata: Metadata
+    # metadata: Metadata
     name: str
+    run_id: Optional[UUID]
     description: Optional[str]
     owner: str
     pluginVersion: Optional[str]
@@ -159,6 +165,8 @@ class TopFindings(BaseModel):
 
 class Snippets(BaseModel):
     snippet: str
+    entityDetails: Optional[dict]
+    topicDetails: Optional[dict]
     sourcePath: str
     fileOwner: str
     authorizedIdentities: list

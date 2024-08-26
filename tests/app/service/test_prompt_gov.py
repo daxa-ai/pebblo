@@ -20,6 +20,15 @@ def test_process_request_success(mock_entity_classifier):
         {"us-ssn": 1},
         1,
         "anonymized document",
+        {
+            "us-ssn": [
+                {
+                    "location": "16_27",
+                    "confidence_score": "HIGH",
+                    "entity_group": "pii-identification",
+                }
+            ]
+        },
     )
 
     data = {"prompt": "Sachin's SSN is 222-85-4836"}

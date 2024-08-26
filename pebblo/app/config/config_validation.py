@@ -3,6 +3,8 @@ import os
 import sys
 from abc import ABC, abstractmethod
 
+from pebblo.app.enums.common import DBStorageTypes, StorageTypes
+
 
 class ConfigValidator(ABC):
     def __init__(self, config):
@@ -40,6 +42,45 @@ class LoggingConfig(ConfigValidator):
             self.errors.append(
                 f"Error: Unsupported logLevel '{level}' specified in the configuration"
             )
+
+
+class StorageConfig(ConfigValidator):
+    def validate(self):
+        storage_type = self.config.get("type")
+        valid_storage_types = [storage_type.value for storage_type in StorageTypes]
+        if storage_type not in valid_storage_types:
+            self.errors.append(
+                f"Error: Unsupported storage type '{storage_type}' specified in the configuration."
+                f"Valid values are {valid_storage_types}"
+            )
+
+        # Set deprecated warning message for file storage type
+        if storage_type == StorageTypes.FILE.value:
+            deprecate_error = f"DeprecationWarning: '{storage_type}' Storage Type will be deprecated starting from Pebblo version 0.0.19, use '{StorageTypes.DATABASE.value}' instead"
+            print(deprecate_error)
+
+        if storage_type == StorageTypes.DATABASE.value:
+            db_type = self.config.get("db")
+            default_location = self.config.get("location")
+            db_name = self.config.get("name")
+
+            valid_db_types = [storage_type.value for storage_type in DBStorageTypes]
+            if db_type not in valid_db_types:
+                self.errors.append(
+                    f"Error: Unsupported db type '{db_type}' specified in the configuration."
+                    f"Valid values are {valid_db_types}"
+                )
+
+            # db_name should be in string
+            if not isinstance(db_name, str):
+                self.errors.append(
+                    f"Error: Unsupported db name '{db_name} specified in the configuration"
+                    f"String values are allowed only"
+                )
+
+            # Check if the output directory exists, create if it doesn't
+            if not os.path.exists(expand_path(str(default_location))):
+                os.makedirs(expand_path(str(default_location)), exist_ok=True)
 
 
 def expand_path(file_path: str) -> str:
@@ -102,6 +143,7 @@ def validate_config(config_dict):
         "logging": LoggingConfig,
         "reports": ReportsConfig,
         "classifier": ClassifierConfig,
+        "storage": StorageConfig,
     }
 
     validation_errors = []

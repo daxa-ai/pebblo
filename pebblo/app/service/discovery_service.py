@@ -35,10 +35,14 @@ class AppDiscover:
     This class handles app discovery business logic.
     """
 
-    def __init__(self, data: dict):
+    def __init__(self):
+        self.data = None
+        self.application_name = None
+
+    def _initialize_data(self, data):
         self.data = data
-        self.load_id = data.get("load_id")
-        self.application_name = self.data.get("name")
+        self.application_name = data.get("name")
+        self.load_id = data.get("load_id", None)
 
     @staticmethod
     def _get_current_datetime():
@@ -239,10 +243,11 @@ class AppDiscover:
         # Writing metadata file
         self._write_file_content_to_path(app_metadata, app_metadata_file_path)
 
-    def process_request(self):
+    def process_request(self, data):
         """
         Process App discovery Request. This handles discovery for loader as well as retrieval type applications.
         """
+        self._initialize_data(data)
         lock_file_path = ""
         chain_details = []
         retrievals_details = []
