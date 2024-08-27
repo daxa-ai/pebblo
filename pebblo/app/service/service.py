@@ -35,7 +35,7 @@ class AppLoaderDoc:
         """
         Calling pdf report generator to write report in pdf format
         """
-        logger.debug("Generating report in pdf format")
+        logger.debug("Generating report in pdf format.")
         report_obj = Reports()
         report_format = CacheDir.FORMAT.value
         renderer = CacheDir.RENDERER.value
