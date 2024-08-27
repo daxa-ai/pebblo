@@ -8,21 +8,18 @@ Currently, we are supporting following Topics:
 4. Board Meeting
 5. Consulting Agreement
 6. Customer List
-7. Distribution/Partner Agreement
-8. Enterprise License Agreement
-9. Executive Severance Agreement
-10. Financial Report
-11. Internal Use Only
-12. Loan And Security Agreement
-13. Merger Agreement
-14. NDA
-15. Patent Application Fillings
-16. Price List
-17. Settlement Agreement
-18. Employee Agreement
-19. Enterprise Agreement
-20. Sexual Content
-21. Sexual Incident Report
+7. Enterprise License Agreement
+8. Executive Severance Agreement
+9. Financial Report
+10. Internal Use Only
+11. Loan And Security Agreement
+12. Merger Agreement
+13. Patent Application Fillings
+14. Price List
+15. Employee Agreement
+16. Enterprise Agreement
+17. Sexual Content
+18. Sexual Incident Report
     
 ## How to use
 
@@ -34,4 +31,5 @@ topic_classifier_obj = TopicClassifier()
 topics, total_topic_count, topic_details = topic_classifier_obj.predict(text)
 print(f"Topic Response: {topics}")
 print(f"Topic Count: {total_topic_count}")
+print(f"Topic Details: {topic_details}")
 ```
