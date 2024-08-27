@@ -415,6 +415,7 @@ class LoaderApp:
             )
             report_summary = self._create_report_summary(loader_response, loader)
             report_summary = report_summary.dict()
+            report_summary["createdAt"] = loader["metadata"]["createdAt"]
             pdf_report_path = (
                 f"{CacheDir.HOME_DIR.value}/{name}/{load_id}/"
                 f"{CacheDir.REPORT_FILE_NAME.value}"
