@@ -179,7 +179,6 @@ def test_create_ai_apps_model(discovery, mock_pebblo_server_version):
     expected_output = {
         "name": "pytest_app",
         "description": "",
-        "run_id": None,
         "owner": "Shreyas Damle",
         "pluginVersion": "0.1.1",
         "instanceDetails": {
@@ -197,6 +196,10 @@ def test_create_ai_apps_model(discovery, mock_pebblo_server_version):
         },
         "framework": {"name": "langchain", "version": "0.1.45"},
         "lastUsed": datetime.datetime(2024, 1, 1, 0, 0, 5),
+        "metadata": {
+            "createdAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
+            "modifiedAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
+            },
         "pebbloServerVersion": "x.x.x",
         "pebbloClientVersion": "0.1.1",
         "clientVersion": {"name": "langchain_community", "version": "x.x.x"},

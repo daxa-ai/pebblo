@@ -115,7 +115,7 @@ class AppLoaderDoc:
                     sourceFiles=loader_source_files,
                     lastModified=datetime.now(),
                 )
-                loader_list.append(new_loader_data.dict())
+                loader_list.append(new_loader_data.model_dump())
                 app_details["loaders"] = loader_list
 
     def process_request(self, data):
@@ -208,17 +208,17 @@ class AppLoaderDoc:
 
             response = LoaderDocResponseModel(docs=docs_out, message=message)
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=200
+                body=response.model_dump(exclude_none=True), status_code=200
             )
         except ValidationError as ex:
             response = LoaderDocResponseModel(docs=[], message=str(ex))
             logger.error(f"AI_LOADER_DOC Failed. Error:{ex}")
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=400
+                body=response.model_dump(exclude_none=True), status_code=400
             )
         except Exception as ex:
             response = LoaderDocResponseModel(docs=[], message=str(ex))
             logger.error(f"AI_LOADER_DOC Failed. Error:{ex}")
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=500
+                body=response.model_dump(exclude_none=True), status_code=500
             )

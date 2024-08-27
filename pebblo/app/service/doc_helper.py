@@ -131,7 +131,7 @@ class LoaderHelper:
             topics=doc_info.topics,
             authorizedIdentities=doc.get("authorized_identities", []),
         )
-        return doc_model.dict()
+        return doc_model.model_dump()
 
     @staticmethod
     def _get_top_n_findings(raw_data):
@@ -282,7 +282,7 @@ class LoaderHelper:
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list
                 if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                    data_source_findings[label_name]["snippets"].append(snippet.dict())
+                    data_source_findings[label_name]["snippets"].append(snippet.model_dump())
                     raw_data["snippet_counter"] += 1
             else:
                 # The source path is encountered for the first time,
@@ -302,7 +302,7 @@ class LoaderHelper:
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list
                 if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                    data_source_findings[label_name]["snippets"] = [snippet.dict()]
+                    data_source_findings[label_name]["snippets"] = [snippet.model_dump()]
                     raw_data["snippet_counter"] += 1
                 else:
                     data_source_findings[label_name]["snippets"] = []
@@ -446,7 +446,7 @@ class LoaderHelper:
                     filesWithFindings=report_summary["filesWithFindings"],
                     generatedOn=report_summary["createdAt"],
                 )
-                load_history["history"].append(load_history_model_obj.dict())
+                load_history["history"].append(load_history_model_obj.model_dump())
         if (
             len(load_history["history"]) == ReportConstants.LOADER_HISTORY__LIMIT.value
             and report_counts > ReportConstants.LOADER_HISTORY__LIMIT.value + 1
@@ -562,7 +562,7 @@ class LoaderHelper:
             pebbloClientVersion=self.app_details.get("pluginVersion", ""),
             clientVersion=self.app_details.get("clientVersion", {}),
         )
-        return report_dict.dict()
+        return report_dict.model_dump()
 
     def process_docs_and_generate_report(self):
         """

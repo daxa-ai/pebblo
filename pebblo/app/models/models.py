@@ -29,10 +29,6 @@ class AiDataModel(BaseModel):
     topics: Optional[dict] = {}
     topicDetails: Optional[dict] = {}
 
-    def dict(self, **kwargs):
-        kwargs["exclude_none"] = True
-        return super().dict(**kwargs)
-
 
 class AiDocs(BaseModel):
     id: Optional[str] = None
@@ -107,10 +103,6 @@ class RetrievalContext(BaseModel):
 class AiClassificationData(BaseModel):
     entities: dict
     topics: Optional[dict] = {}
-
-    def dict(self, **kwargs):
-        kwargs["exclude_none"] = True
-        return super().dict(**kwargs)
 
 
 class RetrievalData(BaseModel):
