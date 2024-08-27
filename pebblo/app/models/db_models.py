@@ -3,7 +3,7 @@
 from typing import Dict, List, Optional, Union
 from uuid import uuid4
 
-from pydantic import ConfigDict, BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Metadata(BaseModel):

@@ -94,12 +94,12 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
     }
     response = client.post("/v1/prompt", json=test_payload)
     assert response.status_code == 400
-    assert (response.json()["message"] == (
+    assert response.json()["message"] == (
         "1 validation error for RetrievalContext\n"
         "vector_db\n"
         "  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n"
         "    For further information visit https://errors.pydantic.dev/2.8/v/string_type"
-    ))
+    )
 
 
 def test_app_prompt_validation_errors_single_missing_field(mock_write_json_to_file):
@@ -134,8 +134,7 @@ def test_app_prompt_validation_errors_single_missing_field(mock_write_json_to_fi
     response = client.post("/v1/prompt", json=test_payload)
     assert response.status_code == 400
     assert (
-    "1 validation error for RetrievalData\n"
-    "prompt_time\n"
+        "1 validation error for RetrievalData\n" "prompt_time\n"
     ) in response.json()["message"]
 
 

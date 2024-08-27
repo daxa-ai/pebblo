@@ -199,7 +199,7 @@ def test_create_ai_apps_model(discovery, mock_pebblo_server_version):
         "metadata": {
             "createdAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
             "modifiedAt": datetime.datetime(2024, 1, 1, 0, 0, 5),
-            },
+        },
         "pebbloServerVersion": "x.x.x",
         "pebbloClientVersion": "0.1.1",
         "clientVersion": {"name": "langchain_community", "version": "x.x.x"},

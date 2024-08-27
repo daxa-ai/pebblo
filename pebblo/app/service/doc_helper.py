@@ -275,14 +275,16 @@ class LoaderHelper:
                     )
                 unique_snippets_set.add(source_path)
                 data_source_findings[label_name]["fileCount"] = len(unique_snippets_set)
-                data_source_findings[label_name]["unique_snippets"] = (
-                    unique_snippets_set
-                )
+                data_source_findings[label_name][
+                    "unique_snippets"
+                ] = unique_snippets_set
 
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list
                 if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                    data_source_findings[label_name]["snippets"].append(snippet.model_dump())
+                    data_source_findings[label_name]["snippets"].append(
+                        snippet.model_dump()
+                    )
                     raw_data["snippet_counter"] += 1
             else:
                 # The source path is encountered for the first time,
@@ -302,7 +304,9 @@ class LoaderHelper:
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list
                 if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                    data_source_findings[label_name]["snippets"] = [snippet.model_dump()]
+                    data_source_findings[label_name]["snippets"] = [
+                        snippet.model_dump()
+                    ]
                     raw_data["snippet_counter"] += 1
                 else:
                     data_source_findings[label_name]["snippets"] = []
