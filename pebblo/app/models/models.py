@@ -2,15 +2,13 @@ from datetime import datetime
 from typing import List, Optional, Union
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict, BaseModel, Field
 
 
 class Metadata(BaseModel):
     createdAt: datetime
     modifiedAt: datetime
-
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class LoaderMetadata(BaseModel):
@@ -19,17 +17,17 @@ class LoaderMetadata(BaseModel):
     sourceType: str
     sourceSize: int
     sourceFiles: Optional[list] = []
-    lastModified: Optional[datetime]
+    lastModified: Optional[datetime] = None
 
 
 class AiDataModel(BaseModel):
-    data: Optional[Union[list, str]]
+    data: Optional[Union[list, str]] = None
     entityCount: int
     entities: dict
-    entityDetails: Optional[dict]
+    entityDetails: Optional[dict] = {}
     topicCount: Optional[int] = None
-    topics: Optional[dict] = None
-    topicDetails: Optional[dict]
+    topics: Optional[dict] = {}
+    topicDetails: Optional[dict] = {}
 
     def dict(self, **kwargs):
         kwargs["exclude_none"] = True
@@ -37,48 +35,48 @@ class AiDataModel(BaseModel):
 
 
 class AiDocs(BaseModel):
-    id: Optional[str]
+    id: Optional[str] = None
     doc: str
     sourceSize: int
     fileOwner: str
     sourcePath: str
     loaderSourcePath: str
-    lastModified: Optional[datetime]
-    entityCount: Optional[int]
-    entityDetails: Optional[dict]
-    entities: Optional[dict]
-    topicCount: Optional[int]
-    topicDetails: Optional[dict]
-    topics: Optional[dict]
+    lastModified: Optional[datetime] = None
+    entityCount: Optional[int] = None
+    entityDetails: Optional[dict] = []
+    entities: Optional[dict] = {}
+    topicCount: Optional[int] = None
+    topicDetails: Optional[dict] = {}
+    topics: Optional[dict] = {}
     authorizedIdentities: list
 
 
 class FrameworkInfo(BaseModel):
-    name: Optional[str]
-    version: Optional[str]
+    name: Optional[str] = None
+    version: Optional[str] = None
 
 
 class InstanceDetails(BaseModel):
-    type: Optional[str]
-    host: Optional[str]
-    path: Optional[str]
-    runtime: Optional[str]
-    ip: Optional[str]
-    language: Optional[str]
-    languageVersion: Optional[str]
-    platform: Optional[str]
-    os: Optional[str]
-    osVersion: Optional[str]
+    type: Optional[str] = None
+    host: Optional[str] = None
+    path: Optional[str] = None
+    runtime: Optional[str] = None
+    ip: Optional[str] = None
+    language: Optional[str] = None
+    languageVersion: Optional[str] = None
+    platform: Optional[str] = None
+    os: Optional[str] = None
+    osVersion: Optional[str] = None
     createdAt: datetime
 
 
 class PackageInfo(BaseModel):
-    projectHomePage: Optional[str]
-    documentationUrl: Optional[str]
-    pypiUrl: Optional[str]
-    licenceType: Optional[str]
-    installedVia: Optional[str]
-    location: Optional[str]
+    projectHomePage: Optional[str] = None
+    documentationUrl: Optional[str] = None
+    pypiUrl: Optional[str] = None
+    licenceType: Optional[str] = None
+    installedVia: Optional[str] = None
+    location: Optional[str] = None
 
 
 class VectorDB(BaseModel):
@@ -86,18 +84,18 @@ class VectorDB(BaseModel):
     version: Optional[str] = None
     location: Optional[str] = None
     embeddingModel: Optional[str] = None
-    pkgInfo: Optional[PackageInfo]
+    pkgInfo: Optional[PackageInfo] = None
 
 
 class AiModel(BaseModel):
     name: str
-    vendor: Optional[str]
+    vendor: Optional[str] = None
 
 
 class Chain(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
     vectorDbs: Optional[List[VectorDB]] = []
-    model: Optional[AiModel]
+    model: Optional[AiModel] = None
 
 
 class RetrievalContext(BaseModel):
@@ -108,7 +106,7 @@ class RetrievalContext(BaseModel):
 
 class AiClassificationData(BaseModel):
     entities: dict
-    topics: Optional[dict] = None
+    topics: Optional[dict] = {}
 
     def dict(self, **kwargs):
         kwargs["exclude_none"] = True
@@ -116,7 +114,6 @@ class AiClassificationData(BaseModel):
 
 
 class RetrievalData(BaseModel):
-    ai_app: Optional[int]
     prompt: AiDataModel
     response: AiDataModel
     context: list[RetrievalContext]
@@ -126,19 +123,18 @@ class RetrievalData(BaseModel):
 
 
 class AiApp(BaseModel):
-    # metadata: Metadata
+    metadata: Metadata
     name: str
-    run_id: Optional[UUID]
-    description: Optional[str]
+    description: Optional[str] = None
     owner: str
-    pluginVersion: Optional[str]
-    instanceDetails: Optional[InstanceDetails]
-    framework: Optional[FrameworkInfo]
+    pluginVersion: Optional[str] = None
+    instanceDetails: Optional[InstanceDetails] = None
+    framework: Optional[FrameworkInfo] = None
     lastUsed: datetime
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
+    pebbloServerVersion: Optional[str] = None
+    pebbloClientVersion: Optional[str] = None
     clientVersion: Union[FrameworkInfo, None] = None
-    chains: Optional[List[Chain]]
+    chains: Optional[List[Chain]] = []
     retrievals: Optional[List[RetrievalData]] = []
 
 
@@ -165,8 +161,8 @@ class TopFindings(BaseModel):
 
 class Snippets(BaseModel):
     snippet: str
-    entityDetails: Optional[dict]
-    topicDetails: Optional[dict]
+    entityDetails: Optional[dict] = {}
+    topicDetails: Optional[dict] = {}
     sourcePath: str
     fileOwner: str
     authorizedIdentities: list
@@ -180,7 +176,7 @@ class DataSource(BaseModel):
     totalSnippetCount: int
     displayedSnippetCount: int
     findingsSummary: list
-    findingsDetails: Optional[list]
+    findingsDetails: Optional[list] = []
     # snippets: Optional[List[Snippets]]
 
 
@@ -194,24 +190,24 @@ class LoadHistory(BaseModel):
 
 class ReportModel(BaseModel):
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    reportSummary: Optional[Summary]
-    loadHistory: Optional[dict]
-    topFindings: Optional[List[TopFindings]]
-    instanceDetails: Optional[InstanceDetails]
-    dataSources: Optional[List[DataSource]]
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
-    clientVersion: Optional[dict]
+    reportSummary: Optional[Summary] = None
+    loadHistory: Optional[dict] = {}
+    topFindings: Optional[List[TopFindings]] = []
+    instanceDetails: Optional[InstanceDetails] = None
+    dataSources: Optional[List[DataSource]] = []
+    pebbloServerVersion: Optional[str] = None
+    pebbloClientVersion: Optional[str] = None
+    clientVersion: Optional[dict] = {}
 
 
 class LoaderAppListDetails(BaseModel):
     name: str
     topics: int
     entities: int
-    owner: Optional[str]
-    loadId: Optional[str]
+    owner: Optional[str] = None
+    loadId: Optional[str] = None
 
 
 class LoaderAppModel(BaseModel):
@@ -245,12 +241,12 @@ class RetrievalAppList(BaseModel):
 
 class RetrievalAppDetails(BaseModel):
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    instanceDetails: Optional[InstanceDetails]
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
-    clientVersion: Optional[dict]
+    instanceDetails: Optional[InstanceDetails] = None
+    pebbloServerVersion: Optional[str] = None
+    pebbloClientVersion: Optional[str] = None
+    clientVersion: Optional[dict] = {}
     total_prompt_with_findings: int = 0
     retrievals: list[RetrievalData] = []
     activeUsers: dict = {}
@@ -259,14 +255,14 @@ class RetrievalAppDetails(BaseModel):
 
 
 class LoaderDocs(BaseModel):
-    pb_id: Optional[str]
+    pb_id: Optional[str] = None
     pb_checksum: str
     source_path: str
     loader_source_path: str
-    entity_count: Optional[int]
-    entities: Optional[dict]
-    topic_count: Optional[int]
-    topics: Optional[dict]
+    entity_count: Optional[int] = None
+    entities: Optional[dict] = {}
+    topic_count: Optional[int] = None
+    topics: Optional[dict] = {}
 
 
 class LoaderDocResponseModel(BaseModel):

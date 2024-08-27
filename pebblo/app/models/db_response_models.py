@@ -8,14 +8,14 @@ from pebblo.app.models.db_models import FrameworkInfo, InstanceDetails, Retrieva
 
 
 class LoaderDocs(BaseModel):
-    pb_id: Optional[str]
+    pb_id: Optional[str] = None
     pb_checksum: str
     source_path: str
     loader_source_path: str
-    entity_count: Optional[int]
-    entities: Optional[dict]
-    topic_count: Optional[int]
-    topics: Optional[dict]
+    entity_count: Optional[int] = None
+    entities: Optional[dict] = {}
+    topic_count: Optional[int] = None
+    topics: Optional[dict] = {}
 
 
 class LoaderDocResponseModel(BaseModel):
@@ -25,7 +25,7 @@ class LoaderDocResponseModel(BaseModel):
 
 class AiClassificationData(BaseModel):
     entities: dict
-    topics: Optional[dict] = None
+    topics: Optional[dict] = {}
 
 
 class RetrievalResponse(BaseModel):
@@ -40,12 +40,12 @@ class PromptResponseModel(BaseModel):
 
 class RetrievalAppDetails(BaseModel):
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    instanceDetails: Optional[InstanceDetails]
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
-    clientVersion: Optional[dict]
+    instanceDetails: Optional[InstanceDetails] = None
+    pebbloServerVersion: Optional[str] = None
+    pebbloClientVersion: Optional[str] = None
+    clientVersion: Optional[dict] = {}
     total_prompt_with_findings: int = 0
     retrievals: list[RetrievalData] = []
     activeUsers: dict = {}
