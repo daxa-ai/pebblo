@@ -39,7 +39,7 @@ class AiDocs(BaseModel):
     loaderSourcePath: str
     lastModified: Optional[datetime] = None
     entityCount: Optional[int] = None
-    entityDetails: Optional[dict] = []
+    entityDetails: Optional[dict] = {}
     entities: Optional[dict] = {}
     topicCount: Optional[int] = None
     topicDetails: Optional[dict] = {}
