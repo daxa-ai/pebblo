@@ -160,6 +160,7 @@ class AiDocument(BaseModel):
     loaderSourcePath: str
     metadata: Metadata
     sourcePath: str
+    sourceSize: int
     lastIngested: str
     owner: str
     userIdentities: Optional[List[str]] = []

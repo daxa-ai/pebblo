@@ -40,6 +40,7 @@ class AiDocumentHandler:
                 "dataSourceId": data_source.get("id"),
                 "metadata": metadata,
                 "sourcePath": doc.get("source_path"),
+                "sourceSize": doc.get("source_path_size"),
                 "loaderSourcePath": data_source.get("sourcePath"),
                 "owner": doc.get("file_owner"),
                 "userIdentities": doc.get("authorized_identities", []),

@@ -330,9 +330,11 @@ class AppLoaderDoc:
             logger.error(message)
             logger.info("Rollback the changes")
             self.db.session.rollback()
-            return self._create_return_response(message, 500)
+            return self._create_return_response(message=message, status_code=500)
         else:
             message = "Loader Doc API Request processed successfully"
-            return self._create_return_response(message, output=loader_response_output)
+            return self._create_return_response(
+                message=message, output=loader_response_output
+            )
         finally:
             self.db.session.close()
