@@ -241,24 +241,31 @@ class LoaderHelper:
 
     @staticmethod
     def _create_data_source_findings(data_source_findings):
+        """
+        This function returns data source findings with entity/topic details based on label i.e, entity/topic name
+        """
         for data in data_source_findings:
             for snippet in data.get("snippets"):
                 entity_details = {}
                 topic_details = {}
-                if snippet.get("entityDetails"):
-                    if data["labelName"] in snippet.get("entityDetails").keys():
-                        entity_details = {
-                            data["labelName"]: snippet.get("entityDetails")[
-                                data["labelName"]
-                            ]
-                        }
-                if snippet.get("topicDetails"):
-                    if data["labelName"] in snippet.get("topicDetails").keys():
-                        topic_details = {
-                            data["labelName"]: snippet.get("topicDetails")[
-                                data["labelName"]
-                            ]
-                        }
+                if (
+                    snippet.get("entityDetails")
+                    and data["labelName"] in snippet.get("entityDetails").keys()
+                ):
+                    entity_details = {
+                        data["labelName"]: snippet.get("entityDetails")[
+                            data["labelName"]
+                        ]
+                    }
+                if (
+                    snippet.get("topicDetails")
+                    and data["labelName"] in snippet.get("topicDetails").keys()
+                ):
+                    topic_details = {
+                        data["labelName"]: snippet.get("topicDetails")[
+                            data["labelName"]
+                        ]
+                    }
                 snippet["entityDetails"] = entity_details
                 snippet["topicDetails"] = topic_details
         return data_source_findings
