@@ -61,4 +61,4 @@ Load History provides details about latest 5 loads of this app. It provides the 
 
    It will also provide you with a list of these Datasource, accompanied by additional details such as the size, source path, the count of topics & entities across the datasource.
 
-4. **Snippets**: This sections provides the actual text inspected by the Pebblo Server using the Pebblo Topic Classifier and Pebblo Entity Classifier. This will be useful to quickly inspect and remediate text that should not be ingested into the Gen-AI RAG application. Each snippet shows the exact file the snippet is loaded from easy remediation.
+4. **Snippets**: This section details the text analyzed by the Pebblo Server using the Pebblo Topic Classifier and Pebblo Entity Classifier. It is designed to help quickly inspect and remediate text that should not be ingested into the Gen-AI RAG application. Each snippet shows the exact file for easy reference, with sensitive information labeled with confidence scores: HIGH, MEDIUM, or LOW.
