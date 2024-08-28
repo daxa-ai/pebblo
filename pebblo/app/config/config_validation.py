@@ -54,11 +54,6 @@ class StorageConfig(ConfigValidator):
                 f"Valid values are {valid_storage_types}"
             )
 
-        # Set deprecated warning message for file storage type
-        if storage_type == StorageTypes.FILE.value:
-            deprecate_error = f"DeprecationWarning: '{storage_type}' Storage Type will be deprecated starting from Pebblo version 0.0.19, use '{StorageTypes.DATABASE.value}' instead"
-            print(deprecate_error)
-
         if storage_type == StorageTypes.DATABASE.value:
             db_type = self.config.get("db")
             default_location = self.config.get("location")
