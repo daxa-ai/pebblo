@@ -44,7 +44,7 @@ class AppLoaderDoc:
             output = []
         response = LoaderDocResponseModel(docs=output, message=message)
         return PebbloJsonResponse.build(
-            body=response.dict(exclude_none=True), status_code=status_code
+            body=response.model_dump(exclude_none=True), status_code=status_code
         )
 
     def _pdf_writer(self, file_path, data):
@@ -157,7 +157,7 @@ class AppLoaderDoc:
                     sourceFiles=loader_source_files,
                     lastModified=get_current_time(),
                 )
-                loader_list.append(new_loader_data.dict())
+                loader_list.append(new_loader_data.model_dump())
                 app_loader_details["loaders"] = loader_list
 
         # self.db.update_data(table_obj, app_loader_details)
@@ -253,7 +253,7 @@ class AppLoaderDoc:
             "loader": loader_details.get("loader"),
         }
         ai_data_source_obj = AiDataSource(**data_source)
-        ai_data_source = ai_data_source_obj.dict()
+        ai_data_source = ai_data_source_obj.model_dump()
         _, data_source_obj = self.db.insert_data(AiDataSourceTable, ai_data_source)
         logger.debug("Data Source has been created successfully.")
         return data_source_obj.data

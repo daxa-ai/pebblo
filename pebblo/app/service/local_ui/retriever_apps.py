@@ -311,7 +311,7 @@ class RetrieverApp:
             vector_dbs=vector_dbs,
             documents=list(documents.keys()),
         )
-        return app_details.dict(), prompt_details, total_prompt_with_findings
+        return app_details.model_dump(), prompt_details, total_prompt_with_findings
 
     @staticmethod
     def _sort_retrievals_with_retrieval_count(retrievals: list) -> list:
@@ -383,7 +383,7 @@ class RetrieverApp:
             vectorDbs=vector_dbs,
             documents=documents,
         )
-        return json.dumps(response.dict(), default=str, indent=4)
+        return json.dumps(response.model_dump(), default=str, indent=4)
 
     def get_all_retriever_apps(self):
         try:
@@ -448,7 +448,7 @@ class RetrieverApp:
                 total_prompt_with_findings=total_prompt_with_findings,
             )
 
-            response = retrieval_response.dict()
+            response = retrieval_response.model_dump()
             logger.debug(f"RetrievalAppResponse: {response}")
         except Exception as ex:
             logger.error(f"[Dashboard]: Error in all retriever app listing. Error:{ex}")

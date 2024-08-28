@@ -192,7 +192,7 @@ class LoaderApp:
             owner=app_data.get("owner"),
             loadId=app_data.get("id"),
         )
-        return app_details.dict()
+        return app_details.model_dump()
 
     def _initialize_variables(self):
         # Variable's initialization
@@ -256,7 +256,7 @@ class LoaderApp:
             message = "All loader app response prepared successfully"
             logger.debug(message)
             self.db.session.commit()
-            return loader_response
+            return loader_response.model_dump()
         finally:
             logger.debug("Closing database session for preparing all loader apps")
             # Closing the session
@@ -273,7 +273,7 @@ class LoaderApp:
             documentsWithFindings=var_keys["loader_document_with_findings_list"],
             dataSource=var_keys["loader_data_source_list"],
         )
-        return loader_response.dict()
+        return loader_response
 
     def get_loader_app_details(self, db, app_name):
         try:
@@ -298,7 +298,7 @@ class LoaderApp:
             self.loader_findings_list = var_keys["loader_findings_list"]
 
             report_data = self._generate_final_report(
-                ai_loader_apps, loader_app, loader_response
+                loader_app, loader_response.model_dump()
             )
             logger.debug(f"REportData: {report_data}")
         except Exception as ex:
@@ -413,7 +413,7 @@ class LoaderApp:
             loader_response = self._create_loader_app_model(
                 [loader_app_details], var_keys
             )
-            report_summary = self._create_report_summary(loader_response, loader)
+            report_summary = self._create_report_summary(loader_response.model_dump(), loader)
             report_summary = report_summary.dict()
             report_summary["createdAt"] = loader["metadata"]["createdAt"]
             pdf_report_path = (
@@ -465,7 +465,7 @@ class LoaderApp:
             pebbloClientVersion=app_data.get("pluginVersion", ""),
             clientVersion=app_data.get("clientVersion", None),
         )
-        return report_dict.dict()
+        return report_dict.model_dump()
 
     def _delete(self, db, table_name, filter_query):
         try:

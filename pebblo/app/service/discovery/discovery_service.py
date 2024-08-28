@@ -35,7 +35,7 @@ class AppDiscover:
             message=str(message),
         )
         return PebbloJsonResponse.build(
-            body=response.dict(exclude_none=True), status_code=status_code
+            body=response.model_dump(exclude_none=True), status_code=status_code
         )
 
     def _fetch_runtime_instance_details(self) -> InstanceDetails:
@@ -98,7 +98,7 @@ class AppDiscover:
         elif app_type == ApplicationTypes.RETRIEVAL.value:
             AppModel = AiApp
         model_obj = AppModel(**ai_app)
-        return model_obj.dict()
+        return model_obj.model_dump()
 
     def _get_app_type_and_class(self):
         AppClass = None
@@ -153,7 +153,7 @@ class AppDiscover:
 
                 vector_db_details.append(vector_db_obj)
             chain_obj = Chain(name=name, model=model, vectorDbs=vector_db_details)
-            chains.append(chain_obj.dict())
+            chains.append(chain_obj.model_dump())
 
         logger.debug(f"Application Name [{self.app_name}]")
         return chains

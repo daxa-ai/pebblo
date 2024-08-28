@@ -46,7 +46,7 @@ class AiDocumentHandler:
                 "lastIngested": get_current_time(),
             }
             ai_document_obj = AiDocument(**ai_documents)
-            ai_document_data = ai_document_obj.dict()
+            ai_document_data = ai_document_obj.model_dump()
 
             _, doc_obj = self.db.insert_data(AiDocumentTable, ai_document_data)
             return doc_obj
