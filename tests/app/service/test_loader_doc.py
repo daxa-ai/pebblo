@@ -481,6 +481,8 @@ def test_get_datasource_details(loader_helper):
                             "snippet": "Name: YqDvXJuxpH\nEmail: bTDyzanhcB@ujxtd.com\nSSN: 807325214\nAddress: ABUbusMLXRygxzpdPOyL\nCC Expiry: 12/2030\nCredit Card Number: 8048428351930771\nCC Security Code: 644\nIPv4: 147.17.4.121\nIPv6: 58fc: 652d:bf33:a1ab: 1f1b: 4d7d: 8fe:d64d\nPhone: 3542039806",
                             "sourcePath": "/home/ubuntu/sens_data.csv",
                             "fileOwner": "fileOnwer",
+                            "entityDetails": {},
+                            "topicDetails": {},
                         }
                     ],
                 },
@@ -495,6 +497,8 @@ def test_get_datasource_details(loader_helper):
                             "snippet": "Name: YqDvXJuxpH\nEmail: bTDyzanhcB@ujxtd.com\nSSN: 807325214\nAddress: ABUbusMLXRygxzpdPOyL\nCC Expiry: 12/2030\nCredit Card Number: 8048428351930771\nCC Security Code: 644\nIPv4: 147.17.4.121\nIPv6: 58fc: 652d:bf33:a1ab: 1f1b: 4d7d: 8fe:d64d\nPhone: 3542039806",
                             "sourcePath": "/home/ubuntu/sens_data.csv",
                             "fileOwner": "fileOwner",
+                            "entityDetails": {},
+                            "topicDetails": {},
                         }
                     ],
                 },
@@ -509,6 +513,8 @@ def test_get_datasource_details(loader_helper):
                             "snippet": "Name: YqDvXJuxpH\nEmail: bTDyzanhcB@ujxtd.com\nSSN: 807325214\nAddress: ABUbusMLXRygxzpdPOyL\nCC Expiry: 12/2030\nCredit Card Number: 8048428351930771\nCC Security Code: 644\nIPv4: 147.17.4.121\nIPv6: 58fc: 652d:bf33:a1ab: 1f1b: 4d7d: 8fe:d64d\nPhone: 3542039806",
                             "sourcePath": "/home/ubuntu/sens_data.csv",
                             "fileOwner": "fileOwner",
+                            "entityDetails": {},
+                            "topicDetails": {},
                         }
                     ],
                 },
