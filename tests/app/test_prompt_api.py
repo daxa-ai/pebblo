@@ -42,6 +42,7 @@ def test_app_prompt_success(mock_write_json_to_file):
         "prompt": {
             "data": "What is John's SSN",
             "entities": {},
+            "topics": {},
             "entityCount": 0,
             "prompt_gov_enabled": True,
         },
@@ -56,6 +57,7 @@ def test_app_prompt_success(mock_write_json_to_file):
     assert response.json()["message"] == "AiApp prompt request completed successfully"
     assert response.json()["retrieval_data"]["prompt"] == {
         "entities": {},
+        "topics": {},
     }
 
     assert response.json()["retrieval_data"]["response"] == {
@@ -95,7 +97,8 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
     assert response.json()["message"] == (
         "1 validation error for RetrievalContext\n"
         "vector_db\n"
-        "  none is not an allowed value (type=type_error.none.not_allowed)"
+        "  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n"
+        "    For further information visit https://errors.pydantic.dev/2.8/v/string_type"
     )
 
 
@@ -130,11 +133,9 @@ def test_app_prompt_validation_errors_single_missing_field(mock_write_json_to_fi
     }
     response = client.post("/v1/prompt", json=test_payload)
     assert response.status_code == 400
-    assert response.json()["message"] == (
-        "1 validation error for RetrievalData\n"
-        "prompt_time\n"
-        "  field required (type=value_error.missing)"
-    )
+    assert (
+        "1 validation error for RetrievalData\n" "prompt_time\n"
+    ) in response.json()["message"]
 
 
 def test_app_prompt_server_error(mock_write_json_to_file):

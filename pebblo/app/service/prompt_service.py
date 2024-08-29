@@ -74,7 +74,7 @@ class Prompt:
         retrieval_data_model = RetrievalData(**self.data)
         retrieval_data_model.context = context_data
         logger.debug(
-            f"AI_APPS [{self.application_name}]: Retrieval Data Details: {retrieval_data_model.dict()}"
+            f"AI_APPS [{self.application_name}]: Retrieval Data Details: {retrieval_data_model.model_dump()}"
         )
         return retrieval_data_model
 
@@ -172,25 +172,25 @@ class Prompt:
             # creating retrieval data model object
             retrieval_data = self._create_retrieval_data(context_data)
 
-            self._upsert_app_metadata_file(retrieval_data.dict())
+            self._upsert_app_metadata_file(retrieval_data.model_dump())
 
             message = "AiApp prompt request completed successfully"
             logger.debug(message)
             response = PromptResponseModel(retrieval_data=self.data, message=message)
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=200
+                body=response.model_dump(exclude_none=True), status_code=200
             )
         except ValidationError as ex:
             response = PromptResponseModel(retrieval_data=None, message=str(ex))
             logger.error(f"Error in Prompt API process_request. Error: {ex}")
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=400
+                body=response.model_dump(exclude_none=True), status_code=400
             )
         except Exception as ex:
             response = PromptResponseModel(retrieval_data=None, message=str(ex))
             logger.error(f"Error in Prompt API process_request. Error: {ex}")
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=500
+                body=response.model_dump(exclude_none=True), status_code=500
             )
 
     @staticmethod

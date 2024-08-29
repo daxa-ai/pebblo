@@ -18,6 +18,7 @@ Below is the list of `entities` supported by Pebblo -
 1. US Bank Account Number
 1. IBAN Code
 1. US ITIN
+1. IP Address
 1. GitHub Access Token
 1. Slack Access Token
 1. AWS Access Key

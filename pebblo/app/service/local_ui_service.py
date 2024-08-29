@@ -139,7 +139,7 @@ class AppData:
         if report_summary.get("findings", 0) > 0:
             self.loader_apps_at_risk += 1
 
-        return app_details.dict()
+        return app_details.model_dump()
 
     def get_prompt_details(
         self,
@@ -273,7 +273,7 @@ class AppData:
             vector_dbs=vector_dbs,
             documents=list(documents.keys()),
         )
-        return app_details.dict(), prompt_details, total_prompt_with_findings
+        return app_details.model_dump(), prompt_details, total_prompt_with_findings
 
     def get_all_apps_details(self):
         """
@@ -406,8 +406,8 @@ class AppData:
 
                 response.update(
                     {
-                        "loaderApps": loader_response.dict(),
-                        "retrievalApps": retrieval_response.dict(),
+                        "loaderApps": loader_response.model_dump(),
+                        "retrievalApps": retrieval_response.model_dump(),
                     }
                 )
                 return json.dumps(response, indent=4)
@@ -649,7 +649,7 @@ class AppData:
             vectorDbs=vector_dbs,
             documents=documents,
         )
-        return json.dumps(response.dict(), default=str, indent=4)
+        return json.dumps(response.model_dump(), default=str, indent=4)
 
     def add_accumulate_active_users(self, active_users):
         """Adding retrieval data for app listing per users"""

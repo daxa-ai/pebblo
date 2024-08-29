@@ -71,7 +71,7 @@ class PromptGov:
                 message="Prompt Governance Processed Successfully",
             )
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=200
+                body=response.model_dump(exclude_none=True), status_code=200
             )
 
         except ValidationError as ex:
@@ -82,7 +82,7 @@ class PromptGov:
                 f"Error in Prompt API process_request. Error:{traceback.format_exc()}"
             )
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=400
+                body=response.model_dump(exclude_none=True), status_code=400
             )
         except Exception as ex:
             response = PromptGovResponseModel(
@@ -92,5 +92,5 @@ class PromptGov:
                 f"Error in Prompt API process_request. Error:{traceback.format_exc()}"
             )
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=500
+                body=response.model_dump(exclude_none=True), status_code=500
             )
