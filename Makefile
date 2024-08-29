@@ -13,6 +13,9 @@ clean:
 	find . -name __pycache__ | xargs rm -rf
 
 build: clean
+	# Ensure the build module is installed
+	pip install build
+	# Run the build command
 	python -m build --wheel
 
 install: build
