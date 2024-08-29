@@ -72,3 +72,5 @@ logging:
 ```
 
 This flexibility empowers users to tailor configurations to their specific needs while retaining default values for other sections or fields.
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=7abf7d3d-2654-4615-9d7a-d3db68033da7" />

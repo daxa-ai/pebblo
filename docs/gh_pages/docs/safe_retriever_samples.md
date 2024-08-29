@@ -58,3 +58,5 @@ This section provides a semantic-filtering focused sample of Pebblo Safe Retrive
 
 **Link:**
 [Google Drive-Qdrant Semantic RAG Sample App](https://github.com/daxa-ai/pebblo/tree/main/pebblo_saferetriever/langchain/semantic-rag/googledrive-qdrant)
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=bea40d19-c5e8-4cee-ad9f-26c124996bb3" />
