@@ -131,7 +131,7 @@ class LoaderHelper:
             topics=doc_info.topics,
             authorizedIdentities=doc.get("authorized_identities", []),
         )
-        return doc_model.dict()
+        return doc_model.model_dump()
 
     @staticmethod
     def _get_top_n_findings(raw_data):
@@ -240,6 +240,37 @@ class LoaderHelper:
         self.app_details["report_metadata"] = raw_data
 
     @staticmethod
+    def _create_data_source_findings(data_source_findings):
+        """
+        This function returns data source findings with entity/topic details based on label i.e, entity/topic name
+        """
+        for data in data_source_findings:
+            for snippet in data.get("snippets"):
+                entity_details = {}
+                topic_details = {}
+                if (
+                    snippet.get("entityDetails")
+                    and data["labelName"] in snippet.get("entityDetails").keys()
+                ):
+                    entity_details = {
+                        data["labelName"]: snippet.get("entityDetails")[
+                            data["labelName"]
+                        ]
+                    }
+                if (
+                    snippet.get("topicDetails")
+                    and data["labelName"] in snippet.get("topicDetails").keys()
+                ):
+                    topic_details = {
+                        data["labelName"]: snippet.get("topicDetails")[
+                            data["labelName"]
+                        ]
+                    }
+                snippet["entityDetails"] = entity_details
+                snippet["topicDetails"] = topic_details
+        return data_source_findings
+
+    @staticmethod
     def _get_finding_details(doc, data_source_findings, entity_type, raw_data):
         """
         Retrieve finding details from data source
@@ -282,7 +313,9 @@ class LoaderHelper:
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list
                 if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                    data_source_findings[label_name]["snippets"].append(snippet.dict())
+                    data_source_findings[label_name]["snippets"].append(
+                        snippet.model_dump()
+                    )
                     raw_data["snippet_counter"] += 1
             else:
                 # The source path is encountered for the first time,
@@ -302,7 +335,9 @@ class LoaderHelper:
                 #  If the snippet count exceeds the snippet limit,
                 #  we will refrain from adding the snippet to the snippet list
                 if raw_data["snippet_counter"] < ReportConstants.SNIPPET_LIMIT.value:
-                    data_source_findings[label_name]["snippets"] = [snippet.dict()]
+                    data_source_findings[label_name]["snippets"] = [
+                        snippet.model_dump()
+                    ]
                     raw_data["snippet_counter"] += 1
                 else:
                     data_source_findings[label_name]["snippets"] = []
@@ -331,6 +366,10 @@ class LoaderHelper:
 
             # Create data source findings summary from data source findings
             data_source_findings_summary = self._create_data_source_findings_summary(
+                data_source_findings
+            )
+
+            data_source_findings = self._create_data_source_findings(
                 data_source_findings
             )
 
@@ -446,7 +485,7 @@ class LoaderHelper:
                     filesWithFindings=report_summary["filesWithFindings"],
                     generatedOn=report_summary["createdAt"],
                 )
-                load_history["history"].append(load_history_model_obj.dict())
+                load_history["history"].append(load_history_model_obj.model_dump())
         if (
             len(load_history["history"]) == ReportConstants.LOADER_HISTORY__LIMIT.value
             and report_counts > ReportConstants.LOADER_HISTORY__LIMIT.value + 1
@@ -562,7 +601,7 @@ class LoaderHelper:
             pebbloClientVersion=self.app_details.get("pluginVersion", ""),
             clientVersion=self.app_details.get("clientVersion", {}),
         )
-        return report_dict.dict()
+        return report_dict.model_dump()
 
     def process_docs_and_generate_report(self):
         """

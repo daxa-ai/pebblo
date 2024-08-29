@@ -206,15 +206,19 @@ class LoaderApp:
             _, ai_loader_apps = self.db.query(table_obj=AiDataLoaderTable)
 
             # Preparing all loader apps
+            app_processed = list()
             all_loader_apps: list = []
             for loader_app in ai_loader_apps:
                 app_data = loader_app.data
-                if app_data.get("docEntities") not in [None, {}] or app_data.get(
-                    "docTopics"
-                ) not in [None, {}]:
+                if app_data.get("docEntities") or app_data.get("docTopics"):
+                    if app_data["name"] in app_processed:
+                        # This app is already processed with the latest loadId, skipping older one's
+                        continue
+
                     self.loader_apps_at_risk += 1
                     loader_app = self.get_findings_for_loader_app(app_data)
                     all_loader_apps.append(loader_app)
+                    app_processed.append(app_data["name"])
 
             # TODO: Sort loader apps
             # sorted_loader_apps = self._sort_loader_apps(all_loader_apps)

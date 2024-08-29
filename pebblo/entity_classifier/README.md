@@ -10,6 +10,7 @@ Currently, we are supporting following Entities:
 5. US Bank Account Number
 6. IBAN code
 7. US ITIN
+8. IP Address
 
 And following Secret Entities:
 1. Github Token
@@ -28,4 +29,5 @@ entities, total_count, anonymized_text, entity_details = entity_classifier_obj.p
 print(f"Entity Group: {entity_groups}")
 print(f"Entity Count: {total_entity_count}")
 print(f"Anonymized Text: {anonymized_text}")
+print(f"Entity Details: {entity_details}")
 ```

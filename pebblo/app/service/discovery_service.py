@@ -83,7 +83,7 @@ class AppDiscover:
             chains=chain_details,
             retrievals=retrievals_details,
         )
-        return ai_apps_model.dict()
+        return ai_apps_model.model_dump()
 
     def _fetch_runtime_instance_details(self) -> InstanceDetails:
         """
@@ -106,7 +106,7 @@ class AppDiscover:
             createdAt=self._get_current_datetime(),
         )
         logger.debug(
-            f"AI_APPS [{self.application_name}]: Instance Details: {instance_details_model.dict()}"
+            f"AI_APPS [{self.application_name}]: Instance Details: {instance_details_model.model_dump()}"
         )
         return instance_details_model
 
@@ -152,7 +152,7 @@ class AppDiscover:
 
                 vector_db_details.append(vector_db_obj)
             chain_obj = Chain(name=name, model=model, vectorDbs=vector_db_details)
-            chains.append(chain_obj.dict())
+            chains.append(chain_obj.model_dump())
 
         logger.debug(f"Application Name [{self.application_name}]: Chains: {chains}")
         return chains
@@ -311,7 +311,7 @@ class AppDiscover:
                 message=message,
             )
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=200
+                body=response.model_dump(exclude_none=True), status_code=200
             )
         except ValidationError as ex:
             response = DiscoverAIAppsResponseModel(
@@ -319,7 +319,7 @@ class AppDiscover:
             )
             logger.error(f"Error in Discovery API process_request. Error: {ex}")
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=400
+                body=response.model_dump(exclude_none=True), status_code=400
             )
         except Exception as ex:
             response = DiscoverAIAppsResponseModel(
@@ -327,7 +327,7 @@ class AppDiscover:
             )
             logger.error(f"Error in Discovery API process_request. Error: {ex}")
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=500
+                body=response.model_dump(exclude_none=True), status_code=500
             )
         finally:
             release_lock(lock_file_path)

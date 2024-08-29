@@ -2,27 +2,22 @@
 
 This is Topic Classifier. 
 Currently, we are supporting following Topics:
-1. Normal Advice
-2. Medical Advice
-3. Harmful Advice
-4. Board Meeting
-5. Consulting Agreement
-6. Customer List
-7. Distribution/Partner Agreement
-8. Enterprise License Agreement
-9. Executive Severance Agreement
-10. Financial Report
-11. Internal Use Only
-12. Loan And Security Agreement
-13. Merger Agreement
-14. NDA
-15. Patent Application Fillings
-16. Price List
-17. Settlement Agreement
-18. Employee Agreement
-19. Enterprise Agreement
-20. Sexual Content
-21. Sexual Incident Report
+1. Medical Advice
+1. Harmful Advice
+1. Board Meeting
+1. Consulting Agreement
+1. Customer List
+1. Enterprise Agreement
+1. Executive Severance Agreement
+1. Financial Report
+1. Loan And Security Agreement
+1. Merger Agreement
+1. Patent Application Fillings
+1. Price List
+1. Employee Agreement
+1. Sexual Content
+1. Sexual Incident Report
+1. Internal Product Roadmap Agreement
     
 ## How to use
 
@@ -34,4 +29,5 @@ topic_classifier_obj = TopicClassifier()
 topics, total_topic_count, topic_details = topic_classifier_obj.predict(text)
 print(f"Topic Response: {topics}")
 print(f"Topic Count: {total_topic_count}")
+print(f"Topic Details: {topic_details}")
 ```
