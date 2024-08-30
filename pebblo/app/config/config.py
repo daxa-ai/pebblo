@@ -1,6 +1,6 @@
 import pathlib
 from contextvars import ContextVar
-from typing import Tuple, Union, Optional
+from typing import Optional, Tuple, Union
 
 import yaml
 from pydantic import Field
