@@ -214,7 +214,7 @@ class DataSource(BaseModel):
     totalSnippetCount: int
     displayedSnippetCount: int
     findingsSummary: list
-    findingsDetails: Optional[list]
+    findingsDetails: Optional[list] = []
     # snippets: Optional[List[Snippets]]
 
 
@@ -232,8 +232,8 @@ class LoaderAppListDetails(BaseModel):
     name: str
     topics: int
     entities: int
-    owner: Optional[str]
-    loadId: Optional[str]
+    owner: Optional[str] = None
+    loadId: Optional[str] = None
 
 
 class LoaderAppModel(BaseModel):
@@ -249,13 +249,13 @@ class LoaderAppModel(BaseModel):
 
 class ReportModel(BaseModel):
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
-    reportSummary: Optional[Summary]
-    loadHistory: Optional[dict]
-    topFindings: Optional[List[TopFindings]]
-    instanceDetails: Optional[InstanceDetails]
-    dataSources: Optional[List[DataSource]]
-    pebbloServerVersion: Optional[str]
-    pebbloClientVersion: Optional[str]
-    clientVersion: Optional[dict]
+    reportSummary: Optional[Summary] = None
+    loadHistory: Optional[dict] = None
+    topFindings: Optional[List[TopFindings]] = None
+    instanceDetails: Optional[InstanceDetails] = None
+    dataSources: Optional[List[DataSource]] = None
+    pebbloServerVersion: Optional[str] = None
+    pebbloClientVersion: Optional[str] = None
+    clientVersion: Optional[dict] = None
