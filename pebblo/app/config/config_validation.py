@@ -152,6 +152,7 @@ def validate_config(config_dict):
         "reports": ReportsConfig,
         "classifier": ClassifierConfig,
         "storage": StorageConfig,
+        "dependency": WeasyPrintDependency
     }
 
     validation_errors = []
