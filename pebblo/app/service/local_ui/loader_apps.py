@@ -44,6 +44,8 @@ class LoaderApp:
 
         response = []
         for snippet_id in snippet_ids:
+            if len(response) >= ReportConstants.SNIPPET_LIMIT.value:
+                break
             status, output = self.db.query(AiSnippetsTable, {"id": snippet_id})
             if not status or len(output) == 0:
                 continue
