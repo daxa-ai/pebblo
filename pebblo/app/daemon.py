@@ -37,7 +37,9 @@ def start():
 
     path = args.config
     if path is not None and not os.path.exists(path):
-        raise FileNotFoundError(f"'--config' was passed but config file '{path}' does not exist.")
+        raise FileNotFoundError(
+            f"'--config' was passed but config file '{path}' does not exist."
+        )
     p_bar = tqdm(range(10))
     config_details, server_config = load_config(path)
     var_server_config_dict.set(config_details)
