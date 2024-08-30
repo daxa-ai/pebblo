@@ -13,7 +13,20 @@ class ConfigValidator(ABC):
 
     @abstractmethod
     def validate(self):
-        pass
+        raise NotImplementedError()
+
+
+class WeasyPrintDependency(ConfigValidator):
+    def validate(self):
+        """Check if WeasyPrint is installed"""
+        try:
+            from weasyprint import CSS, HTML
+        except ImportError:
+            error = """Could not import weasyprint package. Please install weasyprint and Pango to generate 
+            report using weasyprint.
+            Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"
+            """
+            self.errors.append(error)
 
 
 class DaemonConfig(ConfigValidator):
