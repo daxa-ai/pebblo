@@ -37,18 +37,32 @@ class LoaderApp:
         self.loader_document_with_findings_list = []
         self.loader_findings_summary_list = []
 
-    def _get_snippet_details(self, snippet_ids, owner):
+    def _get_snippet_details(self, snippet_ids, owner, label_name):
         response = []
         for snippet_id in snippet_ids:
             status, output = self.db.query(AiSnippetsTable, {"id": snippet_id})
             if not status or len(output) == 0:
                 continue
             snippet_details = output[0].data
+            entity_details = {}
+            topic_details = {}
+            if snippet_details.get("topicDetails") and snippet_details[
+                "topicDetails"
+            ].get(label_name):
+                topic_details = {
+                    label_name: snippet_details["topicDetails"].get(label_name)
+                }
+            if snippet_details.get("entityDetails") and snippet_details[
+                "entityDetails"
+            ].get(label_name):
+                entity_details = {
+                    label_name: snippet_details["entityDetails"].get(label_name)
+                }
             snippet_obj = {
                 "snippet": snippet_details["doc"],
                 "sourcePath": snippet_details["sourcePath"],
-                # "topicDetails": {}, # TODO: To  be added post 0.1.18
-                # "entityDetails": {}, # TODO: to be added post 0.1.18
+                "topicDetails": topic_details,
+                "entityDetails": entity_details,
                 "fileOwner": owner,
                 "authorizedIdentities": [],
             }
@@ -75,7 +89,7 @@ class LoaderApp:
                         total_snippet_count += findings["snippetCount"]
                         snippets.extend(
                             self._get_snippet_details(
-                                entity_data["snippetIds"], app_data["owner"]
+                                entity_data["snippetIds"], app_data["owner"], entity
                             )
                         )
                         break
@@ -89,7 +103,7 @@ class LoaderApp:
                         "snippetCount": len(entity_data["snippetIds"]),
                         "fileCount": len(app_data["documents"]),
                         "snippets": self._get_snippet_details(
-                            entity_data["snippetIds"], app_data["owner"]
+                            entity_data["snippetIds"], app_data["owner"], entity
                         ),
                     }
                     total_snippet_count += findings["snippetCount"]
@@ -113,7 +127,7 @@ class LoaderApp:
                         total_snippet_count += findings["snippetCount"]
                         snippets.extend(
                             self._get_snippet_details(
-                                topic_data["snippetIds"], app_data["owner"]
+                                topic_data["snippetIds"], app_data["owner"], topic
                             )
                         )
                         break
@@ -126,7 +140,7 @@ class LoaderApp:
                         "snippetCount": len(topic_data["snippetIds"]),
                         "fileCount": len(app_data["documents"]),
                         "snippets": self._get_snippet_details(
-                            topic_data["snippetIds"], app_data["owner"]
+                            topic_data["snippetIds"], app_data["owner"], topic
                         ),
                     }
                     total_snippet_count += findings["snippetCount"]
@@ -216,9 +230,9 @@ class LoaderApp:
                         continue
 
                     self.loader_apps_at_risk += 1
-                    loader_app = self.get_findings_for_loader_app(app_data)
-                    all_loader_apps.append(loader_app)
-                    app_processed.append(app_data["name"])
+                loader_app = self.get_findings_for_loader_app(app_data)
+                all_loader_apps.append(loader_app)
+                app_processed.append(app_data["name"])
 
             # TODO: Sort loader apps
             # sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
