@@ -298,7 +298,7 @@ class LoaderApp:
             self.loader_findings_list = var_keys["loader_findings_list"]
 
             report_data = self._generate_final_report(
-                loader_app, loader_response.model_dump()
+                ai_loader_apps, loader_app, loader_response.model_dump()
             )
             logger.debug(f"REportData: {report_data}")
         except Exception as ex:
@@ -413,7 +413,9 @@ class LoaderApp:
             loader_response = self._create_loader_app_model(
                 [loader_app_details], var_keys
             )
-            report_summary = self._create_report_summary(loader_response.model_dump(), loader)
+            report_summary = self._create_report_summary(
+                loader_response.model_dump(), loader
+            )
             report_summary = report_summary.dict()
             report_summary["createdAt"] = loader["metadata"]["createdAt"]
             pdf_report_path = (
