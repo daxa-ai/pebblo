@@ -61,14 +61,14 @@ entity_group_conf_mapping = {
     Entities.US_BANK_NUMBER.value: (0.4, PIIGroups.Financial.value),
     Entities.IBAN_CODE.value: (0.8, PIIGroups.Financial.value),
     # Secret
-    SecretEntities.GITHUB_TOKEN.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.GITHUB_TOKEN.value: (0.4, PIIGroups.Secrets.value),
     SecretEntities.SLACK_TOKEN.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.AWS_ACCESS_KEY.value: (0.45, PIIGroups.Secrets.value),
     SecretEntities.AWS_SECRET_KEY.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.AZURE_KEY_ID.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.AZURE_CLIENT_SECRET.value: (0.8, PIIGroups.Secrets.value),
-    SecretEntities.GOOGLE_API_KEY.value: (0.8, PIIGroups.Secrets.value),
-    SecretEntities.GITHUB_FINEGRAINED_TOKEN.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.GOOGLE_API_KEY.value: (0.4, PIIGroups.Secrets.value),
+    SecretEntities.GITHUB_FINEGRAINED_TOKEN.value: (0.4, PIIGroups.Secrets.value),
     # Network
     Entities.IP_ADDRESS.value: (0.4, PIIGroups.Network.value),
 }
