@@ -100,3 +100,4 @@ brew install pango
 sudo apt-get install libpango-1.0-0 libpangoft2-1.0-0
 ```
 
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=ebe2593f-57f9-4e35-9b17-da30daa6c509" />

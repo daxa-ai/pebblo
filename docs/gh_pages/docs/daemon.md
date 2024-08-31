@@ -23,3 +23,5 @@ $ tree
 │   │   │   └── metadata.json
 │   │   └── report.json
 ```
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=b1163405-aa55-41aa-bc9f-9a594c7eb4a3" />

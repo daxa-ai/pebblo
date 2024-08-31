@@ -34,3 +34,5 @@ Pebblo has two components.
 - [Configuration](config.md)
 - [Reports](reports.md)
 - [Troubleshooting](troubleshooting.md)
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=5e0e30b5-5738-4d87-90d7-ff7e5324200c" />

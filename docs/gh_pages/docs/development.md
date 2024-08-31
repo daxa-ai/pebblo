@@ -79,3 +79,5 @@ to open a pull request against the main Pebblo repo.
 Please join Discord server [https://discord.gg/wyAfaYXwwv](https://discord.gg/wyAfaYXwwv) to reach out to the Pebblo maintainers, contributors and users.
 
 ![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=5dcf02e7-b7ad-472b-89a9-0f235430dbad" />

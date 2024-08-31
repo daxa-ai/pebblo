@@ -65,3 +65,5 @@ The following Langchain DocumentLoaders are currently supported.
 1. SharePointLoader
 
 > Note <sup>1</sup>: _Most other Langchain document loaders that implement load() and lazy_load() methods should work. The above list indicates the ones that are explicitly tested. If you have successfully tested a particular DocumentLoader other than this list above, please consider raising an PR._
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=663e4c29-b156-42a6-b49e-359111bfbd5b" />
