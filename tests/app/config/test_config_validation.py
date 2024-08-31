@@ -106,6 +106,19 @@ def test_reports_config_validate(setup_and_teardown):
         "Error: Unsupported renderer 'invalid_renderer' specified in the configuration"
     ]
 
+    # Test with weasyprint renderer
+    config = {
+        "format": "pdf",
+        "renderer": "weasyprint",
+        "cacheDir": "~/.pebblo_test_",
+    }
+    validator = ReportsConfig(config)
+    validator.validate()
+    assert validator.errors == [
+        """Error: `renderer: weasyprint` was specified, but weasyprint was not found.
+            Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"""
+    ]
+
 
 def test_classifier_config_validate():
     # Test with True value
@@ -171,3 +184,14 @@ def test_validate_config(setup_and_teardown):
     with pytest.raises(SystemExit):
         validate_config(config)
     # If the configuration is invalid, validate_config should raise a SystemExit exception
+
+
+# def test_validate_successful_import():
+#     """Test that validate() does not add an error if import is successful"""
+#     # empty config since this is os dependency
+#     config = {}
+#     validator = WeasyPrintDependency(config)
+#     validator.validate()
+#
+#     # Check that no errors were added
+#     assert len(validator.errors) == 0
