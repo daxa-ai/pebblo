@@ -1,6 +1,6 @@
 import pathlib
 from contextvars import ContextVar
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import yaml
 from pydantic import Field
@@ -68,7 +68,7 @@ var_server_config: ContextVar[Config] = ContextVar("server_config", default=None
 var_server_config_dict: ContextVar[dict] = ContextVar("server_config_dict", default={})
 
 
-def load_config(path: str) -> Tuple[dict, Config]:
+def load_config(path: Optional[str]) -> Tuple[dict, Config]:
     try:
         # If Path does not exist in command, set default config value
         conf_obj = Config(
