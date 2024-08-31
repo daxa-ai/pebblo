@@ -1,3 +1,4 @@
+import importlib.util
 import logging
 import os
 import sys
@@ -112,13 +113,9 @@ class ReportsConfig(ConfigValidator):
 
     def validate_optional_weasyprint_dependency(self):
         """Check if WeasyPrint is installed"""
-        try:
-            from weasyprint import CSS, HTML
-        except ImportError:
-            error = """Could not import weasyprint package. Please install weasyprint and Pango to generate 
-            report using weasyprint.
-            Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"
-            """
+        if importlib.util.find_spec("weasyprint") is None:
+            error = """Error: `renderer: weasyprint` was specified, but weasyprint was not found.
+            Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"""
             self.errors.append(error)
 
     @staticmethod
@@ -152,7 +149,7 @@ def validate_config(config_dict):
         "logging": LoggingConfig,
         "reports": ReportsConfig,
         "classifier": ClassifierConfig,
-        "storage": StorageConfig
+        "storage": StorageConfig,
     }
 
     validation_errors = []
