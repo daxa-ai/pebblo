@@ -184,14 +184,3 @@ def test_validate_config(setup_and_teardown):
     with pytest.raises(SystemExit):
         validate_config(config)
     # If the configuration is invalid, validate_config should raise a SystemExit exception
-
-
-# def test_validate_successful_import():
-#     """Test that validate() does not add an error if import is successful"""
-#     # empty config since this is os dependency
-#     config = {}
-#     validator = WeasyPrintDependency(config)
-#     validator.validate()
-#
-#     # Check that no errors were added
-#     assert len(validator.errors) == 0
