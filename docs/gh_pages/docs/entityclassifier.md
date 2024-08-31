@@ -29,3 +29,5 @@ User can get details of classified entities for their loader source files in Peb
 Different sections of Pebblo report such as , `Top Files with Most Findings`, `Data Source Findings Table` and `Snippets` helps to get overview of pebblo entity classifier output for user's Rag application.
 
 For more details refer - [Reports](reports.md)
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=64a603c5-db24-48b3-bbaa-0e5ca775e1cf" />

@@ -13,3 +13,5 @@
   sudo apt-get update
   sudo apt-get install libpango1.0-0
   ```
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=4f6e05d7-1d73-45dc-abc9-244ee4d905ff" />

@@ -39,3 +39,5 @@ This table provides a summary of all the different Topics and Entities found acr
 # Snippets
 
 This sections provides the actual text inspected by the `Pebblo Server` using the `Pebblo Topic Classifier` and `Pebblo Entity Classifier`. This will be useful to quickly inspect and remediate text that should not be ingested into the Gen-AI RAG application. Each snippet shows the exact file the snippet is loaded from easy remediation.
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=50c3c41f-d0e1-4b3e-ad99-dc9ab5ad2ac1" />

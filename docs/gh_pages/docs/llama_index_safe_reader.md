@@ -59,3 +59,5 @@ The following LlamaIndex DocumentReaders are currently supported.
 
 
 > Note : _Most other LlamaIndex document readers that implement load_data() method should work. The above list indicates the ones that are explicitly tested. If you have successfully tested a particular DocumentReader other than this list above, please consider raising a PR.
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=cd474d67-1474-4733-a400-7b17e403590c" />
