@@ -16,19 +16,6 @@ class ConfigValidator(ABC):
         raise NotImplementedError()
 
 
-class WeasyPrintDependency(ConfigValidator):
-    def validate(self):
-        """Check if WeasyPrint is installed"""
-        try:
-            from weasyprint import CSS, HTML
-        except ImportError:
-            error = """Could not import weasyprint package. Please install weasyprint and Pango to generate 
-            report using weasyprint.
-            Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"
-            """
-            self.errors.append(error)
-
-
 class DaemonConfig(ConfigValidator):
     def validate(self):
         host = self.config.get("host")
@@ -120,6 +107,20 @@ class ReportsConfig(ConfigValidator):
         if not os.path.exists(expand_path(str(cache_dir))):
             os.makedirs(expand_path(str(cache_dir)), exist_ok=True)
 
+        if renderer == "weasyprint":
+            self.validate_optional_weasyprint_dependency()
+
+    def validate_optional_weasyprint_dependency(self):
+        """Check if WeasyPrint is installed"""
+        try:
+            from weasyprint import CSS, HTML
+        except ImportError:
+            error = """Could not import weasyprint package. Please install weasyprint and Pango to generate 
+            report using weasyprint.
+            Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"
+            """
+            self.errors.append(error)
+
     @staticmethod
     def validate_input(input_dict):
         deprecate_error = "DeprecationWarning: 'outputDir' in config is deprecated, use 'cacheDir' instead"
@@ -151,8 +152,7 @@ def validate_config(config_dict):
         "logging": LoggingConfig,
         "reports": ReportsConfig,
         "classifier": ClassifierConfig,
-        "storage": StorageConfig,
-        "dependency": WeasyPrintDependency
+        "storage": StorageConfig
     }
 
     validation_errors = []
