@@ -17,11 +17,6 @@ def weasyprint_pdf_converter(source_html, output_path, search_path):
             target=output_path, stylesheets=[CSS(search_path + "/index.css")]
         )
         return True, result
-    except ImportError:
-        error = """Could not import weasyprint package. Please install weasyprint and Pango to generate report using weasyprint.
-          Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"
-        """
-        return False, error
     except Exception as e:
         return False, e
 
