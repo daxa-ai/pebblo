@@ -75,7 +75,7 @@ class AiSnippetHandler:
             "topicDetails": doc.get("topic_details", {}),
         }
         ai_snippet_obj = AiSnippet(**snippet_details)
-        ai_snippet = ai_snippet_obj.dict()
+        ai_snippet = ai_snippet_obj.model_dump()
         status, snippet_obj = self.db.insert_data(AiSnippetsTable, ai_snippet)
         logger.debug("AISnippet created successfully.")
         return snippet_obj.data
