@@ -88,7 +88,7 @@ class LoaderApp:
                 for findings in self.loader_findings_list:
                     if findings.get("labelName") == entity:
                         findings_exists = True
-                        findings["findings"] += entity_data["count"]
+                        findings["findings"] += entity_data.get("count",0)
                         findings["snippetCount"] += len(
                             entity_data.get("snippetIds", [])
                         )
@@ -230,8 +230,8 @@ class LoaderApp:
                         "sourceSize": document_detail.get("sourceSize", 0),
                         "sourceFilePath": document_detail["sourcePath"],
                         "lastModified": document_detail["lastIngested"],
-                        "findingsEntities": len(document_detail["entities"].keys()),
-                        "findingsTopics": len(document_detail["topics"].keys()),
+                        "findingsEntities":  len((document_detail.get("entities", {}) or {}).keys()),
+                        "findingsTopics":  len((document_detail.get("topics", {}) or {}).keys()),
                         "authorizedIdentities": document_detail["userIdentities"],
                     }
                     documents_with_findings_data.append(document_obj)
