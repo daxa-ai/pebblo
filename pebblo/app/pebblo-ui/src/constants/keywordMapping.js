@@ -28,6 +28,7 @@ export const KEYWORD_MAPPING = {
   "us-itin": "US ITIN",
   "github-token": "Github Token",
   "github-finergrained-token": "Github Finergrained Token",
+  "private-key": "Private Key",
   "slack-token": "Slack Token",
   "aws-access-key": "AWS Access Key",
   "aws-secret-key": "AWS Secret Key",

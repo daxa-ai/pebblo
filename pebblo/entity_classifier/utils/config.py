@@ -30,6 +30,7 @@ class Entities(Enum):
     US_BANK_NUMBER = "us-bank-account-number"
     IBAN_CODE = "iban-code"
     US_ITIN = "us-itin"
+    PRIVATE_KEY = "private-key"
 
 
 class SecretEntities(Enum):
@@ -69,6 +70,7 @@ entity_group_conf_mapping = {
     SecretEntities.AZURE_CLIENT_SECRET.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.GOOGLE_API_KEY.value: (0.4, PIIGroups.Secrets.value),
     SecretEntities.GITHUB_FINEGRAINED_TOKEN.value: (0.4, PIIGroups.Secrets.value),
+    Entities.PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
     # Network
     Entities.IP_ADDRESS.value: (0.4, PIIGroups.Network.value),
 }
