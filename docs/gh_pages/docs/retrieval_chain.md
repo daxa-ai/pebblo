@@ -208,3 +208,5 @@ I don't know, I'm sorry.
 When a user sends any prompt to the LLM using PebbloRetrieveQA, Pebblo captures the findings from that prompt. This behavior is enabled by default.
 
 ***Coming Soon***: Ability to block or anonymize prompts based on policy. 
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=fd3b5c16-cba2-4212-87b2-9b9a9bea9ee1" />

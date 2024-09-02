@@ -29,3 +29,5 @@ User can get details of classified topics for their loader source files in Pebbl
 Different sections of Pebblo report such as , `Top Files With Most Findings`, `Data Source Findings Table` and `Snippets` helps to get overview of pebblo topic classifier output for user's rag application.
 
 For more details refer - [Reports](reports.md)
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=fa7fbe6b-f5a4-490b-8492-526b023d5cdc" />

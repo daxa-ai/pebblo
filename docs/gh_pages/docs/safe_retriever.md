@@ -64,3 +64,5 @@ This page shows all the prompt with findings for all the applications.
 2. **Prompts**: Number of prompts in which the entity was detected.
 3. **Users**: Users who have used this entity in the prompt.
 4. **Apps** : Application in which the entity is present.
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=9302659d-2a79-4999-9bc7-7ac1172fb264" />

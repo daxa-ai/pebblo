@@ -1,3 +1,4 @@
+import importlib.util
 import logging
 import os
 import sys
@@ -13,7 +14,7 @@ class ConfigValidator(ABC):
 
     @abstractmethod
     def validate(self):
-        pass
+        raise NotImplementedError()
 
 
 class DaemonConfig(ConfigValidator):
@@ -106,6 +107,16 @@ class ReportsConfig(ConfigValidator):
         # Check if the output directory exists, create if it doesn't
         if not os.path.exists(expand_path(str(cache_dir))):
             os.makedirs(expand_path(str(cache_dir)), exist_ok=True)
+
+        if renderer == "weasyprint":
+            self.validate_optional_weasyprint_dependency()
+
+    def validate_optional_weasyprint_dependency(self):
+        """Check if WeasyPrint is installed"""
+        if importlib.util.find_spec("weasyprint") is None:
+            error = """Error: `renderer: weasyprint` was specified, but weasyprint was not found.
+            Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"""
+            self.errors.append(error)
 
     @staticmethod
     def validate_input(input_dict):

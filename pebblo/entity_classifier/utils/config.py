@@ -6,6 +6,7 @@ from enum import Enum
 
 secret_entities_context_mapping = {
     "github-token": ["github", "github_token", "git"],
+    "github-finergrained-token": ["github", "github_token", "git"],
     "slack-token": ["slack", "slack token", "slack_token"],
     "aws-access-key": ["aws_access_key", "aws_key", "access", "id", "api"],
     "aws-secret-key": ["aws_secret_key", "secret"],
@@ -39,6 +40,7 @@ class SecretEntities(Enum):
     AZURE_KEY_ID = "azure-key-id"
     AZURE_CLIENT_SECRET = "azure-client-secret"
     GOOGLE_API_KEY = "google-api-key"
+    GITHUB_FINEGRAINED_TOKEN = "github-finergrained-token"
 
 
 class PIIGroups(Enum):
@@ -59,13 +61,14 @@ entity_group_conf_mapping = {
     Entities.US_BANK_NUMBER.value: (0.4, PIIGroups.Financial.value),
     Entities.IBAN_CODE.value: (0.8, PIIGroups.Financial.value),
     # Secret
-    SecretEntities.GITHUB_TOKEN.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.GITHUB_TOKEN.value: (0.4, PIIGroups.Secrets.value),
     SecretEntities.SLACK_TOKEN.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.AWS_ACCESS_KEY.value: (0.45, PIIGroups.Secrets.value),
     SecretEntities.AWS_SECRET_KEY.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.AZURE_KEY_ID.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.AZURE_CLIENT_SECRET.value: (0.8, PIIGroups.Secrets.value),
-    SecretEntities.GOOGLE_API_KEY.value: (0.8, PIIGroups.Secrets.value),
+    SecretEntities.GOOGLE_API_KEY.value: (0.4, PIIGroups.Secrets.value),
+    SecretEntities.GITHUB_FINEGRAINED_TOKEN.value: (0.4, PIIGroups.Secrets.value),
     # Network
     Entities.IP_ADDRESS.value: (0.4, PIIGroups.Network.value),
 }
