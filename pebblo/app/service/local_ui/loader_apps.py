@@ -88,7 +88,7 @@ class LoaderApp:
                 for findings in self.loader_findings_list:
                     if findings.get("labelName") == entity:
                         findings_exists = True
-                        findings["findings"] += entity_data.get("count",0)
+                        findings["findings"] += entity_data.get("count", 0)
                         findings["snippetCount"] += len(
                             entity_data.get("snippetIds", [])
                         )
@@ -96,7 +96,9 @@ class LoaderApp:
                         total_snippet_count += findings["snippetCount"]
                         snippets.extend(
                             self._get_snippet_details(
-                                entity_data.get("snippetIds", []), app_data["owner"], entity
+                                entity_data.get("snippetIds", []),
+                                app_data["owner"],
+                                entity,
                             )
                         )
                         break
@@ -119,9 +121,7 @@ class LoaderApp:
                     self.loader_findings_summary_list.append(findings)
 
             except Exception as err:
-                logger.error(
-                    f"Failed in getting docEntities details, Error: {err}"
-                )
+                logger.error(f"Failed in getting docEntities details, Error: {err}")
 
         return entity_count, snippets, total_snippet_count
 
@@ -148,7 +148,9 @@ class LoaderApp:
                         total_snippet_count += findings["snippetCount"]
                         snippets.extend(
                             self._get_snippet_details(
-                                topic_data.get("snippetIds", []), app_data["owner"], topic
+                                topic_data.get("snippetIds", []),
+                                app_data["owner"],
+                                topic,
                             )
                         )
                         break
@@ -171,9 +173,7 @@ class LoaderApp:
                     self.loader_findings_summary_list.append(findings)
 
             except Exception as err:
-                logger.error(
-                    f"Failed in getting docTopics details, Error: {err}"
-                )
+                logger.error(f"Failed in getting docTopics details, Error: {err}")
 
         return topic_count, snippets, total_snippet_count
 
@@ -215,9 +215,7 @@ class LoaderApp:
         Fetch required data for DocumentWithFindings
         """
 
-        _, documents = self.db.query(
-            AiDocumentTable, {"loadId": app_data.get("id")}
-        )
+        _, documents = self.db.query(AiDocumentTable, {"loadId": app_data.get("id")})
         loader_document_with_findings = app_data.get("documentsWithFindings")
         documents_with_findings_data = []
         for document in documents:
@@ -230,8 +228,12 @@ class LoaderApp:
                         "sourceSize": document_detail.get("sourceSize", 0),
                         "sourceFilePath": document_detail["sourcePath"],
                         "lastModified": document_detail["lastIngested"],
-                        "findingsEntities":  len((document_detail.get("entities", {}) or {}).keys()),
-                        "findingsTopics":  len((document_detail.get("topics", {}) or {}).keys()),
+                        "findingsEntities": len(
+                            (document_detail.get("entities", {}) or {}).keys()
+                        ),
+                        "findingsTopics": len(
+                            (document_detail.get("topics", {}) or {}).keys()
+                        ),
                         "authorizedIdentities": document_detail["userIdentities"],
                     }
                     documents_with_findings_data.append(document_obj)
@@ -256,10 +258,12 @@ class LoaderApp:
         total_snippet_count = 0
         snippets = []
         if app_data.get("docEntities"):
-            entity_count, snippets, total_snippet_count = (
-                self._findings_for_app_entities(
-                    app_data, snippets, total_snippet_count, entity_count
-                )
+            (
+                entity_count,
+                snippets,
+                total_snippet_count,
+            ) = self._findings_for_app_entities(
+                app_data, snippets, total_snippet_count, entity_count
             )
 
         if app_data.get("docTopics"):
