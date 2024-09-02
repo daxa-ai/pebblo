@@ -71,6 +71,8 @@ class AiSnippetHandler:
             "loaderSourcePath": data_source.get("sourcePath"),
             "entities": doc.get("entities", {}),
             "topics": doc.get("topics", {}),
+            "entityDetails": doc.get("entity_details", {}),
+            "topicDetails": doc.get("topic_details", {}),
         }
         ai_snippet_obj = AiSnippet(**snippet_details)
         ai_snippet = ai_snippet_obj.dict()

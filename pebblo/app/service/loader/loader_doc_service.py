@@ -170,8 +170,10 @@ class AppLoaderDoc:
             data=doc.get("doc", None),
             entities={},
             entityCount=0,
+            entityDetails={},
             topics={},
             topicCount=0,
+            topicDetails={},
         )
         try:
             if doc_info.data:
@@ -189,8 +191,10 @@ class AppLoaderDoc:
                 )
                 doc_info.topics = topics
                 doc_info.entities = entities
+                doc_info.entityDetails = entity_details
                 doc_info.topicCount = topic_count
                 doc_info.entityCount = entity_count
+                doc_info.topicDetails = topic_details
                 doc_info.data = anonymized_doc
             logger.debug("Doc classification finished.")
             return doc_info
@@ -209,6 +213,8 @@ class AppLoaderDoc:
         logger.debug("Update doc details with classification result")
         doc["entities"] = doc_info.entities
         doc["topics"] = doc_info.topics
+        doc["entity_details"] = doc_info.entityDetails
+        doc["topic_details"] = doc_info.topicDetails
         logger.debug("Input doc updated with classification result")
 
     @timeit
@@ -324,9 +330,11 @@ class AppLoaderDoc:
             logger.error(message)
             logger.info("Rollback the changes")
             self.db.session.rollback()
-            return self._create_return_response(message, 500)
+            return self._create_return_response(message=message, status_code=500)
         else:
             message = "Loader Doc API Request processed successfully"
-            return self._create_return_response(message, output=loader_response_output)
+            return self._create_return_response(
+                message=message, output=loader_response_output
+            )
         finally:
             self.db.session.close()
