@@ -208,6 +208,7 @@ class LoaderApp:
                 )
 
             # Documents with findings Count
+            self.loader_data_source = len(self.loader_data_source_list)
             self.loader_files_findings = len(self.loader_document_with_findings_list)
 
     def _get_documents_with_findings(self, app_data):
