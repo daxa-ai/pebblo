@@ -8,7 +8,7 @@ import { Tooltip } from "./tooltip.js";
 
 function DisplaySnippet(props) {
   const { formattedString } = props;
-  return `<div>
+  return `<div class="word-wrap-break">
       ${formattedString.myMap((item, index) =>
         item?.score
           ? Tooltip({
