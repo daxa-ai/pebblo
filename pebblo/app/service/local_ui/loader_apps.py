@@ -41,7 +41,6 @@ class LoaderApp:
         """
         This function finds snippet details based on labels
         """
-
         response = []
         for snippet_id in snippet_ids:
             if len(response) >= ReportConstants.SNIPPET_LIMIT.value:
@@ -83,21 +82,21 @@ class LoaderApp:
         """
         for entity, entity_data in app_data.get("docEntities", {}).items():
             try:
-                entity_count += entity_data.get("count")
-                self.loader_findings += entity_data.get("count")
+                entity_count += entity_data.get("count", 0)
+                self.loader_findings += entity_data.get("count", 0)
                 findings_exists = False
                 for findings in self.loader_findings_list:
                     if findings.get("labelName") == entity:
                         findings_exists = True
                         findings["findings"] += entity_data["count"]
                         findings["snippetCount"] += len(
-                            entity_data["snippetIds"]
+                            entity_data.get("snippetIds", [])
                         )
                         findings["fileCount"] = len(app_data.get("documents", []))
                         total_snippet_count += findings["snippetCount"]
                         snippets.extend(
                             self._get_snippet_details(
-                                entity_data["snippetIds"], app_data["owner"], entity
+                                entity_data.get("snippetIds", []), app_data["owner"], entity
                             )
                         )
                         break
@@ -118,11 +117,13 @@ class LoaderApp:
                     self.loader_findings_list.append(shallow_copy)
                     del findings["snippets"]
                     self.loader_findings_summary_list.append(findings)
-                    return entity_count, snippets, total_snippet_count
+
             except Exception as err:
                 logger.error(
                     f"Failed in getting docEntities details, Error: {err}"
                 )
+
+        return entity_count, snippets, total_snippet_count
 
     def _findings_for_app_topics(
         self, app_data, snippets, total_snippet_count, topic_count
@@ -132,14 +133,14 @@ class LoaderApp:
         """
         for topic, topic_data in app_data.get("docTopics", {}).items():
             try:
-                topic_count += topic_data.get("count")
-                self.loader_findings += topic_data.get("count")
+                topic_count += topic_data.get("count", 0)
+                self.loader_findings += topic_data.get("count", 0)
 
                 findings_exists = False
                 for findings in self.loader_findings_list:
                     if findings.get("labelName") == topic:
                         findings_exists = True
-                        findings["findings"] += topic_data["count"]
+                        findings["findings"] += topic_data.get("count", 0)
                         findings["snippetCount"] += len(
                             topic_data.get("snippetIds", [])
                         )
@@ -155,7 +156,7 @@ class LoaderApp:
                     findings = {
                         "appName": app_data["name"],
                         "labelName": topic,
-                        "findings": topic_data["count"],
+                        "findings": topic_data.get("count", 0),
                         "findingsType": "topics",
                         "snippetCount": len(topic_data.get("snippetIds", [])),
                         "fileCount": len(app_data.get("documents", [])),
@@ -168,11 +169,13 @@ class LoaderApp:
                     self.loader_findings_list.append(shallow_copy)
                     del findings["snippets"]
                     self.loader_findings_summary_list.append(findings)
-                    return topic_count, snippets, total_snippet_count
+
             except Exception as err:
                 logger.error(
                     f"Failed in getting docTopics details, Error: {err}"
                 )
+
+        return topic_count, snippets, total_snippet_count
 
     def _update_loader_datasource(
         self, app_data, entity_count, topic_count, total_snippet_count
@@ -224,7 +227,7 @@ class LoaderApp:
                     document_obj = {
                         "appName": document_detail["appName"],
                         "owner": document_detail["owner"],
-                        "sourceSize": document_detail["sourceSize"],
+                        "sourceSize": document_detail.get("sourceSize", 0),
                         "sourceFilePath": document_detail["sourcePath"],
                         "lastModified": document_detail["lastIngested"],
                         "findingsEntities": len(document_detail["entities"].keys()),
@@ -277,7 +280,7 @@ class LoaderApp:
             owner=app_data.get("owner"),
             loadId=app_data.get("id"),
         )
-        return app_details.dict()
+        return app_details.model_dump()
 
     def get_all_loader_apps(self):
         """
@@ -331,7 +334,7 @@ class LoaderApp:
             message = "All loader app response prepared successfully"
             logger.debug(message)
             self.db.session.commit()
-            return loader_response.dict()
+            return loader_response.model_dump()
         finally:
             logger.debug("Closing database session for preparing all loader apps")
             # Closing the session
@@ -359,7 +362,7 @@ class LoaderApp:
                 dataSource=self.loader_data_source_list,
             )
             report_data = self._generate_final_report(
-                loader_app, loader_response.dict()
+                loader_app, loader_response.model_dump()
             )
         except Exception as ex:
             message = f"[App Detail]: Error in loader app listing. Error:{ex}"
@@ -478,7 +481,7 @@ class LoaderApp:
             pebbloClientVersion=app_data.get("pluginVersion", ""),
             clientVersion=app_data.get("clientVersion", {}),
         )
-        return report_dict.dict()
+        return report_dict.model_dump()
 
     def _delete(self, db, table_name, filter_query):
         try:
