@@ -81,11 +81,10 @@ class LoaderApp:
         """
         This function finds findings for apps with entities
         """
-        for entity, entity_data in app_data.get("docEntities").items():
+        for entity, entity_data in app_data.get("docEntities", {}).items():
             try:
                 entity_count += entity_data.get("count")
                 self.loader_findings += entity_data.get("count")
-
                 findings_exists = False
                 for findings in self.loader_findings_list:
                     if findings.get("labelName") == entity:
@@ -131,7 +130,7 @@ class LoaderApp:
         """
         This function finds findings for apps with topics
         """
-        for topic, topic_data in app_data.get("docTopics").items():
+        for topic, topic_data in app_data.get("docTopics", {}).items():
             try:
                 topic_count += topic_data.get("count")
                 self.loader_findings += topic_data.get("count")
