@@ -14,5 +14,4 @@ regex_secrets_patterns = {
     "azure-key-id": r"""(?i)(%s).{0,20}([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})""",
     "azure-client-secret": r"""\b(?i)(%s).{0,20}([a-z0-9_\.\-~]{34})\b""",
     "google-api-key": r"""\bAIza[0-9A-Za-z\-_]{35}\b""",
-    # "google-key" : r"(?<=BEGIN PRIVATE KEY-----)(.){100,}(?=-----END PRIVATE KEY)"
 }
