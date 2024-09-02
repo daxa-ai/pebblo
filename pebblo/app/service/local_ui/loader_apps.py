@@ -2,11 +2,12 @@ import json
 
 from fastapi import status
 
-from pebblo.app.enums.enums import ReportConstants
-from pebblo.app.models.models import (
+from pebblo.app.enums.enums import CacheDir, ReportConstants
+from pebblo.app.models.db_models import (
     DataSource,
     LoaderAppListDetails,
     LoaderAppModel,
+    LoadHistory,
     ReportModel,
     Summary,
 )
@@ -18,7 +19,9 @@ from pebblo.app.models.sqltables import (
 )
 from pebblo.app.storage.sqlite_db import SQLiteClient
 from pebblo.app.utils.utils import (
+    delete_directory,
     get_current_time,
+    get_full_path,
     get_pebblo_server_version,
 )
 from pebblo.log import get_logger
@@ -28,14 +31,25 @@ logger = get_logger(__name__)
 
 class LoaderApp:
     def __init__(self):
-        self.loader_apps_at_risk = 0
-        self.loader_findings = 0
-        self.loader_files_findings = 0
-        self.loader_data_source = 0
         self.loader_findings_list = []
-        self.loader_data_source_list = []
-        self.loader_document_with_findings_list = []
         self.loader_findings_summary_list = []
+
+    def _initialize_variables(self):
+        """
+        Loader details variables initialization
+        """
+        self.loader_details = {
+            "loader_apps_at_risk": 0,
+            "loader_findings": 0,
+            "loader_files_findings": 0,
+            "loader_data_source": 0,
+            "loader_findings_list": [],
+            "loader_data_source_list": [],
+            "loader_document_with_findings_list": [],
+            "loader_findings_summary_list": [],
+            "loader_files_with_findings_count": 0,
+            "loader_data_source_count": 0,
+        }
 
     def _get_snippet_details(self, snippet_ids: list, owner: str, label_name: str):
         """
@@ -83,9 +97,9 @@ class LoaderApp:
         for entity, entity_data in app_data.get("docEntities", {}).items():
             try:
                 entity_count += entity_data.get("count", 0)
-                self.loader_findings += entity_data.get("count", 0)
+                self.loader_details["loader_findings"] += entity_data.get("count", 0)
                 findings_exists = False
-                for findings in self.loader_findings_list:
+                for findings in self.loader_details.get("loader_findings_list", []):
                     if findings.get("labelName") == entity:
                         findings_exists = True
                         findings["findings"] += entity_data.get("count", 0)
@@ -116,9 +130,9 @@ class LoaderApp:
                     }
                     total_snippet_count += findings["snippetCount"]
                     shallow_copy = findings.copy()
-                    self.loader_findings_list.append(shallow_copy)
+                    self.loader_details["loader_findings_list"].append(shallow_copy)
                     del findings["snippets"]
-                    self.loader_findings_summary_list.append(findings)
+                    self.loader_details["loader_findings_summary_list"].append(findings)
 
             except Exception as err:
                 logger.error(f"Failed in getting docEntities details, Error: {err}")
@@ -134,7 +148,7 @@ class LoaderApp:
         for topic, topic_data in app_data.get("docTopics", {}).items():
             try:
                 topic_count += topic_data.get("count", 0)
-                self.loader_findings += topic_data.get("count", 0)
+                self.loader_details["loader_findings"] += topic_data.get("count", 0)
 
                 findings_exists = False
                 for findings in self.loader_findings_list:
@@ -168,9 +182,9 @@ class LoaderApp:
                     }
                     total_snippet_count += findings["snippetCount"]
                     shallow_copy = findings.copy()
-                    self.loader_findings_list.append(shallow_copy)
+                    self.loader_details["loader_findings_list"].append(shallow_copy)
                     del findings["snippets"]
-                    self.loader_findings_summary_list.append(findings)
+                    self.loader_details["loader_findings_summary_list"].append(findings)
 
             except Exception as err:
                 logger.error(f"Failed in getting docTopics details, Error: {err}")
@@ -201,15 +215,15 @@ class LoaderApp:
                         ReportConstants.SNIPPET_LIMIT.value, total_snippet_count
                     ),
                 }
-                self.loader_data_source_list.append(ds_obj)
+                self.loader_details["loader_data_source_list"].append(ds_obj)
             except Exception as err:
                 logger.error(
                     f"Failed in getting data source details of {data_source.data}, Error: {err}"
                 )
 
             # Documents with findings Count
-            self.loader_data_source = len(self.loader_data_source_list)
-            self.loader_files_findings = len(self.loader_document_with_findings_list)
+            self.loader_data_source = len(self.loader_details.get("loader_data_source_list", []))
+            self.loader_files_findings = len(self.loader_details.get("loader_document_with_findings_list", []))
 
     def _get_documents_with_findings(self, app_data):
         """
@@ -244,10 +258,10 @@ class LoaderApp:
                 )
                 continue
 
-        self.loader_document_with_findings_list.extend(documents_with_findings_data)
+        self.loader_details["loader_document_with_findings_list"].extend(documents_with_findings_data)
 
         # Documents with findings Count
-        self.loader_files_findings = len(self.loader_document_with_findings_list)
+        self.loader_files_findings = len(self.loader_details.get("loader_document_with_findings_list", []))
 
     def get_findings_for_loader_app(self, app_data):
         """
@@ -287,6 +301,19 @@ class LoaderApp:
         )
         return app_details.model_dump()
 
+    def _create_loader_app_model(self,app_list):
+        loader_response = LoaderAppModel(
+            applicationsAtRiskCount=self.loader_details["loader_apps_at_risk"],
+            findingsCount=self.loader_details["loader_findings"],
+            documentsWithFindingsCount=self.loader_details["loader_files_with_findings_count"],
+            dataSourceCount=self.loader_details["loader_data_source_count"],
+            appList=app_list,
+            findings=self.loader_details["loader_findings_list"],
+            documentsWithFindings=self.loader_details["loader_document_with_findings_list"],
+            dataSource=self.loader_details["loader_data_source_list"],
+        )
+        return loader_response
+
     def get_all_loader_apps(self):
         """
         Returns all necessary loader app details required for get all app functionality.
@@ -296,7 +323,7 @@ class LoaderApp:
 
             # create session
             self.db.create_session()
-
+            self._initialize_variables()
             _, ai_loader_apps = self.db.query(table_obj=AiDataLoaderTable)
 
             # Preparing all loader apps
@@ -304,12 +331,14 @@ class LoaderApp:
             all_loader_apps: list = []
             for loader_app in ai_loader_apps:
                 app_data = loader_app.data
-                if app_data.get("docEntities") or app_data.get("docTopics"):
+                if app_data.get("docEntities") not in [None, {}] or app_data.get(
+                        "docTopics"
+                ) not in [None, {}]:
                     if app_data["name"] in app_processed:
-                        # This app is already processed with the latest loadId, skipping older one's
+                        # This app is already processed with the latest app, skipping older one's
                         continue
 
-                    self.loader_apps_at_risk += 1
+                    self.loader_details["loader_apps_at_risk"] += 1
                 loader_app = self.get_findings_for_loader_app(app_data)
                 all_loader_apps.append(loader_app)
                 app_processed.append(app_data["name"])
@@ -318,16 +347,7 @@ class LoaderApp:
             # sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
 
             logger.debug("[Dashboard]: Preparing loader app response object")
-            loader_response = LoaderAppModel(
-                applicationsAtRiskCount=self.loader_apps_at_risk,
-                findingsCount=self.loader_findings,
-                documentsWithFindingsCount=self.loader_files_findings,
-                dataSourceCount=self.loader_data_source,
-                appList=all_loader_apps,
-                findings=self.loader_findings_list,
-                documentsWithFindings=self.loader_document_with_findings_list,
-                dataSource=self.loader_data_source_list,
-            )
+            loader_response = self._create_loader_app_model(all_loader_apps)
 
         except Exception as ex:
             logger.error(f"[Dashboard]: Error in all loader app listing. Error:{ex}")
@@ -349,25 +369,26 @@ class LoaderApp:
         try:
             logger.debug(f"Getting loader app details, App: {app_name}")
             self.db = db
+            self._initialize_variables()
             filter_query = {"name": app_name}
-            _, ai_loader_apps = self.db.query(
+            _, all_loader_apps = self.db.query(
                 table_obj=AiDataLoaderTable, filter_query=filter_query
             )
-            loader_app = ai_loader_apps[0].data
+            # Entry with the same name can be many due to multiple loads, we will consider only the latest one here.
+            if len(all_loader_apps) == 0:
+                raise Exception("App with this name does not exists.")
+
+            loader_app = all_loader_apps[0].data
             loader_app_details = self.get_findings_for_loader_app(loader_app)
 
-            loader_response = LoaderAppModel(
-                applicationsAtRiskCount=self.loader_apps_at_risk,
-                findingsCount=self.loader_findings,
-                documentsWithFindingsCount=self.loader_files_findings,
-                dataSourceCount=self.loader_data_source,
-                appList=[loader_app_details],
-                findings=self.loader_findings_summary_list,
-                documentsWithFindings=self.loader_document_with_findings_list,
-                dataSource=self.loader_data_source_list,
+            loader_response = self._create_loader_app_model(
+                [loader_app_details]
             )
+            self.loader_findings_summary_list = self.loader_details["loader_findings_summary_list"]
+            self.loader_findings_list = self.loader_details["loader_findings_list"]
+
             report_data = self._generate_final_report(
-                loader_app, loader_response.model_dump()
+                all_loader_apps, loader_app, loader_response.model_dump()
             )
         except Exception as ex:
             message = f"[App Detail]: Error in loader app listing. Error:{ex}"
@@ -425,6 +446,62 @@ class LoaderApp:
             top_n_findings.append(finding_obj)
         return top_n_findings
 
+    def _get_load_history(self, app_name, all_loader_apps):
+        logger.info(f"Fetching LoadHistory for application: {app_name}")
+        load_history: dict = dict()
+        load_history["history"] = list()
+        load_history["moreReportsPath"] = "-"
+        if len(all_loader_apps) <= 1:
+            return load_history
+
+        load_history_limit = ReportConstants.LOADER_HISTORY__LIMIT.value
+        limit_reached = False
+        load_history_instances = 0
+        # Starting from index 1, the application of index 0 is the latest one and
+        # need not be considered for load history
+        for loader_obj in all_loader_apps[1:]:
+            try:
+                loader = loader_obj.data
+                name = loader["name"]
+                load_id = loader["id"]
+                if load_history_instances >= load_history_limit:
+                    limit_reached = True
+                    break
+                self._initialize_variables()
+                loader_app_details = self.get_findings_for_loader_app(loader)
+                loader_response = self._create_loader_app_model([loader_app_details])
+                report_summary = self._create_report_summary(
+                    loader_response.model_dump(), loader
+                )
+                report_summary = report_summary.dict()
+                report_summary["createdAt"] = loader["metadata"]["createdAt"]
+                pdf_report_path = (
+                    f"{CacheDir.HOME_DIR.value}/{name}/{load_id}/"
+                    f"{CacheDir.REPORT_FILE_NAME.value}"
+                )
+                report_name = get_full_path(pdf_report_path)
+
+                load_history_model_obj = LoadHistory(
+                    loadId=load_id,
+                    reportName=report_name,
+                    findings=report_summary["findings"],
+                    filesWithFindings=report_summary["filesWithFindings"],
+                    generatedOn=report_summary["createdAt"],
+                )
+                load_history["history"].append(load_history_model_obj.dict())
+                load_history_instances += 1
+            except Exception as e:
+                logger.error("Error processing this instance of load history. Continuing.")
+                continue
+
+        # If we read load history limit(5 as of now), then add "more reports path" needed for UI.
+        if limit_reached:
+            more_reports = f"{CacheDir.HOME_DIR.value}/{app_name}/"
+            more_report_full_path = get_full_path(more_reports)
+            load_history["moreReportsPath"] = more_report_full_path
+
+        return load_history
+
     def _get_data_source_details(self, app_data, raw_data):
         """
         Create data source findings details and data source findings summary
@@ -456,7 +533,7 @@ class LoaderApp:
             data_source_obj_list.append(data_source_obj)
         return data_source_obj_list
 
-    def _generate_final_report(self, app_data, raw_data):
+    def _generate_final_report(self, all_loader_apps, app_data, raw_data):
         """
         Aggregating all input, processing the data, and generating the final report
         """
@@ -470,9 +547,8 @@ class LoaderApp:
         # Generating DataSource
         data_source_obj_list = self._get_data_source_details(app_data, raw_data)
 
-        # TODO: Retrieve LoadHistory From previous executions
-        # load_history = self._get_load_history()
-        load_history = {"history": [], "moreReportsPath": "-"}
+        load_history = self._get_load_history(app_data["name"], all_loader_apps)
+
         report_dict = ReportModel(
             name=app_data["name"],
             description=app_data.get("description", "-"),
@@ -484,7 +560,7 @@ class LoaderApp:
             dataSources=data_source_obj_list,
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=app_data.get("pluginVersion", ""),
-            clientVersion=app_data.get("clientVersion", {}),
+            clientVersion=app_data.get("clientVersion", None),
         )
         return report_dict.model_dump()
 
@@ -514,6 +590,17 @@ class LoaderApp:
 
             # delete entry from AiDataLoader Table
             self._delete(db, AiDataLoaderTable, filter_query={"name": app_name})
+
+            # Delete PDF report from storage
+            # Path to application directory
+            app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
+            logger.debug(
+                f"[Delete App]: Application directory to deleted, Path: {app_dir_path}"
+            )
+
+            response = delete_directory(app_dir_path, app_name)
+            if response["status_code"] != 200:
+                raise Exception(response["message"])
 
             message = f"Application {app_name} has been deleted."
             logger.info(message)
