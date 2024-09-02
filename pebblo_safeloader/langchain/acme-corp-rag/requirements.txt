@@ -1,8 +1,8 @@
 langchain-community>=0.2.9 # For PebbloSafeLoader, VectorStore
 langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
-chromadb==0.4.7
-python-dotenv==1.0.0
+chromadb
+python-dotenv
 tiktoken
 requests>=2.32.0
-Markdown==3.5
+Markdown
 unstructured[all-docs]
