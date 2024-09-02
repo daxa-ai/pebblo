@@ -37,106 +37,139 @@ class LoaderApp:
         self.loader_document_with_findings_list = []
         self.loader_findings_summary_list = []
 
-    def _get_snippet_details(self, snippet_ids, owner):
+    def _get_snippet_details(self, snippet_ids, owner, label_name):
+        """
+        This function finds snippet details based on labels
+        """
+
         response = []
         for snippet_id in snippet_ids:
             status, output = self.db.query(AiSnippetsTable, {"id": snippet_id})
             if not status or len(output) == 0:
                 continue
             snippet_details = output[0].data
+            entity_details = {}
+            topic_details = {}
+            if snippet_details.get("topicDetails") and snippet_details[
+                "topicDetails"
+            ].get(label_name):
+                topic_details = {
+                    label_name: snippet_details["topicDetails"].get(label_name)
+                }
+            if snippet_details.get("entityDetails") and snippet_details[
+                "entityDetails"
+            ].get(label_name):
+                entity_details = {
+                    label_name: snippet_details["entityDetails"].get(label_name)
+                }
             snippet_obj = {
                 "snippet": snippet_details["doc"],
                 "sourcePath": snippet_details["sourcePath"],
-                # "topicDetails": {}, # TODO: To  be added post 0.1.18
-                # "entityDetails": {}, # TODO: to be added post 0.1.18
+                "topicDetails": topic_details,
+                "entityDetails": entity_details,
                 "fileOwner": owner,
                 "authorizedIdentities": [],
             }
             response.append(snippet_obj)
         return response
 
-    def get_findings_for_loader_app(self, app_data):
-        topic_count = 0
-        entity_count = 0
-        total_snippet_count = 0
-        snippets = []
-        if app_data.get("docEntities"):
-            for entity, entity_data in app_data.get("docEntities").items():
-                entity_count += entity_data.get("count")
-                self.loader_findings += entity_data.get("count")
+    def _findings_for_app_entities(
+        self, app_data, snippets, total_snippet_count, entity_count
+    ):
+        """
+        This function finds findings for apps with entities
+        """
 
-                findings_exists = False
-                for findings in self.loader_findings_list:
-                    if findings.get("labelName") == entity:
-                        findings_exists = True
-                        findings["findings"] += entity_data["count"]
-                        findings["snippetCount"] += len(entity_data["snippetIds"])
-                        findings["fileCount"] = len(app_data["documents"])
-                        total_snippet_count += findings["snippetCount"]
-                        snippets.extend(
-                            self._get_snippet_details(
-                                entity_data["snippetIds"], app_data["owner"]
-                            )
-                        )
-                        break
-                if not findings_exists:
-                    logger.debug("finding not exist")
-                    findings = {
-                        "appName": app_data["name"],
-                        "labelName": entity,
-                        "findings": entity_data["count"],
-                        "findingsType": "entities",
-                        "snippetCount": len(entity_data["snippetIds"]),
-                        "fileCount": len(app_data["documents"]),
-                        "snippets": self._get_snippet_details(
-                            entity_data["snippetIds"], app_data["owner"]
-                        ),
-                    }
+        for entity, entity_data in app_data.get("docEntities").items():
+            entity_count += entity_data.get("count")
+            self.loader_findings += entity_data.get("count")
+
+            findings_exists = False
+            for findings in self.loader_findings_list:
+                if findings.get("labelName") == entity:
+                    findings_exists = True
+                    findings["findings"] += entity_data["count"]
+                    findings["snippetCount"] += len(entity_data["snippetIds"])
+                    findings["fileCount"] = len(app_data["documents"])
                     total_snippet_count += findings["snippetCount"]
-                    shallow_copy = findings.copy()
-                    self.loader_findings_list.append(shallow_copy)
-                    del findings["snippets"]
-                    self.loader_findings_summary_list.append(findings)
-
-        if app_data.get("docTopics"):
-            for topic, topic_data in app_data.get("docTopics").items():
-                topic_count += topic_data.get("count")
-                self.loader_findings += topic_data.get("count")
-
-                findings_exists = False
-                for findings in self.loader_findings_list:
-                    if findings.get("labelName") == topic:
-                        findings_exists = True
-                        findings["findings"] += topic_data["count"]
-                        findings["snippetCount"] += len(topic_data["snippetIds"])
-                        findings["fileCount"] = len(app_data["documents"])
-                        total_snippet_count += findings["snippetCount"]
-                        snippets.extend(
-                            self._get_snippet_details(
-                                topic_data["snippetIds"], app_data["owner"]
-                            )
+                    snippets.extend(
+                        self._get_snippet_details(
+                            entity_data["snippetIds"], app_data["owner"], entity
                         )
-                        break
-                if not findings_exists:
-                    findings = {
-                        "appName": app_data["name"],
-                        "labelName": topic,
-                        "findings": topic_data["count"],
-                        "findingsType": "topics",
-                        "snippetCount": len(topic_data["snippetIds"]),
-                        "fileCount": len(app_data["documents"]),
-                        "snippets": self._get_snippet_details(
-                            topic_data["snippetIds"], app_data["owner"]
-                        ),
-                    }
-                    total_snippet_count += findings["snippetCount"]
-                    shallow_copy = findings.copy()
-                    self.loader_findings_list.append(shallow_copy)
-                    del findings["snippets"]
-                    self.loader_findings_summary_list.append(findings)
+                    )
+                    break
+            if not findings_exists:
+                logger.debug("finding not exist")
+                findings = {
+                    "appName": app_data["name"],
+                    "labelName": entity,
+                    "findings": entity_data["count"],
+                    "findingsType": "entities",
+                    "snippetCount": len(entity_data["snippetIds"]),
+                    "fileCount": len(app_data["documents"]),
+                    "snippets": self._get_snippet_details(
+                        entity_data["snippetIds"], app_data["owner"], entity
+                    ),
+                }
+                total_snippet_count += findings["snippetCount"]
+                shallow_copy = findings.copy()
+                self.loader_findings_list.append(shallow_copy)
+                del findings["snippets"]
+                self.loader_findings_summary_list.append(findings)
+        return entity_count, snippets, total_snippet_count
 
-        # Data Source Details
-        status, data_sources = self.db.query(
+    def _findings_for_app_topics(
+        self, app_data, snippets, total_snippet_count, topic_count
+    ):
+        """
+        This function finds findings for apps with topics
+        """
+
+        for topic, topic_data in app_data.get("docTopics").items():
+            topic_count += topic_data.get("count")
+            self.loader_findings += topic_data.get("count")
+
+            findings_exists = False
+            for findings in self.loader_findings_list:
+                if findings.get("labelName") == topic:
+                    findings_exists = True
+                    findings["findings"] += topic_data["count"]
+                    findings["snippetCount"] += len(topic_data["snippetIds"])
+                    findings["fileCount"] = len(app_data["documents"])
+                    total_snippet_count += findings["snippetCount"]
+                    snippets.extend(
+                        self._get_snippet_details(
+                            topic_data["snippetIds"], app_data["owner"], topic
+                        )
+                    )
+                    break
+            if not findings_exists:
+                findings = {
+                    "appName": app_data["name"],
+                    "labelName": topic,
+                    "findings": topic_data["count"],
+                    "findingsType": "topics",
+                    "snippetCount": len(topic_data["snippetIds"]),
+                    "fileCount": len(app_data["documents"]),
+                    "snippets": self._get_snippet_details(
+                        topic_data["snippetIds"], app_data["owner"], topic
+                    ),
+                }
+                total_snippet_count += findings["snippetCount"]
+                shallow_copy = findings.copy()
+                self.loader_findings_list.append(shallow_copy)
+                del findings["snippets"]
+                self.loader_findings_summary_list.append(findings)
+        return topic_count, snippets, total_snippet_count
+
+    def _update_loader_datasource(
+        self, app_data, entity_count, topic_count, total_snippet_count
+    ):
+        """
+        This function updates loader datasource details and count
+        """
+
+        _, data_sources = self.db.query(
             AiDataSourceTable, {"loadId": app_data.get("id")}
         )
         for data_source in data_sources:
@@ -158,10 +191,12 @@ class LoaderApp:
         # Data Source Count
         self.loader_data_source = len(self.loader_data_source_list)
 
-        # Fetch required data for DocumentWithFindings
-        status, documents = self.db.query(
-            AiDocumentTable, {"loadId": app_data.get("id")}
-        )
+    def _get_documents_with_findings(self, app_data):
+        """
+        Fetch required data for DocumentWithFindings
+        """
+
+        _, documents = self.db.query(AiDocumentTable, {"loadId": app_data.get("id")})
         loader_document_with_findings = app_data.get("documentsWithFindings")
         documents_with_findings_data = []
         for document in documents:
@@ -183,6 +218,33 @@ class LoaderApp:
 
         # Documents with findings Count
         self.loader_files_findings = len(self.loader_document_with_findings_list)
+
+    def get_findings_for_loader_app(self, app_data):
+        """
+        This function calculates findings for loader app
+        """
+
+        entity_count = 0
+        topic_count = 0
+        total_snippet_count = 0
+        snippets = []
+        if app_data.get("docEntities"):
+            entity_count, snippets, total_snippet_count = (
+                self._findings_for_app_entities(
+                    app_data, snippets, total_snippet_count, entity_count
+                )
+            )
+
+        if app_data.get("docTopics"):
+            topic_count, snippets, total_snippet_count = self._findings_for_app_topics(
+                app_data, snippets, total_snippet_count, topic_count
+            )
+
+        self._update_loader_datasource(
+            app_data, entity_count, topic_count, total_snippet_count
+        )
+
+        self._get_documents_with_findings(app_data)
 
         app_details = LoaderAppListDetails(
             name=app_data.get("name"),
@@ -216,9 +278,9 @@ class LoaderApp:
                         continue
 
                     self.loader_apps_at_risk += 1
-                    loader_app = self.get_findings_for_loader_app(app_data)
-                    all_loader_apps.append(loader_app)
-                    app_processed.append(app_data["name"])
+                loader_app = self.get_findings_for_loader_app(app_data)
+                all_loader_apps.append(loader_app)
+                app_processed.append(app_data["name"])
 
             # TODO: Sort loader apps
             # sorted_loader_apps = self._sort_loader_apps(all_loader_apps)

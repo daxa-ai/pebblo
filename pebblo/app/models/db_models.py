@@ -81,12 +81,10 @@ class AiDataModel(BaseModel):
     data: Optional[Union[list, str]] = None
     entityCount: int
     entities: dict
+    entityDetails: Optional[dict] = {}
     topicCount: Optional[int] = 0
     topics: Optional[dict] = {}
-
-    def dict(self, **kwargs):
-        kwargs["exclude_none"] = True
-        return super().dict(**kwargs)
+    topicDetails: Optional[dict] = {}
 
 
 class RetrievalContext(BaseModel):
@@ -183,5 +181,7 @@ class AiSnippet(BaseModel):
     lastModified: Optional[str] = None
     entities: dict
     topics: dict
+    entityDetails: Optional[dict] = {}
+    topicDetails: Optional[dict] = {}
     policyViolations: Optional[List[dict]] = []
     # label_feedback: Optional[List[LabelFeedback]] = []
