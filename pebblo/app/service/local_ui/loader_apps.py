@@ -37,7 +37,7 @@ class LoaderApp:
         self.loader_document_with_findings_list = []
         self.loader_findings_summary_list = []
 
-    def _get_snippet_details(self, snippet_ids, owner, label_name):
+    def _get_snippet_details(self, snippet_ids: list, owner: str, label_name: str):
         """
         This function finds snippet details based on labels
         """
@@ -46,8 +46,8 @@ class LoaderApp:
         for snippet_id in snippet_ids:
             if len(response) >= ReportConstants.SNIPPET_LIMIT.value:
                 break
-            status, output = self.db.query(AiSnippetsTable, {"id": snippet_id})
-            if not status or len(output) == 0:
+            result, output = self.db.query(AiSnippetsTable, {"id": snippet_id})
+            if not result or len(output) == 0:
                 continue
             snippet_details = output[0].data
             entity_details = {}
@@ -81,7 +81,6 @@ class LoaderApp:
         """
         This function finds findings for apps with entities
         """
-
         for entity, entity_data in app_data.get("docEntities").items():
             try:
                 entity_count += entity_data.get("count")
@@ -95,25 +94,24 @@ class LoaderApp:
                         findings["snippetCount"] += len(
                             entity_data["snippetIds"]
                         )
-                        findings["fileCount"] = len(app_data["documents"])
+                        findings["fileCount"] = len(app_data.get("documents", []))
                         total_snippet_count += findings["snippetCount"]
                         snippets.extend(
                             self._get_snippet_details(
-                                entity_data["snippetIds"], app_data["owner"]
+                                entity_data["snippetIds"], app_data["owner"], entity
                             )
                         )
                         break
                 if not findings_exists:
-                    logger.debug("finding not exist")
                     findings = {
                         "appName": app_data["name"],
                         "labelName": entity,
-                        "findings": entity_data["count"],
+                        "findings": entity_data.get("count", 0),
                         "findingsType": "entities",
-                        "snippetCount": len(entity_data["snippetIds"]),
-                        "fileCount": len(app_data["documents"]),
+                        "snippetCount": len(entity_data.get("snippetIds", [])),
+                        "fileCount": len(app_data.get("documents", [])),
                         "snippets": self._get_snippet_details(
-                            entity_data["snippetIds"], app_data["owner"]
+                            entity_data.get("snippetIds", []), app_data["owner"], entity
                         ),
                     }
                     total_snippet_count += findings["snippetCount"]
@@ -124,7 +122,7 @@ class LoaderApp:
                     return entity_count, snippets, total_snippet_count
             except Exception as err:
                 logger.error(
-                    f"Failed in getting docEnties details, Error: {err}"
+                    f"Failed in getting docEntities details, Error: {err}"
                 )
 
     def _findings_for_app_topics(
@@ -144,13 +142,13 @@ class LoaderApp:
                         findings_exists = True
                         findings["findings"] += topic_data["count"]
                         findings["snippetCount"] += len(
-                            topic_data["snippetIds"]
+                            topic_data.get("snippetIds", [])
                         )
-                        findings["fileCount"] = len(app_data["documents"])
+                        findings["fileCount"] = len(app_data.get("documents", []))
                         total_snippet_count += findings["snippetCount"]
                         snippets.extend(
                             self._get_snippet_details(
-                                topic_data["snippetIds"], app_data["owner"]
+                                topic_data.get("snippetIds", []), app_data["owner"], topic
                             )
                         )
                         break
@@ -160,10 +158,10 @@ class LoaderApp:
                         "labelName": topic,
                         "findings": topic_data["count"],
                         "findingsType": "topics",
-                        "snippetCount": len(topic_data["snippetIds"]),
-                        "fileCount": len(app_data["documents"]),
+                        "snippetCount": len(topic_data.get("snippetIds", [])),
+                        "fileCount": len(app_data.get("documents", [])),
                         "snippets": self._get_snippet_details(
-                            topic_data["snippetIds"], app_data["owner"]
+                            topic_data.get("snippetIds", []), app_data["owner"], topic
                         ),
                     }
                     total_snippet_count += findings["snippetCount"]
@@ -361,7 +359,6 @@ class LoaderApp:
                 documentsWithFindings=self.loader_document_with_findings_list,
                 dataSource=self.loader_data_source_list,
             )
-
             report_data = self._generate_final_report(
                 loader_app, loader_response.dict()
             )
