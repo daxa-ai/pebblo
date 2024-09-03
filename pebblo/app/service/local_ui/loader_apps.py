@@ -241,10 +241,13 @@ class LoaderApp:
         for document in documents:
             try:
                 document_detail = document.data
+
+                # Calculate entity count from the document details stored in the db.
                 entity_count = 0
                 for entity, entity_data in document_detail.get("entities", {}).items():
                     entity_count += entity_data.get("count", 0)
 
+                # Calculate topic count from the document details stored in the db.
                 topic_count = 0
                 for topic, topic_data in document_detail.get("topics", {}).items():
                     topic_count += topic_data.get("count", 0)
@@ -315,6 +318,9 @@ class LoaderApp:
         return app_details.model_dump()
 
     def _create_loader_app_model(self, app_list):
+        """
+        Prepare loader app response.
+        """
         loader_response = LoaderAppModel(
             applicationsAtRiskCount=self.loader_details["loader_apps_at_risk"],
             findingsCount=self.loader_details["loader_findings"],
@@ -467,6 +473,9 @@ class LoaderApp:
         return top_n_findings
 
     def _get_load_history(self, app_name, all_loader_apps):
+        """
+        Prepare load history for last 5 executions.
+        """
         logger.debug(f"Fetching load history for application: {app_name}")
         load_history: dict = dict()
         load_history["history"] = list()
@@ -484,9 +493,12 @@ class LoaderApp:
                 loader = loader_obj.data
                 name = loader["name"]
                 load_id = loader["id"]
+
+                # Stop if load history limit(5 as of now) is reached.
                 if load_history_instances >= load_history_limit:
                     limit_reached = True
                     break
+
                 self._initialize_variables()
                 loader_app_details = self.get_findings_for_loader_app(loader)
                 loader_response = self._create_loader_app_model([loader_app_details])
@@ -494,7 +506,9 @@ class LoaderApp:
                     loader_response.model_dump(), loader
                 )
                 report_summary = report_summary.dict()
-                report_summary["createdAt"] = loader["metadata"]["createdAt"]
+                report_summary["createdAt"] = loader["metadata"].get("createdAt")
+
+                # Prepare pdf report path based on app name and load id
                 pdf_report_path = (
                     f"{CacheDir.HOME_DIR.value}/{name}/{load_id}/"
                     f"{CacheDir.REPORT_FILE_NAME.value}"
@@ -508,7 +522,7 @@ class LoaderApp:
                     filesWithFindings=report_summary["filesWithFindings"],
                     generatedOn=report_summary["createdAt"],
                 )
-                load_history["history"].append(load_history_model_obj.dict())
+                load_history["history"].append(load_history_model_obj.model_dump())
                 load_history_instances += 1
             except Exception:
                 logger.error(
@@ -601,20 +615,19 @@ class LoaderApp:
 
     def delete_loader_app(self, db, app_name):
         try:
-            # delete entry from AiSnippet Table
+            # Delete entry from AiSnippet Table
             self._delete(db, AiSnippetsTable, {"appName": app_name})
 
-            # delete entry from AiDocument Table
+            # Delete entry from AiDocument Table
             self._delete(db, AiDocumentTable, filter_query={"appName": app_name})
 
-            # delete entry from AiDataSource Table
+            # Delete entry from AiDataSource Table
             self._delete(db, AiDataSourceTable, filter_query={"appName": app_name})
 
-            # delete entry from AiDataLoader Table
+            # Delete entry from AiDataLoader Table
             self._delete(db, AiDataLoaderTable, filter_query={"name": app_name})
 
             # Delete PDF report from storage
-            # Path to application directory
             app_dir_path = f"{CacheDir.HOME_DIR.value}/{app_name}"
             logger.debug(
                 f"[Delete App]: Application directory to deleted, Path: {app_dir_path}"
