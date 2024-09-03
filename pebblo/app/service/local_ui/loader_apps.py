@@ -1,6 +1,8 @@
 import json
 
 from fastapi import status
+from typing import List, Tuple
+from sqlalchemy.ext.declarative import declarative_base
 
 from pebblo.app.enums.enums import CacheDir, ReportConstants
 from pebblo.app.models.db_models import (
@@ -49,7 +51,7 @@ class LoaderApp:
             "loader_findings_summary_list": [],
         }
 
-    def _get_snippet_details(self, snippet_ids: list, owner: str, label_name: str):
+    def _get_snippet_details(self, snippet_ids: list, owner: str, label_name: str) -> list:
         """
         This function finds snippet details based on labels
         """
@@ -87,10 +89,11 @@ class LoaderApp:
         return response
 
     def _findings_for_app_entities(
-        self, app_data, snippets, total_snippet_count, entity_count
-    ):
+        self, app_data: AiDataLoaderTable, snippets: list, total_snippet_count: int, entity_count: int
+    ) -> Tuple[int, list, int]:
         """
-        This function finds findings for apps with entities
+        This function finds findings for apps with entities and
+        returns entity count, snippets list and total snippet count
         """
         for entity, entity_data in app_data.get("docEntities", {}).items():
             try:
@@ -141,10 +144,11 @@ class LoaderApp:
         return entity_count, snippets, total_snippet_count
 
     def _findings_for_app_topics(
-        self, app_data, snippets, total_snippet_count, topic_count
-    ):
+        self, app_data: AiDataLoaderTable, snippets: list, total_snippet_count: int, topic_count: int
+    ) -> Tuple[int, list, int]:
         """
-        This function finds findings for apps with topics
+        This function finds findings for apps with topics and
+        returns topic count, snippets list and total snippet count
         """
         for topic, topic_data in app_data.get("docTopics", {}).items():
             try:
@@ -196,8 +200,8 @@ class LoaderApp:
         return topic_count, snippets, total_snippet_count
 
     def _update_loader_datasource(
-        self, app_data, entity_count, topic_count, total_snippet_count
-    ):
+        self, app_data: AiDataLoaderTable, entity_count: int, topic_count: int, total_snippet_count: int
+    ) -> None:
         """
         This function updates loader datasource details and count
         """
@@ -230,7 +234,7 @@ class LoaderApp:
                 self.loader_details.get("loader_data_source_list", [])
             )
 
-    def _get_documents_with_findings(self, app_data):
+    def _get_documents_with_findings(self, app_data: AiDataLoaderTable) -> None:
         """
         Fetch required data for DocumentWithFindings
         """
@@ -255,7 +259,7 @@ class LoaderApp:
                 if document_detail["sourcePath"] in loader_document_with_findings:
                     document_obj = {
                         "appName": document_detail["appName"],
-                        "owner": document_detail["owner"],
+                        "owner": document_detail.get("owner", "-"),
                         "sourceSize": document_detail.get("sourceSize", 0),
                         "sourceFilePath": document_detail["sourcePath"],
                         "lastModified": document_detail["lastIngested"],
@@ -279,7 +283,7 @@ class LoaderApp:
             self.loader_details["loader_document_with_findings_list"]
         )
 
-    def get_findings_for_loader_app(self, app_data):
+    def get_findings_for_loader_app(self, app_data: AiDataLoaderTable) -> dict:
         """
         This function calculates findings for loader app
         """
@@ -317,7 +321,7 @@ class LoaderApp:
         )
         return app_details.model_dump()
 
-    def _create_loader_app_model(self, app_list):
+    def _create_loader_app_model(self, app_list: list) -> LoaderAppModel:
         """
         Prepare loader app response.
         """
@@ -388,7 +392,7 @@ class LoaderApp:
             # Closing the session
             self.db.session.close()
 
-    def get_loader_app_details(self, db, app_name):
+    def get_loader_app_details(self, db: SQLiteClient, app_name: str):
         """
         This function is being used by the loader_doc_service to get data needed to generate pdf.
         """
@@ -427,7 +431,7 @@ class LoaderApp:
             return json.dumps(report_data, default=str, indent=4)
 
     @staticmethod
-    def _create_report_summary(raw_data, app_data):
+    def _create_report_summary(raw_data: dict, app_data: dict) -> Summary:
         """
         Return report summary object
         """
@@ -445,7 +449,7 @@ class LoaderApp:
         return report_summary
 
     @staticmethod
-    def _get_top_n_findings(raw_data):
+    def _get_top_n_findings(raw_data: dict):
         """
         Return top N findings from all findings
         """
@@ -472,7 +476,7 @@ class LoaderApp:
             top_n_findings.append(finding_obj)
         return top_n_findings
 
-    def _get_load_history(self, app_name, all_loader_apps):
+    def _get_load_history(self, app_name: str, all_loader_apps: List[AiDataLoaderTable]) -> dict:
         """
         Prepare load history for last 5 executions.
         """
@@ -538,7 +542,7 @@ class LoaderApp:
 
         return load_history
 
-    def _get_data_source_details(self, app_data, raw_data):
+    def _get_data_source_details(self, app_data: dict, raw_data: dict) -> List[DataSource]:
         """
         Create data source findings details and data source findings summary
         """
@@ -569,7 +573,7 @@ class LoaderApp:
             data_source_obj_list.append(data_source_obj)
         return data_source_obj_list
 
-    def _generate_final_report(self, all_loader_apps, app_data, raw_data):
+    def _generate_final_report(self, all_loader_apps: list, app_data: dict, raw_data: dict):
         """
         Aggregating all input, processing the data, and generating the final report
         """
@@ -600,7 +604,7 @@ class LoaderApp:
         )
         return report_dict.model_dump()
 
-    def _delete(self, db, table_name, filter_query):
+    def _delete(self, db: SQLiteClient, table_name: declarative_base, filter_query: dict) -> None:
         try:
             logger.info(f"Delete entry from table {table_name}")
             # delete entry from Table
@@ -613,7 +617,7 @@ class LoaderApp:
             logger.error(message)
             raise Exception(message)
 
-    def delete_loader_app(self, db, app_name):
+    def delete_loader_app(self, db: SQLiteClient, app_name: str) -> dict:
         try:
             # Delete entry from AiSnippet Table
             self._delete(db, AiSnippetsTable, {"appName": app_name})

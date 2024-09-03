@@ -1,5 +1,6 @@
 from pebblo.app.models.db_models import AiDocument
 from pebblo.app.models.sqltables import AiDocumentTable
+from pebblo.app.enums.enums import ApplicationTypes
 from pebblo.app.service.loader.snippet.snippet import AiSnippetHandler
 from pebblo.app.utils.utils import get_current_time, timeit
 from pebblo.log import get_logger
@@ -15,7 +16,7 @@ class AiDocumentHandler:
         self.snippet_handler = AiSnippetHandler(db, data)
 
     @timeit
-    def _get_or_create_document(self, doc, data_source):
+    def _get_or_create_document(self, doc: dict, data_source: dict) -> AiDocumentTable:
         logger.debug("Create or update AIDocument")
         filter_query = {
             "appName": self.app_name,
@@ -53,7 +54,7 @@ class AiDocumentHandler:
             return doc_obj
 
     @staticmethod
-    def _update_loader_documents(app_loader_details, document):
+    def _update_loader_documents(app_loader_details: dict, document: dict) -> dict:
         logger.debug("Updating Loader details with document and findings.")
 
         # Updating documents value for AiDataLoader
@@ -86,7 +87,7 @@ class AiDocumentHandler:
         return app_loader_details
 
     @staticmethod
-    def _update_document(document, snippet):
+    def _update_document(document: dict, snippet: dict) -> dict:
         logger.debug("Updating AIDocument with snippet reference.")
         existing_topics = document.get("topics")
         if not existing_topics:
@@ -102,22 +103,22 @@ class AiDocumentHandler:
                 if entity in existing_entities.keys():
                     updated_entity = existing_entities[entity]
                     updated_entity["ref"].append(snippet.get("id"))
-                    updated_entity["count"] = updated_entity.get("count") + 1
+                    updated_entity["count"] += snippet.get("entities", {}).get(entity, 0)
                     existing_entities.update({entity: updated_entity})
                 else:
                     existing_entities.update(
-                        {entity: {"ref": [snippet.get("id")], "count": 1}}
+                        {entity: {"ref": [snippet.get("id")], "count": snippet.get("entities").get(entity, 0)}}
                     )
         if topics:
             for topic in topics:
                 if topic in existing_topics.keys():
                     updated_topic = existing_topics[topic]
                     updated_topic["ref"].append(snippet.get("id"))
-                    updated_topic["count"] = updated_topic.get("count") + 1
+                    updated_topic["count"] += snippet.get("topics", {}).get(topic, 0)
                     existing_topics.update({topic: updated_topic})
                 else:
                     existing_topics.update(
-                        {topic: {"ref": [snippet.get("id")], "count": 1}}
+                        {topic: {"ref": [snippet.get("id")], "count": snippet.get("topics", {}).get(topic, 0)}}
                     )
 
         document["topics"] = existing_topics
@@ -126,7 +127,7 @@ class AiDocumentHandler:
         return document
 
     @timeit
-    def create_or_update_document(self, app_loader_details, data_source):
+    def create_or_update_document(self, app_loader_details: ApplicationTypes.LOADER.value, data_source: dict):
         logger.debug("Create or update document snippet")
         input_doc_list = self.data.get("docs", [])
         for doc in input_doc_list:
