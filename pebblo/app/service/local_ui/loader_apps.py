@@ -40,15 +40,13 @@ class LoaderApp:
         """
         self.loader_details = {
             "loader_apps_at_risk": 0,
-            "loader_findings": 0,
-            "loader_files_findings": 0,
-            "loader_data_source": 0,
             "loader_findings_list": [],
+            "loader_findings": 0,
             "loader_data_source_list": [],
-            "loader_document_with_findings_list": [],
-            "loader_findings_summary_list": [],
-            "loader_files_with_findings_count": 0,
             "loader_data_source_count": 0,
+            "loader_document_with_findings_list": [],
+            "loader_files_with_findings_count": 0,
+            "loader_findings_summary_list": [],
         }
 
     def _get_snippet_details(self, snippet_ids: list, owner: str, label_name: str):
@@ -100,7 +98,10 @@ class LoaderApp:
                 self.loader_details["loader_findings"] += entity_data.get("count", 0)
                 findings_exists = False
                 for findings in self.loader_details.get("loader_findings_list", []):
-                    if findings.get("labelName") == entity:
+                    if (
+                        findings.get("labelName") == entity
+                        and findings.get("appName") == app_data["name"]
+                    ):
                         findings_exists = True
                         findings["findings"] += entity_data.get("count", 0)
                         findings["snippetCount"] += len(
@@ -151,8 +152,11 @@ class LoaderApp:
                 self.loader_details["loader_findings"] += topic_data.get("count", 0)
 
                 findings_exists = False
-                for findings in self.loader_findings_list:
-                    if findings.get("labelName") == topic:
+                for findings in self.loader_details.get("loader_findings_list", []):
+                    if (
+                        findings.get("labelName") == topic
+                        and findings.get("appName") == app_data["name"]
+                    ):
                         findings_exists = True
                         findings["findings"] += topic_data.get("count", 0)
                         findings["snippetCount"] += len(
@@ -221,9 +225,10 @@ class LoaderApp:
                     f"Failed in getting data source details of {data_source.data}, Error: {err}"
                 )
 
-            # Documents with findings Count
-            self.loader_data_source = len(self.loader_details.get("loader_data_source_list", []))
-            self.loader_files_findings = len(self.loader_details.get("loader_document_with_findings_list", []))
+            # Data source count
+            self.loader_details["loader_data_source_count"] = len(
+                self.loader_details.get("loader_data_source_list", [])
+            )
 
     def _get_documents_with_findings(self, app_data):
         """
@@ -258,10 +263,14 @@ class LoaderApp:
                 )
                 continue
 
-        self.loader_details["loader_document_with_findings_list"].extend(documents_with_findings_data)
+        self.loader_details["loader_document_with_findings_list"].extend(
+            documents_with_findings_data
+        )
 
         # Documents with findings Count
-        self.loader_files_findings = len(self.loader_details.get("loader_document_with_findings_list", []))
+        self.loader_details["loader_files_with_findings_count"] = len(
+            self.loader_details["loader_document_with_findings_list"]
+        )
 
     def get_findings_for_loader_app(self, app_data):
         """
@@ -301,15 +310,19 @@ class LoaderApp:
         )
         return app_details.model_dump()
 
-    def _create_loader_app_model(self,app_list):
+    def _create_loader_app_model(self, app_list):
         loader_response = LoaderAppModel(
             applicationsAtRiskCount=self.loader_details["loader_apps_at_risk"],
             findingsCount=self.loader_details["loader_findings"],
-            documentsWithFindingsCount=self.loader_details["loader_files_with_findings_count"],
+            documentsWithFindingsCount=self.loader_details[
+                "loader_files_with_findings_count"
+            ],
             dataSourceCount=self.loader_details["loader_data_source_count"],
             appList=app_list,
             findings=self.loader_details["loader_findings_list"],
-            documentsWithFindings=self.loader_details["loader_document_with_findings_list"],
+            documentsWithFindings=self.loader_details[
+                "loader_document_with_findings_list"
+            ],
             dataSource=self.loader_details["loader_data_source_list"],
         )
         return loader_response
@@ -332,7 +345,7 @@ class LoaderApp:
             for loader_app in ai_loader_apps:
                 app_data = loader_app.data
                 if app_data.get("docEntities") not in [None, {}] or app_data.get(
-                        "docTopics"
+                    "docTopics"
                 ) not in [None, {}]:
                     if app_data["name"] in app_processed:
                         # This app is already processed with the latest app, skipping older one's
@@ -366,6 +379,9 @@ class LoaderApp:
             self.db.session.close()
 
     def get_loader_app_details(self, db, app_name):
+        """
+        This function is being used by the loader_doc_service to get data needed to generate pdf.
+        """
         try:
             logger.debug(f"Getting loader app details, App: {app_name}")
             self.db = db
@@ -381,10 +397,10 @@ class LoaderApp:
             loader_app = all_loader_apps[0].data
             loader_app_details = self.get_findings_for_loader_app(loader_app)
 
-            loader_response = self._create_loader_app_model(
-                [loader_app_details]
-            )
-            self.loader_findings_summary_list = self.loader_details["loader_findings_summary_list"]
+            loader_response = self._create_loader_app_model([loader_app_details])
+            self.loader_findings_summary_list = self.loader_details[
+                "loader_findings_summary_list"
+            ]
             self.loader_findings_list = self.loader_details["loader_findings_list"]
 
             report_data = self._generate_final_report(
@@ -400,11 +416,11 @@ class LoaderApp:
             logger.debug(message)
             return json.dumps(report_data, default=str, indent=4)
 
-    def _create_report_summary(self, raw_data, app_data):
+    @staticmethod
+    def _create_report_summary(raw_data, app_data):
         """
         Return report summary object
         """
-        logger.debug("Creating report summary")
         loader_app = raw_data["appList"][0]
         report_summary = Summary(
             findings=raw_data["findingsCount"],
@@ -490,8 +506,10 @@ class LoaderApp:
                 )
                 load_history["history"].append(load_history_model_obj.dict())
                 load_history_instances += 1
-            except Exception as e:
-                logger.error("Error processing this instance of load history. Continuing.")
+            except Exception:
+                logger.error(
+                    "Error processing this instance of load history. Continuing."
+                )
                 continue
 
         # If we read load history limit(5 as of now), then add "more reports path" needed for UI.

@@ -187,6 +187,7 @@ class AiSnippet(BaseModel):
     policyViolations: Optional[List[dict]] = []
     # label_feedback: Optional[List[LabelFeedback]] = []
 
+
 class Summary(BaseModel):
     findings: int
     findingsEntities: int
