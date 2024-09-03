@@ -1,7 +1,7 @@
 import json
+from typing import List, Tuple
 
 from fastapi import status
-from typing import List, Tuple
 from sqlalchemy.ext.declarative import declarative_base
 
 from pebblo.app.enums.enums import CacheDir, ReportConstants
@@ -51,7 +51,9 @@ class LoaderApp:
             "loader_findings_summary_list": [],
         }
 
-    def _get_snippet_details(self, snippet_ids: list, owner: str, label_name: str) -> list:
+    def _get_snippet_details(
+        self, snippet_ids: list, owner: str, label_name: str
+    ) -> list:
         """
         This function finds snippet details based on labels
         """
@@ -89,7 +91,11 @@ class LoaderApp:
         return response
 
     def _findings_for_app_entities(
-        self, app_data: AiDataLoaderTable, snippets: list, total_snippet_count: int, entity_count: int
+        self,
+        app_data: AiDataLoaderTable,
+        snippets: list,
+        total_snippet_count: int,
+        entity_count: int,
     ) -> Tuple[int, list, int]:
         """
         This function finds findings for apps with entities and
@@ -144,7 +150,11 @@ class LoaderApp:
         return entity_count, snippets, total_snippet_count
 
     def _findings_for_app_topics(
-        self, app_data: AiDataLoaderTable, snippets: list, total_snippet_count: int, topic_count: int
+        self,
+        app_data: AiDataLoaderTable,
+        snippets: list,
+        total_snippet_count: int,
+        topic_count: int,
     ) -> Tuple[int, list, int]:
         """
         This function finds findings for apps with topics and
@@ -200,7 +210,11 @@ class LoaderApp:
         return topic_count, snippets, total_snippet_count
 
     def _update_loader_datasource(
-        self, app_data: AiDataLoaderTable, entity_count: int, topic_count: int, total_snippet_count: int
+        self,
+        app_data: AiDataLoaderTable,
+        entity_count: int,
+        topic_count: int,
+        total_snippet_count: int,
     ) -> None:
         """
         This function updates loader datasource details and count
@@ -476,7 +490,9 @@ class LoaderApp:
             top_n_findings.append(finding_obj)
         return top_n_findings
 
-    def _get_load_history(self, app_name: str, all_loader_apps: List[AiDataLoaderTable]) -> dict:
+    def _get_load_history(
+        self, app_name: str, all_loader_apps: List[AiDataLoaderTable]
+    ) -> dict:
         """
         Prepare load history for last 5 executions.
         """
@@ -542,7 +558,9 @@ class LoaderApp:
 
         return load_history
 
-    def _get_data_source_details(self, app_data: dict, raw_data: dict) -> List[DataSource]:
+    def _get_data_source_details(
+        self, app_data: dict, raw_data: dict
+    ) -> List[DataSource]:
         """
         Create data source findings details and data source findings summary
         """
@@ -573,7 +591,9 @@ class LoaderApp:
             data_source_obj_list.append(data_source_obj)
         return data_source_obj_list
 
-    def _generate_final_report(self, all_loader_apps: list, app_data: dict, raw_data: dict):
+    def _generate_final_report(
+        self, all_loader_apps: list, app_data: dict, raw_data: dict
+    ):
         """
         Aggregating all input, processing the data, and generating the final report
         """
@@ -604,7 +624,9 @@ class LoaderApp:
         )
         return report_dict.model_dump()
 
-    def _delete(self, db: SQLiteClient, table_name: declarative_base, filter_query: dict) -> None:
+    def _delete(
+        self, db: SQLiteClient, table_name: declarative_base, filter_query: dict
+    ) -> None:
         try:
             logger.info(f"Delete entry from table {table_name}")
             # delete entry from Table
