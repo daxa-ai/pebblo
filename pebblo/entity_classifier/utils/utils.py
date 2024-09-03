@@ -15,9 +15,21 @@ from pebblo.entity_classifier.utils.regex_pattern import regex_secrets_patterns
 from pebblo.utils import get_confidence_score_label
 
 
+def location_key(item):
+    """
+    To convert the location string into a tuple of integers
+    """
+    loc = item["location"]
+    return tuple(map(int, loc.split("_")))
+
+
 def get_entities(entities_list, response):
+    """
+    Returns entity groups, its details such as confidence score, location and its group grouped by entity type
+    """
     entity_groups: dict = dict()
     entity_details: dict = dict()
+    entity_details_response: dict = dict()
 
     mapped_entity = None
     total_count = 0
@@ -41,7 +53,11 @@ def get_entities(entities_list, response):
                 entity_details[mapped_entity] = [entity_data]
             total_count += 1
 
-    return entity_groups, entity_details, total_count
+    for entity, entity_data in entity_details.items():
+        # Sorting entity details based on location in ascending order
+        entity_details_response[entity] = sorted(entity_data, key=location_key)
+
+    return entity_groups, entity_details_response, total_count
 
 
 def add_custom_regex_analyzer_registry():
