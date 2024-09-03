@@ -28,10 +28,35 @@ class PrivateKeyRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "PrivateKey1 ",
-            r"(?<=BEGIN PRIVATE KEY-----)(.){100,}(?=-----END PRIVATE KEY)",
+            "PRIVATE_KEY",
+            r"(?<=BEGIN PRIVATE KEY-----)[\s\S]{10,}?(?=-----END PRIVATE KEY)",
             0.5,
-        )
+        ),
+        Pattern(
+            "DSA_PRIVATE_KEY",
+            r"(?<=BEGIN DSA PRIVATE KEY-----)[\s\S]{10,}?(?=-----END DSA PRIVATE KEY)",
+            0.5,
+        ),
+        Pattern(
+            "ELLIPTIC_CURVE_PRIVATE_KEY",
+            r"(?<=BEGIN EC PRIVATE KEY-----)[\s\S]{10,}?(?=-----END EC PRIVATE KEY)",
+            0.5,
+        ),
+        Pattern(
+            "ENCRYPTED_PRIVATE_KEY",
+            r"(?<=BEGIN ENCRYPTED PRIVATE KEY-----)[\s\S]{10,}?(?=-----END ENCRYPTED PRIVATE KEY)",
+            0.5,
+        ),
+        Pattern(
+            "OPENSSH_PRIVATE_KEY",
+            r"(?<=BEGIN OPENSSH PRIVATE KEY-----)[\s\S]{10,}?(?=-----END OPENSSH PRIVATE KEY)",
+            0.5,
+        ),
+        Pattern(
+            "RSA_PRIVATE_KEY",
+            r"(?<=BEGIN RSA PRIVATE KEY-----)(.)[\s\S]{10,}?(?=-----END RSA PRIVATE KEY)",
+            0.5,
+        ),
     ]
 
     CONTEXT = []
@@ -51,11 +76,18 @@ class PrivateKeyRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
+        self.google_keywords = [
+            "gsuite-group-api-only",
+            "https://accounts.google.com/o/oauth2/auth",
+            "googleapis.com",
+            "https://oauth2.googleapis.com/token",
+            "gsuite-group-api-only.iam.gserviceaccount.com",
+        ]
 
     def analyze(
         self,
         text: str,
-        entities: List[str],
+        entities: List[str] = [],
         nlp_artifacts: Optional[NlpArtifacts] = None,
         regex_flags: Optional[int] = None,
     ) -> List[RecognizerResult]:
@@ -99,6 +131,15 @@ class PrivateKeyRecognizer(PatternRecognizer):
             for matchNum, match in enumerate(matches, start=1):
                 start, end = match.span()
                 current_match = text[start:end]
+                range_text = text[start - 200 : end + 200]
+                # Check if any of the keywords exist within the range
+                keyword_found = any(
+                    keyword in range_text for keyword in self.google_keywords
+                )
+
+                # Determine the entity type based on keyword presence
+                if keyword_found:
+                    pattern.name = "GOOGLE_PRIVATE_KEY"
 
                 # Skip empty results
                 if current_match == "":
@@ -116,7 +157,7 @@ class PrivateKeyRecognizer(PatternRecognizer):
                     flags,
                 )
                 pattern_result = RecognizerResult(
-                    entity_type=self.supported_entities[0],
+                    entity_type=pattern.name,
                     start=start,
                     end=end,
                     score=score,
@@ -153,6 +194,6 @@ class PrivateKeyRecognizer(PatternRecognizer):
         :param pattern_text: Text detected as pattern by regex
         :return: True if invalidated
         """
-        if is_high_entropy_secret(pattern_text):
+        if is_high_entropy_secret(pattern_text) and len(pattern_text) > 100:
             return False
         return True
