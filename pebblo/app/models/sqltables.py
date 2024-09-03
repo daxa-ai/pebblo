@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import StorageTypes
-from pebblo.app.enums.enums import CacheDir
+from pebblo.app.enums.enums import CacheDir, SQLiteTables
 from pebblo.app.utils.utils import get_full_path
 
 Base = declarative_base()
@@ -12,49 +12,49 @@ config_details = var_server_config_dict.get()
 
 
 class AiAppTable(Base):
-    __tablename__ = "aiapp"
+    __tablename__ = SQLiteTables.AI_APP.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
 
 
 class AiDataLoaderTable(Base):
-    __tablename__ = "aidataloader"
+    __tablename__ = SQLiteTables.AI_DATALOADER.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
 
 
 class AiRetrievalTable(Base):
-    __tablename__ = "airetrieval"
+    __tablename__ = SQLiteTables.AI_RETRIVAL.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
 
 
 class AiDataSourceTable(Base):
-    __tablename__ = "aidatasource"
+    __tablename__ = SQLiteTables.AI_DATASOURCE.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
 
 
 class AiDocumentTable(Base):
-    __tablename__ = "aidocument"
+    __tablename__ = SQLiteTables.AI_DOCUMENT.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
 
 
 class AiSnippetsTable(Base):
-    __tablename__ = "aisnippets"
+    __tablename__ = SQLiteTables.AI_SNIPPETS.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)
 
 
 class AiUser(Base):
-    __tablename__ = "aiuser"
+    __tablename__ = SQLiteTables.AI_USER.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     data = Column(JSON)

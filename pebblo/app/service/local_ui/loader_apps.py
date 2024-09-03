@@ -241,6 +241,14 @@ class LoaderApp:
         for document in documents:
             try:
                 document_detail = document.data
+                entity_count = 0
+                for entity, entity_data in document_detail.get("entities", {}).items():
+                    entity_count += entity_data.get("count", 0)
+
+                topic_count = 0
+                for topic, topic_data in document_detail.get("topics", {}).items():
+                    topic_count += topic_data.get("count", 0)
+
                 if document_detail["sourcePath"] in loader_document_with_findings:
                     document_obj = {
                         "appName": document_detail["appName"],
@@ -248,12 +256,8 @@ class LoaderApp:
                         "sourceSize": document_detail.get("sourceSize", 0),
                         "sourceFilePath": document_detail["sourcePath"],
                         "lastModified": document_detail["lastIngested"],
-                        "findingsEntities": len(
-                            (document_detail.get("entities", {}) or {}).keys()
-                        ),
-                        "findingsTopics": len(
-                            (document_detail.get("topics", {}) or {}).keys()
-                        ),
+                        "findingsEntities": entity_count,
+                        "findingsTopics": topic_count,
                         "authorizedIdentities": document_detail["userIdentities"],
                     }
                     documents_with_findings_data.append(document_obj)
@@ -463,7 +467,7 @@ class LoaderApp:
         return top_n_findings
 
     def _get_load_history(self, app_name, all_loader_apps):
-        logger.info(f"Fetching LoadHistory for application: {app_name}")
+        logger.debug(f"Fetching load history for application: {app_name}")
         load_history: dict = dict()
         load_history["history"] = list()
         load_history["moreReportsPath"] = "-"

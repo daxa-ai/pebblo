@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 from datetime import datetime
 from json import JSONEncoder, dump
@@ -295,12 +296,15 @@ def get_current_time():
 
 def timeit(func):
     def wrapper(*args, **kwargs):
-        start_time = time.perf_counter()
-        response = func(*args, **kwargs)
-        end_time = time.perf_counter()
-        logger.debug(
-            f"Execution time of function <{func.__name__}> is {end_time-start_time} seconds."
-        )
-        return response
+        if logger.isEnabledFor(logging.DEBUG):
+            start_time = time.perf_counter()
+            response = func(*args, **kwargs)
+            end_time = time.perf_counter()
+            logger.debug(
+                f"Execution time of function <{func.__name__}> is {end_time-start_time} seconds."
+            )
+            return response
+        else:
+            return {}
 
     return wrapper

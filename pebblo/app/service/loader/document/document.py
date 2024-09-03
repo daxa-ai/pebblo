@@ -102,17 +102,23 @@ class AiDocumentHandler:
                 if entity in existing_entities.keys():
                     updated_entity = existing_entities[entity]
                     updated_entity["ref"].append(snippet.get("id"))
+                    updated_entity["count"] = updated_entity.get("count") + 1
                     existing_entities.update({entity: updated_entity})
                 else:
-                    existing_entities.update({entity: {"ref": [snippet.get("id")]}})
+                    existing_entities.update(
+                        {entity: {"ref": [snippet.get("id")], "count": 1}}
+                    )
         if topics:
             for topic in topics:
                 if topic in existing_topics.keys():
                     updated_topic = existing_topics[topic]
                     updated_topic["ref"].append(snippet.get("id"))
+                    updated_topic["count"] = updated_topic.get("count") + 1
                     existing_topics.update({topic: updated_topic})
                 else:
-                    existing_topics.update({topic: {"ref": [snippet.get("id")]}})
+                    existing_topics.update(
+                        {topic: {"ref": [snippet.get("id")], "count": 1}}
+                    )
 
         document["topics"] = existing_topics
         document["entities"] = existing_entities
@@ -123,7 +129,6 @@ class AiDocumentHandler:
     def create_or_update_document(self, app_loader_details, data_source):
         logger.debug("Create or update document snippet")
         input_doc_list = self.data.get("docs", [])
-        doc_obj = None
         for doc in input_doc_list:
             doc_obj = self._get_or_create_document(doc, data_source)
             existing_document = doc_obj.data
@@ -138,6 +143,6 @@ class AiDocumentHandler:
                 app_loader_details, snippet
             )
 
-        self.db.update_data(doc_obj, doc_obj.data)
+            self.db.update_data(doc_obj, doc_obj.data)
 
         return app_loader_details
