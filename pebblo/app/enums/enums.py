@@ -54,3 +54,13 @@ class ClassifierConstants(Enum):
 class ApplicationTypes(Enum):
     LOADER = "loader"
     RETRIEVAL = "retrieval"
+
+
+class SQLiteTables(Enum):
+    AI_APP = "aiapp"
+    AI_DATALOADER = "aidataloader"
+    AI_RETRIVAL = "airetrieval"
+    AI_DATASOURCE = "aidatasource"
+    AI_DOCUMENT = "aidocument"
+    AI_SNIPPETS = "aisnippets"
+    AI_USER = "aiuser"
