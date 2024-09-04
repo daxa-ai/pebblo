@@ -81,7 +81,7 @@ class Classification:
             if self.input.get("inputs"):
                 doc_info = self._get_classifier_response()
                 return PebbloJsonResponse.build(
-                    body=doc_info.dict(exclude_none=True), status_code=200
+                    body=doc_info.model_dump(exclude_none=True), status_code=200
                 )
             else:
                 raise ValidationError("Input is not valid")
@@ -99,7 +99,7 @@ class Classification:
                 f"Error in Classification API process_request. Error:{traceback.format_exc()}"
             )
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=400
+                body=response.model_dump(exclude_none=True), status_code=400
             )
         except Exception:
             response = AiDataModel(

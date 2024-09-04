@@ -61,7 +61,7 @@ def test_process_request_success(mock_entity_classifier, mock_topic_classifier):
         topicDetails={},
     )
     expected_response = PebbloJsonResponse.build(
-        body=expected_response.dict(exclude_none=True), status_code=200
+        body=expected_response.model_dump(exclude_none=True), status_code=200
     )
 
     assert response.__dict__ == expected_response.__dict__
