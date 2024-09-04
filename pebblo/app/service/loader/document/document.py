@@ -1,3 +1,4 @@
+from pebblo.app.enums.enums import ApplicationTypes
 from pebblo.app.models.db_models import AiDocument
 from pebblo.app.models.sqltables import AiDocumentTable
 from pebblo.app.service.loader.snippet.snippet import AiSnippetHandler
@@ -15,7 +16,7 @@ class AiDocumentHandler:
         self.snippet_handler = AiSnippetHandler(db, data)
 
     @timeit
-    def _get_or_create_document(self, doc, data_source):
+    def _get_or_create_document(self, doc: dict, data_source: dict) -> AiDocumentTable:
         logger.debug("Create or update AIDocument")
         filter_query = {
             "appName": self.app_name,
@@ -47,13 +48,13 @@ class AiDocumentHandler:
                 "lastIngested": get_current_time(),
             }
             ai_document_obj = AiDocument(**ai_documents)
-            ai_document_data = ai_document_obj.dict()
+            ai_document_data = ai_document_obj.model_dump()
 
             _, doc_obj = self.db.insert_data(AiDocumentTable, ai_document_data)
             return doc_obj
 
     @staticmethod
-    def _update_loader_documents(app_loader_details, document):
+    def _update_loader_documents(app_loader_details: dict, document: dict) -> dict:
         logger.debug("Updating Loader details with document and findings.")
 
         # Updating documents value for AiDataLoader
@@ -86,7 +87,7 @@ class AiDocumentHandler:
         return app_loader_details
 
     @staticmethod
-    def _update_document(document, snippet):
+    def _update_document(document: dict, snippet: dict) -> dict:
         logger.debug("Updating AIDocument with snippet reference.")
         existing_topics = document.get("topics")
         if not existing_topics:
@@ -102,17 +103,35 @@ class AiDocumentHandler:
                 if entity in existing_entities.keys():
                     updated_entity = existing_entities[entity]
                     updated_entity["ref"].append(snippet.get("id"))
+                    updated_entity["count"] += snippet.get("entities", {}).get(
+                        entity, 0
+                    )
                     existing_entities.update({entity: updated_entity})
                 else:
-                    existing_entities.update({entity: {"ref": [snippet.get("id")]}})
+                    existing_entities.update(
+                        {
+                            entity: {
+                                "ref": [snippet.get("id")],
+                                "count": snippet.get("entities").get(entity, 0),
+                            }
+                        }
+                    )
         if topics:
             for topic in topics:
                 if topic in existing_topics.keys():
                     updated_topic = existing_topics[topic]
                     updated_topic["ref"].append(snippet.get("id"))
+                    updated_topic["count"] += snippet.get("topics", {}).get(topic, 0)
                     existing_topics.update({topic: updated_topic})
                 else:
-                    existing_topics.update({topic: {"ref": [snippet.get("id")]}})
+                    existing_topics.update(
+                        {
+                            topic: {
+                                "ref": [snippet.get("id")],
+                                "count": snippet.get("topics", {}).get(topic, 0),
+                            }
+                        }
+                    )
 
         document["topics"] = existing_topics
         document["entities"] = existing_entities
@@ -120,10 +139,11 @@ class AiDocumentHandler:
         return document
 
     @timeit
-    def create_or_update_document(self, app_loader_details, data_source):
+    def create_or_update_document(
+        self, app_loader_details: ApplicationTypes.LOADER.value, data_source: dict
+    ):
         logger.debug("Create or update document snippet")
         input_doc_list = self.data.get("docs", [])
-        doc_obj = None
         for doc in input_doc_list:
             doc_obj = self._get_or_create_document(doc, data_source)
             existing_document = doc_obj.data
@@ -138,6 +158,6 @@ class AiDocumentHandler:
                 app_loader_details, snippet
             )
 
-        self.db.update_data(doc_obj, doc_obj.data)
+            self.db.update_data(doc_obj, doc_obj.data)
 
         return app_loader_details
