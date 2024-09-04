@@ -239,9 +239,7 @@ class LoaderApp:
                 }
                 self.loader_details["loader_data_source_list"].append(ds_obj)
             except Exception as err:
-                logger.error(
-                    f"Failed in getting data source details of {data_source.data}, Error: {err}"
-                )
+                logger.warning(f"Failed in getting data source details, Error: {err}")
 
             # Data source count
             self.loader_details["loader_data_source_count"] = len(
@@ -631,7 +629,7 @@ class LoaderApp:
             _, ai_table_data = db.query(table_obj=table_name, filter_query=filter_query)
             if ai_table_data and len(ai_table_data) > 0:
                 db.delete(ai_table_data)
-            logger.debug(f"entry deleted from table {table_name}")
+            logger.debug(f"Entry deleted from table {table_name}")
         except Exception as err:
             message = f"Failed in delete entry from table {table_name}, Error: {err}"
             logger.error(message)
