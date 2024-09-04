@@ -283,9 +283,7 @@ class LoaderApp:
                     }
                     documents_with_findings_data.append(document_obj)
             except Exception as err:
-                logger.error(
-                    f"Failed in getting doc details of {document.data}, Error: {err}"
-                )
+                logger.warning(f"Failed in getting doc details, Error: {err}")
                 continue
 
         self.loader_details["loader_document_with_findings_list"].extend(
@@ -406,7 +404,7 @@ class LoaderApp:
             # Closing the session
             self.db.session.close()
 
-    def get_loader_app_details(self, db: SQLiteClient, app_name: str):
+    def get_loader_app_details(self, db: SQLiteClient, app_name: str) -> str:
         """
         This function is being used by the loader_doc_service to get data needed to generate pdf.
         """
@@ -463,7 +461,7 @@ class LoaderApp:
         return report_summary
 
     @staticmethod
-    def _get_top_n_findings(raw_data: dict):
+    def _get_top_n_findings(raw_data: dict) -> list:
         """
         Return top N findings from all findings
         """
