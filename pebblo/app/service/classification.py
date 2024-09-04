@@ -114,5 +114,5 @@ class Classification:
                 f"Error in Classification API process_request. Error:{traceback.format_exc()}"
             )
             return PebbloJsonResponse.build(
-                body=response.dict(exclude_none=True), status_code=500
+                body=response.model_dump(exclude_none=True), status_code=500
             )

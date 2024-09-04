@@ -65,7 +65,3 @@ def test_process_request_success(mock_entity_classifier, mock_topic_classifier):
     )
 
     assert response.__dict__ == expected_response.__dict__
-
-
-if __name__ == "__main__":
-    pytest.main()

@@ -35,7 +35,7 @@ router_instance.router.add_api_route(
 
 router_instance.router.add_api_route(
     "/classify",
-    App.classifydata,
+    App.classify_data,
     methods=["POST"],
     response_model=dict,
     response_model_exclude_none=True,

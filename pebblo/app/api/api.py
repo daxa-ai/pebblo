@@ -51,8 +51,7 @@ class App:
         return response
 
     @staticmethod
-    def classifydata(data: dict):
-        print("data aaya hai ", data)
+    def classify_data(data: dict):
         cls_obj = Classification(data)
         response = cls_obj.process_request()
         return response
