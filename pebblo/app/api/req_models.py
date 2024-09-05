@@ -31,14 +31,14 @@ class VectorDB(BaseModel):
 
 
 class Model(BaseModel):
-    vendor: Optional[str]
-    name: Optional[str]
+    vendor: Optional[str] = None
+    name: Optional[str] = None
 
 
 class ChainInfo(BaseModel):
     name: str
-    model: Optional[Model]
-    vector_dbs: Optional[List[VectorDB]] = []
+    model: Optional[Model] = None
+    vector_dbs: Optional[List[VectorDB]] = None
 
 
 class ReqDiscover(BaseModel):
@@ -48,7 +48,7 @@ class ReqDiscover(BaseModel):
     load_id: Optional[str] = None
     runtime: Runtime
     framework: Framework
-    chains: Optional[List[ChainInfo]] = []
+    chains: Optional[List[ChainInfo]] = None
     plugin_version: str
     client_version: Framework
 
@@ -56,7 +56,7 @@ class ReqDiscover(BaseModel):
 class ReqLoaderDoc(BaseModel):
     name: str
     owner: str
-    docs: list[dict] = []
+    docs: list[dict] = None
     plugin_version: str
     load_id: str
     loader_details: dict
@@ -75,18 +75,18 @@ class Context(BaseModel):
 class Prompt(BaseModel):
     data: Optional[Union[list, str]] = None
     entityCount: Optional[int] = None
-    entities: Optional[dict] = {}
+    entities: Optional[dict] = None
     prompt_gov_enabled: Optional[bool] = None
 
 
 class ReqPrompt(BaseModel):
     name: str
-    context: Optional[List[Context]] = []
+    context: Optional[List[Context]] = None
     prompt: Optional[Prompt] = None
     response: Optional[Prompt] = None
     prompt_time: str
     user: str
-    user_identities: Optional[List[str]] = []
+    user_identities: Optional[List[str]] = None
     classifier_location: str
 
 
