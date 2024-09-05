@@ -1127,6 +1127,10 @@ dialog::backdrop {
   border: 1px solid#D8D9E380;
 }
 
+.word-wrap-break {
+  word-wrap: break-word;
+}
+
 /* TOOLTIP */
 
 .tooltip-wrapper {
