@@ -30,6 +30,13 @@ class Entities(Enum):
     US_BANK_NUMBER = "us-bank-account-number"
     IBAN_CODE = "iban-code"
     US_ITIN = "us-itin"
+    PRIVATE_KEY = "private-key"
+    DSA_PRIVATE_KEY = "dsa-private-key"
+    ENCRYPTED_PRIVATE_KEY = "encrypted-private-key"
+    ELLIPTIC_CURVE_PRIVATE_KEY = "ec-private-key"
+    OPENSSH_PRIVATE_KEY = "openssh-private-key"
+    RSA_PRIVATE_KEY = "rsa-private-key"
+    GOOGLE_PRIVATE_KEY = "google-private-key"
 
 
 class SecretEntities(Enum):
@@ -69,6 +76,14 @@ entity_group_conf_mapping = {
     SecretEntities.AZURE_CLIENT_SECRET.value: (0.8, PIIGroups.Secrets.value),
     SecretEntities.GOOGLE_API_KEY.value: (0.4, PIIGroups.Secrets.value),
     SecretEntities.GITHUB_FINEGRAINED_TOKEN.value: (0.4, PIIGroups.Secrets.value),
+    # Private keys
+    Entities.PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
+    Entities.DSA_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
+    Entities.ENCRYPTED_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
+    Entities.ELLIPTIC_CURVE_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
+    Entities.OPENSSH_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
+    Entities.RSA_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
+    Entities.GOOGLE_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
     # Network
     Entities.IP_ADDRESS.value: (0.4, PIIGroups.Network.value),
 }
