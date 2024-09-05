@@ -149,6 +149,9 @@ svg.icon-success {
 .w-100 {
   width: 100%;
 }
+.w-400px {
+  width: 400px;
+}
 
 /* <----------- DISPLAY PROPERTY -----------> */
 .none {
@@ -1023,6 +1026,9 @@ td.fit {
 .overflow-x-hidden {
   overflow-x: hidden;
 }
+.overflow-x-auto {
+  overflow-x: auto;
+}
 
 .snippet-body:hover {
   background: var(--main);
@@ -1422,4 +1428,9 @@ dialog::backdrop {
 
 .width-max-content {
   width: 200px;
+}
+
+.text-wrap {
+  word-break: break-all;
+  text-wrap: wrap;
 }

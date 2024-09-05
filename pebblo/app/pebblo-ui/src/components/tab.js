@@ -52,7 +52,7 @@ function Tabs(tabsArr, tabPanel) {
   }
   return /*html*/ `
       <div class="flex flex-col">
-        <div class="tabs sticky top-0 flex gap-6">
+        <div class="tabs sticky top-0 flex gap-6 overflow-x-auto">
           ${allTabs}
           <div id="tab_selected"></div> 
         </div>
