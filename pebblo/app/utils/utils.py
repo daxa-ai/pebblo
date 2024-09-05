@@ -297,6 +297,7 @@ def get_current_time():
 def timeit(func):
     def wrapper(*args, **kwargs):
         if logger.isEnabledFor(logging.DEBUG):
+            # Apply time profiling
             start_time = time.perf_counter()
             response = func(*args, **kwargs)
             end_time = time.perf_counter()
@@ -305,6 +306,8 @@ def timeit(func):
             )
             return response
         else:
-            return {}
+            # Skip time profiling
+            response = func(*args, **kwargs)
+            return response
 
     return wrapper
