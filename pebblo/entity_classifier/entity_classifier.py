@@ -2,6 +2,9 @@ from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 from presidio_anonymizer import AnonymizerEngine
 
+from pebblo.entity_classifier.custom_analyzer.private_key_analyzer import (
+    PrivateKeyRecognizer,
+)
 from pebblo.entity_classifier.utils.config import (
     ConfidenceScore,
     Entities,
@@ -40,6 +43,9 @@ class EntityClassifier:
                 ),
             ),
         )
+        pk_recognizer = PrivateKeyRecognizer()
+        # Add the private key recognizer to the Presidio Analyzer
+        self.analyzer.registry.add_recognizer(pk_recognizer)
 
     def analyze_response(self, input_text, anonymize_all_entities=True):
         """
