@@ -474,7 +474,7 @@ export const TABLE_DATA_FOR_DATA_SOURCE = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter text-none">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${
+         <div class="surface-10-opacity-50 font-12 w-400px text-wrap">${
            item?.sourceSize ? getFileSize(item.sourceSize) : "-"
          } | ${item.sourcePath}</div>
       </div>
@@ -506,7 +506,7 @@ export const TABLE_DATA_FOR_DATA_SOURCE_APP_DETAILS = [
     render: (item) => /*html*/ `
       <div class="flex flex-col inter text-none">
          <div class="surface-10 font-13">${item.name || "-"}</div>
-         <div class="surface-10-opacity-50 font-12">${
+         <div class="surface-10-opacity-50 font-12 w-400px text-wrap">${
            item.sourceSize ? getFileSize(item.sourceSize) : ""
          } | ${item.sourcePath}</div>
       </div>
