@@ -40,7 +40,7 @@ def test_process_request_success(mock_entity_classifier, mock_topic_classifier):
     mock_topic_classifier_instance = mock_topic_classifier.return_value
     mock_topic_classifier_instance.predict.return_value = ({}, 0, {})
 
-    data = {"inputs": "Sachin's SSN is 222-85-4836"}
+    data = {"data": "Sachin's SSN is 222-85-4836"}
     cls_obj = Classification(data)
     response = cls_obj.process_request()
     expected_response = AiDataModel(

@@ -14,6 +14,8 @@ from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 logger = get_logger(__name__)
 
+topic_classifier_obj = TopicClassifier()
+
 
 class Classification:
     """
@@ -23,7 +25,6 @@ class Classification:
     def __init__(self, input_data):
         self.input = input_data
         self.entity_classifier_obj = EntityClassifier()
-        self.topic_classifier_obj = TopicClassifier()
 
     def _get_classifier_response(self):
         """
@@ -50,7 +51,7 @@ class Classification:
                 anonymized_doc,
                 entity_details,
             ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
-                self.input.get("inputs"),
+                self.input.get("data"),
                 anonymize_snippets=annonymize,
             )
             doc_info.entities = entities
@@ -61,8 +62,8 @@ class Classification:
             else:
                 doc_info.data = ""
 
-            topics, topic_count, topic_details = self.topic_classifier_obj.predict(
-                self.input.get("inputs")
+            topics, topic_count, topic_details = topic_classifier_obj.predict(
+                self.input.get("data")
             )
             doc_info.topicCount = topic_count
             doc_info.topics = topics
@@ -77,13 +78,15 @@ class Classification:
         Process Prompt Governance Request
         """
         try:
-            if self.input.get("inputs"):
+            if self.input.get("data"):
                 doc_info = self._get_classifier_response()
                 return PebbloJsonResponse.build(
                     body=doc_info.model_dump(exclude_none=True), status_code=200
                 )
             else:
-                raise ValidationError("Input is not valid")
+                return PebbloJsonResponse.build(
+                    body={"error": "Input data is missing"}, status_code=400
+                )
 
         except ValidationError:
             response = AiDataModel(
