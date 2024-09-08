@@ -15,7 +15,7 @@ from pebblo.app.routers.local_ui_routers import local_ui_router_instance
 from pebblo.app.routers.redirection_router import redirect_router_instance
 
 with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
-    from pebblo.app.routers.routers import router_instance, api_v1_router_instance
+    from pebblo.app.routers.routers import api_v1_router_instance, router_instance
 from pebblo.log import get_logger, get_uvicorn_logconfig
 
 logger = get_logger(__name__)
