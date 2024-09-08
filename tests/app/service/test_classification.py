@@ -38,7 +38,7 @@ def test_process_request_success(mock_entity_classifier, mock_topic_classifier):
     )
 
     mock_topic_classifier_instance = mock_topic_classifier.return_value
-    mock_topic_classifier_instance.predict.return_value = (0, {}, {})
+    mock_topic_classifier_instance.predict.return_value = ({}, 0, {})
 
     data = {"inputs": "Sachin's SSN is 222-85-4836"}
     cls_obj = Classification(data)
@@ -64,4 +64,5 @@ def test_process_request_success(mock_entity_classifier, mock_topic_classifier):
         body=expected_response.model_dump(exclude_none=True), status_code=200
     )
 
-    assert response.__dict__ == expected_response.__dict__
+    assert response.status_code == expected_response.status_code
+    assert response.body == expected_response.body

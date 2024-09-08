@@ -22,10 +22,10 @@ class LoaderMetadata(BaseModel):
 
 class AiDataModel(BaseModel):
     data: Optional[Union[list, str]] = None
-    entityCount: int
+    entityCount: Optional[int] = 0
     entities: dict
     entityDetails: Optional[dict] = {}
-    topicCount: Optional[int] = None
+    topicCount: Optional[int] = 0
     topics: Optional[dict] = {}
     topicDetails: Optional[dict] = {}
 
