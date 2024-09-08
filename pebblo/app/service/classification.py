@@ -14,8 +14,6 @@ from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 logger = get_logger(__name__)
 
-topic_classifier_obj = TopicClassifier()
-
 
 class Classification:
     """
@@ -25,6 +23,7 @@ class Classification:
     def __init__(self, input_data):
         self.input = input_data
         self.entity_classifier_obj = EntityClassifier()
+        self.topic_classifier_obj = TopicClassifier()
 
     def _get_classifier_response(self):
         """
@@ -62,7 +61,7 @@ class Classification:
             else:
                 doc_info.data = ""
 
-            topics, topic_count, topic_details = topic_classifier_obj.predict(
+            topics, topic_count, topic_details = self.topic_classifier_obj.predict(
                 self.input.get("inputs")
             )
             doc_info.topicCount = topic_count
