@@ -3,11 +3,10 @@ Module for prompt governance
 """
 
 import traceback
-
-from pydantic import ValidationError
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional
 from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import AiDataModel
@@ -16,18 +15,19 @@ from pebblo.log import get_logger
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
 
-
 class ClassificationMode(Enum):
     ENTITY = "entity"
     TOPIC = "topic"
     ALL = "all"
+
 
 class ReqClassifier(BaseModel):
     data: str
     mode: Optional[ClassificationMode] = Field(default=ClassificationMode.ALL)
     anonymize: Optional[bool] = Field(default=False)
 
-    model_config = ConfigDict(extra='forbid')
+    model_config = ConfigDict(extra="forbid")
+
 
 logger = get_logger(__name__)
 topic_classifier_obj = TopicClassifier()
@@ -38,11 +38,11 @@ class Classification:
     Class for loader doc related task
     """
 
-    def __init__(self, input:dict):
+    def __init__(self, input: dict):
         self.input = input
         self.entity_classifier_obj = EntityClassifier()
 
-    def _get_classifier_response(self, req:ReqClassifier):
+    def _get_classifier_response(self, req: ReqClassifier):
         """
         Processes the input prompt through the entity classifier and anonymizer, and returns
         the resulting information encapsulated in an AiDataModel object.
@@ -60,7 +60,10 @@ class Classification:
             topicDetails={},
         )
         try:
-            if req.mode == ClassificationMode.ENTITY or req.mode == ClassificationMode.ALL:
+            if (
+                req.mode == ClassificationMode.ENTITY
+                or req.mode == ClassificationMode.ALL
+            ):
                 (
                     entities,
                     entity_count,
@@ -77,7 +80,10 @@ class Classification:
                     doc_info.data = anonymized_doc
                 else:
                     doc_info.data = ""
-            if req.mode == ClassificationMode.TOPIC or req.mode == ClassificationMode.ALL:
+            if (
+                req.mode == ClassificationMode.TOPIC
+                or req.mode == ClassificationMode.ALL
+            ):
                 topics, topic_count, topic_details = topic_classifier_obj.predict(
                     req.data
                 )
