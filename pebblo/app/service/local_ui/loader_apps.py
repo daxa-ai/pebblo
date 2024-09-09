@@ -368,13 +368,13 @@ class LoaderApp:
             all_loader_apps: list = []
             for loader_app in ai_loader_apps:
                 app_data = loader_app.data
+                if app_data["name"] in app_processed:
+                    # This app is already processed with the latest app, skipping older one's
+                    continue
+
                 if app_data.get("docEntities") not in [None, {}] or app_data.get(
                     "docTopics"
                 ) not in [None, {}]:
-                    if app_data["name"] in app_processed:
-                        # This app is already processed with the latest app, skipping older one's
-                        continue
-
                     self.loader_details["loader_apps_at_risk"] += 1
                 loader_app = self.get_findings_for_loader_app(app_data)
                 all_loader_apps.append(loader_app)
