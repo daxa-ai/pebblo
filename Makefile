@@ -46,10 +46,6 @@ lint:
 	ruff check --select I .
 	mkdir -p $(MYPY_CACHE) && mypy --install-types --non-interactive $(PYTHON_FILES) --cache-dir $(MYPY_CACHE) --exclude build/ --exclude pebblo_saferetriever --check-untyped-defs || true
 
-lint-fix:
-	ruff check . --fix
-	ruff format
-
 spell_check:
 	codespell --toml pyproject.toml
 
@@ -64,7 +60,6 @@ format_diff: PYTHON_FILES=$(shell git diff --relative= --name-only --diff-filter
 format format_diff:
 	[ "$(PYTHON_FILES)" = "" ] || ruff check $(PYTHON_FILES) --fix
 	[ "$(PYTHON_FILES)" = "" ] || ruff format $(PYTHON_FILES)
-	[ "$(PYTHON_FILES)" = "" ] || ruff check --select I --fix $(PYTHON_FILES)
 
 ################################################
 # HELP
