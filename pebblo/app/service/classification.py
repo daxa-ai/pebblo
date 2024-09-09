@@ -1,12 +1,12 @@
 """
-Module for prompt governance
+Module for text classification
 """
 
 import traceback
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import AiDataModel
@@ -26,21 +26,22 @@ class ReqClassifier(BaseModel):
     mode: Optional[ClassificationMode] = Field(default=ClassificationMode.ALL)
     anonymize: Optional[bool] = Field(default=False)
 
-    model_config = ConfigDict(extra="forbid")
+    class Config:
+        extra = "forbid"
 
 
 logger = get_logger(__name__)
 topic_classifier_obj = TopicClassifier()
+entity_classifier_obj = EntityClassifier()
 
 
 class Classification:
     """
-    Class for loader doc related task
+    Classification wrapper class for Entity and Semantic classification with anonymization
     """
 
     def __init__(self, input: dict):
         self.input = input
-        self.entity_classifier_obj = EntityClassifier()
 
     def _get_classifier_response(self, req: ReqClassifier):
         """
@@ -60,30 +61,24 @@ class Classification:
             topicDetails={},
         )
         try:
-            if (
-                req.mode == ClassificationMode.ENTITY
-                or req.mode == ClassificationMode.ALL
-            ):
+            # Process entity classification
+            if req.mode in [ClassificationMode.ENTITY, ClassificationMode.ALL]:
                 (
                     entities,
                     entity_count,
                     anonymized_doc,
                     entity_details,
-                ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
+                ) = entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
                     req.data,
                     anonymize_snippets=req.anonymize,
                 )
                 doc_info.entities = entities
                 doc_info.entityCount = entity_count
                 doc_info.entityDetails = entity_details
-                if req.anonymize:
-                    doc_info.data = anonymized_doc
-                else:
-                    doc_info.data = ""
-            if (
-                req.mode == ClassificationMode.TOPIC
-                or req.mode == ClassificationMode.ALL
-            ):
+                doc_info.data = anonymized_doc if req.anonymize else ""
+
+            # Process topic classification
+            if req.mode in [ClassificationMode.TOPIC, ClassificationMode.ALL]:
                 topics, topic_count, topic_details = topic_classifier_obj.predict(
                     req.data
                 )
@@ -91,13 +86,19 @@ class Classification:
                 doc_info.topicCount = topic_count
                 doc_info.topicDetails = topic_details
             return doc_info
+        except (KeyError, ValueError, RuntimeError) as e:
+            logger.error(f"Failed to get classifier response: {e}")
+            return doc_info
         except Exception as e:
-            logger.error(f"Get Classifier Response Failed, Exception: {e}")
+            logger.error(f"Unexpected error:{e}\n{traceback.format_exc()}")
             return doc_info
 
     def process_request(self):
         """
-        Process Prompt Governance Request
+        Processes the user request for classification and returns a structured response.
+
+        Returns:
+            PebbloJsonResponse: The response object containing classification results or error details.
         """
         try:
             req = ReqClassifier.model_validate(self.input)
@@ -111,7 +112,7 @@ class Classification:
             )
         except ValidationError as e:
             logger.error(
-                f"Error in Classification API process_request. Error:{traceback.format_exc()}"
+                f"Validation error in Classification API process_request:{e}\n{traceback.format_exc()}"
             )
             return PebbloJsonResponse.build(
                 body={"error": f"Validation error: {e}"}, status_code=400
@@ -126,7 +127,7 @@ class Classification:
                 topicDetails={},
             )
             logger.error(
-                f"Error in Classification API process_request. Error:{traceback.format_exc()}"
+                f"Error in Classification API process_request: {traceback.format_exc()}"
             )
             return PebbloJsonResponse.build(
                 body=response.model_dump(exclude_none=True), status_code=500
