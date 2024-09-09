@@ -3,8 +3,8 @@ from fastapi import APIRouter
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.service.classification import Classification
 
-config_details = var_server_config_dict.get()
 
+config_details = var_server_config_dict.get()
 
 class APIv1:
     """
