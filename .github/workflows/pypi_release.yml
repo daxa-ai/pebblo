@@ -58,7 +58,7 @@ jobs:
     needs: build
     steps:
       - name: Download all the dists
-        uses: actions/download-artifact@v4.1.1
+        uses: actions/download-artifact@v4.1.7
         with:
           name: pebblo-package-distributions
           path: dist/
