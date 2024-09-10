@@ -138,12 +138,12 @@ class ClassifierConfig(ConfigValidator):
     def validate(self):
         mode = self.config.get("mode")
         anonymize_snippets = self.config.get("anonymizeSnippets")
-        valid_classification_mode = [
+        valid_classification_modes = [
             classification_mode.value for classification_mode in ClassificationMode
         ]
-        if mode not in valid_classification_mode:
+        if mode not in valid_classification_modes:
             self.errors.append(
-                f"Error: Unsupported classifier mode '{mode}' specified in the configuration. Valid values are {valid_classification_mode}"
+                f"Error: Unsupported classifier mode '{mode}' specified in the configuration. Valid values are {valid_classification_modes}"
             )
         if not isinstance(anonymize_snippets, bool):
             self.errors.append(
