@@ -39,6 +39,7 @@ class AppLoaderDoc:
         self.db = None
         self.data = None
         self.app_name = None
+        self.classifier_mode = None
         self.entity_classifier_obj = EntityClassifier()
 
     @staticmethod
@@ -180,10 +181,7 @@ class AppLoaderDoc:
         )
         try:
             if doc_info.data:
-                classifier_mode = config_details.get("classifier", {}).get(
-                    "mode", ClassificationMode.ALL.value
-                )
-                if classifier_mode in [
+                if self.classifier_mode and self.classifier_mode in [
                     ClassificationMode.ALL.value,
                     ClassificationMode.TOPIC.value,
                 ]:
@@ -193,7 +191,7 @@ class AppLoaderDoc:
                     doc_info.topics = topics
                     doc_info.topicCount = topic_count
                     doc_info.topicDetails = topic_details
-                if classifier_mode in [
+                if self.classifier_mode and self.classifier_mode in [
                     ClassificationMode.ALL.value,
                     ClassificationMode.ENTITY.value,
                 ]:
@@ -283,6 +281,13 @@ class AppLoaderDoc:
             self.db = SQLiteClient()
             self.data = data
             self.app_name = data.get("name")
+
+            if not self.data.get("classifier_mode"):
+                self.classifier_mode = config_details.get("classifier", {}).get(
+                    "mode", ClassificationMode.ALL.value
+                )
+            else:
+                self.classifier_mode = self.data.get("classifier_mode")
 
             # create session
             self.db.create_session()
