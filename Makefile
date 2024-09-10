@@ -60,7 +60,6 @@ format_diff: PYTHON_FILES=$(shell git diff --relative= --name-only --diff-filter
 format format_diff:
 	[ "$(PYTHON_FILES)" = "" ] || ruff check $(PYTHON_FILES) --fix
 	[ "$(PYTHON_FILES)" = "" ] || ruff format $(PYTHON_FILES)
-	[ "$(PYTHON_FILES)" = "" ] || ruff check --select I --fix $(PYTHON_FILES)
 
 ################################################
 # HELP
