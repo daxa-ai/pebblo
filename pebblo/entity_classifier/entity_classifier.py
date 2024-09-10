@@ -103,19 +103,16 @@ class EntityClassifier:
         """
         This function sort analyzed response data based on its start position
         """
-        analyzed_data = []
         # Convert input data into dictionary structure
-        for entry in data:
-            analyzed_data.append(
-                {
-                    "entity_type": entry.entity_type,
-                    "start": entry.start,
-                    "end": entry.end,
-                    "score": entry.score,
-                }
-            )
-
-        # Sort data based on start
+        analyzed_data = [
+            {
+                "entity_type": entry.entity_type,
+                "start": entry.start,
+                "end": entry.end,
+                "score": entry.score,
+            }
+            for entry in data
+        ]
         analyzed_data.sort(key=lambda x: x["start"])
         return analyzed_data
 
@@ -124,16 +121,11 @@ class EntityClassifier:
         """
         This function sort anonymized response data based on its start position
         """
-        anonymized_data = []
         # Convert input data into dictionary structure
-        for entry in data:
-            anonymized_data.append(
-                {
-                    "entity_type": entry.entity_type,
-                    "start": entry.start,
-                    "end": entry.end,
-                }
-            )
+        anonymized_data = [
+            {"entity_type": entry.entity_type, "start": entry.start, "end": entry.end}
+            for entry in data
+        ]
 
         # Sort data based on start
         anonymized_data.sort(key=lambda x: x["start"])
