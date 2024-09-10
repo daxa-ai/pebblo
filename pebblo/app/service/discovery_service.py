@@ -124,35 +124,36 @@ class AppDiscover:
             logger.debug(f"Existing Chains : {chains}")
 
         logger.debug(f"Input chains : {self.data.get('chains', [])}")
-        for chain in self.data.get("chains", []):
-            name = chain["name"]
-            model = chain["model"]
-            # vector db details
-            vector_db_details = []
-            for vector_db in chain.get("vector_dbs", []):
-                vector_db_obj = VectorDB(
-                    name=vector_db.get("name"),
-                    version=vector_db.get("version"),
-                    location=vector_db.get("location"),
-                    embeddingModel=vector_db.get("embedding_model"),
-                    pkgInfo=None,
-                )
-
-                package_info = vector_db.get("pkg_info")
-                if package_info:
-                    pkg_info_obj = PackageInfo(
-                        projectHomePage=package_info.get("project_home_page"),
-                        documentationUrl=package_info.get("documentation_url"),
-                        pypiUrl=package_info.get("pypi_url"),
-                        licenceType=package_info.get("licence_type"),
-                        installedVia=package_info.get("installed_via"),
-                        location=package_info.get("location"),
+        if self.data.get("chains") not in [None, []]:
+            for chain in self.data.get("chains", []):
+                name = chain["name"]
+                model = chain["model"]
+                # vector db details
+                vector_db_details = []
+                for vector_db in chain.get("vector_dbs", []):
+                    vector_db_obj = VectorDB(
+                        name=vector_db.get("name"),
+                        version=vector_db.get("version"),
+                        location=vector_db.get("location"),
+                        embeddingModel=vector_db.get("embedding_model"),
+                        pkgInfo=None,
                     )
-                    vector_db_obj.pkgInfo = pkg_info_obj
 
-                vector_db_details.append(vector_db_obj)
-            chain_obj = Chain(name=name, model=model, vectorDbs=vector_db_details)
-            chains.append(chain_obj.model_dump())
+                    package_info = vector_db.get("pkg_info")
+                    if package_info:
+                        pkg_info_obj = PackageInfo(
+                            projectHomePage=package_info.get("project_home_page"),
+                            documentationUrl=package_info.get("documentation_url"),
+                            pypiUrl=package_info.get("pypi_url"),
+                            licenceType=package_info.get("licence_type"),
+                            installedVia=package_info.get("installed_via"),
+                            location=package_info.get("location"),
+                        )
+                        vector_db_obj.pkgInfo = pkg_info_obj
+
+                    vector_db_details.append(vector_db_obj)
+                chain_obj = Chain(name=name, model=model, vectorDbs=vector_db_details)
+                chains.append(chain_obj.model_dump())
 
         logger.debug(f"Application Name [{self.application_name}]: Chains: {chains}")
         return chains
