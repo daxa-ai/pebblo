@@ -4,7 +4,7 @@ import os
 import sys
 from abc import ABC, abstractmethod
 
-from pebblo.app.enums.common import DBStorageTypes, StorageTypes
+from pebblo.app.enums.common import ClassificationMode, DBStorageTypes, StorageTypes
 
 
 class ConfigValidator(ABC):
@@ -136,7 +136,15 @@ class ReportsConfig(ConfigValidator):
 
 class ClassifierConfig(ConfigValidator):
     def validate(self):
+        mode = self.config.get("mode")
         anonymize_snippets = self.config.get("anonymizeSnippets")
+        valid_classification_mode = [
+            classification_mode.value for classification_mode in ClassificationMode
+        ]
+        if mode not in valid_classification_mode:
+            self.errors.append(
+                f"Error: Unsupported classifier mode '{mode}' specified in the configuration. Valid values are {valid_classification_mode}"
+            )
         if not isinstance(anonymize_snippets, bool):
             self.errors.append(
                 f"Error: Invalid anonymizeSnippets '{anonymize_snippets}'. anonymizeSnippets must be a boolean."

@@ -8,6 +8,7 @@ reports:
   renderer: xhtml2pdf
   cacheDir: ~/.pebblo
 classifier:
+  mode: all
   anonymizeSnippets: False
 storage:
   type: file
