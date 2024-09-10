@@ -52,8 +52,8 @@ class Classification:
         try:
             # Process entity classification
             if req.mode in [
-                ClassificationMode.ENTITY.value,
-                ClassificationMode.ALL.value,
+                ClassificationMode.ENTITY,
+                ClassificationMode.ALL,
             ]:
                 (
                     entities,
@@ -71,8 +71,8 @@ class Classification:
 
             # Process topic classification
             if req.mode in [
-                ClassificationMode.TOPIC.value,
-                ClassificationMode.ALL.value,
+                ClassificationMode.TOPIC,
+                ClassificationMode.ALL,
             ]:
                 topics, topic_count, topic_details = topic_classifier_obj.predict(
                     req.data
@@ -105,6 +105,7 @@ class Classification:
                 req.mode = config_details.get("classifier", {}).get(
                     "mode", ClassificationMode.ALL.value
                 )
+                req.mode = ClassificationMode(req.mode)
             if not req.anonymize:
                 req.anonymize = config_details.get("classifier", {}).get(
                     "anonymizeSnippets", False
