@@ -99,25 +99,80 @@ class EntityClassifier:
         return anonymized_text.items, anonymized_text.text
 
     @staticmethod
-    def get_analyzed_entities_response(data, anonymized_response=None):
-        # Returns entities with its location i.e. start to end and confidence score
-        response = []
-        for index, value in enumerate(data):
-            mapped_entity = None
-            if value.entity_type in Entities.__members__:
-                mapped_entity = Entities[value.entity_type].value
-            elif value.entity_type in SecretEntities.__members__:
-                mapped_entity = SecretEntities[value.entity_type].value
+    def _sort_analyzed_data(data):
+        """
+        This function sort analyzed response data based on its start position
+        """
+        analyzed_data = []
+        # Convert input data into dictionary structure
+        for entry in data:
+            analyzed_data.append(
+                {
+                    "entity_type": entry.entity_type,
+                    "start": entry.start,
+                    "end": entry.end,
+                    "score": entry.score,
+                }
+            )
 
-            location = f"{value.start}_{value.end}"
+        # Sort data based on start
+        analyzed_data.sort(key=lambda x: x["start"])
+        return analyzed_data
+
+    @staticmethod
+    def _sort_anonymized_data(data):
+        """
+        This function sort anonymized response data based on its start position
+        """
+        anonymized_data = []
+        # Convert input data into dictionary structure
+        for entry in data:
+            anonymized_data.append(
+                {
+                    "entity_type": entry.entity_type,
+                    "start": entry.start,
+                    "end": entry.end,
+                }
+            )
+
+        # Sort data based on start
+        anonymized_data.sort(key=lambda x: x["start"])
+        return anonymized_data
+
+    @staticmethod
+    def update_anonymized_location(start, end, location_count):
+        location = f"{start+location_count}_{end+location_count+6}"
+        location_count += 6
+        return location, location_count
+
+    def get_analyzed_entities_response(self, data, anonymized_response=None):
+        # Returns entities with its location i.e. start to end and confidence score
+
+        analyzed_data = self._sort_analyzed_data(data)
+        if anonymized_response:
+            anonymized_response = self._sort_anonymized_data(anonymized_response)
+
+        response = []
+        location_count = 0
+        for index, value in enumerate(analyzed_data):
+            mapped_entity = None
+            if value["entity_type"] in Entities.__members__:
+                mapped_entity = Entities[value["entity_type"]].value
+            elif value["entity_type"] in SecretEntities.__members__:
+                mapped_entity = SecretEntities[value["entity_type"]].value
+
+            location = f"{value['start']}_{value['end']}"
             if anonymized_response:
-                anonymized_data = anonymized_response[len(data) - index - 1]
-                location = f"{anonymized_data.start}_{anonymized_data.end}"
+                anonymized_data = anonymized_response[index]
+                if anonymized_data["entity_type"] == value["entity_type"]:
+                    location, location_count = self.update_anonymized_location(
+                        anonymized_data["start"], anonymized_data["end"], location_count
+                    )
             response.append(
                 {
-                    "entity_type": value.entity_type,
+                    "entity_type": value["entity_type"],
                     "location": location,
-                    "confidence_score": value.score,
+                    "confidence_score": value["score"],
                     "entity_group": entity_group_conf_mapping[mapped_entity][1],
                 }
             )
