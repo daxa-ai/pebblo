@@ -37,6 +37,9 @@ const config: Config = {
               label: "latest",
               path: "",
             },
+            "0.1.18": {
+              banner: "none",
+            },
             "0.1.17": {
               banner: "none",
             },
