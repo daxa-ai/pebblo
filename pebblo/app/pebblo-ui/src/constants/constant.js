@@ -262,9 +262,7 @@ export const TABLE_DATA_FOR_APPLICATIONS = [
   {
     label: "Findings - Total",
     field: "total",
-    render: (item) => {
-      return item.topics + item.entities;
-    },
+    render: (item) => item.total,
     align: "end",
   },
   {
@@ -696,12 +694,18 @@ export const TABLE_DATA_FOR_PROMPTS_WITH_FINDINGS_SAFE_RETRIEVAL = [
   },
 ];
 
+const appListing =
+  APP_DATA?.appList?.map((app, index) => ({
+    ...app,
+    total: app?.topics + app?.entities,
+  })) || [];
+
 export const TAB_PANEL_ARR_FOR_APPLICATIONS_SAFE_LOADER = [
   {
     value: {
       title: "Applications",
       tableCol: TABLE_DATA_FOR_APPLICATIONS,
-      tableData: APP_DATA?.appList,
+      tableData: appListing,
       isDownloadReport: false,
       searchField: ["name", "owner"],
       isSorting: true,

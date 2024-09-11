@@ -14,6 +14,28 @@ app.include_router(router_instance.router)
 client = TestClient(app)
 
 
+app_discover_payload = {
+    "name": "Test App",
+    "owner": "Test owner",
+    "description": "This is a test app.",
+    "runtime": {
+        "type": "desktop",
+        "host": "MacBook-Pro.local",
+        "path": "Test/Path",
+        "ip": "127.0.0.1",
+        "platform": "macOS-14.6.1-arm64-i386-64bit",
+        "os": "Darwin",
+        "os_version": "Darwin Kernel Version 23.6.0",
+        "language": "python",
+        "language_version": "3.11.9",
+        "runtime": "Mac OSX",
+    },
+    "framework": {"name": "langchain", "version": "0.2.35"},
+    "plugin_version": "0.1",
+    "client_version": {"name": "langchain_community", "version": "0.2.12"},
+}
+
+
 @pytest.fixture(scope="module")
 def mocked_objects():
     with (
@@ -96,13 +118,7 @@ def test_app_discover_success(mock_write_json_to_file, mock_pebblo_server_versio
     Test the app discover endpoint.
     """
     mock_write_json_to_file.return_value = None
-    app_payload = {
-        "name": "Test App",
-        "owner": "Test owner",
-        "description": "This is a test app.",
-        "plugin_version": "0.1",
-    }
-    response = client.post("/v1/app/discover", json=app_payload)
+    response = client.post("/v1/app/discover", json=app_discover_payload)
 
     # Assertions
     assert response.status_code == 200
@@ -115,14 +131,14 @@ def test_app_discover_validation_errors(mock_write_json_to_file):
     Test the app discover endpoint with validation errors.
     """
     mock_write_json_to_file.return_value = None
-    app = {
-        "owner": "Test owner",
-        "description": "This is a test app.",
-        "plugin_version": "0.1",
-    }
-    response = client.post("/v1/app/discover", json=app)
-    assert response.status_code == 400
-    assert "1 validation error for AiApp" in response.json()["message"]
+    app_payload = app_discover_payload.copy()
+    app_payload.pop("name")
+
+    response = client.post("/v1/app/discover", json=app_payload)
+    assert response.status_code == 422
+    assert "'type': 'missing', 'loc': ['body', 'name'], 'msg': 'Field required'" in str(
+        response.json()["detail"]
+    )
 
 
 def test_app_discover_server_error(mock_write_json_to_file):
@@ -130,13 +146,7 @@ def test_app_discover_server_error(mock_write_json_to_file):
     Test the app discover endpoint with server error.
     """
     mock_write_json_to_file.side_effect = Exception("Mocked exception")
-    app_payload = {
-        "name": "Test App",
-        "owner": "Test owner",
-        "description": "This is a test app.",
-        "plugin_version": "0.1",
-    }
-    response = client.post("/v1/app/discover", json=app_payload)
+    response = client.post("/v1/app/discover", json=app_discover_payload)
 
     # Assertions
     assert response.status_code == 500
@@ -186,6 +196,7 @@ def test_loader_doc_success(
             "source_aggr_size": 306,
         },
         "plugin_version": "0.1.0",
+        "classifier_location": "local",
     }
     response = client.post("/v1/loader/doc", json=loader_doc)
     assert response.status_code == 200
