@@ -41,7 +41,7 @@ class Classification:
             AiDataModel: An object containing the anonymized document, entities, and their counts.
         """
         doc_info = AiDataModel(
-            data=None,
+            data=req.data,
             entities={},
             entityCount=0,
             entityDetails={},
@@ -67,7 +67,8 @@ class Classification:
                 doc_info.entities = entities
                 doc_info.entityCount = entity_count
                 doc_info.entityDetails = entity_details
-                doc_info.data = anonymized_doc if req.anonymize else ""
+                if req.anonymize:
+                    doc_info.data = anonymized_doc
 
             # Process topic classification
             if req.mode in [

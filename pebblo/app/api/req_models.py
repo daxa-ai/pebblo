@@ -2,7 +2,7 @@
 
 from typing import List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from pebblo.app.enums.common import ClassificationMode
 
@@ -98,8 +98,8 @@ class ReqPromptGov(BaseModel):
 
 class ReqClassifier(BaseModel):
     data: str
-    mode: Optional[ClassificationMode] = None
-    anonymize: Optional[bool] = None
+    mode: Optional[ClassificationMode] = Field(default=ClassificationMode.ALL)
+    anonymize: Optional[bool] = Field(default=False)
 
     class Config:
         extra = "forbid"
