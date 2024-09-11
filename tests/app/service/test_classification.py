@@ -44,7 +44,7 @@ def test_process_request_success(mock_entity_classifier, mock_topic_classifier):
     cls_obj = Classification(data)
     response = cls_obj.process_request()
     expected_response = AiDataModel(
-        data="",
+        data=data["data"],
         entities={"us-ssn": 1},
         entityCount=1,
         entityDetails={

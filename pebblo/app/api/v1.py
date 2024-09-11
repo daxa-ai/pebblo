@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from pebblo.app.api.req_models import ReqClassifier
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.service.classification import Classification
 
@@ -15,7 +16,9 @@ class APIv1:
         self.router = APIRouter(prefix=prefix)
 
     @staticmethod
-    def classify_data(data: dict):
-        cls_obj = Classification(data)
+    def classify_data(data: ReqClassifier):
+        # "/classify" API entrypoint
+        # Execute entity/topic classification
+        cls_obj = Classification(data.model_dump())
         response = cls_obj.process_request()
         return response

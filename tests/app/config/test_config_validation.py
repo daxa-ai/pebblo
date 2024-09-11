@@ -122,31 +122,50 @@ def test_reports_config_validate(setup_and_teardown):
 
 def test_classifier_config_validate():
     # Test with True value
-    config = {"anonymizeSnippets": True}
+    config = {"mode": "all", "anonymizeSnippets": True}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == []
 
-    # Test with False value
-    config = {"anonymizeSnippets": False}
+    # Test with anonymizeSnippets False value
+    config = {"mode": "all", "anonymizeSnippets": False}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == []
 
-    # Test with invalid int
-    config = {"anonymizeSnippets": 70000}
+    # Test with mode entity value
+    config = {"mode": "entity", "anonymizeSnippets": False}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == []
+
+    # Test with mode topic value
+    config = {"mode": "topic", "anonymizeSnippets": False}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == []
+
+    # Test with invalid anonymizeSnippets values
+    config = {"mode": "all", "anonymizeSnippets": 70000}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == [
         "Error: Invalid anonymizeSnippets '70000'. anonymizeSnippets must be a boolean."
     ]
 
-    # Test with invalid str
-    config = {"anonymizeSnippets": "abc"}
+    config = {"mode": "all", "anonymizeSnippets": "abc"}
     validator = ClassifierConfig(config)
     validator.validate()
     assert validator.errors == [
         "Error: Invalid anonymizeSnippets 'abc'. anonymizeSnippets must be a boolean."
+    ]
+
+    # Test with invalid mode values
+    config = {"mode": "Wrong", "anonymizeSnippets": True}
+    validator = ClassifierConfig(config)
+    validator.validate()
+    assert validator.errors == [
+        "Error: Unsupported classifier mode 'Wrong' specified in the configuration. Valid values are ['all', 'entity', 'topic']"
     ]
 
 
@@ -161,6 +180,7 @@ def test_validate_config(setup_and_teardown):
             "cacheDir": "~/.pebblo_test_",
         },
         "classifier": {
+            "mode": "all",
             "anonymizeSnippets": True,
         },
         "storage": {"type": "file"},

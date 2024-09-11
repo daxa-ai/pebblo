@@ -7,7 +7,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings
 
 from pebblo.app.config.config_validation import validate_config, validate_input
-from pebblo.app.enums.common import DBStorageTypes, StorageTypes
+from pebblo.app.enums.common import ClassificationMode, DBStorageTypes, StorageTypes
 
 # Default config value
 dir_path = pathlib.Path().absolute()
@@ -44,6 +44,7 @@ class LoggingConfig(BaseSettings):
 
 
 class ClassifierConfig(BaseSettings):
+    mode: str = Field(default=ClassificationMode.ALL.value)
     anonymizeSnippets: bool = Field(default=True)
 
 
@@ -77,7 +78,9 @@ def load_config(path: Optional[str]) -> Tuple[dict, Config]:
                 format="pdf", renderer="xhtml2pdf", cacheDir="~/.pebblo"
             ),
             logging=LoggingConfig(),
-            classifier=ClassifierConfig(anonymizeSnippets=False),
+            classifier=ClassifierConfig(
+                mode=ClassificationMode.ALL.value, anonymizeSnippets=False
+            ),
             storage=StorageConfig(type="file", db=None),
             # for now, a default storage type is FILE, but in the next release DB will be the default storage type.
         )
