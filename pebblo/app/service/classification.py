@@ -3,31 +3,19 @@ Module for text classification
 """
 
 import traceback
-from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import ValidationError
 
+from pebblo.app.api.req_models import ReqClassifier
+from pebblo.app.config.config import var_server_config_dict
+from pebblo.app.enums.common import ClassificationMode
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import AiDataModel
 from pebblo.entity_classifier.entity_classifier import EntityClassifier
 from pebblo.log import get_logger
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
-
-class ClassificationMode(Enum):
-    ENTITY = "entity"
-    TOPIC = "topic"
-    ALL = "all"
-
-
-class ReqClassifier(BaseModel):
-    data: str
-    mode: Optional[ClassificationMode] = Field(default=ClassificationMode.ALL)
-    anonymize: Optional[bool] = Field(default=False)
-
-    class Config:
-        extra = "forbid"
+config_details = var_server_config_dict.get()
 
 
 logger = get_logger(__name__)
@@ -40,10 +28,11 @@ class Classification:
     Classification wrapper class for Entity and Semantic classification with anonymization
     """
 
-    def __init__(self, input: dict):
-        self.input = input
+    def __init__(self, data: dict):
+        self.input = data
 
-    def _get_classifier_response(self, req: ReqClassifier):
+    @staticmethod
+    def _get_classifier_response(req: ReqClassifier):
         """
         Processes the input prompt through the entity classifier and anonymizer, and returns
         the resulting information encapsulated in an AiDataModel object.
@@ -52,7 +41,7 @@ class Classification:
             AiDataModel: An object containing the anonymized document, entities, and their counts.
         """
         doc_info = AiDataModel(
-            data=None,
+            data=req.data,
             entities={},
             entityCount=0,
             entityDetails={},
@@ -62,7 +51,10 @@ class Classification:
         )
         try:
             # Process entity classification
-            if req.mode in [ClassificationMode.ENTITY, ClassificationMode.ALL]:
+            if req.mode in [
+                ClassificationMode.ENTITY,
+                ClassificationMode.ALL,
+            ]:
                 (
                     entities,
                     entity_count,
@@ -75,10 +67,14 @@ class Classification:
                 doc_info.entities = entities
                 doc_info.entityCount = entity_count
                 doc_info.entityDetails = entity_details
-                doc_info.data = anonymized_doc if req.anonymize else ""
+                if req.anonymize:
+                    doc_info.data = anonymized_doc
 
             # Process topic classification
-            if req.mode in [ClassificationMode.TOPIC, ClassificationMode.ALL]:
+            if req.mode in [
+                ClassificationMode.TOPIC,
+                ClassificationMode.ALL,
+            ]:
                 topics, topic_count, topic_details = topic_classifier_obj.predict(
                     req.data
                 )

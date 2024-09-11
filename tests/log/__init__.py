@@ -13,7 +13,7 @@ config = Config(
     daemon=PortConfig(host="localhost", port=8000),
     logging=LoggingConfig(),
     reports=ReportConfig(format="pdf", renderer="xhtml2pdf", cacheDir="~/.pebblo"),
-    classifier=ClassifierConfig(anonymizeSnippets=False),
+    classifier=ClassifierConfig(mode="all", anonymizeSnippets=False),
     storage=StorageConfig(type="db"),
 )
 var_server_config.set(config)

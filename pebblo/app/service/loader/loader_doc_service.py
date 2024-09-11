@@ -3,6 +3,8 @@ import json
 from datetime import datetime
 from os import makedirs, path
 
+from pebblo.app.config.config import var_server_config_dict
+from pebblo.app.enums.common import ClassificationMode
 from pebblo.app.enums.enums import ApplicationTypes, CacheDir, ClassifierConstants
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
@@ -25,6 +27,7 @@ from pebblo.log import get_logger
 from pebblo.reports.reports import Reports
 from pebblo.topic_classifier.topic_classifier import TopicClassifier
 
+config_details = var_server_config_dict.get()
 logger = get_logger(__name__)
 
 # Init topic classifier
@@ -36,6 +39,7 @@ class AppLoaderDoc:
         self.db = None
         self.data = None
         self.app_name = None
+        self.classifier_mode = None
         self.entity_classifier_obj = EntityClassifier()
 
     @staticmethod
@@ -177,25 +181,33 @@ class AppLoaderDoc:
         )
         try:
             if doc_info.data:
-                topics, topic_count, topic_details = topic_classifier_obj.predict(
-                    doc_info.data
-                )
-                (
-                    entities,
-                    entity_count,
-                    anonymized_doc,
-                    entity_details,
-                ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
-                    doc_info.data,
-                    anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
-                )
-                doc_info.topics = topics
-                doc_info.entities = entities
-                doc_info.entityDetails = entity_details
-                doc_info.topicCount = topic_count
-                doc_info.entityCount = entity_count
-                doc_info.topicDetails = topic_details
-                doc_info.data = anonymized_doc
+                if self.classifier_mode and self.classifier_mode in [
+                    ClassificationMode.ALL.value,
+                    ClassificationMode.TOPIC.value,
+                ]:
+                    topics, topic_count, topic_details = topic_classifier_obj.predict(
+                        doc_info.data
+                    )
+                    doc_info.topics = topics
+                    doc_info.topicCount = topic_count
+                    doc_info.topicDetails = topic_details
+                if self.classifier_mode and self.classifier_mode in [
+                    ClassificationMode.ALL.value,
+                    ClassificationMode.ENTITY.value,
+                ]:
+                    (
+                        entities,
+                        entity_count,
+                        anonymized_doc,
+                        entity_details,
+                    ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
+                        doc_info.data,
+                        anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
+                    )
+                    doc_info.entities = entities
+                    doc_info.entityDetails = entity_details
+                    doc_info.entityCount = entity_count
+                    doc_info.data = anonymized_doc
             logger.debug("Doc classification finished.")
             return doc_info
         except Exception as e:
@@ -269,6 +281,13 @@ class AppLoaderDoc:
             self.db = SQLiteClient()
             self.data = data
             self.app_name = data.get("name")
+
+            if not self.data.get("classifier_mode"):
+                self.classifier_mode = config_details.get("classifier", {}).get(
+                    "mode", ClassificationMode.ALL.value
+                )
+            else:
+                self.classifier_mode = self.data.get("classifier_mode")
 
             # create session
             self.db.create_session()
