@@ -15,7 +15,7 @@ from pebblo.entity_classifier.utils.regex_pattern import regex_secrets_patterns
 from pebblo.utils import get_confidence_score_label
 
 
-def get_entities(entities_list, response):
+def get_entities(entities_list: list, response: list) -> (dict, dict, int):
     """
     Returns entity groups, its details such as confidence score, location and its group grouped by entity type
     """
