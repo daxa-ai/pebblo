@@ -101,15 +101,6 @@ class Classification:
                 return PebbloJsonResponse.build(
                     body={"error": "Input data is missing"}, status_code=400
                 )
-            if not req.mode:
-                req.mode = config_details.get("classifier", {}).get(
-                    "mode", ClassificationMode.ALL.value
-                )
-                req.mode = ClassificationMode(req.mode)
-            if not req.anonymize:
-                req.anonymize = config_details.get("classifier", {}).get(
-                    "anonymizeSnippets", False
-                )
             doc_info = self._get_classifier_response(req)
             return PebbloJsonResponse.build(
                 body=doc_info.model_dump(exclude_none=True), status_code=200

@@ -1,8 +1,11 @@
 """API Request Model Class"""
+
 from typing import List, Optional, Union
 
 from pydantic import BaseModel
+
 from pebblo.app.enums.common import ClassificationMode
+
 
 class Runtime(BaseModel):
     type: str = "local"
