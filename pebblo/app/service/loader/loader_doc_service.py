@@ -227,6 +227,7 @@ class AppLoaderDoc:
         doc["topics"] = doc_info.topics
         doc["entity_details"] = doc_info.entityDetails
         doc["topic_details"] = doc_info.topicDetails
+        doc["doc"] = doc_info.data
         logger.debug("Input doc updated with classification result")
 
     @timeit
