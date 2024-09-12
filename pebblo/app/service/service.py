@@ -5,9 +5,9 @@ This module handles app loader/doc API business logic.
 import hashlib
 from datetime import datetime
 
-from pebblo.app.config.config import var_server_config_dict
 from pydantic import ValidationError
 
+from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import ClassificationMode
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.responses import PebbloJsonResponse
@@ -172,7 +172,9 @@ class AppLoaderDoc:
             self._upsert_loader_details(app_details)
 
             # process input docs, app details, and generate final report
-            loader_helper_obj = LoaderHelper(app_details, self.data, load_id, self.classifier_mode)
+            loader_helper_obj = LoaderHelper(
+                app_details, self.data, load_id, self.classifier_mode
+            )
             (
                 app_details,
                 final_report,
