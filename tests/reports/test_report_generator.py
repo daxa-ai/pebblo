@@ -41,9 +41,12 @@ class TestReportGenerator(unittest.TestCase):
         output_str = identity_comma_separated(self.authorizedIdentities)
         assert output_str == "demo-user-hr, demo-user-engg"
 
+    @patch("jinja2.select_autoescape", return_value=Mock())
     @patch("jinja2.Environment", return_value=Mock(get_template=Mock()))
     @patch("jinja2.FileSystemLoader")
-    def test_convert_html_to_pdf(self, mock_filesystem_loader, mock_environment):
+    def test_convert_html_to_pdf(
+        self, mock_filesystem_loader, mock_environment, mock_select_autoescape
+    ):
         """Test the convert_html_to_pdf function"""
         # Arrange
         data = {
@@ -68,10 +71,13 @@ class TestReportGenerator(unittest.TestCase):
             convert_html_to_pdf(data, output_path, template_name, search_path, renderer)
 
         # Assert
+        mock_autoescape = mock_select_autoescape.return_value
+        mock_environment.autoescape = mock_autoescape
         mock_filesystem_loader.assert_called_once_with(searchpath=search_path)
         mock_environment.assert_called_once_with(
-            loader=mock_filesystem_loader.return_value
+            loader=mock_filesystem_loader.return_value, autoescape=mock_autoescape
         )
+
         mock_environment.return_value.get_template.assert_called_once_with(
             template_name
         )

@@ -52,17 +52,13 @@ export function ApplicationsList(props) {
   function onChange(evt) {
     let filteredData;
     if (evt.target.value) {
-      filteredData = tableData?.filter((item) =>
-        eval(
-          searchField
-            ?.map((sch) =>
-              item[sch]
-                ?.toLocaleLowerCase()
-                ?.includes(evt.target.value.toLocaleLowerCase())
-            )
-            .join(" || ")
-        )
-      );
+      const searchValue = evt.target.value.toLocaleLowerCase();
+      filteredData = tableData?.filter((item) => {
+        const isMatch = searchField?.some((sch) =>
+          item[sch]?.toLocaleLowerCase()?.includes(searchValue)
+        );
+        return isMatch;
+      });
     } else {
       filteredData = tableData;
     }
