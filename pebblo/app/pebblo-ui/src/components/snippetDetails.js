@@ -106,17 +106,13 @@ export function SnippetDetails(props) {
   function onChange(evt) {
     let filteredData;
     if (evt.target.value) {
-      filteredData = snippetList?.filter((item) =>
-        eval(
-          searchField
-            ?.map((sch) =>
-              item[sch]
-                ?.toLocaleLowerCase()
-                ?.includes(evt.target.value.toLocaleLowerCase())
-            )
-            .join(" || ")
-        )
-      );
+      filteredData = snippetList?.filter((item) => {
+        const searchValue = evt.target.value.toLocaleLowerCase();
+        const isMatch = searchField?.some((sch) =>
+          item[sch]?.toLocaleLowerCase()?.includes(searchValue)
+        );
+        return isMatch;
+      });
     } else {
       filteredData = snippetList;
     }
