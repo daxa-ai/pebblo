@@ -6,6 +6,7 @@ import ast
 import os.path
 from datetime import datetime
 
+from pebblo.app.enums.common import ClassificationMode
 from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
 from pebblo.app.models.models import (
     AiDataModel,
@@ -36,11 +37,12 @@ class LoaderHelper:
     Class for loader doc related task
     """
 
-    def __init__(self, app_details, data, load_id):
+    def __init__(self, app_details, data, load_id, classifier_mode):
         self.app_details = app_details
         self.data = data
         self.load_id = load_id
         self.loader_mapper = {}
+        self.classifier_mode = classifier_mode
         self.entity_classifier_obj = EntityClassifier()
 
     # Initialization
@@ -186,25 +188,33 @@ class LoaderHelper:
         )
         try:
             if doc_info.data:
-                topics, topic_count, topic_details = topic_classifier_obj.predict(
-                    doc_info.data
-                )
-                (
-                    entities,
-                    entity_count,
-                    anonymized_doc,
-                    entity_details,
-                ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
-                    doc_info.data,
-                    anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
-                )
-                doc_info.topics = topics
-                doc_info.entities = entities
-                doc_info.entityDetails = entity_details
-                doc_info.topicDetails = topic_details
-                doc_info.topicCount = topic_count
-                doc_info.entityCount = entity_count
-                doc_info.data = anonymized_doc
+                if self.classifier_mode and self.classifier_mode in [
+                    ClassificationMode.ALL.value,
+                    ClassificationMode.TOPIC.value,
+                ]:
+                    topics, topic_count, topic_details = topic_classifier_obj.predict(
+                        doc_info.data
+                    )
+                    doc_info.topics = topics
+                    doc_info.topicDetails = topic_details
+                    doc_info.topicCount = topic_count
+                if self.classifier_mode and self.classifier_mode in [
+                    ClassificationMode.ALL.value,
+                    ClassificationMode.ENTITY.value,
+                ]:
+                    (
+                        entities,
+                        entity_count,
+                        anonymized_doc,
+                        entity_details,
+                    ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
+                        doc_info.data,
+                        anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
+                    )
+                    doc_info.entities = entities
+                    doc_info.entityDetails = entity_details
+                    doc_info.entityCount = entity_count
+                    doc_info.data = anonymized_doc
             return doc_info
         except Exception as e:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
