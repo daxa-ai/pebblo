@@ -64,7 +64,7 @@ export const NO_APPLICATIONS_FOUND = APP_DATA
   ? Object.keys(APP_DATA)?.length === 0
   : true;
 export const NO_FINDINGS_FOR_APP =
-  APP_DATA && APP_DATA?.reportSummary
+  APP_DATA && APP_DATA?.reportSummary && "findings" in APP_DATA.reportSummary
     ? APP_DATA.reportSummary?.findings === 0
     : true;
 
@@ -850,20 +850,24 @@ const entitiesCount = dataSourceObject
   ? dataSourceObject?.findingsSummary?.length - topicsCount
   : 0;
 
+const appReportSummary = APP_DATA?.reportSummary || false;
+
 export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   {
     label: "Findings",
-    critical: NO_FINDINGS_FOR_APP
-      ? "-"
-      : APP_DATA?.reportSummary?.findings || 0,
+    critical:
+      appReportSummary && "findings" in APP_DATA?.reportSummary
+        ? APP_DATA?.reportSummary?.findings || 0
+        : "-",
     value: 0,
     isCritical: IS_CRITICAL_COUNT,
   },
   {
     label: "Documents With Findings",
-    critical: NO_FINDINGS_FOR_APP
-      ? "-"
-      : APP_DATA?.reportSummary?.filesWithFindings || 0,
+    critical:
+      appReportSummary && "filesWithFindings" in appReportSummary
+        ? APP_DATA?.reportSummary?.filesWithFindings || 0
+        : "-",
     outOf: NO_FINDINGS_FOR_APP ? "" : APP_DATA?.reportSummary?.totalFiles || 0,
     value: 1,
     isCritical: IS_CRITICAL_COUNT,
@@ -876,11 +880,12 @@ export const TABS_ARR_FOR_APPLICATION_DETAILS = [
   },
   {
     label: "Snippets",
-    critical: NO_FINDINGS_FOR_APP
-      ? "-"
-      : APP_DATA?.dataSources
-      ? APP_DATA?.dataSources[0]?.totalSnippetCount
-      : 0,
+    critical:
+      APP_DATA?.dataSources && "totalSnippetCount" in APP_DATA?.dataSources[0]
+        ? APP_DATA?.dataSources
+          ? APP_DATA?.dataSources[0]?.totalSnippetCount
+          : 0
+        : "-",
     value: 3,
     isCritical: false,
   },
