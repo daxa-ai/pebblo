@@ -5,8 +5,10 @@ This module handles app loader/doc API business logic.
 import hashlib
 from datetime import datetime
 
+from pebblo.app.config.config import var_server_config_dict
 from pydantic import ValidationError
 
+from pebblo.app.enums.common import ClassificationMode
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.models import LoaderDocResponseModel, LoaderDocs, LoaderMetadata
@@ -15,6 +17,7 @@ from pebblo.app.utils.utils import get_full_path, read_json_file, write_json_to_
 from pebblo.log import get_logger
 from pebblo.reports.reports import Reports
 
+config_details = var_server_config_dict.get()
 logger = get_logger(__name__)
 
 
@@ -26,6 +29,7 @@ class AppLoaderDoc:
     def __init__(self):
         self.data = None
         self.app_name = None
+        self.classifier_mode = None
 
     def _initialize_data(self, data):
         self.data = data
@@ -122,6 +126,13 @@ class AppLoaderDoc:
         """
         This process is entrypoint function for loader doc API implementation.
         """
+        if not data.get("classifier_mode"):
+            self.classifier_mode = config_details.get("classifier", {}).get(
+                "mode", ClassificationMode.ALL.value
+            )
+        else:
+            self.classifier_mode = data.get("classifier_mode")
+
         self._initialize_data(data)
 
         try:
@@ -161,7 +172,7 @@ class AppLoaderDoc:
             self._upsert_loader_details(app_details)
 
             # process input docs, app details, and generate final report
-            loader_helper_obj = LoaderHelper(app_details, self.data, load_id)
+            loader_helper_obj = LoaderHelper(app_details, self.data, load_id, self.classifier_mode)
             (
                 app_details,
                 final_report,

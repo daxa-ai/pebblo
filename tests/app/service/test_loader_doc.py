@@ -74,7 +74,7 @@ raw_data = {
 
 @pytest.fixture
 def loader_helper():
-    return LoaderHelper(app_details, data=data, load_id=data.get("load_id"))
+    return LoaderHelper(app_details, data=data, load_id=data.get("load_id"), classifier_mode="all")
 
 
 @pytest.fixture

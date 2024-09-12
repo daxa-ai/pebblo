@@ -65,6 +65,7 @@ class ReqLoaderDoc(BaseModel):
     loading_end: bool
     source_owner: str
     classifier_location: str
+    classifier_mode: Optional[str] = None
 
 
 class Context(BaseModel):
