@@ -52,8 +52,8 @@ export function ApplicationsList(props) {
   function onChange(evt) {
     let filteredData;
     if (evt.target.value) {
+      const searchValue = evt.target.value.toLocaleLowerCase();
       filteredData = tableData?.filter((item) => {
-        const searchValue = evt.target.value.toLocaleLowerCase();
         const isMatch = searchField?.some((sch) =>
           item[sch]?.toLocaleLowerCase()?.includes(searchValue)
         );
