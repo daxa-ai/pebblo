@@ -118,13 +118,13 @@ function Td(props) {
       });
     td = /*html*/ `
       <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 fit" id="link-${id}">
-      ${children || "-"}
+      ${typeof children === "number" ? children : children || "-"}
       </td>
    `;
   } else {
     td = /*html*/ `
     <td class="${TEXT__ALIGN} capitalize pt-3 pb-3 pl-3 pr-3 fit">
-       ${children || "-"}
+       ${typeof children === "number" ? children : children || "-"}
        </td>
     `;
   }
@@ -134,7 +134,7 @@ function Td(props) {
       tooltipWidth ? tooltipWidth : "text-ellipsis"
     }">
        ${Tooltip({
-         children: children || "-",
+         children: typeof children === "number" ? children : children || "-",
          title: tooltipTitle,
        })}
        </td>
