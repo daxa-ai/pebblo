@@ -64,10 +64,12 @@ class AppDiscover:
             createdAt=self._get_current_datetime(),
             modifiedAt=self._get_current_datetime(),
         )
-        client_version = FrameworkInfo(
-            name=self.data.get("client_version", {}).get("name"),
-            version=self.data.get("client_version", {}).get("version"),
-        )
+        client_version = None
+        if self.data.get("client_version"):
+            client_version = FrameworkInfo(
+                name=self.data.get("client_version", {}).get("name"),
+                version=self.data.get("client_version", {}).get("version"),
+            )
         ai_apps_model = AiApp(
             metadata=metadata,
             name=self.data.get("name"),

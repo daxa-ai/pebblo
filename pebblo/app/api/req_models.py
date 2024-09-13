@@ -52,7 +52,7 @@ class ReqDiscover(BaseModel):
     framework: Framework
     chains: Optional[List[ChainInfo]] = None
     plugin_version: str
-    client_version: Framework
+    client_version: Optional[Framework] = None
 
 
 class ReqLoaderDoc(BaseModel):
