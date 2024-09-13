@@ -72,10 +72,12 @@ class AppDiscover:
         current_time = get_current_time()
 
         metadata = Metadata(createdAt=current_time, modifiedAt=current_time)
-        client_version = FrameworkInfo(
-            name=self.data.get("client_version", {}).get("name"),
-            version=self.data.get("client_version", {}).get("version"),
-        )
+        client_version = None
+        if self.data.get("client_version"):
+            client_version = FrameworkInfo(
+                name=self.data.get("client_version", {}).get("name"),
+                version=self.data.get("client_version", {}).get("version"),
+            )
         ai_app_obj = {
             "metadata": metadata,
             "description": self.data.get("description", "-"),

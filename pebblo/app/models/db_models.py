@@ -46,6 +46,7 @@ class AiBaseApp(BaseModel):
     ] = []  # list of policy id, title and other details
     pebbloServerVersion: Optional[str] = None
     pebbloClientVersion: Optional[str] = None
+    clientVersion: Optional[FrameworkInfo] = None
     model_config = ConfigDict(arbitrary_types_allowed=True, use_enum_values=True)
 
 
