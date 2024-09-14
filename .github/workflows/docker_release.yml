@@ -22,8 +22,7 @@ jobs:
 
       - name: Get Release Tag
         run: |
-          TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
-          echo "VERSION=$(echo $TAG | sed 's/v//')" >> $GITHUB_ENV
+             echo "VERSION=v0.1.19" >> $GITHUB_ENV       
           
       - name: Build base images
         uses: docker/bake-action@v4
