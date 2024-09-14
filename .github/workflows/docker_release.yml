@@ -32,5 +32,6 @@ jobs:
         with:
           workdir: deploy/docker
           targets: base
-          push: true
+          push: false
+          no-cache: true
      
