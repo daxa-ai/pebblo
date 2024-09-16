@@ -8,7 +8,7 @@ on:
 jobs:
   docker:
     name: Build base image
-    runs-on: macos-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
           context: ./deploy/docker
           push: true
           tags: daxaai/pebblo:raj-v1
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           file: ./deploy/docker/Dockerfile.base
           build-args: |
                       "build_image=python:3.11"
