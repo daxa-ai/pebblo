@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - "v[0-9].[0-9]+.[0-9]+*"
-  workflow_dispatch:    
 jobs:
   build-and-push:
     name: Build base image
@@ -22,8 +21,8 @@ jobs:
 
       - name: Get Release Tag
         run: |
-             TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
-             echo "VERSION=$(echo $TAG | sed 's/v//')" >> $GITHUB_ENV     
+          TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+          echo "VERSION=$(echo $TAG | sed 's/v//')" >> $GITHUB_ENV
           
       - name: Build base images
         uses: docker/bake-action@v4
@@ -34,5 +33,4 @@ jobs:
           workdir: deploy/docker
           targets: base
           push: true
-          no-cache: true
      
