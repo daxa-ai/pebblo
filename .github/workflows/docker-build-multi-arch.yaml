@@ -33,9 +33,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./deploy/docker
-          push: true
-          tags: daxaai/pebblo:raj-v1
-          platforms: linux/amd64
+          push: false
+          tags: daxaai/pebblo:test
+          platforms: linux/amd64,linux/arm64
           file: ./deploy/docker/Dockerfile.base
           build-args: |
                       "build_image=python:3.11"
