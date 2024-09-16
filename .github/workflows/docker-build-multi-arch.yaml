@@ -38,6 +38,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: ./deploy/docker/Dockerfile.base
           build-args: |
-                      build_image="python:3.11"
-                      base_image="python:3.11"
-                      pebblo_version="main"
+                      "build_image=python:3.11"
+                      "base_image=python:3.11"
+                      "pebblo_version=main"
