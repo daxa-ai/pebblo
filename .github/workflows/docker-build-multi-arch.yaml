@@ -1,5 +1,8 @@
 name: ci-docker-multi-arch
 on:
+  push:
+    branches:
+      - multi-arch      
   workflow_dispatch:
 
 jobs:
@@ -19,7 +22,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }} 
 
       # - name: Get Release Tag
       #   run: |
