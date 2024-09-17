@@ -58,6 +58,7 @@ format: PYTHON_FILES=.
 format_diff: PYTHON_FILES=$(shell git diff --relative= --name-only --diff-filter=d main '*.py' '*.ipynb')
 
 format format_diff:
+	[ "$(PYTHON_FILES)" = "" ] || ruff check --select I $(PYTHON_FILES) --fix
 	[ "$(PYTHON_FILES)" = "" ] || ruff check $(PYTHON_FILES) --fix
 	[ "$(PYTHON_FILES)" = "" ] || ruff format $(PYTHON_FILES)
 
