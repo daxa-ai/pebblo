@@ -1,6 +1,9 @@
 
 name: ci-docker-multi-arch
 on:
+  push:
+    branches:
+      - pebblo-v0.1.19-docker-build
   workflow_dispatch:
 
 jobs:
