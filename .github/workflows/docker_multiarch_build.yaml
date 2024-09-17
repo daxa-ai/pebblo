@@ -36,4 +36,4 @@ jobs:
           build-args: |
                       "build_image=python:3.11"
                       "base_image=python:3.11"
-                      "pebblo_version=${{ env.VERSION }}"
+                      "pebblo_branch=${{ env.VERSION }}"
