@@ -1,9 +1,7 @@
 
 name: ci-docker-multi-arch
 on:
-  push:
-    tags:
-      - "v[0-9].[0-9]+.[0-9]+*"
+  workflow_dispatch:
 
 jobs:
   docker:
@@ -26,14 +24,13 @@ jobs:
 
       - name: Get Release Tag
         run: |
-             TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
-             echo "VERSION=$(echo $TAG | sed 's/v//')" >> $GITHUB_ENV
+             echo "VERSION=0.1.19" >> $GITHUB_ENV
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./deploy/docker
           push: true
-          tags: daxaai/pebblo:${{ env.VERSION }}
+          tags: daxaai/pebblo:${{ env.VERSION }},daxaai/pebblo:latest
           platforms: linux/amd64,linux/arm64
           file: ./deploy/docker/Dockerfile.base
           build-args: |
