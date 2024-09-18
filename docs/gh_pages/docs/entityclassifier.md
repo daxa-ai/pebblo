@@ -23,6 +23,14 @@ Below is the list of `entities` supported by Pebblo -
 1. Slack Access Token
 1. AWS Access Key
 1. AWS Secret Key
+1. Private Key
+1. DSA Private Key
+1. Encrypted Private Key
+1. Elliptic Curve Private Key
+1. OpenSSH Private Key
+1. RSA Private Key
+1. Google Account Private Key
+1. Github Fine Grained Token
 
 
 User can get details of classified entities for their loader source files in Pebblo report.  
