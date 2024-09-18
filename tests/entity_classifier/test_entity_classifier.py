@@ -5,7 +5,12 @@ from tests.entity_classifier.mock_response import (
     mock_input_text1_anonymize_snippet_true,
     mock_input_text2_anonymize_snippet_true,
 )
-from tests.entity_classifier.test_data import input_text1, input_text2, negative_data
+from tests.entity_classifier.test_data import (
+    input_text1,
+    input_text2,
+    negative_data,
+    tf_test_data,
+)
 
 
 class TestAnonymizerResult:
@@ -140,14 +145,14 @@ def test_entity_classifier_and_anonymizer2(entity_classifier):
         "credit-card-number": 1,
         "iban-code": 1,
         "us-itin": 1,
-        "azure-client-secret": 3,
         "aws-access-key": 1,
         "aws-secret-key": 1,
         "github-token": 1,
         "slack-token": 2,
         "ip-address": 1,
+        "azure-client-secret": 1,
     }
-    assert total_count == 15
+    assert total_count == 13
     assert anonymized_text == input_text2
     assert entity_details == {
         "us-ssn": [
@@ -192,61 +197,51 @@ def test_entity_classifier_and_anonymizer2(entity_classifier):
                 "entity_group": "pii-financial",
             }
         ],
-        "azure-client-secret": [
-            {
-                "location": "1475_1511",
-                "confidence_score": "HIGH",
-                "entity_group": "secrets_and_tokens",
-            },
-            {
-                "location": "1841_1877",
-                "confidence_score": "HIGH",
-                "entity_group": "secrets_and_tokens",
-            },
-            {
-                "location": "2058_2094",
-                "confidence_score": "HIGH",
-                "entity_group": "secrets_and_tokens",
-            },
-        ],
         "aws-access-key": [
             {
-                "location": "1532_1552",
+                "location": "1472_1492",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "aws-secret-key": [
             {
-                "location": "1573_1614",
+                "location": "1513_1554",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "github-token": [
             {
-                "location": "1631_1721",
+                "location": "1571_1661",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "slack-token": [
             {
-                "location": "1795_1818",
+                "location": "1735_1758",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
             {
-                "location": "1892_1949",
+                "location": "1773_1830",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
         ],
         "ip-address": [
             {
-                "location": "2023_2034",
+                "location": "1904_1915",
                 "confidence_score": "HIGH",
                 "entity_group": "pii-network",
+            }
+        ],
+        "azure-client-secret": [
+            {
+                "location": "1939_1975",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
             }
         ],
     }
@@ -266,14 +261,14 @@ def test_entity_classifier_and_anonymizer2(entity_classifier):
         "credit-card-number": 1,
         "iban-code": 1,
         "us-itin": 1,
-        "azure-client-secret": 3,
         "aws-access-key": 1,
         "aws-secret-key": 1,
         "github-token": 1,
         "slack-token": 2,
         "ip-address": 1,
+        "azure-client-secret": 1,
     }
-    assert total_count == 15
+    assert total_count == 13
     assert anonymized_text == mock_input_text2_anonymize_snippet_true
     assert entity_details == {
         "us-ssn": [
@@ -318,61 +313,51 @@ def test_entity_classifier_and_anonymizer2(entity_classifier):
                 "entity_group": "pii-financial",
             }
         ],
-        "azure-client-secret": [
-            {
-                "location": "1497_1524",
-                "confidence_score": "HIGH",
-                "entity_group": "secrets_and_tokens",
-            },
-            {
-                "location": "1763_1790",
-                "confidence_score": "HIGH",
-                "entity_group": "secrets_and_tokens",
-            },
-            {
-                "location": "1940_1967",
-                "confidence_score": "HIGH",
-                "entity_group": "secrets_and_tokens",
-            },
-        ],
         "aws-access-key": [
             {
-                "location": "1545_1567",
+                "location": "1494_1516",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "aws-secret-key": [
             {
-                "location": "1588_1610",
+                "location": "1537_1559",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "github-token": [
             {
-                "location": "1627_1647",
+                "location": "1576_1596",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "slack-token": [
             {
-                "location": "1721_1740",
+                "location": "1670_1689",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
             {
-                "location": "1805_1824",
+                "location": "1704_1723",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
         ],
         "ip-address": [
             {
-                "location": "1898_1916",
+                "location": "1797_1815",
                 "confidence_score": "HIGH",
                 "entity_group": "pii-network",
+            }
+        ],
+        "azure-client-secret": [
+            {
+                "location": "1839_1866",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
             }
         ],
     }
@@ -403,3 +388,49 @@ def test_entity_classifier_and_anonymizer_negative_data(entity_classifier):
     assert entities == {}
     assert total_count == 0
     assert anonymized_text == negative_data
+
+
+def test_entity_classifier_and_anonymizer_azure_secret(entity_classifier):
+    """
+    UT for presidio_entity_classifier_and_anonymizer function with tf_test_data
+    """
+    (
+        entities,
+        total_count,
+        anonymized_text,
+        entity_details,
+    ) = entity_classifier.presidio_entity_classifier_and_anonymizer(tf_test_data)
+    assert entities == {
+        "azure-client-secret": 1,
+    }
+    assert total_count == 1
+    assert anonymized_text == tf_test_data
+    assert entity_details == {
+        "azure-client-secret": [
+            {
+                "location": "430_466",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ]
+    }
+
+    (
+        entities,
+        total_count,
+        anonymized_text,
+        entity_details,
+    ) = entity_classifier.presidio_entity_classifier_and_anonymizer(tf_test_data, True)
+    assert entities == {
+        "azure-client-secret": 1,
+    }
+    assert total_count == 1
+    assert entity_details == {
+        "azure-client-secret": [
+            {
+                "location": "430_457",
+                "confidence_score": "HIGH",
+                "entity_group": "secrets_and_tokens",
+            }
+        ]
+    }

@@ -11,7 +11,7 @@ secret_entities_context_mapping = {
     "aws-access-key": ["aws_access_key", "aws_key", "access", "id", "api"],
     "aws-secret-key": ["aws_secret_key", "secret"],
     "azure-key-id": ["azure_key", "azure_key_id", "azure_id", "key"],
-    "azure-client-secret": ["azure_client_secret", "client", "secret", "client-secret"],
+    "azure-client-secret": ["azure_client_secret", "client-secret", "client_secret"],
     "google-api-key": ["google_api_key", "google_key", "google"],
 }
 
