@@ -140,7 +140,7 @@ def test_entity_classifier_and_anonymizer2(entity_classifier):
         "credit-card-number": 1,
         "iban-code": 1,
         "us-itin": 1,
-        "client-secret": 3,
+        "azure-client-secret": 3,
         "aws-access-key": 1,
         "aws-secret-key": 1,
         "github-token": 1,
@@ -192,7 +192,7 @@ def test_entity_classifier_and_anonymizer2(entity_classifier):
                 "entity_group": "pii-financial",
             }
         ],
-        "client-secret": [
+        "azure-client-secret": [
             {
                 "location": "1475_1511",
                 "confidence_score": "HIGH",
@@ -266,7 +266,7 @@ def test_entity_classifier_and_anonymizer2(entity_classifier):
         "credit-card-number": 1,
         "iban-code": 1,
         "us-itin": 1,
-        "client-secret": 3,
+        "azure-client-secret": 3,
         "aws-access-key": 1,
         "aws-secret-key": 1,
         "github-token": 1,
@@ -318,59 +318,59 @@ def test_entity_classifier_and_anonymizer2(entity_classifier):
                 "entity_group": "pii-financial",
             }
         ],
-        "client-secret": [
+        "azure-client-secret": [
             {
-                "location": "1497_1518",
+                "location": "1497_1524",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
             {
-                "location": "1757_1778",
+                "location": "1763_1790",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
             {
-                "location": "1928_1949",
+                "location": "1940_1967",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
         ],
         "aws-access-key": [
             {
-                "location": "1539_1561",
+                "location": "1545_1567",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "aws-secret-key": [
             {
-                "location": "1582_1604",
+                "location": "1588_1610",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "github-token": [
             {
-                "location": "1621_1641",
+                "location": "1627_1647",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             }
         ],
         "slack-token": [
             {
-                "location": "1715_1734",
+                "location": "1721_1740",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
             {
-                "location": "1793_1812",
+                "location": "1805_1824",
                 "confidence_score": "HIGH",
                 "entity_group": "secrets_and_tokens",
             },
         ],
         "ip-address": [
             {
-                "location": "1886_1904",
+                "location": "1898_1916",
                 "confidence_score": "HIGH",
                 "entity_group": "pii-network",
             }

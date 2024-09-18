@@ -16,14 +16,14 @@ Sachin's bank account number is &lt;US_BANK_NUMBER&gt;.
 His American express credit card number is &lt;CREDIT_CARD&gt;.
 His UK IBAN Code is &lt;IBAN_CODE&gt;.
 ITIN number &lt;US_ITIN&gt;.
-Azure client secret : &lt;CLIENT_SECRET&gt;.
+Azure client secret : &lt;AZURE_CLIENT_SECRET&gt;.
 AWS Access Key is: &lt;AWS_ACCESS_KEY&gt;
 AWS Secret Key is : &lt;AWS_SECRET_KEY&gt;Github Token is: &lt;GITHUB_TOKEN&gt;
 Google API key: zaCELgL0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx
 Slack Token is: &lt;SLACK_TOKEN&gt;
-Azure Client Secret - &lt;CLIENT_SECRET&gt;
+Azure Client Secret - &lt;AZURE_CLIENT_SECRET&gt;
 Slack Token - &lt;SLACK_TOKEN&gt;
 Google API key- KLzaSyB_tWrbmfWx8g2bzL7Vhq7znuTUn0JPKmY"
 My IP Address - &lt;IP_ADDRESS&gt;
-Azure client-secret is &lt;CLIENT_SECRET&gt;
+Azure client-secret is &lt;AZURE_CLIENT_SECRET&gt;
 """
