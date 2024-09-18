@@ -3,7 +3,7 @@ from typing import Any, Optional
 
 
 def get_data(
-        metadata=False, ids=False, metadatas=False
+    metadata=False, ids=False, metadatas=False
 ) -> tuple[
     list[str],
     Optional[dict[str, Any]],
