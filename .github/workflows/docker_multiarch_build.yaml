@@ -1,0 +1,42 @@
+
+name: ci-docker-multi-arch
+on:
+  push:
+    tags:
+      - "v[0-9].[0-9]+.[0-9]+*"
+
+jobs:
+  docker:
+    name: Build base image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }} 
+
+      - name: Get Release Tag
+        run: |
+             TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+             echo "VERSION=$(echo $TAG | sed 's/v//')" >> $GITHUB_ENV
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./deploy/docker
+          push: true
+          tags: daxaai/pebblo:${{ env.VERSION }}
+          platforms: linux/amd64,linux/arm64
+          file: ./deploy/docker/Dockerfile.base
+          build-args: |
+                      "build_image=python:3.11"
+                      "base_image=python:3.11"
+                      "pebblo_branch=${{ env.VERSION }}"
