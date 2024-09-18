@@ -13,7 +13,7 @@ WORKDIR /opt/pebblo
 
 RUN git clone  https://github.com/daxa-ai/pebblo.git /opt/pebblo && git checkout $pebblo_branch
 
-RUN pip install weasyprint && pip install build && python -m build --wheel && pip install dist/*.whl
+RUN pip install weasyprint build && python -m build --wheel && pip install dist/*.whl
 
 # Stage 2
 FROM --platform=$BUILDPLATFORM $base_image
