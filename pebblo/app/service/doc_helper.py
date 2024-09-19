@@ -94,14 +94,14 @@ class LoaderHelper:
 
     @staticmethod
     def _update_raw_data(
-        raw_data: dict,
-        loader_source_snippets: dict,
-        total_findings: int,
-        findings_entities: int,
-        findings_topics: int,
-        snippet_count: int,
-        file_count: int,
-        data_source_findings: dict,
+        raw_data,
+        loader_source_snippets,
+        total_findings,
+        findings_entities,
+        findings_topics,
+        snippet_count,
+        file_count,
+        data_source_findings,
     ):
         """
         Reassigning raw data
@@ -144,7 +144,7 @@ class LoaderHelper:
         return doc_model.model_dump()
 
     @staticmethod
-    def _get_top_n_findings(raw_data: dict) -> list:
+    def _get_top_n_findings(raw_data):
         """
         Return top N findings from all findings
         """
@@ -228,7 +228,7 @@ class LoaderHelper:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
             return doc_info
 
-    def _update_app_details(self, raw_data: dict, ai_app_docs: list):
+    def _update_app_details(self, raw_data, ai_app_docs):
         """
         Updating ai app details loader source files
         """
@@ -258,7 +258,7 @@ class LoaderHelper:
         self.app_details["report_metadata"] = raw_data
 
     @staticmethod
-    def _create_data_source_findings(data_source_findings: list) -> list:
+    def _create_data_source_findings(data_source_findings):
         """
         This function returns data source findings with entity/topic details based on label i.e, entity/topic name
         """
@@ -289,9 +289,7 @@ class LoaderHelper:
         return data_source_findings
 
     @staticmethod
-    def _get_finding_details(
-        doc: dict, data_source_findings: dict, entity_type: str, raw_data: dict
-    ):
+    def _get_finding_details(doc, data_source_findings, entity_type, raw_data):
         """
         Retrieve finding details from data source
         """
@@ -362,7 +360,7 @@ class LoaderHelper:
                 else:
                     data_source_findings[label_name]["snippets"] = []
 
-    def _get_data_source_details(self, raw_data: dict) -> list:
+    def _get_data_source_details(self, raw_data):
         """
         Create data source findings details and data source findings summary
         """
@@ -407,7 +405,7 @@ class LoaderHelper:
         return data_source_obj_list
 
     @staticmethod
-    def _create_data_source_findings_summary(data_source_findings: list) -> list:
+    def _create_data_source_findings_summary(data_source_findings):
         """
         Creating data source findings summary and return it findings summary list
         """
@@ -432,9 +430,7 @@ class LoaderHelper:
 
         return data_source_findings_summary
 
-    def _create_report_summary(
-        self, raw_data: dict, files_with_findings_count: int
-    ) -> Summary:
+    def _create_report_summary(self, raw_data, files_with_findings_count):
         """
         Return report summary object
         """
@@ -451,7 +447,7 @@ class LoaderHelper:
         )
         return report_summary
 
-    def _get_load_history(self) -> dict:
+    def _get_load_history(self):
         """
         Retrieve previous runs details and create load history and return
         """
@@ -517,7 +513,7 @@ class LoaderHelper:
             load_history["moreReportsPath"] = more_report_full_path
         return load_history
 
-    def _get_doc_report_metadata(self, doc: dict, raw_data: dict) -> dict:
+    def _get_doc_report_metadata(self, doc, raw_data):
         """
         Retrieve metadata from the document, update the raw data,
         and then return the updated raw data.
@@ -587,7 +583,7 @@ class LoaderHelper:
         )
         return raw_data
 
-    def _generate_final_report(self, raw_data: dict) -> dict:
+    def _generate_final_report(self, raw_data):
         """
         Aggregating all input, processing the data, and generating the final report
         """
@@ -625,7 +621,7 @@ class LoaderHelper:
         )
         return report_dict.model_dump()
 
-    def process_docs_and_generate_report(self) -> (dict, dict):
+    def process_docs_and_generate_report(self):
         """
         Processing the doc and aggregate the report data
         """
