@@ -5,7 +5,7 @@ from os import makedirs, path
 
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import ClassificationMode
-from pebblo.app.enums.enums import ApplicationTypes, CacheDir, ClassifierConstants
+from pebblo.app.enums.enums import ApplicationTypes, CacheDir
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiDataModel,
@@ -40,6 +40,7 @@ class AppLoaderDoc:
         self.data = None
         self.app_name = None
         self.classifier_mode = None
+        self.anonymize_snippets = None
         self.entity_classifier_obj = EntityClassifier()
 
     @staticmethod
@@ -202,7 +203,7 @@ class AppLoaderDoc:
                         entity_details,
                     ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
                         doc_info.data,
-                        anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
+                        anonymize_snippets=self.anonymize_snippets,
                     )
                     doc_info.entities = entities
                     doc_info.entityDetails = entity_details
@@ -289,6 +290,13 @@ class AppLoaderDoc:
                 )
             else:
                 self.classifier_mode = self.data.get("classifier_mode")
+
+            if not data.get("anonymize_snippets"):
+                self.anonymize_snippets = config_details.get("classifier", {}).get(
+                    "anonymizeSnippets", False
+                )
+            else:
+                self.anonymize_snippets = data.get("anonymize_snippets")
 
             # create session
             self.db.create_session()

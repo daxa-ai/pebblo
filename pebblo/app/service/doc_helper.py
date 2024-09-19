@@ -7,7 +7,7 @@ import os.path
 from datetime import datetime
 
 from pebblo.app.enums.common import ClassificationMode
-from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
+from pebblo.app.enums.enums import CacheDir, ReportConstants
 from pebblo.app.models.models import (
     AiDataModel,
     AiDocs,
@@ -37,12 +37,20 @@ class LoaderHelper:
     Class for loader doc related task
     """
 
-    def __init__(self, app_details, data, load_id, classifier_mode):
+    def __init__(
+        self,
+        app_details,
+        data,
+        load_id,
+        classifier_mode="all",
+        anonymize_snippets=False,
+    ):
         self.app_details = app_details
         self.data = data
         self.load_id = load_id
         self.loader_mapper = {}
         self.classifier_mode = classifier_mode
+        self.anonymize_snippets = anonymize_snippets
         self.entity_classifier_obj = EntityClassifier()
 
     # Initialization
@@ -209,7 +217,7 @@ class LoaderHelper:
                         entity_details,
                     ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
                         doc_info.data,
-                        anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
+                        anonymize_snippets=self.anonymize_snippets,
                     )
                     doc_info.entities = entities
                     doc_info.entityDetails = entity_details

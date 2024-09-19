@@ -30,6 +30,7 @@ class AppLoaderDoc:
         self.data = None
         self.app_name = None
         self.classifier_mode = None
+        self.anonymize_snippets = None
 
     def _initialize_data(self, data):
         self.data = data
@@ -133,6 +134,13 @@ class AppLoaderDoc:
         else:
             self.classifier_mode = data.get("classifier_mode")
 
+        if not data.get("anonymize_snippets"):
+            self.anonymize_snippets = config_details.get("classifier", {}).get(
+                "anonymizeSnippets", False
+            )
+        else:
+            self.anonymize_snippets = data.get("anonymize_snippets")
+
         self._initialize_data(data)
 
         try:
@@ -173,7 +181,11 @@ class AppLoaderDoc:
 
             # process input docs, app details, and generate final report
             loader_helper_obj = LoaderHelper(
-                app_details, self.data, load_id, self.classifier_mode
+                app_details,
+                self.data,
+                load_id,
+                self.classifier_mode,
+                self.anonymize_snippets,
             )
             (
                 app_details,
