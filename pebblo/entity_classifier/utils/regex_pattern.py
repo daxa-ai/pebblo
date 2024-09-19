@@ -12,6 +12,6 @@ regex_secrets_patterns = {
     "aws-access-key": r"""\b((?:AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16})\b""",
     "aws-secret-key": r"""\b([A-Za-z0-9+/]{40})[ \r\n'"\x60]""",
     "azure-key-id": r"""(?i)(%s).{0,20}([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})""",
-    "azure-client-secret": r"""\b(?i)(%s).{0,20}([a-z0-9_\.\-~]{34})\b""",
+    "azure-client-secret": r"""\b[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\b""",
     "google-api-key": r"""\bAIza[0-9A-Za-z\-_]{35}\b""",
 }

@@ -25,6 +25,7 @@ And following Secret Entities:
 10. RSA Private Key
 11. Google Account Private Key
 12. Github Fine Grained Token
+13. Azure Client Secret Key
 
 ## How to use
 Entity Classifier
