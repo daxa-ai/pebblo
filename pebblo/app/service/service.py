@@ -35,8 +35,8 @@ class AppLoaderDoc:
     def _initialize_data(self, data: dict):
         self.data = data
         self.app_name = data.get("name")
-        self._set_classifier_mode(data)
-        self._set_anonymize_snippets(data)
+        self._set_classifier_mode()
+        self._set_anonymize_snippets()
 
     def _write_pdf_report(self, final_report):
         """
@@ -125,29 +125,29 @@ class AppLoaderDoc:
                 loader_list.append(new_loader_data.model_dump())
                 app_details["loaders"] = loader_list
 
-    def _set_classifier_mode(self, data: dict):
+    def _set_classifier_mode(self):
         """
         This function defines the value of the classifier_mode: if it is included in the API request,
         it will be used; otherwise, the value will be taken from the config.
         """
-        if not data.get("classifier_mode"):
+        if not self.data.get("classifier_mode"):
             self.classifier_mode = config_details.get("classifier", {}).get(
                 "mode", ClassificationMode.ALL.value
             )
         else:
-            self.classifier_mode = data.get("classifier_mode")
+            self.classifier_mode = self.data.get("classifier_mode")
 
-    def _set_anonymize_snippets(self, data: dict):
+    def _set_anonymize_snippets(self):
         """
         This function defines the value of the anonymize_snippets: if it is included in the API request,
         it will be used; otherwise, the value will be taken from the config.
         """
-        if not data.get("anonymize_snippets"):
+        if not self.data.get("anonymize_snippets"):
             self.anonymize_snippets = config_details.get("classifier", {}).get(
                 "anonymizeSnippets", False
             )
         else:
-            self.anonymize_snippets = data.get("anonymize_snippets")
+            self.anonymize_snippets = self.data.get("anonymize_snippets")
 
     def process_request(self, data: dict):
         """
