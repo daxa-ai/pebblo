@@ -8,7 +8,6 @@ class StorageTypes(Enum):
 
 class DBStorageTypes(Enum):
     SQLITE = "sqlite"
-    MONGODB = "mongodb"
 
 
 class ClassificationMode(Enum):
