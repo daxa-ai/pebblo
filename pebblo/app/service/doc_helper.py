@@ -39,11 +39,11 @@ class LoaderHelper:
 
     def __init__(
         self,
-        app_details,
-        data,
-        load_id,
-        classifier_mode="all",
-        anonymize_snippets=False,
+        app_details: dict,
+        data: dict,
+        load_id: str,
+        classifier_mode: str = "all",
+        anonymize_snippets: bool = False,
     ):
         self.app_details = app_details
         self.data = data
@@ -54,7 +54,7 @@ class LoaderHelper:
         self.entity_classifier_obj = EntityClassifier()
 
     # Initialization
-    def _initialize_raw_data(self):
+    def _initialize_raw_data(self) -> dict:
         """
         Initializing raw data and return as dict object
         """
@@ -77,7 +77,7 @@ class LoaderHelper:
         return raw_data
 
     @staticmethod
-    def _fetch_variables(raw_data):
+    def _fetch_variables(raw_data: dict):
         """
         Return list of variable's
         """
@@ -94,14 +94,14 @@ class LoaderHelper:
 
     @staticmethod
     def _update_raw_data(
-        raw_data,
-        loader_source_snippets,
-        total_findings,
-        findings_entities,
-        findings_topics,
-        snippet_count,
-        file_count,
-        data_source_findings,
+        raw_data: dict,
+        loader_source_snippets: dict,
+        total_findings: int,
+        findings_entities: int,
+        findings_topics: int,
+        snippet_count: int,
+        file_count: int,
+        data_source_findings: dict,
     ):
         """
         Reassigning raw data
@@ -119,7 +119,7 @@ class LoaderHelper:
         )
 
     # Model Creation
-    def _create_doc_model(self, doc, doc_info):
+    def _create_doc_model(self, doc: dict, doc_info: AiDataModel) -> dict:
         """
         Create doc model and return its object
         """
@@ -144,7 +144,7 @@ class LoaderHelper:
         return doc_model.model_dump()
 
     @staticmethod
-    def _get_top_n_findings(raw_data):
+    def _get_top_n_findings(raw_data: dict) -> list:
         """
         Return top N findings from all findings
         """
@@ -171,7 +171,7 @@ class LoaderHelper:
         ]
         return top_n_findings
 
-    def _count_files_with_findings(self):
+    def _count_files_with_findings(self) -> int:
         """
         Return the count of files that have associated findings.
         """
@@ -184,7 +184,7 @@ class LoaderHelper:
                     files_with_findings_count += 1
         return files_with_findings_count
 
-    def _get_classifier_response(self, doc):
+    def _get_classifier_response(self, doc: dict) -> AiDataModel:
         doc_info = AiDataModel(
             data=doc.get("doc", None),
             entities={},
@@ -228,7 +228,7 @@ class LoaderHelper:
             logger.error(f"Get Classifier Response Failed, Exception: {e}")
             return doc_info
 
-    def _update_app_details(self, raw_data, ai_app_docs):
+    def _update_app_details(self, raw_data: dict, ai_app_docs: list):
         """
         Updating ai app details loader source files
         """
@@ -258,7 +258,7 @@ class LoaderHelper:
         self.app_details["report_metadata"] = raw_data
 
     @staticmethod
-    def _create_data_source_findings(data_source_findings):
+    def _create_data_source_findings(data_source_findings: list) -> list:
         """
         This function returns data source findings with entity/topic details based on label i.e, entity/topic name
         """
@@ -289,7 +289,9 @@ class LoaderHelper:
         return data_source_findings
 
     @staticmethod
-    def _get_finding_details(doc, data_source_findings, entity_type, raw_data):
+    def _get_finding_details(
+        doc: dict, data_source_findings: dict, entity_type: str, raw_data: dict
+    ):
         """
         Retrieve finding details from data source
         """
@@ -360,7 +362,7 @@ class LoaderHelper:
                 else:
                     data_source_findings[label_name]["snippets"] = []
 
-    def _get_data_source_details(self, raw_data):
+    def _get_data_source_details(self, raw_data: dict) -> list:
         """
         Create data source findings details and data source findings summary
         """
@@ -405,7 +407,7 @@ class LoaderHelper:
         return data_source_obj_list
 
     @staticmethod
-    def _create_data_source_findings_summary(data_source_findings):
+    def _create_data_source_findings_summary(data_source_findings: list) -> list:
         """
         Creating data source findings summary and return it findings summary list
         """
@@ -430,7 +432,9 @@ class LoaderHelper:
 
         return data_source_findings_summary
 
-    def _create_report_summary(self, raw_data, files_with_findings_count):
+    def _create_report_summary(
+        self, raw_data: dict, files_with_findings_count: int
+    ) -> Summary:
         """
         Return report summary object
         """
@@ -447,7 +451,7 @@ class LoaderHelper:
         )
         return report_summary
 
-    def _get_load_history(self):
+    def _get_load_history(self) -> dict:
         """
         Retrieve previous runs details and create load history and return
         """
@@ -513,7 +517,7 @@ class LoaderHelper:
             load_history["moreReportsPath"] = more_report_full_path
         return load_history
 
-    def _get_doc_report_metadata(self, doc, raw_data):
+    def _get_doc_report_metadata(self, doc: dict, raw_data: dict) -> dict:
         """
         Retrieve metadata from the document, update the raw data,
         and then return the updated raw data.
@@ -583,7 +587,7 @@ class LoaderHelper:
         )
         return raw_data
 
-    def _generate_final_report(self, raw_data):
+    def _generate_final_report(self, raw_data: dict) -> dict:
         """
         Aggregating all input, processing the data, and generating the final report
         """
@@ -621,7 +625,7 @@ class LoaderHelper:
         )
         return report_dict.model_dump()
 
-    def process_docs_and_generate_report(self):
+    def process_docs_and_generate_report(self) -> (dict, dict):
         """
         Processing the doc and aggregate the report data
         """
