@@ -80,9 +80,8 @@ class StorageConfig(ConfigValidator):
 
     @staticmethod
     def validate_input(input_dict):
-        deprecate_error = (
-            "DeprecationWarning: 'file' in storage type is deprecated, use 'db' instead"
-        )
+        deprecate_error = f"DeprecationWarning: '{StorageTypes.FILE.value}' in storage type is deprecated, use '{StorageTypes.DATABASE.value}' instead"
+
         valid_storage_type = [storage_type.value for storage_type in StorageTypes]
         input_storage_type = input_dict.get("storage", {}).get("type")
         if input_storage_type not in valid_storage_type:
