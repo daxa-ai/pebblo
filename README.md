@@ -81,7 +81,7 @@ Refer to [troubleshooting](docs/gh_pages/docs/troubleshooting.md) guide.
 
 Add `PebbloSafeLoader` wrapper to the existing Langchain document loader(s) used in the RAG application. `PebbloSafeLoader` is interface compatible with Langchain `BaseLoader`. The application can continue to use `load()` and `lazy_load()` methods as it would on a Langchain document loader.
 
-Here is the snippet of Lanchain RAG application using `CSVLoader` before enabling `PebbloSafeLoader`.
+Here is the snippet of Langchain RAG application using `CSVLoader` before enabling `PebbloSafeLoader`.
 
 ```python
     from langchain_community.document_loaders import CSVLoader
