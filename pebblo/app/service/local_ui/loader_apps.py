@@ -247,7 +247,7 @@ class LoaderApp:
                 self.loader_details.get("loader_data_source_list", [])
             )
 
-    def _get_data_source_name(self, document_detail: dict):
+    def _get_data_source_name(self, document_detail: dict) -> str:
         """
         Get data source name for given data source id from db.
         """
