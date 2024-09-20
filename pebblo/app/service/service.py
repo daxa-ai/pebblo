@@ -30,10 +30,13 @@ class AppLoaderDoc:
         self.data = None
         self.app_name = None
         self.classifier_mode = None
+        self.anonymize_snippets = None
 
-    def _initialize_data(self, data):
+    def _initialize_data(self, data: dict):
         self.data = data
         self.app_name = data.get("name")
+        self._set_classifier_mode()
+        self._set_anonymize_snippets()
 
     def _write_pdf_report(self, final_report):
         """
@@ -122,17 +125,34 @@ class AppLoaderDoc:
                 loader_list.append(new_loader_data.model_dump())
                 app_details["loaders"] = loader_list
 
-    def process_request(self, data):
+    def _set_classifier_mode(self):
         """
-        This process is entrypoint function for loader doc API implementation.
+        This function defines the value of the classifier_mode: if it is included in the API request,
+        it will be used; otherwise, the value will be taken from the config.
         """
-        if not data.get("classifier_mode"):
+        if not self.data.get("classifier_mode"):
             self.classifier_mode = config_details.get("classifier", {}).get(
                 "mode", ClassificationMode.ALL.value
             )
         else:
-            self.classifier_mode = data.get("classifier_mode")
+            self.classifier_mode = self.data.get("classifier_mode")
 
+    def _set_anonymize_snippets(self):
+        """
+        This function defines the value of the anonymize_snippets: if it is included in the API request,
+        it will be used; otherwise, the value will be taken from the config.
+        """
+        if not self.data.get("anonymize_snippets"):
+            self.anonymize_snippets = config_details.get("classifier", {}).get(
+                "anonymizeSnippets", False
+            )
+        else:
+            self.anonymize_snippets = self.data.get("anonymize_snippets")
+
+    def process_request(self, data: dict):
+        """
+        This process is entrypoint function for loader doc API implementation.
+        """
         self._initialize_data(data)
 
         try:
@@ -173,7 +193,11 @@ class AppLoaderDoc:
 
             # process input docs, app details, and generate final report
             loader_helper_obj = LoaderHelper(
-                app_details, self.data, load_id, self.classifier_mode
+                app_details,
+                self.data,
+                load_id,
+                self.classifier_mode,
+                self.anonymize_snippets,
             )
             (
                 app_details,
