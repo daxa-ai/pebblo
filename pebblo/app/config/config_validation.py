@@ -78,6 +78,21 @@ class StorageConfig(ConfigValidator):
             if not os.path.exists(expand_path(str(default_location))):
                 os.makedirs(expand_path(str(default_location)), exist_ok=True)
 
+    @staticmethod
+    def validate_input(input_dict):
+        deprecate_error = f"DeprecationWarning: '{StorageTypes.FILE.value}' in storage type is deprecated, use '{StorageTypes.DATABASE.value}' instead"
+
+        valid_storage_type = [storage_type.value for storage_type in StorageTypes]
+        input_storage_type = input_dict.get("storage", {}).get("type")
+        if input_storage_type not in valid_storage_type:
+            raise Exception(
+                f"Either '{StorageTypes.FILE.value}' or '{StorageTypes.DATABASE.value}' should be there in storage type"
+            )
+
+        if StorageTypes.FILE.value in input_storage_type:
+            print(deprecate_error)
+        return input_dict
+
 
 def expand_path(file_path: str) -> str:
     # Expand user (~) and environment variables
@@ -177,6 +192,7 @@ def validate_input(input_dict):
     """This function is used to validate input of config file"""
     validators = {
         "reports": ReportsConfig,
+        "storage": StorageConfig,
     }
 
     validation_errors = []

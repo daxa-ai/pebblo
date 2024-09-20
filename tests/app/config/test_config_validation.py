@@ -8,6 +8,7 @@ from pebblo.app.config.config_validation import (
     DaemonConfig,
     LoggingConfig,
     ReportsConfig,
+    StorageConfig,
     validate_config,
 )
 
@@ -166,6 +167,45 @@ def test_classifier_config_validate():
     validator.validate()
     assert validator.errors == [
         "Error: Unsupported classifier mode 'Wrong' specified in the configuration. Valid values are ['all', 'entity', 'topic']"
+    ]
+
+
+def test_storage_config_validate():
+    # Test with storage type `file` correct value
+    storage = {"type": "file"}
+    validator = StorageConfig(storage)
+    validator.validate()
+    assert validator.errors == []
+
+    # Test with storage type `db` correct value
+    storage = {"type": "db", "db": "sqlite", "name": "pebblo_db"}
+    validator = StorageConfig(storage)
+    validator.validate()
+    assert validator.errors == []
+
+    # Test with wrong storage type
+    storage = {"type": "xyz"}
+    validator = StorageConfig(storage)
+    validator.validate()
+    assert validator.errors == [
+        "Error: Unsupported storage type 'xyz' specified in the configuration.Valid values are ['file', 'db']"
+    ]
+
+    # Test with storage type as `db` wrong `db` value
+    storage = {"type": "db", "db": "db123", "name": "pebblo_db"}
+    validator = StorageConfig(storage)
+    validator.validate()
+    assert validator.errors == [
+        "Error: Unsupported db type 'db123' specified in the configuration.Valid values are ['sqlite']"
+    ]
+
+    # Test with storage type as `db` without `db` and `name`
+    storage = {"type": "db"}
+    validator = StorageConfig(storage)
+    validator.validate()
+    assert validator.errors == [
+        "Error: Unsupported db type 'None' specified in the configuration.Valid values are ['sqlite']",
+        "Error: Unsupported db name 'None specified in the configurationString values are allowed only",
     ]
 
 
