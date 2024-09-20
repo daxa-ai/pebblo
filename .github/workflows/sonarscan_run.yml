@@ -59,19 +59,19 @@ jobs:
             npm install -g sonar-report  
             sonar-report \
               --sonarurl="https://sonarcloud.io" \
-              --sonarcomponent="rajburnwal07_pebblo" \
-              --sonarorganization="rajburnwal07" \
-              --project="rajburnwal07_pebblo" \
+              --sonarcomponent="daxa-ai_pebblo" \
+              --sonarorganization="daxa-ai" \
+              --project="daxa-ai_pebblo" \
               --application="sonar-report" \
               --release="1.0.0" \
               --branch="main" \
-              --output="./pebblo_sonar.pdf" \
+              --output="./pebblo_sonar.html" \
               --sonartoken ${{ secrets.SONAR_TOKEN }}
 
       - name: Upload Pebblo SonarQube report File
         if: steps.sonar-report-gen.outcome == 'success'
         run: |  
-           curl -F file=@pebblo_sonar.pdf https://slack.com/api/files.upload -H "Authorization: Bearer $SLACK_TOKEN" -F channels=$SLACK_CH -F "initial_comment=Pebblo Sonar Scan Report"
+           curl -F file=@pebblo_sonar.html https://slack.com/api/files.upload -H "Authorization: Bearer $SLACK_TOKEN" -F channels=$SLACK_CH -F "initial_comment=Pebblo Sonar Scan Report"
 
       - name: Report Status if sonarscanner failure
         if: ${{ always() }} || steps.sonarqube-scan-check.outcome == 'failure' 
