@@ -5,7 +5,7 @@ from os import makedirs, path
 
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import ClassificationMode
-from pebblo.app.enums.enums import ApplicationTypes, CacheDir, ClassifierConstants
+from pebblo.app.enums.enums import ApplicationTypes, CacheDir
 from pebblo.app.libs.responses import PebbloJsonResponse
 from pebblo.app.models.db_models import (
     AiDataModel,
@@ -40,7 +40,15 @@ class AppLoaderDoc:
         self.data = None
         self.app_name = None
         self.classifier_mode = None
+        self.anonymize_snippets = None
         self.entity_classifier_obj = EntityClassifier()
+
+    def _initialize_data(self, data: dict):
+        self.db = SQLiteClient()
+        self.data = data
+        self.app_name = data.get("name")
+        self._set_classifier_mode()
+        self._set_anonymize_snippets()
 
     @staticmethod
     def _create_return_response(message, output=None, status_code=200):
@@ -202,7 +210,7 @@ class AppLoaderDoc:
                         entity_details,
                     ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
                         doc_info.data,
-                        anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
+                        anonymize_snippets=self.anonymize_snippets,
                     )
                     doc_info.entities = entities
                     doc_info.entityDetails = entity_details
@@ -276,19 +284,34 @@ class AppLoaderDoc:
         logger.debug("Data Source has been created successfully.")
         return data_source_obj.data
 
+    def _set_classifier_mode(self):
+        """
+        This function defines the value of the classifier_mode: if it is included in the API request,
+        it will be used; otherwise, the value will be taken from the config.
+        """
+        if not self.data.get("classifier_mode"):
+            self.classifier_mode = config_details.get("classifier", {}).get(
+                "mode", ClassificationMode.ALL.value
+            )
+        else:
+            self.classifier_mode = self.data.get("classifier_mode")
+
+    def _set_anonymize_snippets(self):
+        """
+        This function defines the value of the anonymize_snippets: if it is included in the API request,
+        it will be used; otherwise, the value will be taken from the config.
+        """
+        if not self.data.get("anonymize_snippets"):
+            self.anonymize_snippets = config_details.get("classifier", {}).get(
+                "anonymizeSnippets", False
+            )
+        else:
+            self.anonymize_snippets = self.data.get("anonymize_snippets")
+
     @timeit
     def process_request(self, data):
         try:
-            self.db = SQLiteClient()
-            self.data = data
-            self.app_name = data.get("name")
-
-            if not self.data.get("classifier_mode"):
-                self.classifier_mode = config_details.get("classifier", {}).get(
-                    "mode", ClassificationMode.ALL.value
-                )
-            else:
-                self.classifier_mode = self.data.get("classifier_mode")
+            self._initialize_data(data)
 
             # create session
             self.db.create_session()

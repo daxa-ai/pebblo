@@ -7,7 +7,7 @@ import os.path
 from datetime import datetime
 
 from pebblo.app.enums.common import ClassificationMode
-from pebblo.app.enums.enums import CacheDir, ClassifierConstants, ReportConstants
+from pebblo.app.enums.enums import CacheDir, ReportConstants
 from pebblo.app.models.models import (
     AiDataModel,
     AiDocs,
@@ -37,16 +37,24 @@ class LoaderHelper:
     Class for loader doc related task
     """
 
-    def __init__(self, app_details, data, load_id, classifier_mode):
+    def __init__(
+        self,
+        app_details: dict,
+        data: dict,
+        load_id: str,
+        classifier_mode: str = "all",
+        anonymize_snippets: bool = False,
+    ):
         self.app_details = app_details
         self.data = data
         self.load_id = load_id
         self.loader_mapper = {}
         self.classifier_mode = classifier_mode
+        self.anonymize_snippets = anonymize_snippets
         self.entity_classifier_obj = EntityClassifier()
 
     # Initialization
-    def _initialize_raw_data(self):
+    def _initialize_raw_data(self) -> dict:
         """
         Initializing raw data and return as dict object
         """
@@ -69,7 +77,7 @@ class LoaderHelper:
         return raw_data
 
     @staticmethod
-    def _fetch_variables(raw_data):
+    def _fetch_variables(raw_data: dict):
         """
         Return list of variable's
         """
@@ -111,7 +119,7 @@ class LoaderHelper:
         )
 
     # Model Creation
-    def _create_doc_model(self, doc, doc_info):
+    def _create_doc_model(self, doc: dict, doc_info: AiDataModel) -> dict:
         """
         Create doc model and return its object
         """
@@ -163,7 +171,7 @@ class LoaderHelper:
         ]
         return top_n_findings
 
-    def _count_files_with_findings(self):
+    def _count_files_with_findings(self) -> int:
         """
         Return the count of files that have associated findings.
         """
@@ -176,7 +184,7 @@ class LoaderHelper:
                     files_with_findings_count += 1
         return files_with_findings_count
 
-    def _get_classifier_response(self, doc):
+    def _get_classifier_response(self, doc: dict) -> AiDataModel:
         doc_info = AiDataModel(
             data=doc.get("doc", None),
             entities={},
@@ -209,7 +217,7 @@ class LoaderHelper:
                         entity_details,
                     ) = self.entity_classifier_obj.presidio_entity_classifier_and_anonymizer(
                         doc_info.data,
-                        anonymize_snippets=ClassifierConstants.anonymize_snippets.value,
+                        anonymize_snippets=self.anonymize_snippets,
                     )
                     doc_info.entities = entities
                     doc_info.entityDetails = entity_details

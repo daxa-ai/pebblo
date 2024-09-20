@@ -66,6 +66,7 @@ class ReqLoaderDoc(BaseModel):
     source_owner: str
     classifier_location: str
     classifier_mode: Optional[str] = None
+    anonymize_snippets: Optional[bool] = None
 
 
 class Context(BaseModel):
