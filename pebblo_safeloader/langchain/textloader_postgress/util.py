@@ -3,7 +3,7 @@ from typing import Any, Optional
 
 
 def get_data(
-    metadata=False, ids=False, metadatas=False
+        metadata=False, ids=False, metadatas=False
 ) -> tuple[
     list[str],
     Optional[dict[str, Any]],
@@ -40,8 +40,12 @@ def get_data(
     if metadatas:
         # Metadata(source: fake news web url) for each text
         _metadata_list = [
-            {"source": f"https://www.acme.org/news/{i}"}
-            for i in range(1, len(texts) + 1)
+            {
+                "source": f"https://www.acme.org/news/{i + 1}",
+                "owner": "Joe Smith",
+                "size": f"{len(texts[i])}"
+            }
+            for i in range(len(texts))
         ]
     else:
         _metadata_list = None
