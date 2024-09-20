@@ -42,6 +42,22 @@ Note: By default Pebblo Server runs at localhost:8000. If your Pebblo Server is 
 export PEBBLO_CLASSIFIER_URL="<pebblo-server-host:pebblo-server-port>"
 ```
 
+## Parameters
+PebbloSafeLoader takes the following parameters:
+
+| Parameter          | Type              | Description                                                                                                                                  | Mandatory |        Default        |
+|:-------------------|:------------------|:---------------------------------------------------------------------------------------------------------------------------------------------|:---------:|:---------------------:|
+| name               | str               | Name of the application; should be unique across the loader and retriever applications                                                       |    Yes    |           -           |
+| owner              | str               | Owner of the application                                                                                                                     |     No    |         None          |
+| description        | str               | Description of the application                                                                                                               |     No    |         None          |
+| loader             | DocumentLoader    | Langchain DocumentLoader                                                                                                                     |    Yes    |           -           |
+| api_key            | str               | API Key for Pebblo Cloud; if not provided, it will look for `PEBBLO_API_KEY` in the environment. If found, data will be sent to Pebblo Cloud |     No    |         None          |
+| load_semantic      | bool              | Indicates whether to include semantic metadata in the documents being loaded into VectorDB                                                   |     No    |         False         |
+| classifier_url     | str               | URL of the Pebblo Classifier Server                                                                                                          |     No    | http://localhost:8000 |
+| classifier_location | str               | Location of the classifier, local or cloud.                                                                                                  |     No    |         local         |
+| anonymize_snippets  | bool              | Anonymize snippets in the document                                                                                                           |     No    |         False         |
+
+
 ## Supported Document Loaders
 
 The following Langchain DocumentLoaders are currently supported.
