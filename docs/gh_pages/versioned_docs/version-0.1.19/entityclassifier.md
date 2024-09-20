@@ -31,7 +31,6 @@ Below is the list of `entities` supported by Pebblo -
 1. RSA Private Key
 1. Google Account Private Key
 1. Github Fine Grained Token
-1. Azure Client Secret Key
 
 
 User can get details of classified entities for their loader source files in Pebblo report.  
