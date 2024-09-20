@@ -287,7 +287,7 @@ class LoaderApp:
                 if document_detail["sourcePath"] in loader_document_with_findings:
                     document_obj = {
                         "appName": document_detail["appName"],
-                        "sourceName":  source_name,
+                        "sourceName": source_name,
                         "owner": document_detail.get("owner", "-"),
                         "sourceSize": document_detail.get("sourceSize", 0),
                         "sourceFilePath": document_detail["sourcePath"],
