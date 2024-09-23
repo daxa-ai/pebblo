@@ -150,18 +150,18 @@ def ask(question: str, auth_context: dict):
 ### Parameters
 PebbloRetrievalQA takes the following parameters:
 
-| Parameter          | Type                 | Description                                                                                                                                                                               |
-|:-------------------|:---------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| llm                | BaseLanguageModel    | Langchain LLM instance.                                                                                                                                                      |
-| app_name           | str                  | Name of the application; should be unique across the loader and retriever applications.                                                                                                   |
-| owner              | str                  | (**Optional**, Default: None) Owner of the application.                                                                                                                                   |
-| description        | str                  | (**Optional**, Default: None) Description of the application.                                                                                                                             |
-| chain_type         | str                  | Type of document combining chain to use. Should be one of "stuff", "map_reduce", "map_rerank", and "refine".                                                                              |
-| retriever          | VectorStoreRetriever | Vector database retriever.                                                                                                                                                                |
-| verbose            | bool                 | (**Optional**, Default: False) Whether chains should be run in verbose mode or not.                                                                                                       |
-| api_key            | str                  | (**Optional**, Default: None) API Key for Pebblo Cloud; if not provided, PebbloRetrievalQA will look for `PEBBLO_API_KEY` in the environment. If found, data will be sent to Pebblo Cloud. |
-| classifier_url     | str                  | (**Optional**, Default: http://localhost:8000) URL of the Pebblo Classifier Server.                                                                                                       |
-| classifier_location| str                  | (**Optional**, Default: local) Location of the classifier, local or cloud.                                                                                                                |
+| Parameter          | Type                | Description                                                                                                                                                                                         |
+|:-------------------|:--------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| llm                | BaseLanguageModel   | Langchain LLM instance.                                                                                                                                                                             |
+| app_name           | str                 | Name of the application; should be unique across the loader and retriever applications.                                                                                                             |
+| owner              | str                 | (**Optional**, Default: None) Owner of the application.                                                                                                                                             |
+| description        | str                 | (**Optional**, Default: None) Description of the application.                                                                                                                                       |
+| chain_type         | str                 | Type of document combining chain to use. Should be one of "stuff", "map_reduce", "map_rerank", and "refine".                                                                                        |
+| retriever          | VectorStoreRetriever| Vector database retriever.                                                                                                                                                                          |
+| verbose            | bool                | (**Optional**, Default: False) Whether chains should be run in verbose mode or not.                                                                                                                 |
+| api_key            | str                 | (**Optional**, Default: None) API Key for Pebblo Cloud; if not provided, PebbloRetrievalQA will look for `PEBBLO_API_KEY` in the environment. If found, retrieval data will be sent to Pebblo Cloud.|
+| classifier_url     | str                 | (**Optional**, Default: http://localhost:8000) URL of the Pebblo Classifier Server.                                                                                                                 |
+| classifier_location| str                 | (**Optional**, Default: local) Location of the classifier, local or cloud.                                                                                                                          |
 
 \* _In addition to the above-mentioned parameters, `PebbloRetrievalQA` also supports the keyword arguments that are supported by the [Langchain Chain class](https://python.langchain.com/api_reference/langchain/chains/langchain.chains.base.Chain.html#langchain.chains.base.Chain)._
 

@@ -45,17 +45,17 @@ export PEBBLO_CLASSIFIER_URL="<pebblo-server-host:pebblo-server-port>"
 ## Parameters
 PebbloSafeLoader takes the following parameters:
 
-| Parameter          | Type              | Description                                                                                                                                                                               |
-|:-------------------|:------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| name               | str               | Name of the application; should be unique across the loader and retriever applications.                                                                                                   |
-| owner              | str               | (**Optional**, Default: None) Owner of the application.                                                                                                                                   |
-| description        | str               | (**Optional**, Default: None) Description of the application.                                                                                                                             |
-| loader             | DocumentLoader    | Langchain DocumentLoader.                                                                                                                                                                 |
-| api_key            | str               | (**Optional**, Default: None) API Key for Pebblo Cloud; if not provided, PebbloSafeLoader will look for `PEBBLO_API_KEY` in the environment. If found, data will be sent to Pebblo Cloud. |
-| load_semantic      | bool              | (**Optional**, Default: False) Indicates whether to include semantic metadata in the documents being loaded into VectorDB.                                                                |
-| classifier_url     | str               | (**Optional**, Default: http://localhost:8000) URL of the Pebblo Classifier Server.                                                                                                       |
-| classifier_location | str               | (**Optional**, Default: local) Location of the classifier, local or cloud.                                                                                                                |
-| anonymize_snippets  | bool              | (**Optional**, Default: False) Indicates whether to anonymize snippets in the document.                                                                                                   |
+| Parameter          | Type          | Description                                                                                                                                                                                   |
+|:-------------------|:--------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name               | str           | Name of the application; should be unique across the loader and retriever applications.                                                                                                       |
+| owner              | str           | (**Optional**, Default: None) Owner of the application.                                                                                                                                       |
+| description        | str           | (**Optional**, Default: None) Description of the application.                                                                                                                                 |
+| loader             | DocumentLoader| Langchain DocumentLoader.                                                                                                                                                                     |
+| api_key            | str           | (**Optional**, Default: None) API Key for Pebblo Cloud; if not provided, PebbloSafeLoader will look for `PEBBLO_API_KEY` in the environment. If found, documents will be sent to Pebblo Cloud.|
+| load_semantic      | bool          | (**Optional**, Default: False) Indicates whether to include semantic metadata in the documents being loaded into VectorDB.                                                                    |
+| classifier_url     | str           | (**Optional**, Default: http://localhost:8000) URL of the Pebblo Classifier Server.                                                                                                           |
+| classifier_location| str           | (**Optional**, Default: local) Location of the classifier, local or cloud.                                                                                                                    |
+| anonymize_snippets | bool          | (**Optional**, Default: False) Indicates whether to anonymize snippets in the document.                                                                                                       |
 
 
 ## Supported Document Loaders
