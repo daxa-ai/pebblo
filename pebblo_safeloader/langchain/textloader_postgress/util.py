@@ -3,7 +3,7 @@ from typing import Any, Optional
 
 
 def get_data(
-        metadata=False, ids=False, metadatas=False
+    metadata=False, ids=False, metadatas=False
 ) -> tuple[
     list[str],
     Optional[dict[str, Any]],
@@ -43,7 +43,7 @@ def get_data(
             {
                 "source": f"https://www.acme.org/news/{i + 1}",
                 "owner": "Joe Smith",
-                "size": f"{len(texts[i])}"
+                "size": f"{len(texts[i])}",
             }
             for i in range(len(texts))
         ]
