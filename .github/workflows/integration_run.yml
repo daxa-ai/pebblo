@@ -12,6 +12,13 @@ env:
 jobs:
   Setup_Pebblo_Run_Tests:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        langchain-community-version: ["0.2.10", "0.2.12", "0.2.16", "0.3.0"]
+        python-version: ["3.10.15", "3.11.10", "3.12.6"]
+
+    name: Running tests on Python ${{ matrix.python-version }} & langchain-community ${{ matrix.langchain-community-version }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -20,7 +27,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           ref: 'main'
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Build Pebblo
         run: |
@@ -52,7 +59,11 @@ jobs:
             echo "Unexpected issue detected at server."
             exit 1 
           fi
-  
+
+      - name: Update requirements.txt with langchain-community version
+        run: |
+            sed -i "s/langchain-community/langchain-community==${{ matrix.langchain-community-version }}/" tests/integration/samples/requirements.txt
+
       - name: Install Required Sample Application Dependencies
         run: |
             echo 'Install Sample Application dependency'
@@ -75,7 +86,7 @@ jobs:
       - name: Upload Pebblo App Run Logs as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Pebblo_Report
+          name: Pebblo_Report_${{ matrix.python-version }}_${{ matrix.langchain-community-version }}
           path: |
             /tmp/logs/pebblo.log
 
