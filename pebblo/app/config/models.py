@@ -30,22 +30,10 @@ class DaemonConfig(BaseSettings):
     host: str = Field(default="localhost")
     port: int = Field(default=8000)
 
-    @field_validator("host")
-    @classmethod
-    def host_should_be_str(cls, host: str) -> str:
-        if not isinstance(host, str):
-            raise ValueError(f"Error: Invalid host '{host}'. Host must be a string.")
-        return host
-
     @field_validator("port")
     @classmethod
-    def check_port_validity(cls, port: str) -> int:
-        try:
-            port = int(port)
-        except ValueError:
-            raise ValueError(
-                f"Error: Invalid port value '{port}'. Port must be an integer."
-            )
+    def check_port_validity(cls, port: int) -> int:
+        # check to validate port should be between 0 and 65535
         if not (0 < port <= 65535):
             raise ValueError(
                 f"Error: Invalid port '{port}'. Port must be between 1 and 65535."
@@ -62,7 +50,8 @@ class LoggingConfig(BaseSettings):
 
     @field_validator("level")
     @classmethod
-    def host_should_be_str(cls, level: str) -> str:
+    def validate_logging_level_value(cls, level: str) -> str:
+        # check to validate level entry
         if level.upper() not in logging._nameToLevel:
             raise ValueError(
                 f"Error: Unsupported logLevel '{level}' specified in the configuration"
@@ -80,14 +69,17 @@ class ReportConfig(BaseSettings):
     @model_validator(mode="before")
     @classmethod
     def validate_report_config_model(cls, data: dict) -> dict:
+        # check to validate reports config model entries
         deprecate_error = "DeprecationWarning: 'outputDir' in config is deprecated, use 'cacheDir' instead"
         report_config_key = data.keys()
         if "cacheDir" in report_config_key and "outputDir" in report_config_key:
+            # check to validate both `cacheDir` and `outputDir` should not be there is in reports config
             raise Exception(
                 f"Either 'cacheDir' or 'outputDir' should be there in config \n{deprecate_error}"
             )
 
         if "outputDir" in report_config_key:
+            # if `outputDir` is there in reports config, give deprecation message
             print(deprecate_error)
             data["cacheDir"] = data["outputDir"]
             data.pop("outputDir")
@@ -96,6 +88,7 @@ class ReportConfig(BaseSettings):
     @field_validator("format")
     @classmethod
     def validate_format_value(cls, format_: str) -> str:
+        # check to validate format value in reports config model
         valid_format_values = [format_type.value for format_type in ReportFormat]
         if format_ not in valid_format_values:
             raise ValueError(
@@ -106,6 +99,7 @@ class ReportConfig(BaseSettings):
     @field_validator("renderer")
     @classmethod
     def validate_renderer_value(cls, renderer: str) -> str:
+        # check to validate renderer value in reports config model
         valid_renderer_values = [
             renderer_value.value for renderer_value in ReportLibraries
         ]
@@ -132,6 +126,7 @@ class ReportConfig(BaseSettings):
     @field_validator("anonymizeSnippets")
     @classmethod
     def validate_anonymize_snippets(cls, anonymize_snippets: bool) -> bool:
+        # check to validate anonymizeSnippets should be boolean
         if anonymize_snippets is not None:
             update_anonymize_snippets_exists()
             if not isinstance(anonymize_snippets, bool):
@@ -161,14 +156,17 @@ class ClassifierConfig(BaseSettings):
     @field_validator("anonymizeSnippets")
     @classmethod
     def validate_anonymize_snippets(cls, anonymize_snippets: bool) -> bool:
+        # if `anonymizeSnippets` is there in classifier config, give deprecation message
         if anonymize_snippets is not None:
             print(
                 "DeprecationWarning: 'anonymizeSnippets' in classifier is deprecated, use 'anonymizeSnippets' in reports instead"
             )
+            # check if anonymizeSnippet is already there in Reports Config,it should throw error
             if utils.anonymize_snippets_exists:
                 raise ValueError(
                     "'anonymizeSnippets' should be either in classifier or reports"
                 )
+            # check to validate anonymizeSnippets should be boolean
             if not isinstance(anonymize_snippets, bool):
                 raise ValueError(
                     f"Error: Invalid anonymizeSnippets '{anonymize_snippets}'. anonymizeSnippets must be a boolean."
@@ -189,6 +187,7 @@ class StorageConfig(BaseSettings):
     def validate_storage_config_model(cls, data: dict) -> dict:
         storage_type = data.get("type")
         valid_storage_types = [storage_type.value for storage_type in StorageTypes]
+        # check to validate valid storage type
         if storage_type not in valid_storage_types:
             raise ValueError(
                 f"Error: Unsupported storage type '{storage_type}' specified in the configuration."
@@ -202,6 +201,7 @@ class StorageConfig(BaseSettings):
             db_type = data.get("db")
             if db_type is not None:
                 valid_db_types = [storage_type.value for storage_type in DBStorageTypes]
+                # check to validate valid db type
                 if db_type not in valid_db_types:
                     raise ValueError(
                         f"Error: Unsupported db type '{db_type}' specified in the configuration."
@@ -217,7 +217,7 @@ class StorageConfig(BaseSettings):
 
             db_name = data.get("name")
             if db_name is not None:
-                # db_name should be in string
+                # check to validate db_name should be in string
                 if not isinstance(db_name, str):
                     raise ValueError(
                         f"Error: Unsupported db name '{db_name} specified in the configuration. "

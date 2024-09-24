@@ -31,6 +31,13 @@ def test_daemon_config_validate_invalid_port():
   Value error, Error: Invalid port '12345678'. Port must be between 1 and 65535."""
     assert error_msg in str(err_msg.value)
 
+    config_json.update({"daemon": {"host": "localhost", "port": "invalid_value"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """daemon.port
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='invalid_value', input_type=str]"""
+    assert error_msg in str(err_msg.value)
+
 
 def test_daemon_config_validate_invalid_host():
     config_json.update({"daemon": {"host": 123, "port": "8000"}})
