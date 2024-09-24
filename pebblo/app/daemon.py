@@ -36,12 +36,14 @@ def start():
         exit(0)
 
     path = args.config
+    # path = "/Users/dristysrivastava/Desktop/WORK/pebblo/pebblo/app/config/config.yaml"
     if path is not None and not os.path.exists(path):
         raise FileNotFoundError(
             f"'--config' was passed but config file '{path}' does not exist."
         )
-    p_bar = tqdm(range(10))
+
     config_details, server_config = load_config(path)
+    p_bar = tqdm(range(10))
     var_server_config_dict.set(config_details)
     var_server_config.set(server_config)
     server_start(config_details, p_bar)
