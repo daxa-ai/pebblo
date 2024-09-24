@@ -1,0 +1,84 @@
+name: Run Pebblo Scanner Tests
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '30 2,14 * * *'      
+
+  workflow_dispatch: # Activate this workflow manually
+env:
+  PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.11.x' }}
+  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+  SLACK_CH: ${{ secrets.SLACK_CH }}
+jobs:
+  Setup_Pebblo_Run_Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          ref: 'main'
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Build Pebblo
+        run: |
+          pip install build
+          python -m build --wheel
+          ls -la dist/
+          
+      - name: Install Pebblo Packages
+        run: |
+            echo 'Install Pebblo Package'
+            pkg_file=$(ls dist | grep .whl)
+            pip3 install dist/$pkg_file --force-reinstall
+            pip3 install --upgrade pip
+
+      - name: SonarCloud Scan
+        id: sonarqube-scan-check
+        uses: SonarSource/sonarcloud-github-action@v3.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # - name: SonarQube Quality Gate check
+      #   id: sonarqube-quality-gate-check
+      #   uses: sonarsource/sonarqube-quality-gate-action@master
+      #   # Force to fail step after specific time.
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
+      - name: Install Sonar Report and generate
+        id: sonar-report-gen
+        run: |
+            echo 'Installing sonar-report NPM package.'
+            npm install -g sonar-report  
+            sonar-report \
+              --sonarurl="https://sonarcloud.io" \
+              --sonarcomponent="daxa-ai_pebblo" \
+              --sonarorganization="daxa-ai" \
+              --project="daxa-ai_pebblo" \
+              --application="sonar-report" \
+              --release="1.0.0" \
+              --branch="main" \
+              --output="./pebblo_sonar.html" \
+              --sonartoken ${{ secrets.SONAR_TOKEN }}
+
+      - name: Upload Pebblo SonarQube report File
+        if: steps.sonar-report-gen.outcome == 'success'
+        run: |  
+           curl -F file=@pebblo_sonar.html https://slack.com/api/files.upload -H "Authorization: Bearer $SLACK_TOKEN" -F channels=$SLACK_CH -F "initial_comment=Pebblo Sonar Scan Report"
+
+      - name: Report Status if sonarscanner failure
+        if: ${{ always() }} || steps.sonarqube-scan-check.outcome == 'failure' 
+        uses: ravsamhq/notify-slack-action@master
+        with:
+          status: ${{ job.status }}
+          notify_when: 'failure'
+          message_format: "{emoji} *{workflow}* {status_message} with Scan status ${{ steps.sonarqube-scan-check.outcome }}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_SECRET }}            
