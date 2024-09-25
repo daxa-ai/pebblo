@@ -82,3 +82,4 @@ jobs:
           message_format: "{emoji} *{workflow}* {status_message} with Scan status ${{ steps.sonarqube-scan-check.outcome }}"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}            
+

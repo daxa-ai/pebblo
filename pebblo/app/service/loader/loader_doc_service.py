@@ -302,9 +302,19 @@ class AppLoaderDoc:
         it will be used; otherwise, the value will be taken from the config.
         """
         if not self.data.get("anonymize_snippets"):
-            self.anonymize_snippets = config_details.get("classifier", {}).get(
-                "anonymizeSnippets", False
-            )
+            if config_details.get("reports", {}).get("anonymizeSnippets") is not None:
+                self.anonymize_snippets = config_details.get("reports", {}).get(
+                    "anonymizeSnippets"
+                )
+            elif (
+                config_details.get("classifier", {}).get("anonymizeSnippets")
+                is not None
+            ):
+                self.anonymize_snippets = config_details.get("classifier", {}).get(
+                    "anonymizeSnippets"
+                )
+            else:
+                self.anonymize_snippets = False
         else:
             self.anonymize_snippets = self.data.get("anonymize_snippets")
 

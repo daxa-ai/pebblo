@@ -1,246 +1,217 @@
-import os
-import shutil
-
 import pytest
 
-from pebblo.app.config.config_validation import (
-    ClassifierConfig,
-    DaemonConfig,
-    LoggingConfig,
-    ReportsConfig,
-    StorageConfig,
-    validate_config,
+from pebblo.app.config.models import (
+    Config,
 )
 
-
-@pytest.fixture
-def setup_and_teardown():
-    """
-    Create a directory before running the test and delete it after the test is done.
-    """
-    # Setup: Create directory
-    os.makedirs(os.path.expanduser("~/.pebblo_test_"), exist_ok=True)
-    yield
-    # Teardown: Delete directory
-    shutil.rmtree(os.path.expanduser("~/.pebblo_test_"))
-
-
-def test_daemon_config_validate():
-    # Test with valid host and port
-    config = {"host": "localhost", "port": "8000"}
-    validator = DaemonConfig(config)
-    validator.validate()
-    assert validator.errors == []
-
-    # Test with invalid host
-    config = {"host": 123, "port": "8000"}
-    validator = DaemonConfig(config)
-    validator.validate()
-    assert validator.errors == ["Error: Invalid host '123'. Host must be a string."]
-
-    # Test with invalid port
-    config = {"host": "localhost", "port": 70000}
-    validator = DaemonConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Invalid port '70000'. Port must be between 1 and 65535."
-    ]
-
-    # Test with negative port
-    config = {"host": "localhost", "port": -1}
-    validator = DaemonConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Invalid port '-1'. Port must be between 1 and 65535."
-    ]
-
-    # Test with invalid port using string value
-    config = {"host": "localhost", "port": "abc"}
-    validator = DaemonConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Invalid port value 'abc'. Port must be an integer."
-    ]
-
-
-def test_logging_config_validate():
-    # Test with valid log level
-    config = {"level": "info"}
-    validator = LoggingConfig(config)
-    validator.validate()
-    assert validator.errors == []
-
-    # Test with invalid log level
-    log_level = "invalid_level"
-    config = {"level": log_level}
-    validator = LoggingConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        f"Error: Unsupported logLevel '{log_level.upper()}' specified in the configuration"
-    ]
-
-
-def test_reports_config_validate(setup_and_teardown):
-    # Test with valid format, renderer, and output directory
-    config = {"format": "pdf", "renderer": "xhtml2pdf", "cacheDir": "~/.pebblo_test_"}
-    validator = ReportsConfig(config)
-    validator.validate()
-    assert validator.errors == []
-
-    # Test with invalid format
-    config = {"format": "doc", "renderer": "xhtml2pdf", "cacheDir": "~/.pebblo_test_"}
-    validator = ReportsConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Unsupported format 'doc' specified in the configuration"
-    ]
-
-    # Test with invalid renderer
-    config = {
+config_json = {
+    "daemon": {"port": 8000, "host": "localhost"},
+    "logging": {"level": "info"},
+    "reports": {
         "format": "pdf",
-        "renderer": "invalid_renderer",
-        "cacheDir": "~/.pebblo_test_",
-    }
-    validator = ReportsConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Unsupported renderer 'invalid_renderer' specified in the configuration"
-    ]
-
-    # Test with weasyprint renderer
-    config = {
-        "format": "pdf",
-        "renderer": "weasyprint",
-        "cacheDir": "~/.pebblo_test_",
-    }
-    validator = ReportsConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        """Error: `renderer: weasyprint` was specified, but weasyprint was not found.
-            Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation"""
-    ]
+        "renderer": "xhtml2pdf",
+        "cacheDir": "~/.pebblo",
+        "anonymizeSnippets": True,
+    },
+    "classifier": {"mode": "all"},
+    "storage": {"type": "file"},
+}
 
 
-def test_classifier_config_validate():
-    # Test with True value
-    config = {"mode": "all", "anonymizeSnippets": True}
-    validator = ClassifierConfig(config)
-    validator.validate()
-    assert validator.errors == []
-
-    # Test with anonymizeSnippets False value
-    config = {"mode": "all", "anonymizeSnippets": False}
-    validator = ClassifierConfig(config)
-    validator.validate()
-    assert validator.errors == []
-
-    # Test with mode entity value
-    config = {"mode": "entity", "anonymizeSnippets": False}
-    validator = ClassifierConfig(config)
-    validator.validate()
-    assert validator.errors == []
-
-    # Test with mode topic value
-    config = {"mode": "topic", "anonymizeSnippets": False}
-    validator = ClassifierConfig(config)
-    validator.validate()
-    assert validator.errors == []
-
-    # Test with invalid anonymizeSnippets values
-    config = {"mode": "all", "anonymizeSnippets": 70000}
-    validator = ClassifierConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Invalid anonymizeSnippets '70000'. anonymizeSnippets must be a boolean."
-    ]
-
-    config = {"mode": "all", "anonymizeSnippets": "abc"}
-    validator = ClassifierConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Invalid anonymizeSnippets 'abc'. anonymizeSnippets must be a boolean."
-    ]
-
-    # Test with invalid mode values
-    config = {"mode": "Wrong", "anonymizeSnippets": True}
-    validator = ClassifierConfig(config)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Unsupported classifier mode 'Wrong' specified in the configuration. Valid values are ['all', 'entity', 'topic']"
-    ]
+def test_with_valid_values():
+    valid_data = Config.parse_obj(config_json)
+    assert valid_data == Config(**config_json)
 
 
-def test_storage_config_validate():
-    # Test with storage type `file` correct value
-    storage = {"type": "file"}
-    validator = StorageConfig(storage)
-    validator.validate()
-    assert validator.errors == []
+def test_daemon_config_validate_invalid_port():
+    config_json.update({"daemon": {"host": "localhost", "port": "12345678"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """daemon.port
+  Value error, Error: Invalid port '12345678'. Port must be between 1 and 65535."""
+    assert error_msg in str(err_msg.value)
 
-    # Test with storage type `db` correct value
-    storage = {"type": "db", "db": "sqlite", "name": "pebblo_db"}
-    validator = StorageConfig(storage)
-    validator.validate()
-    assert validator.errors == []
-
-    # Test with wrong storage type
-    storage = {"type": "xyz"}
-    validator = StorageConfig(storage)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Unsupported storage type 'xyz' specified in the configuration.Valid values are ['file', 'db']"
-    ]
-
-    # Test with storage type as `db` wrong `db` value
-    storage = {"type": "db", "db": "db123", "name": "pebblo_db"}
-    validator = StorageConfig(storage)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Unsupported db type 'db123' specified in the configuration.Valid values are ['sqlite']"
-    ]
-
-    # Test with storage type as `db` without `db` and `name`
-    storage = {"type": "db"}
-    validator = StorageConfig(storage)
-    validator.validate()
-    assert validator.errors == [
-        "Error: Unsupported db type 'None' specified in the configuration.Valid values are ['sqlite']",
-        "Error: Unsupported db name 'None specified in the configurationString values are allowed only",
-    ]
+    config_json.update({"daemon": {"host": "localhost", "port": "invalid_value"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """daemon.port
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='invalid_value', input_type=str]"""
+    assert error_msg in str(err_msg.value)
 
 
-def test_validate_config(setup_and_teardown):
-    # Test with valid configuration
-    config = {
-        "daemon": {"host": "localhost", "port": "8000"},
-        "logging": {"level": "info"},
-        "reports": {
-            "format": "pdf",
-            "renderer": "xhtml2pdf",
-            "cacheDir": "~/.pebblo_test_",
-        },
-        "classifier": {
-            "mode": "all",
-            "anonymizeSnippets": True,
-        },
-        "storage": {"type": "file"},
-    }
-    validate_config(config)
-    # If the configuration is valid, validate_config should not raise any exceptions
+def test_daemon_config_validate_invalid_host():
+    config_json.update({"daemon": {"host": 123, "port": "8000"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """daemon.host
+  Input should be a valid string [type=string_type, input_value=123, input_type=int]"""
+    assert error_msg in str(err_msg.value)
 
-    # Test with invalid configuration
-    config = {
-        "daemon": {"host": 123, "port": "8000"},
-        "logging": {"level": "invalid_level"},
-        "reports": {
-            "format": "doc",
-            "renderer": "xhtml2pdf",
-            "cacheDir": "~/.pebblo_test_",
-        },
-        "classifier": {
-            "anonymizeSnippets": "abc",
-        },
-    }
-    with pytest.raises(SystemExit):
-        validate_config(config)
-    # If the configuration is invalid, validate_config should raise a SystemExit exception
+
+def test_daemon_config_validate_invalid_values():
+    config_json.update({"daemon": {"host": 123, "port": 12345678}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """daemon.host
+  Input should be a valid string [type=string_type, input_value=123, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.8/v/string_type
+daemon.port
+  Value error, Error: Invalid port '12345678'. Port must be between 1 and 65535."""
+    assert error_msg in str(err_msg.value)
+
+
+def test_logging_config_validate_invalid_log_level():
+    config_json.update({"logging": {"level": "invalid_level"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """logging.level
+  Value error, Error: Unsupported logLevel 'invalid_level' specified in the configuration"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_classifier_config_validate_invalid_mode():
+    config_json.update({"classifier": {"mode": "123"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """classifier.mode
+  Value error, Error: Unsupported classifier mode '123' specified in the configuration. Valid values are ['all', 'entity', 'topic'] [type=value_error, input_value='123', input_type=str]"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_classifier_config_validate_invalid_anonymize_snippets():
+    config_json.update({"classifier": {"mode": "all", "anonymizeSnippets": "123"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """classifier.anonymizeSnippets
+  Input should be a valid boolean, unable to interpret input [type=bool_parsing, input_value='123', input_type=str]"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_classifier_config_validate_invalid_values():
+    config_json.update(
+        {"classifier": {"mode": "false_value", "anonymizeSnippets": "123"}}
+    )
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """classifier.mode
+  Value error, Error: Unsupported classifier mode 'false_value' specified in the configuration. Valid values are ['all', 'entity', 'topic'] [type=value_error, input_value='false_value', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.8/v/value_error
+classifier.anonymizeSnippets
+  Input should be a valid boolean, unable to interpret input [type=bool_parsing, input_value='123', input_type=str]"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_report_config_validate_both_cache_and_output_dir():
+    config_json.update(
+        {
+            "classifier": {"mode": "all"},
+            "reports": {
+                "format": "pdf",
+                "renderer": "xhtml2pdf",
+                "outputDir": "~/.pebblo",
+                "cacheDir": "~/.pebblo",
+                "anonymizeSnippets": False,
+            },
+        }
+    )
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = "Either 'cacheDir' or 'outputDir' should be there in config \nDeprecationWarning: 'outputDir' in config is deprecated, use 'cacheDir' instead"
+    assert error_msg in str(err_msg.value.args[0])
+
+
+def test_report_config_validate_invalid_format_value():
+    config_json.update(
+        {
+            "reports": {
+                "format": "wrong_format",
+                "renderer": "xhtml2pdf",
+                "cacheDir": "~/.pebblo",
+                "anonymizeSnippets": False,
+            }
+        }
+    )
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """reports.format
+  Value error, Error: Unsupported format type 'wrong_format' specified in the configuration. Valid values are ['pdf'] [type=value_error, input_value='wrong_format', input_type=str]"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_report_config_validate_invalid_renderer_value():
+    config_json.update(
+        {
+            "reports": {
+                "format": "pdf",
+                "renderer": "wrong_value",
+                "cacheDir": "~/.pebblo",
+                "anonymizeSnippets": False,
+            }
+        }
+    )
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """reports.renderer
+  Value error, Error: Unsupported renderer value 'wrong_value' specified in the configuration. Valid values are ['xhtml2pdf', 'weasyprint'] [type=value_error, input_value='wrong_value', input_type=str]"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_report_config_validate_weasyprint_renderer_value():
+    config_json.update(
+        {
+            "reports": {
+                "format": "pdf",
+                "renderer": "weasyprint",
+                "cacheDir": "~/.pebblo",
+            }
+        }
+    )
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """reports.renderer
+  Value error, Error: `renderer: weasyprint` was specified, but weasyprint was not found.
+                Follow documentation for more details - https://daxa-ai.github.io/pebblo/installation [type=value_error, input_value='weasyprint', input_type=str]"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_report_config_validate_with_invalid_anonymize_snippets():
+    config_json.update(
+        {
+            "reports": {
+                "format": "pdf",
+                "renderer": "xhtml2pdf",
+                "cacheDir": "~/.pebblo",
+                "anonymizeSnippets": 123,
+            }
+        }
+    )
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """reports.anonymizeSnippets
+  Input should be a valid boolean, unable to interpret input [type=bool_parsing, input_value=123, input_type=int]"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_storage_config_validate_invalid_type_value():
+    config_json.update({"storage": {"type": "wrong_value"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """storage
+  Value error, Error: Unsupported storage type 'wrong_value' specified in the configuration.Valid values are ['file', 'db'] [type=value_error, input_value={'type': 'wrong_value'}, input_type=dict]"""
+    assert error_msg in str(err_msg.value)
+
+
+def test_storage_config_validate_db_type_value():
+    config_json.update({"storage": {"type": "db", "db": "test_db"}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """storage
+  Value error, Error: Unsupported db type 'test_db' specified in the configuration.Valid values are ['sqlite'] [type=value_error, input_value={'type': 'db', 'db': 'test_db'}, input_type=dict]"""
+    assert error_msg in str(err_msg.value)
+
+    config_json.update({"storage": {"type": "db", "db": "sqlite", "name": 123}})
+    with pytest.raises(Exception) as err_msg:
+        Config.parse_obj(config_json)
+    error_msg = """storage
+  Value error, Error: Unsupported db name '123 specified in the configuration. String values are allowed only [type=value_error, input_value={'type': 'db', 'db': 'sqlite', 'name': 123}, input_type=dict]"""
+    assert error_msg in str(err_msg.value)

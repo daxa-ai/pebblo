@@ -1,8 +1,8 @@
 from pebblo.app.config.config import (
     ClassifierConfig,
     Config,
+    DaemonConfig,
     LoggingConfig,
-    PortConfig,
     ReportConfig,
     StorageConfig,
     var_server_config,
@@ -10,7 +10,7 @@ from pebblo.app.config.config import (
 
 # Initialize global server config with default values
 config = Config(
-    daemon=PortConfig(host="localhost", port=8000),
+    daemon=DaemonConfig(host="localhost", port=8000),
     logging=LoggingConfig(),
     reports=ReportConfig(format="pdf", renderer="xhtml2pdf", cacheDir="~/.pebblo"),
     classifier=ClassifierConfig(mode="all", anonymizeSnippets=False),

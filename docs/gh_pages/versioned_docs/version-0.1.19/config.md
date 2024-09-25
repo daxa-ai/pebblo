@@ -31,20 +31,21 @@ Notes:
   > **Note**  
   >  Note: Using xhtml2pdf gives a report with basic UI elements, but WeasyPrint renderer creates a sleeker, better-aligned interface for your PDFs. See image below. If you put renderer as `weasyprint`, then you need to install Pango. Follow [these instructions](./installation.md#install-weasyprint-library) for the same.
 
-  ![Pebblo Reports](../static/img/report-comparision.png)
+  ![Pebblo Reports](../../static/img/report-comparision.png)
 
 - `cacheDir`: Sets the directory where pebblo stores metadata, generated reports, and other temporary files. Default value is `~/.pebblo`.
-- `anonymizeSnippets`: Flag to anonymize snippets in report and Pebblo local UI. Possible values are 'True' and 'False'. When its value is 'True', snippets in reports and Pebblo local UI will be shown as anonymized and vice versa.
 - `outputDir`: Deprecated. Use `cacheDir` instead.
 
 ### Classifier
 
 - `mode`: Specifies mode for classify API. Possible values are `all`, `entity` or `topic`. Default value is `all`. When its value is `all`, both entities and topics will get classified, if value is `entity`, only entities will get classified and vice-versa. It is used for classification in /classify and /loader/doc APIs.
-- `anonymizeSnippets` is deprecated, use 'anonymizeSnippets' in reports instead.
+- `anonymizeSnippets`: Flag to anonymize snippets in report. Possible values are 'True' and 'False'. When its value is 'True', snippets in reports will be shown as anonymized and vice versa.
 
 ### Storage
+
 This is beta feature introduced in 0.1.18.
-- `type`: Specifies storage type to store states of the GenAI applications. Possible values are `file` or `db`.  Default value is `file`. By default, SQLite database is used when we set it as `db`.
+
+- `type`: Specifies storage type to store states of the GenAI applications. Possible values are `file` or `db`. Default value is `file`. By default, SQLite database is used when we set it as `db`.
 - `type` as `file` is deprecated, use `type` as `db`. `file` would not be supported from 0.1.19 release.
 
 ### Default Configuration
