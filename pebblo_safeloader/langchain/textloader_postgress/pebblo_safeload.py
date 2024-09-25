@@ -48,6 +48,7 @@ class PebbloSafeRAG:
             description="Identity & Semantic enabled SafeLoader app using Pebblo",  # Description (Optional)
             load_semantic=True,
             api_key=PEBBLO_API_KEY,
+            anonymize_snippets=True,
         )
         self.documents = self.loader.load()
         unique_identities = set()
