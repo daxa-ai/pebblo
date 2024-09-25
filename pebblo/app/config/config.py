@@ -37,7 +37,7 @@ def load_config(path: Optional[str]) -> Tuple[dict, Config]:
     try:
         if not path:
             # If Path does not exist in command, set default config value
-            get_default_config_values()
+            return get_default_config_values()
 
         # If Path exist, set config value
         try:
