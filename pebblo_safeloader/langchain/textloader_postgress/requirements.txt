@@ -2,7 +2,7 @@ python-dotenv==1.0.0
 tiktoken # OpenAI tokenizer
 
 langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
-langchain-community>=0.2.16,<0.3 # for PebbloSafeLoader, PebbloRetrievalQA
+#langchain-community>=0.2.16,<0.3 # for PebbloSafeLoader, PebbloRetrievalQA
 
 psycopg2-binary # For Postgres VectorStore
 langchain-postgres # For Postgres VectorStore
