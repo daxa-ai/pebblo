@@ -34,12 +34,13 @@ Notes:
   ![Pebblo Reports](../static/img/report-comparision.png)
 
 - `cacheDir`: Sets the directory where pebblo stores metadata, generated reports, and other temporary files. Default value is `~/.pebblo`.
+- `anonymizeSnippets`: Flag to anonymize snippets in report and Pebblo local UI. Possible values are 'True' and 'False'. When its value is 'True', snippets in reports and Pebblo local UI will be shown as anonymized and vice versa.
 - `outputDir`: Deprecated. Use `cacheDir` instead.
 
 ### Classifier
 
 - `mode`: Specifies mode for classify API. Possible values are `all`, `entity` or `topic`. Default value is `all`. When its value is `all`, both entities and topics will get classified, if value is `entity`, only entities will get classified and vice-versa. It is used for classification in /classify and /loader/doc APIs.
-- `anonymizeSnippets`: Flag to anonymize snippets in report. Possible values are 'True' and 'False'. When its value is 'True', snippets in reports will be shown as anonymized and vice versa.
+- `anonymizeSnippets` is deprecated, use 'anonymizeSnippets' in reports instead.
 
 ### Storage
 This is beta feature introduced in 0.1.18.
