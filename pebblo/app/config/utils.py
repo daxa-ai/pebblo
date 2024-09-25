@@ -19,7 +19,7 @@ anonymize_snippets_exists = False
 
 
 def update_anonymize_snippets_exists():
-    # Update anonymize_snippets_exists value to True if anonymize_snippets_exists is already in classifier
+    # Update anonymize_snippets_exists value to True if anonymize_snippets_exists is already in reports
     global anonymize_snippets_exists
     anonymize_snippets_exists = True
 
