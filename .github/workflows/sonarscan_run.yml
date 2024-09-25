@@ -81,4 +81,5 @@ jobs:
           notify_when: 'failure'
           message_format: "{emoji} *{workflow}* {status_message} with Scan status ${{ steps.sonarqube-scan-check.outcome }}"
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.WEBHOOK_SECRET }}            
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}            
+
