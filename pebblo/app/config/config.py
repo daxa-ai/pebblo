@@ -22,11 +22,14 @@ def get_default_config_values():
     # set default config value
     conf_obj = Config(
         daemon=DaemonConfig(host="localhost", port=8000),
-        reports=ReportConfig(format="pdf", renderer="xhtml2pdf", cacheDir="~/.pebblo"),
-        logging=LoggingConfig(),
-        classifier=ClassifierConfig(
-            mode=ClassificationMode.ALL.value, anonymizeSnippets=False
+        reports=ReportConfig(
+            format="pdf",
+            renderer="xhtml2pdf",
+            cacheDir="~/.pebblo",
+            anonymizeSnippets=False,
         ),
+        logging=LoggingConfig(),
+        classifier=ClassifierConfig(mode=ClassificationMode.ALL.value),
         storage=StorageConfig(type="file", db=None),
         # for now, a default storage type is FILE, but in the next release DB will be the default storage type.
     )
