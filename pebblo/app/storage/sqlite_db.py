@@ -1,4 +1,5 @@
-from sqlalchemy import and_, create_engine, text
+import logging
+from sqlalchemy import and_, create_engine, text, func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -21,7 +22,10 @@ class SQLiteClient(Database):
         # Create an engine that stores data in the local directory's db file.
         full_path = get_full_path(CacheDir.HOME_DIR.value)
         sqlite_db_path = CacheDir.SQLITE_ENGINE.value.format(full_path)
-        engine = create_engine(sqlite_db_path, echo=True)
+        if logger.isEnabledFor(logging.DEBUG):
+            engine = create_engine(sqlite_db_path, echo=True)
+        else:
+            engine = create_engine(sqlite_db_path)
         return engine
 
     def create_session(self):
@@ -97,6 +101,26 @@ class SQLiteClient(Database):
         try:
             logger.debug(f"Fetching data from table {table_name}")
             output = self.session.query(table_obj.__class__).filter_by(id=id).first()
+            return True, output
+        except Exception as err:
+            logger.error(
+                f"Failed in fetching data from table {table_name}, Error: {err}"
+            )
+            return False, err
+
+
+    @timeit
+    def query_by_list(self, table_obj, key, ids):
+        """
+        Pass filter like list. For example get snippets with ids in [<id1>, <id2>]
+        """
+        # This function is not in use right now, But in the local_ui it will get used.
+        table_name = table_obj.__tablename__
+        try:
+            logger.debug(f"Fetching data from table {table_name}")
+            output = self.session.query(table_obj).filter(
+                func.json_extract(table_obj.data, f"$.{key}").in_(ids)
+            ).all()
             return True, output
         except Exception as err:
             logger.error(

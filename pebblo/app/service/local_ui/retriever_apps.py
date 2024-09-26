@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Tuple
 
 from dateutil import parser
 from fastapi import status
-
+from pebblo.app.utils.utils import timeit
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.models.db_response_models import (
     RetrievalAppDetails,
@@ -385,6 +385,7 @@ class RetrieverApp:
         )
         return json.dumps(response.model_dump(), default=str, indent=4)
 
+    @timeit
     def get_all_retriever_apps(self):
         try:
             self.db = SQLiteClient()
@@ -462,6 +463,7 @@ class RetrieverApp:
             # Closing the session
             self.db.session.close()
 
+    @timeit
     def get_retriever_app_details(self, app_name):
         try:
             retrieval_data = []
