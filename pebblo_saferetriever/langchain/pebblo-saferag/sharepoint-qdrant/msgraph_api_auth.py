@@ -127,6 +127,88 @@ class SharepointADHelper:
         else:
             return response.json()["access_token"]
 
+    @staticmethod
+    def format_site_url(site_url: str):
+        """
+        Formats the site URL to include the colon(:) in the URL as required by the Microsoft Graph API.
+        Example:
+        1. Default site URL:
+            input: https://<tenant-name>.sharepoint.com/
+            output: tenant.sharepoint.com
+        2. Custom site URL:
+            input: https://<tenant-name>.sharepoint.com/sites/<site-name>
+            output: tenant.sharepoint.com:/sites/<site-name>
+
+        :param site_url: The original SharePoint site URL.
+        :return: The formatted site URL with a colon after the tenant domain.
+        """
+
+        # Check if the site URL contains the "/sites/" substring and format the URL accordingly
+        if "/sites/" in site_url:
+            parts = site_url.split("/sites/")
+            if parts[0].endswith(":"):
+                # If the URL already contains a colon, use the URL as is
+                formatted_url = site_url
+            else:
+                # Add a colon after the tenant domain
+                formatted_url = f"{parts[0]}:/sites/{parts[1]}"
+        else:
+            formatted_url = site_url
+
+        # Remove the  https:// prefix from the site URL
+        formatted_url = formatted_url.replace("https://", "")
+        return formatted_url
+
+    def get_site_id(self, site_url):
+        """
+        This function retrieves the ID of a SharePoint site using the Microsoft Graph API.
+
+        Parameters:
+        site_url (str): The URL of the SharePoint site.
+
+        Returns:
+        str: The ID of the SharePoint site.
+        """
+        # Format the site URL
+        site_url = self.format_site_url(site_url)
+        # Build URL to request site ID
+        full_url = f"https://graph.microsoft.com/v1.0/sites/{site_url}"
+        response = requests.get(
+            full_url, headers={"Authorization": f"Bearer {self.access_token}"}
+        )
+        site_id = response.json().get("id")  # Return the site ID
+        return site_id
+
+    def get_drive_id(self, site_id):
+        """
+        This function retrieves the IDs and names of all drives associated with a specified SharePoint site.
+
+        Parameters:
+        site_id (str): The ID of the SharePoint site.
+
+        Returns:
+        list: A list of dictionaries. Each dictionary represents a drive on the SharePoint site.
+              Each dictionary contains the following keys:
+              - 'id': The ID of the drive.
+              - 'name': The name of the drive.
+        """
+
+        # Retrieve drive IDs and names associated with a site
+        try:
+            drives_url = f"https://graph.microsoft.com/v1.0/sites/{site_id}/drives"
+            response = requests.get(drives_url, headers=self.headers)
+            drives = response.json().get("value", [])
+            drive_info = [
+                ({"id": drive["id"], "name": drive["name"]}) for drive in drives
+            ]
+            # print(f"Drive Info: {drive_info}")
+            return drive_info
+        except requests.exceptions.HTTPError as e:
+            print(
+                f"Error while retrieving document library ID from Microsoft Graph API, Error: {e}"
+            )
+            return []
+
 
 if __name__ == "__main__":
     pass
