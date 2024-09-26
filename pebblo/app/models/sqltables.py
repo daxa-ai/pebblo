@@ -1,7 +1,7 @@
 import logging
 
 from sqlalchemy import JSON, Column, Integer, create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import StorageTypes

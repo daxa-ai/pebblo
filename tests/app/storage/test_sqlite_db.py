@@ -1,24 +1,21 @@
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import MagicMock, patch
 from sqlalchemy.orm import Session
-from sqlalchemy.ext.declarative import DeclarativeMeta
-from sqlalchemy.sql import func
+
 from pebblo.app.models.sqltables import (
+    AiDataSourceTable,
     AiSnippetsTable,
 )
 
 # Assume table_obj is imported from the actual module where the table is defined
 
 
-class MockTable(DeclarativeMeta):
-    __tablename__ = 'mock_table'
-    data = {}
-
-
 @pytest.fixture
 def sqlite_client():
     """Fixture for creating an SQLiteClient instance."""
     from pebblo.app.storage.sqlite_db import SQLiteClient
+
     client = SQLiteClient()
     client.session = MagicMock(spec=Session)
     return client
@@ -37,7 +34,7 @@ def test_query_by_list_success(sqlite_client, mocker):
     mock_filter.all.return_value = ["result1", "result2"]  # Mocked results
 
     # Mock func.json_extract
-    mock_json_extract = mocker.patch('sqlalchemy.sql.func.json_extract')
+    mock_json_extract = mocker.patch("sqlalchemy.sql.func.json_extract")
 
     # Call the method
     success, result = sqlite_client.query_by_list(table_obj, filter_key, filter_values)
@@ -53,18 +50,21 @@ def test_query_by_list_success(sqlite_client, mocker):
 def test_query_by_list_failure(sqlite_client, mocker):
     """Test query_by_list failure due to an exception."""
     mock_session = sqlite_client.session
-    mock_table_obj = MockTable  # Use your actual table object here
+    mock_table_obj = AiDataSourceTable
     filter_key = "invalid_key"
     filter_values = ["value1", "value2"]
 
     # Mocking an exception when calling the query
-    mock_session.query.side_effect = Exception("DB Error. Key with name 'invalid_key' does not exists.")
+    mock_session.query.side_effect = Exception(
+        "DB Error. Key with name 'invalid_key' does not exists."
+    )
 
     # Call the method
-    success, result = sqlite_client.query_by_list(mock_table_obj, filter_key, filter_values)
+    success, result = sqlite_client.query_by_list(
+        mock_table_obj, filter_key, filter_values
+    )
 
     # Assertions
     assert success is False
     assert result == []
     mock_session.query.assert_called_once_with(mock_table_obj)
-
