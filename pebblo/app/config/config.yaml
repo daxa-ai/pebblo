@@ -7,8 +7,8 @@ reports:
   format: pdf
   renderer: xhtml2pdf
   cacheDir: ~/.pebblo
+  anonymizeSnippets: False
 classifier:
   mode: all
-  anonymizeSnippets: False
 storage:
   type: file
