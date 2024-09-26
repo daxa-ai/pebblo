@@ -11,6 +11,7 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/pebblo)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pebblo?logo=python&logoColor=gold)
 
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/company/cloud-defense-inc)
 [![Discord](https://img.shields.io/discord/1199861582776246403?logo=discord)](https://discord.gg/wyAfaYXwwv)
 [![Twitter Follow](https://img.shields.io/twitter/follow/daxa_ai)](https://twitter.com/daxa_ai)
 ---
