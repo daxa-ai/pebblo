@@ -141,7 +141,7 @@ class SQLiteClient(Database):
             logger.error(
                 f"Failed in fetching data from table {table_name}, Error: {err}"
             )
-            return False, err
+            return False, []
 
     @timeit
     def update_data(self, table_obj, data):
