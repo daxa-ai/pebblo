@@ -195,7 +195,7 @@ class StorageConfig(BaseSettings):
             )
         if storage_type == StorageTypes.FILE.value:
             print(
-                f"DeprecationWarning: '{StorageTypes.FILE.value}' in storage type is deprecated, use '{StorageTypes.DATABASE.value}' instead"
+                f"DeprecationWarning: '{StorageTypes.FILE.value}' in storage type will be deprecated from next release, use '{StorageTypes.DATABASE.value}' instead"
             )
         if storage_type == StorageTypes.DATABASE.value:
             db_type = data.get("db")
