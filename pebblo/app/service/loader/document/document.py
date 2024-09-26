@@ -20,9 +20,14 @@ class AiDocumentHandler:
         logger.debug("Create or update AIDocument")
         filter_query = {
             "appName": self.app_name,
-            "loadId": self.data.get("load_id"),
             "sourcePath": doc.get("source_path"),
         }
+
+        if "run_id" in self.data.keys():
+            filter_query["runId"] = self.data.get("run_id")
+        else:
+            filter_query["loadId"] = self.data.get("load_id")
+
         status, output = self.db.query(AiDocumentTable, filter_query)
         if output and len(output) > 0:
             data = output[0].data
@@ -47,6 +52,9 @@ class AiDocumentHandler:
                 "userIdentities": doc.get("authorized_identities", []),
                 "lastIngested": get_current_time(),
             }
+            if "run_id" in self.data.keys():
+                ai_documents["runId"] = self.data.get("run_id")
+
             ai_document_obj = AiDocument(**ai_documents)
             ai_document_data = ai_document_obj.model_dump()
 

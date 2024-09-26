@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from collections.abc import MutableMapping
 from datetime import datetime
 from json import JSONEncoder, dump
 from os import getcwd, makedirs, path, remove
@@ -311,3 +312,19 @@ def timeit(func):
             return response
 
     return wrapper
+
+
+def merge_dicts(dict1, dict2):
+    def deep_merge(d1, d2):
+        for k, v in d2.items():
+            if isinstance(v, MutableMapping):
+                d1[k] = deep_merge(d1.get(k, {}), v)
+            elif isinstance(v, list) and k in d1:
+                d1[k].extend(x for x in v if x not in d1[k])
+                if k == "snippetIds":
+                    d1["count"] = len(d1[k])  # Increasing the snippet counts
+            else:
+                d1[k] = d1.get(k, v)
+        return d1
+
+    return deep_merge(dict1, dict2)

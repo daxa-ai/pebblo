@@ -258,8 +258,13 @@ class AppLoaderDoc:
             "appName": self.app_name,
             "sourcePath": loader_details.get("source_path"),
             "sourceType": loader_details.get("source_type"),
-            "loadId": self.data.get("load_id"),
         }
+
+        if "run_id" in self.data.keys():
+            filter_query["runId"] = self.data.get("run_id")
+        else:
+            filter_query["loadId"] = self.data.get("load_id")
+
         status, output = self.db.query(AiDataSourceTable, filter_query)
         if status and output and len(output) > 0:
             logger.debug("Data Source details are already existed.")
@@ -278,6 +283,10 @@ class AppLoaderDoc:
             "sourceType": loader_details.get("source_type"),
             "loader": loader_details.get("loader"),
         }
+
+        if "run_id" in self.data.keys():
+            data_source["runId"] = self.data.get("run_id")
+
         ai_data_source_obj = AiDataSource(**data_source)
         ai_data_source = ai_data_source_obj.model_dump()
         _, data_source_obj = self.db.insert_data(AiDataSourceTable, ai_data_source)

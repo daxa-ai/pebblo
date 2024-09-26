@@ -26,6 +26,7 @@ from pebblo.app.utils.utils import (
     get_full_path,
     get_pebblo_server_version,
     timeit,
+    merge_dicts,
 )
 from pebblo.log import get_logger
 
@@ -223,13 +224,12 @@ class LoaderApp:
         entity_count: int,
         topic_count: int,
         total_snippet_count: int,
+        filter_query: dict
     ) -> None:
         """
         This function updates loader datasource details and count
         """
-        _, data_sources = self.db.query(
-            AiDataSourceTable, {"loadId": app_data.get("id")}
-        )
+        _, data_sources = self.db.query(AiDataSourceTable, filter_query)
         for data_source in data_sources:
             try:
                 ds_data = data_source.data
@@ -254,12 +254,14 @@ class LoaderApp:
                 self.loader_details.get("loader_data_source_list", [])
             )
 
-    def _get_documents_with_findings(self, app_data: AiDataLoaderTable) -> None:
+    def _get_documents_with_findings(self,
+                                     app_data: AiDataLoaderTable,
+                                     filter_query: dict) -> None:
         """
         Fetch required data for DocumentWithFindings
         """
 
-        _, documents = self.db.query(AiDocumentTable, {"loadId": app_data.get("id")})
+        _, documents = self.db.query(AiDocumentTable, filter_query)
         loader_document_with_findings = app_data.get("documentsWithFindings")
         documents_with_findings_data = []
         for document in documents:
@@ -301,6 +303,17 @@ class LoaderApp:
             self.loader_details["loader_document_with_findings_list"]
         )
 
+    def _get_consolidate_app_data(self, app_name, run_id):
+        filter_query = {"name": app_name, "runId": run_id}
+        _, ai_loader_apps = self.db.query(
+            table_obj=AiDataLoaderTable, filter_query=filter_query
+        )
+        final_loader_apps = {}
+        for loader_app in ai_loader_apps:
+            data = loader_app.data
+            final_loader_apps = merge_dicts(final_loader_apps, data)
+        return final_loader_apps
+
     def get_findings_for_loader_app(self, app_data: AiDataLoaderTable) -> dict:
         """
         This function calculates findings for loader app
@@ -319,16 +332,22 @@ class LoaderApp:
                 app_data, snippets, total_snippet_count, entity_count
             )
 
+        filter_query = {}
+        if "runId" in app_data.keys():
+            filter_query["runId"] = app_data.get("runId")
+        else:
+            filter_query["loadId"] = app_data.get("id")
+
         if app_data.get("docTopics"):
             topic_count, snippets, total_snippet_count = self._findings_for_app_topics(
                 app_data, snippets, total_snippet_count, topic_count
             )
 
         self._update_loader_datasource(
-            app_data, entity_count, topic_count, total_snippet_count
+            app_data, entity_count, topic_count, total_snippet_count, filter_query
         )
 
-        self._get_documents_with_findings(app_data)
+        self._get_documents_with_findings(app_data, filter_query)
 
         app_details = LoaderAppListDetails(
             name=app_data.get("name"),
@@ -381,10 +400,16 @@ class LoaderApp:
                     # This app is already processed with the latest app, skipping older one's
                     continue
 
+                if "runId" in app_data.keys():
+                    app_data = self._get_consolidate_app_data(
+                        app_data["name"], app_data["runId"]
+                    )
+
                 if app_data.get("docEntities") not in [None, {}] or app_data.get(
                     "docTopics"
                 ) not in [None, {}]:
                     self.loader_details["loader_apps_at_risk"] += 1
+
                 loader_app = self.get_findings_for_loader_app(app_data)
                 all_loader_apps.append(loader_app)
                 app_processed.append(app_data["name"])
@@ -428,8 +453,18 @@ class LoaderApp:
             if len(all_loader_apps) == 0:
                 raise Exception("App with this name does not exists.")
 
-            loader_app = all_loader_apps[0].data
-            loader_app_details = self.get_findings_for_loader_app(loader_app)
+            final_loader_apps = {}
+            for loader_app in all_loader_apps:
+                data = loader_app.data
+                if "runId" in data.keys():
+                    final_loader_apps = self._get_consolidate_app_data(
+                        app_name, data["runId"]
+                    )
+                else:
+                    final_loader_apps = all_loader_apps[0].data
+                break
+
+            loader_app_details = self.get_findings_for_loader_app(final_loader_apps)
 
             loader_response = self._create_loader_app_model([loader_app_details])
             self.loader_findings_summary_list = self.loader_details[
@@ -438,7 +473,7 @@ class LoaderApp:
             self.loader_findings_list = self.loader_details["loader_findings_list"]
 
             report_data = self._generate_final_report(
-                all_loader_apps, loader_app, loader_response.model_dump()
+                all_loader_apps, final_loader_apps, loader_response.model_dump()
             )
         except Exception as ex:
             message = f"[App Detail]: Error in loader app listing. Error:{ex}"

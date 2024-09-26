@@ -74,6 +74,10 @@ class AiSnippetHandler:
             "entityDetails": doc.get("entity_details", {}),
             "topicDetails": doc.get("topic_details", {}),
         }
+
+        if "run_id" in self.data.keys():
+            snippet_details["runId"] = self.data.get("run_id")
+
         ai_snippet_obj = AiSnippet(**snippet_details)
         ai_snippet = ai_snippet_obj.model_dump()
         status, snippet_obj = self.db.insert_data(AiSnippetsTable, ai_snippet)
