@@ -1,4 +1,5 @@
 import logging
+
 from sqlalchemy import JSON, Column, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 

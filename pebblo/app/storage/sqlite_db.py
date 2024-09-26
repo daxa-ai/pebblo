@@ -1,5 +1,6 @@
 import logging
-from sqlalchemy import and_, create_engine, text, func
+
+from sqlalchemy import and_, create_engine, func, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -108,7 +109,6 @@ class SQLiteClient(Database):
             )
             return False, err
 
-
     @timeit
     def query_by_list(self, table_obj, key, ids):
         """
@@ -118,9 +118,11 @@ class SQLiteClient(Database):
         table_name = table_obj.__tablename__
         try:
             logger.debug(f"Fetching data from table {table_name}")
-            output = self.session.query(table_obj).filter(
-                func.json_extract(table_obj.data, f"$.{key}").in_(ids)
-            ).all()
+            output = (
+                self.session.query(table_obj)
+                .filter(func.json_extract(table_obj.data, f"$.{key}").in_(ids))
+                .all()
+            )
             return True, output
         except Exception as err:
             logger.error(

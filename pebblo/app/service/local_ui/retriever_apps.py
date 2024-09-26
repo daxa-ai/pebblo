@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Tuple
 
 from dateutil import parser
 from fastapi import status
-from pebblo.app.utils.utils import timeit
+
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.models.db_response_models import (
     RetrievalAppDetails,
@@ -20,6 +20,7 @@ from pebblo.app.models.sqltables import (
     AiUser,
 )
 from pebblo.app.storage.sqlite_db import SQLiteClient
+from pebblo.app.utils.utils import timeit
 from pebblo.log import get_logger
 
 config_details = var_server_config_dict.get()

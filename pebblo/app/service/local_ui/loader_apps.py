@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 from fastapi import status
 from sqlalchemy.ext.declarative import declarative_base
-from pebblo.app.utils.utils import timeit
+
 from pebblo.app.enums.enums import CacheDir, ReportConstants
 from pebblo.app.models.db_models import (
     DataSource,
@@ -25,6 +25,7 @@ from pebblo.app.utils.utils import (
     get_current_time,
     get_full_path,
     get_pebblo_server_version,
+    timeit,
 )
 from pebblo.log import get_logger
 
@@ -60,12 +61,13 @@ class LoaderApp:
         response = []
         result, output = self.db.query_by_list(AiSnippetsTable, "id", snippet_ids)
 
+        if not result or len(output) == 0:
+            return response
+
         for row in output:
             if len(response) >= ReportConstants.SNIPPET_LIMIT.value:
                 break
 
-            if not result or len(output) == 0:
-                continue
             snippet_details = row.data
             entity_details = {}
             topic_details = {}
