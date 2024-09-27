@@ -117,16 +117,20 @@ class SQLiteClient(Database):
         table_obj: Type[DeclarativeMeta],
         filter_key: str,
         filter_values: List[str],
+        max_filter_values: int = 100,
     ):
         """
         Pass filter like list. For example get snippets with ids in [<id1>, <id2>]
         :param table_obj: Table object on which query is to be performed
         :param filter_key: Search key
-        :param filter_values: List of strings to be added to filter criteria
+        :param filter_values: List of strings to be added to filter criteria.
+        :param max_filter_values: Max number ot items to be searched for. Default value is 10.
         """
         table_name = table_obj.__tablename__
         try:
             logger.debug(f"Fetching data from table {table_name}")
+            # limit the number of values being passed for search query to avoid usage of long list.
+            filter_values = filter_values[:max_filter_values]
             output = (
                 self.session.query(table_obj)
                 .filter(

@@ -47,6 +47,38 @@ def test_query_by_list_success(sqlite_client, mocker):
     assert result == ["result1", "result2"]
 
 
+def test_query_by_list_max_filter_values(sqlite_client, mocker):
+    """Test successful query with query_by_list to verify max_filter_limit"""
+    mock_session = sqlite_client.session
+    table_obj = AiSnippetsTable
+    filter_key = "id"
+    filter_values = ["snippet_id1", "snippet_id2", "snippet_id3", "snippet_id4"]
+    max_filter_values = 2
+
+    # Mocking query result
+    mock_query = mock_session.query.return_value
+    mock_filter = mock_query.filter.return_value
+    mock_filter.all.return_value = ["result1", "result2"]  # Mocked results
+
+    # Mock func.json_extract
+    mock_json_extract = mocker.patch("sqlalchemy.sql.func.json_extract")
+
+    # Call the method
+    success, result = sqlite_client.query_by_list(
+        table_obj, filter_key, filter_values, max_filter_values
+    )
+
+    # Ensure that `json_extract` was called with the correct arguments
+    mock_json_extract.assert_called_once_with(table_obj.data, f"$.{filter_key}")
+
+    # Assertions
+    assert success is True
+    assert result == [
+        "result1",
+        "result2",
+    ]  # this should only limit first two items and skip rest two in the input.
+
+
 def test_query_by_list_failure(sqlite_client, mocker):
     """Test query_by_list failure due to an exception."""
     mock_session = sqlite_client.session
