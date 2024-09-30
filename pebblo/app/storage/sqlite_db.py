@@ -118,26 +118,27 @@ class SQLiteClient(Database):
         table_obj: Type[DeclarativeMeta],
         filter_key: str,
         filter_values: List[str],
-        max_filter_values: int = 100,
+        page_size: int = 100,
     ):
         """
         Pass filter like list. For example get snippets with ids in [<id1>, <id2>]
         :param table_obj: Table object on which query is to be performed
         :param filter_key: Search key
         :param filter_values: List of strings to be added to filter criteria.
-        :param max_filter_values: Max number ot items to be searched for. Default value is 100.
+        :param page_size: Page size to be used per iteration.
+                          All items from filter_values would be search based on page_size.
         """
         table_name = table_obj.__tablename__
-        logger.debug(f"Fetching data from table {table_name}")
-        total_records = len(filter_values)
-        total_pages = ceil(total_records / max_filter_values)
-        results = []
         try:
+            logger.debug(f"Fetching data from table {table_name}")
+            total_records = len(filter_values)
+            total_pages = ceil(total_records / page_size)
+            results = []
             for page in range(total_pages):
                 try:
                     # Calculate start and end indices for the current batch
-                    start_idx = page * max_filter_values
-                    end_idx = start_idx + max_filter_values
+                    start_idx = page * page_size
+                    end_idx = start_idx + page_size
 
                     # Slice filter_values to match the current batch
                     current_batch = filter_values[start_idx:end_idx]
@@ -159,6 +160,7 @@ class SQLiteClient(Database):
                     logger.error(
                         f"Failed in fetching data from table {table_name}, Error: {err}"
                     )
+                    continue
 
             return True, results
 
