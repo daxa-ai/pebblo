@@ -1,5 +1,6 @@
 import logging
 from typing import List, Type
+from math import ceil
 
 from sqlalchemy import and_, create_engine, func, text
 from sqlalchemy.orm import sessionmaker
@@ -124,23 +125,43 @@ class SQLiteClient(Database):
         :param table_obj: Table object on which query is to be performed
         :param filter_key: Search key
         :param filter_values: List of strings to be added to filter criteria.
-        :param max_filter_values: Max number ot items to be searched for. Default value is 10.
+        :param max_filter_values: Max number ot items to be searched for. Default value is 100.
         """
         table_name = table_obj.__tablename__
+        logger.debug(f"Fetching data from table {table_name}")
+        total_records = len(filter_values)
+        total_pages = ceil(total_records / max_filter_values)
+        results = []
         try:
-            logger.debug(f"Fetching data from table {table_name}")
-            # limit the number of values being passed for search query to avoid usage of long list.
-            filter_values = filter_values[:max_filter_values]
-            output = (
-                self.session.query(table_obj)
-                .filter(
-                    func.json_extract(table_obj.data, f"$.{filter_key}").in_(
-                        filter_values
+            for page in range(total_pages):
+                try:
+                    # Calculate start and end indices for the current batch
+                    start_idx = page * max_filter_values
+                    end_idx = start_idx + max_filter_values
+
+                    # Slice filter_values to match the current batch
+                    current_batch = filter_values[start_idx:end_idx]
+
+                    logger.debug(f"Processing batch {page + 1}/{total_pages}, filter values: {current_batch}")
+
+                    # Execute the query for the current batch
+                    batch_result = (
+                        self.session.query(table_obj)
+                        .filter(
+                            func.json_extract(table_obj.data, f"$.{filter_key}").in_(
+                                current_batch
+                            )
+                        )
+                        .all()
                     )
-                )
-                .all()
-            )
-            return True, output
+                    results.extend(batch_result)
+                except Exception as err:
+                    logger.error(
+                        f"Failed in fetching data from table {table_name}, Error: {err}"
+                    )
+
+            return True, results
+
         except Exception as err:
             logger.error(
                 f"Failed in fetching data from table {table_name}, Error: {err}"
