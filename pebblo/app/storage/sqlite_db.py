@@ -1,6 +1,6 @@
 import logging
-from typing import List, Type
 from math import ceil
+from typing import List, Type
 
 from sqlalchemy import and_, create_engine, func, text
 from sqlalchemy.orm import sessionmaker
@@ -143,7 +143,9 @@ class SQLiteClient(Database):
                     # Slice filter_values to match the current batch
                     current_batch = filter_values[start_idx:end_idx]
 
-                    logger.debug(f"Processing batch {page + 1}/{total_pages}, filter values: {current_batch}")
+                    logger.debug(
+                        f"Processing batch {page + 1}/{total_pages}, filter values: {current_batch}"
+                    )
 
                     # Execute the query for the current batch
                     batch_result = (

@@ -49,7 +49,13 @@ def test_query_by_list_page_size(sqlite_client):
     mock_session = sqlite_client.session
     table_obj = AiSnippetsTable
     filter_key = "id"
-    filter_values = ["snippet_id1", "snippet_id2", "snippet_id3", "snippet_id4", "snippet_id5"]
+    filter_values = [
+        "snippet_id1",
+        "snippet_id2",
+        "snippet_id3",
+        "snippet_id4",
+        "snippet_id5",
+    ]
     page_size = 2
 
     # Mocking query result
@@ -57,7 +63,11 @@ def test_query_by_list_page_size(sqlite_client):
     mock_result_page_2 = ["result3", "result4"]
     mock_result_page_3 = ["result5"]
     mock_query = mock_session.query().filter().all
-    mock_query.side_effect = [mock_result_page_1, mock_result_page_2, mock_result_page_3]
+    mock_query.side_effect = [
+        mock_result_page_1,
+        mock_result_page_2,
+        mock_result_page_3,
+    ]
 
     # Call the method
     success, result = sqlite_client.query_by_list(
@@ -66,13 +76,7 @@ def test_query_by_list_page_size(sqlite_client):
 
     # Assertions
     assert success is True
-    assert result == [
-        "result1",
-        "result2",
-        "result3",
-        "result4",
-        "result5"
-    ]
+    assert result == ["result1", "result2", "result3", "result4", "result5"]
 
 
 def test_query_by_list_failure(sqlite_client):
@@ -89,7 +93,7 @@ def test_query_by_list_failure(sqlite_client):
         table_obj=mock_table_obj,
         filter_key=filter_key,
         filter_values=filter_values,
-        page_size=page_size
+        page_size=page_size,
     )
 
     assert success is False
