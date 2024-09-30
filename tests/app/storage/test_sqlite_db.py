@@ -3,10 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy.orm import Session
 
-from pebblo.app.models.sqltables import (
-    AiDataSourceTable,
-    AiSnippetsTable,
-)
+from pebblo.app.models.sqltables import AiSnippetsTable
 
 # Assume table_obj is imported from the actual module where the table is defined
 
