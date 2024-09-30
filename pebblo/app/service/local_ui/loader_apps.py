@@ -59,7 +59,11 @@ class LoaderApp:
         This function finds snippet details based on labels
         """
         response = []
-        result, output = self.db.query_by_list(AiSnippetsTable, "id", snippet_ids)
+        result, output = self.db.query_by_list(
+            AiSnippetsTable,
+            filter_key="id",
+            filter_values=snippet_ids[: ReportConstants.SNIPPET_LIMIT.value],
+        )
 
         if not result or len(output) == 0:
             return response
