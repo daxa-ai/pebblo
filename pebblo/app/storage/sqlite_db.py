@@ -1,6 +1,11 @@
-from sqlalchemy import and_, create_engine, text
+import logging
+from math import ceil
+from typing import List, Type
+
+from sqlalchemy import and_, create_engine, func, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.attributes import flag_modified
+from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 from pebblo.app.enums.enums import CacheDir
 from pebblo.app.storage.database import Database
@@ -21,7 +26,10 @@ class SQLiteClient(Database):
         # Create an engine that stores data in the local directory's db file.
         full_path = get_full_path(CacheDir.HOME_DIR.value)
         sqlite_db_path = CacheDir.SQLITE_ENGINE.value.format(full_path)
-        engine = create_engine(sqlite_db_path, echo=True)
+        if logger.isEnabledFor(logging.DEBUG):
+            engine = create_engine(sqlite_db_path, echo=True)
+        else:
+            engine = create_engine(sqlite_db_path)
         return engine
 
     def create_session(self):
@@ -103,6 +111,66 @@ class SQLiteClient(Database):
                 f"Failed in fetching data from table {table_name}, Error: {err}"
             )
             return False, err
+
+    @timeit
+    def query_by_list(
+        self,
+        table_obj: Type[DeclarativeMeta],
+        filter_key: str,
+        filter_values: List[str],
+        page_size: int = 100,
+    ):
+        """
+        Pass filter like list. For example get snippets with ids in [<id1>, <id2>]
+        :param table_obj: Table object on which query is to be performed
+        :param filter_key: Search key
+        :param filter_values: List of strings to be added to filter criteria.
+        :param page_size: Page size to be used per iteration.
+                          All items from filter_values would be search based on page_size.
+        """
+        table_name = table_obj.__tablename__
+        try:
+            logger.debug(f"Fetching data from table {table_name}")
+            total_records = len(filter_values)
+            total_pages = ceil(total_records / page_size)
+            results = []
+            for page in range(total_pages):
+                try:
+                    # Calculate start and end indices for the current batch
+                    start_idx = page * page_size
+                    end_idx = start_idx + page_size
+
+                    # Slice filter_values to match the current batch
+                    current_batch = filter_values[start_idx:end_idx]
+
+                    logger.debug(
+                        f"Processing batch {page + 1}/{total_pages}, filter values: {current_batch}"
+                    )
+
+                    # Execute the query for the current batch
+                    batch_result = (
+                        self.session.query(table_obj)
+                        .filter(
+                            func.json_extract(table_obj.data, f"$.{filter_key}").in_(
+                                current_batch
+                            )
+                        )
+                        .all()
+                    )
+                    results.extend(batch_result)
+                except Exception as err:
+                    logger.error(
+                        f"Failed in fetching data from table {table_name}, Error: {err}"
+                    )
+                    continue
+
+            return True, results
+
+        except Exception as err:
+            logger.error(
+                f"Failed in fetching data from table {table_name}, Error: {err}"
+            )
+            return False, []
 
     @timeit
     def update_data(self, table_obj, data):

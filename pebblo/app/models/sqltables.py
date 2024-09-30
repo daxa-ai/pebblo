@@ -1,10 +1,15 @@
+import logging
+
 from sqlalchemy import JSON, Column, Integer, create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 from pebblo.app.config.config import var_server_config_dict
 from pebblo.app.enums.common import StorageTypes
 from pebblo.app.enums.enums import CacheDir, SQLiteTables
 from pebblo.app.utils.utils import get_full_path
+from pebblo.log import get_logger
+
+logger = get_logger(__name__)
 
 Base = declarative_base()
 
@@ -66,7 +71,10 @@ if storage_type == StorageTypes.DATABASE.value:
     # Create an engine that stores data in the local directory's my_database.db file.
     full_path = get_full_path(CacheDir.HOME_DIR.value)
     sqlite_db_path = CacheDir.SQLITE_ENGINE.value.format(full_path)
-    engine = create_engine(sqlite_db_path, echo=True)
+    if logger.isEnabledFor(logging.DEBUG):
+        engine = create_engine(sqlite_db_path, echo=True)
+    else:
+        engine = create_engine(sqlite_db_path)
 
     # Create all tables in the engine. This is equivalent to "Create Table" statements in raw SQL.
     Base.metadata.create_all(engine)

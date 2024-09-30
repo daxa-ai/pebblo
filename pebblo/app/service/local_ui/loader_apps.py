@@ -25,6 +25,7 @@ from pebblo.app.utils.utils import (
     get_current_time,
     get_full_path,
     get_pebblo_server_version,
+    timeit,
 )
 from pebblo.log import get_logger
 
@@ -58,13 +59,20 @@ class LoaderApp:
         This function finds snippet details based on labels
         """
         response = []
-        for snippet_id in snippet_ids:
+        result, output = self.db.query_by_list(
+            AiSnippetsTable,
+            filter_key="id",
+            filter_values=snippet_ids[: ReportConstants.SNIPPET_LIMIT.value],
+        )
+
+        if not result or len(output) == 0:
+            return response
+
+        for row in output:
             if len(response) >= ReportConstants.SNIPPET_LIMIT.value:
                 break
-            result, output = self.db.query(AiSnippetsTable, {"id": snippet_id})
-            if not result or len(output) == 0:
-                continue
-            snippet_details = output[0].data
+
+            snippet_details = row.data
             entity_details = {}
             topic_details = {}
             if snippet_details.get("topicDetails") and snippet_details[
@@ -351,6 +359,7 @@ class LoaderApp:
         )
         return loader_response
 
+    @timeit
     def get_all_loader_apps(self):
         """
         Returns all necessary loader app details required for get all app functionality.
@@ -402,6 +411,7 @@ class LoaderApp:
             # Closing the session
             self.db.session.close()
 
+    @timeit
     def get_loader_app_details(self, db: SQLiteClient, app_name: str) -> str:
         """
         This function is being used by the loader_doc_service to get data needed to generate pdf.
