@@ -238,6 +238,7 @@ class LoaderApp:
                     "name": ds_data["loader"],
                     "sourcePath": ds_data["sourcePath"],
                     "sourceType": ds_data["sourceType"],
+                    "sourceSize": ds_data.get("sourceSize", "-"),
                     "findingsEntities": entity_count,
                     "findingsTopics": topic_count,
                     "totalSnippetCount": total_snippet_count,
@@ -253,6 +254,19 @@ class LoaderApp:
             self.loader_details["loader_data_source_count"] = len(
                 self.loader_details.get("loader_data_source_list", [])
             )
+
+    def _get_data_source_name(self, document_detail: dict) -> str:
+        """
+        Get data source name for given data source id from db.
+        """
+        data_source_id = document_detail.get("dataSourceId")
+        source_name = "-"
+        if data_source_id:
+            _, datasource = self.db.query(AiDataSourceTable, {"id": data_source_id})
+            if datasource:
+                source_name = datasource[0].data.get("loader", "-")
+
+        return source_name
 
     def _get_documents_with_findings(self, app_data: AiDataLoaderTable) -> None:
         """
@@ -276,9 +290,12 @@ class LoaderApp:
                 for topic, topic_data in document_detail.get("topics", {}).items():
                     topic_count += topic_data.get("count", 0)
 
+                source_name = self._get_data_source_name(document_detail)
+
                 if document_detail["sourcePath"] in loader_document_with_findings:
                     document_obj = {
                         "appName": document_detail["appName"],
+                        "sourceName": source_name,
                         "owner": document_detail.get("owner", "-"),
                         "sourceSize": document_detail.get("sourceSize", 0),
                         "sourceFilePath": document_detail["sourcePath"],
