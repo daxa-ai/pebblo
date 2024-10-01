@@ -48,6 +48,7 @@ class ReqDiscover(BaseModel):
     owner: str
     description: Optional[str] = None
     load_id: Optional[str] = None
+    run_id: Optional[str] = None
     runtime: Runtime
     framework: Framework
     chains: Optional[List[ChainInfo]] = None
@@ -61,6 +62,7 @@ class ReqLoaderDoc(BaseModel):
     docs: list[dict] = None
     plugin_version: str
     load_id: str
+    run_id: Optional[str] = None
     loader_details: dict
     loading_end: bool
     source_owner: str

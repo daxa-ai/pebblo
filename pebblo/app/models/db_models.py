@@ -137,6 +137,7 @@ class LoaderMetadata(BaseModel):
 
 class AiDataLoader(AiBaseApp):
     loaders: Optional[List[LoaderMetadata]] = []
+    runId: Optional[str] = None
     # documents: Optional[List[UUID]] = [] # list of doc ids, TODO: need confirmation
     docEntities: Optional[Dict] = {}
     docTopics: Optional[Dict] = {}
