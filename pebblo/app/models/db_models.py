@@ -33,7 +33,6 @@ class FrameworkInfo(BaseModel):
 
 class AiBaseApp(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
-    run_id: Optional[str] = None
     name: str
     owner: str
     description: Optional[str] = None
@@ -152,6 +151,7 @@ class AiDataSource(BaseModel):
     loadId: str
     metadata: Metadata
     sourcePath: str
+    sourceSize: int
     sourceType: str
     loader: str
 
@@ -179,6 +179,7 @@ class AiSnippet(BaseModel):
     appName: str
     loadId: str
     dataSourceId: str
+    dataSourceName: str
     documentId: str
     metadata: Metadata
     doc: Optional[str] = None
@@ -228,6 +229,7 @@ class DataSource(BaseModel):
 class TopFindings(BaseModel):
     fileName: str
     fileOwner: str
+    dataSource: Optional[str] = None
     sourceSize: int
     findingsEntities: int
     findingsTopics: int
@@ -266,3 +268,4 @@ class ReportModel(BaseModel):
     pebbloServerVersion: Optional[str] = None
     pebbloClientVersion: Optional[str] = None
     clientVersion: Optional[dict] = None
+    snippets: Optional[list] = []

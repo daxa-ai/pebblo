@@ -1,4 +1,3 @@
-from pebblo.app.enums.enums import ApplicationTypes
 from pebblo.app.models.db_models import AiDocument
 from pebblo.app.models.sqltables import AiDocumentTable
 from pebblo.app.service.loader.snippet.snippet import AiSnippetHandler
@@ -147,9 +146,7 @@ class AiDocumentHandler:
         return document
 
     @timeit
-    def create_or_update_document(
-        self, app_loader_details: ApplicationTypes.LOADER.value, data_source: dict
-    ):
+    def create_or_update_document(self, app_loader_details: dict, data_source: dict):
         logger.debug("Create or update document snippet")
         input_doc_list = self.data.get("docs", [])
         for doc in input_doc_list:
@@ -162,7 +159,12 @@ class AiDocumentHandler:
             app_loader_details = self._update_loader_documents(
                 app_loader_details, existing_document
             )
-            app_loader_details = self.snippet_handler.update_loader_with_snippet(
+
+            app_loader_details = self.snippet_handler.update_loader_doc_findings(
+                app_loader_details, snippet
+            )
+
+            app_loader_details = self.snippet_handler.update_app_doc_findings(
                 app_loader_details, snippet
             )
 

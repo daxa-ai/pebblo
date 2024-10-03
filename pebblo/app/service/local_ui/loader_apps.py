@@ -25,8 +25,8 @@ from pebblo.app.utils.utils import (
     get_current_time,
     get_full_path,
     get_pebblo_server_version,
-    timeit,
     merge_dicts,
+    timeit,
 )
 from pebblo.log import get_logger
 
@@ -90,6 +90,7 @@ class LoaderApp:
                 }
             snippet_obj = {
                 "snippet": snippet_details["doc"],
+                "dataSourceName": snippet_details.get("dataSourceName", "-"),
                 "sourcePath": snippet_details["sourcePath"],
                 "topicDetails": topic_details,
                 "entityDetails": entity_details,
@@ -224,7 +225,7 @@ class LoaderApp:
         entity_count: int,
         topic_count: int,
         total_snippet_count: int,
-        filter_query: dict
+        filter_query: dict,
     ) -> None:
         """
         This function updates loader datasource details and count
@@ -238,6 +239,7 @@ class LoaderApp:
                     "name": ds_data["loader"],
                     "sourcePath": ds_data["sourcePath"],
                     "sourceType": ds_data["sourceType"],
+                    "sourceSize": ds_data.get("sourceSize", "-"),
                     "findingsEntities": entity_count,
                     "findingsTopics": topic_count,
                     "totalSnippetCount": total_snippet_count,
@@ -254,9 +256,22 @@ class LoaderApp:
                 self.loader_details.get("loader_data_source_list", [])
             )
 
-    def _get_documents_with_findings(self,
-                                     app_data: AiDataLoaderTable,
-                                     filter_query: dict) -> None:
+    def _get_data_source_name(self, document_detail: dict) -> str:
+        """
+        Get data source name for given data source id from db.
+        """
+        data_source_id = document_detail.get("dataSourceId")
+        source_name = "-"
+        if data_source_id:
+            _, datasource = self.db.query(AiDataSourceTable, {"id": data_source_id})
+            if datasource:
+                source_name = datasource[0].data.get("loader", "-")
+
+        return source_name
+
+    def _get_documents_with_findings(
+        self, app_data: AiDataLoaderTable, filter_query: dict
+    ) -> None:
         """
         Fetch required data for DocumentWithFindings
         """
@@ -278,9 +293,12 @@ class LoaderApp:
                 for topic, topic_data in document_detail.get("topics", {}).items():
                     topic_count += topic_data.get("count", 0)
 
+                source_name = self._get_data_source_name(document_detail)
+
                 if document_detail["sourcePath"] in loader_document_with_findings:
                     document_obj = {
                         "appName": document_detail["appName"],
+                        "sourceName": source_name,
                         "owner": document_detail.get("owner", "-"),
                         "sourceSize": document_detail.get("sourceSize", 0),
                         "sourceFilePath": document_detail["sourcePath"],
@@ -350,7 +368,7 @@ class LoaderApp:
         self._get_documents_with_findings(app_data, filter_query)
 
         app_details = LoaderAppListDetails(
-            name=app_data.get("name"),
+            name=app_data.get("name", "-"),
             topics=topic_count,
             entities=entity_count,
             owner=app_data.get("owner"),
@@ -412,7 +430,7 @@ class LoaderApp:
 
                 loader_app = self.get_findings_for_loader_app(app_data)
                 all_loader_apps.append(loader_app)
-                app_processed.append(app_data["name"])
+                app_processed.append(app_data.get("name", "-"))
 
             # TODO: Sort loader apps
             # sorted_loader_apps = self._sort_loader_apps(all_loader_apps)
@@ -516,6 +534,9 @@ class LoaderApp:
         top_n_findings = []
         for findings in top_n_findings_list:
             finding_obj = {
+                "dataSource": "-"
+                if findings.get("sourceName", "-") is None
+                else findings.get("sourceName", "-"),
                 "fileName": findings["sourceFilePath"],
                 "fileOwner": "-"
                 if findings.get("fileOwner", "-") is None
@@ -601,7 +622,7 @@ class LoaderApp:
 
     def _get_data_source_details(
         self, app_data: dict, raw_data: dict
-    ) -> List[DataSource]:
+    ) -> Tuple[List[DataSource], list[dict]]:
         """
         Create data source findings details and data source findings summary
         """
@@ -612,13 +633,24 @@ class LoaderApp:
             source_path = loader.get("sourcePath")
             source_type = loader.get("sourceType")
             source_size = loader.get("sourceSize")
-            total_snippet_count = sum(
-                map(lambda x: x["totalSnippetCount"], raw_data["dataSource"])
-            )
-            displayed_snippet_count = sum(
-                map(lambda x: x["displayedSnippetCount"], raw_data["dataSource"])
+
+            total_snippet_count = next(
+                (
+                    obj["totalSnippetCount"]
+                    for obj in raw_data["dataSource"]
+                    if obj["name"] == name
+                ),
+                0,
             )
 
+            displayed_snippet_count = next(
+                (
+                    obj["displayedSnippetCount"]
+                    for obj in raw_data["dataSource"]
+                    if obj["name"] == name
+                ),
+                0,
+            )
             data_source_obj = DataSource(
                 name=name,
                 sourcePath=source_path,
@@ -626,11 +658,11 @@ class LoaderApp:
                 sourceSize=source_size,
                 totalSnippetCount=total_snippet_count,
                 displayedSnippetCount=displayed_snippet_count,
-                findingsSummary=self.loader_findings_summary_list,
-                findingsDetails=self.loader_findings_list,
+                findingsSummary=self.loader_details["loader_findings_summary_list"],
+                findingsDetails=self.loader_details["loader_findings_list"],
             )
             data_source_obj_list.append(data_source_obj)
-        return data_source_obj_list
+        return data_source_obj_list, self.loader_details["loader_findings_list"]
 
     def _generate_final_report(
         self, all_loader_apps: list, app_data: dict, raw_data: dict
@@ -646,7 +678,9 @@ class LoaderApp:
         top_n_findings = self._get_top_n_findings(raw_data)
 
         # Generating DataSource
-        data_source_obj_list = self._get_data_source_details(app_data, raw_data)
+        data_source_obj_list, finding_details = self._get_data_source_details(
+            app_data, raw_data
+        )
 
         load_history = self._get_load_history(app_data["name"], all_loader_apps)
 
@@ -655,14 +689,18 @@ class LoaderApp:
             description=app_data.get("description", "-"),
             instanceDetails=app_data["instanceDetails"],
             framework=app_data["framework"],
-            reportSummary=report_summary,
-            loadHistory=load_history,
-            topFindings=top_n_findings,
-            dataSources=data_source_obj_list,
+            reportSummary=report_summary,  # Report summary i.e. numbers on top.
+            loadHistory=load_history,  # Load history
+            topFindings=top_n_findings,  # Documents with Findings tab
+            dataSources=data_source_obj_list,  # Data Source tab
             pebbloServerVersion=get_pebblo_server_version(),
             pebbloClientVersion=app_data.get("pluginVersion", ""),
             clientVersion=app_data.get("clientVersion", None),
+            snippets=finding_details,  # Snippets tab
         )
+        logger.info(
+            f"Report : {report_dict.model_dump()}"
+        )  # TODO : Remove it before merging the PR.
         return report_dict.model_dump()
 
     def _delete(
