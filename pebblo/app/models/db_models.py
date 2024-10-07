@@ -131,6 +131,8 @@ class LoaderMetadata(BaseModel):
     sourceType: str
     sourceSize: int
     sourceFiles: Optional[list] = []
+    docEntities: Optional[dict] = {}
+    docTopics: Optional[dict] = {}
     lastModified: Optional[str] = None
 
 
@@ -262,10 +264,11 @@ class ReportModel(BaseModel):
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary] = None
     loadHistory: Optional[dict] = None
+    findings: Optional[list] = None
     topFindings: Optional[List[TopFindings]] = None
     instanceDetails: Optional[InstanceDetails] = None
     dataSources: Optional[List[DataSource]] = None
     pebbloServerVersion: Optional[str] = None
     pebbloClientVersion: Optional[str] = None
     clientVersion: Optional[dict] = None
-    snippets: Optional[list] = []
+    snippets: Optional[dict] = {}
