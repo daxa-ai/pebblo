@@ -106,7 +106,8 @@ class AppDiscover:
         AppClass = None
         app_type = None
         load_id = self.data.get("load_id") or None
-        if load_id:
+        run_id = self.data.get("run_id") or None
+        if load_id or run_id:
             AppClass = AiDataLoaderTable
             app_type = ApplicationTypes.LOADER.value
         else:

@@ -131,11 +131,14 @@ class LoaderMetadata(BaseModel):
     sourceType: str
     sourceSize: int
     sourceFiles: Optional[list] = []
+    docEntities: Optional[dict] = {}
+    docTopics: Optional[dict] = {}
     lastModified: Optional[str] = None
 
 
 class AiDataLoader(AiBaseApp):
     loaders: Optional[List[LoaderMetadata]] = []
+    runId: Optional[str] = None
     # documents: Optional[List[UUID]] = [] # list of doc ids, TODO: need confirmation
     docEntities: Optional[Dict] = {}
     docTopics: Optional[Dict] = {}
@@ -145,16 +148,19 @@ class AiDataLoader(AiBaseApp):
 
 class AiDataSource(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
+    runId: Optional[str] = None
     appName: str
     loadId: str
     metadata: Metadata
     sourcePath: str
+    sourceSize: int
     sourceType: str
     loader: str
 
 
 class AiDocument(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
+    runId: Optional[str] = None
     appName: str
     loadId: str
     dataSourceId: str
@@ -171,9 +177,11 @@ class AiDocument(BaseModel):
 
 class AiSnippet(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
+    runId: Optional[str] = None
     appName: str
     loadId: str
     dataSourceId: str
+    dataSourceName: str
     documentId: str
     metadata: Metadata
     doc: Optional[str] = None
@@ -223,6 +231,7 @@ class DataSource(BaseModel):
 class TopFindings(BaseModel):
     fileName: str
     fileOwner: str
+    dataSource: Optional[str] = None
     sourceSize: int
     findingsEntities: int
     findingsTopics: int
@@ -255,9 +264,11 @@ class ReportModel(BaseModel):
     framework: Optional[FrameworkInfo] = Field(default_factory=FrameworkInfo)
     reportSummary: Optional[Summary] = None
     loadHistory: Optional[dict] = None
+    findings: Optional[list] = None
     topFindings: Optional[List[TopFindings]] = None
     instanceDetails: Optional[InstanceDetails] = None
     dataSources: Optional[List[DataSource]] = None
     pebbloServerVersion: Optional[str] = None
     pebbloClientVersion: Optional[str] = None
     clientVersion: Optional[dict] = None
+    snippets: Optional[dict] = {}

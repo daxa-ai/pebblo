@@ -1,4 +1,3 @@
-from pebblo.app.enums.enums import ApplicationTypes
 from pebblo.app.models.db_models import AiDocument
 from pebblo.app.models.sqltables import AiDocumentTable
 from pebblo.app.service.loader.snippet.snippet import AiSnippetHandler
@@ -20,9 +19,14 @@ class AiDocumentHandler:
         logger.debug("Create or update AIDocument")
         filter_query = {
             "appName": self.app_name,
-            "loadId": self.data.get("load_id"),
             "sourcePath": doc.get("source_path"),
         }
+
+        if "run_id" in self.data.keys():
+            filter_query["runId"] = self.data.get("run_id")
+        else:
+            filter_query["loadId"] = self.data.get("load_id")
+
         status, output = self.db.query(AiDocumentTable, filter_query)
         if output and len(output) > 0:
             data = output[0].data
@@ -47,6 +51,9 @@ class AiDocumentHandler:
                 "userIdentities": doc.get("authorized_identities", []),
                 "lastIngested": get_current_time(),
             }
+            if "run_id" in self.data.keys():
+                ai_documents["runId"] = self.data.get("run_id")
+
             ai_document_obj = AiDocument(**ai_documents)
             ai_document_data = ai_document_obj.model_dump()
 
@@ -139,9 +146,7 @@ class AiDocumentHandler:
         return document
 
     @timeit
-    def create_or_update_document(
-        self, app_loader_details: ApplicationTypes.LOADER.value, data_source: dict
-    ):
+    def create_or_update_document(self, app_loader_details: dict, data_source: dict):
         logger.debug("Create or update document snippet")
         input_doc_list = self.data.get("docs", [])
         for doc in input_doc_list:
@@ -154,7 +159,12 @@ class AiDocumentHandler:
             app_loader_details = self._update_loader_documents(
                 app_loader_details, existing_document
             )
-            app_loader_details = self.snippet_handler.update_loader_with_snippet(
+
+            app_loader_details = self.snippet_handler.update_loader_doc_findings(
+                app_loader_details, snippet
+            )
+
+            app_loader_details = self.snippet_handler.update_app_doc_findings(
                 app_loader_details, snippet
             )
 

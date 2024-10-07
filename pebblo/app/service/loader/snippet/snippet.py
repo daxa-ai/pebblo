@@ -33,8 +33,37 @@ class AiSnippetHandler:
         logger.debug("Counting entities and topics finished.")
         return restricted_data
 
-    def update_loader_with_snippet(self, app_loader_details, snippet):
-        # Update doc entities & topics details from snippets
+    def update_loader_doc_findings(self, app_loader_details, snippet):
+        # Update doc entities & topics for individual loader
+        # Fetching entities and topics
+        for loader in app_loader_details.get("loaders", []):
+            if loader.get("sourcePath") == snippet.get("sourcePath") and loader.get(
+                "name"
+            ) == snippet.get("dataSourceName"):
+                entities_data = loader.get("docEntities", {})
+                topics_data = loader.get("docTopics", {})
+
+                if snippet.get("entities"):
+                    # If entities exist in snippet
+                    entities_data = self._count_and_update_entities_topics(
+                        entities_data, snippet.get("entities"), snippet.get("id")
+                    )
+                if snippet.get("topics"):
+                    # If entities exist in snippet
+                    topics_data = self._count_and_update_entities_topics(
+                        topics_data, snippet.get("topics"), snippet.get("id")
+                    )
+
+                loader["docEntities"] = entities_data
+                loader["docTopics"] = topics_data
+                logger.debug(f"Loader Doc entities: {loader}")
+                break
+
+        return app_loader_details
+
+    # def update_loader_with_snippet(self, app_loader_details, snippet):
+    def update_app_doc_findings(self, app_loader_details, snippet):
+        # Update doc entities & topics for app
         # Fetching entities and topics
         entities_data = app_loader_details.get("docEntities", {})
         topics_data = app_loader_details.get("docTopics", {})
@@ -68,12 +97,17 @@ class AiSnippetHandler:
             "doc": doc.get("doc"),
             # 'checksum': checksum,
             "sourcePath": doc.get("source_path"),
+            "dataSourceName": data_source.get("loader"),
             "loaderSourcePath": data_source.get("sourcePath"),
             "entities": doc.get("entities", {}),
             "topics": doc.get("topics", {}),
             "entityDetails": doc.get("entity_details", {}),
             "topicDetails": doc.get("topic_details", {}),
         }
+
+        if "run_id" in self.data.keys():
+            snippet_details["runId"] = self.data.get("run_id")
+
         ai_snippet_obj = AiSnippet(**snippet_details)
         ai_snippet = ai_snippet_obj.model_dump()
         status, snippet_obj = self.db.insert_data(AiSnippetsTable, ai_snippet)

@@ -16,7 +16,11 @@ def get_or_create_app(db, app_name, app_class, data, app_type):
         ai_app = {"name": app_name}
 
         if app_type == ApplicationTypes.LOADER.value:
-            ai_app["id"] = data["load_id"]
+            if "run_id" in data.keys():
+                ai_app["runId"] = data["run_id"]
+                # ai_app["id"] = data["load_id"]
+            else:
+                ai_app["id"] = data["load_id"]
         elif app_type == ApplicationTypes.RETRIEVAL.value:
             pass
 
@@ -30,6 +34,7 @@ def get_or_create_app(db, app_name, app_class, data, app_type):
         )
 
         # Inserting app details
+        ai_app["id"] = data["load_id"]
         response, app_object = db.insert_data(app_class, ai_app)
 
         if response:
