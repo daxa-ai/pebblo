@@ -11,6 +11,7 @@ Currently, we are supporting following Entities:
 6. IBAN code
 7. US ITIN
 8. IP Address
+9. Email Address
 
 And following Secret Entities:
 1. Github Token
