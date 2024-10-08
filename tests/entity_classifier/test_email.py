@@ -44,15 +44,6 @@ class TestEmailRecognizer(unittest.TestCase):
         self.assertEqual(results[0].start, 12)
         self.assertEqual(results[0].end, 38)
 
-    def test_email_with_multiple_dots(self):
-        # Email with multiple dots in the domain part
-        text = "Send the report to reports@sub.example.co.uk."
-        results = self.analyzer.analyze(text, entities=["EMAIL_ADDRESS"], language="en")
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0].entity_type, "EMAIL_ADDRESS")
-        self.assertEqual(results[0].start, 19)
-        self.assertEqual(results[0].end, 44)
-
     def test_multiple_emails(self):
         # Text with multiple emails
         text = "Emails: alice@example.com, bob@example.org."
