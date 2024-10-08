@@ -22,6 +22,8 @@ class Entities(Enum):
     US_PASSPORT = "us-passport-number"
     US_DRIVER_LICENSE = "us-drivers-license"
 
+    # contactinfo
+    EMAIL_ADDRESS = "email-address"
     # network
     IP_ADDRESS = "ip-address"
 
@@ -55,6 +57,7 @@ class PIIGroups(Enum):
     Financial = "pii-financial"
     Secrets = "secrets_and_tokens"
     Network = "pii-network"
+    Contact = "pii-contact-information"
 
 
 entity_group_conf_mapping = {
@@ -62,6 +65,8 @@ entity_group_conf_mapping = {
     Entities.US_SSN.value: (0.8, PIIGroups.Identification.value),
     Entities.US_PASSPORT.value: (0.4, PIIGroups.Identification.value),
     Entities.US_DRIVER_LICENSE.value: (0.4, PIIGroups.Identification.value),
+    # Contact
+    Entities.EMAIL_ADDRESS.value: (0.8, PIIGroups.Contact.value),
     # Financial
     Entities.US_ITIN.value: (0.8, PIIGroups.Financial.value),
     Entities.CREDIT_CARD.value: (0.8, PIIGroups.Financial.value),
