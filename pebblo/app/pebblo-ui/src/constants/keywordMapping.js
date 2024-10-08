@@ -23,6 +23,7 @@ export const KEYWORD_MAPPING = {
   "us-passport-number": "US Passport number",
   "us-drivers-license": "US Drivers License",
   "credit-card-number": "Credit card number",
+  "email-address": "Email Address",
   "us-bank-account-number": "US Bank Account Number",
   "iban-code": "IBAN code",
   "us-itin": "US ITIN",
