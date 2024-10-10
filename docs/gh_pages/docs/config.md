@@ -58,9 +58,10 @@ logging:
 reports:
   format: pdf
   renderer: xhtml2pdf
-  outputDir: ~/.pebblo
-classifier:
+  cacheDir: ~/.pebblo
   anonymizeSnippets: False
+classifier:
+  mode: all
 storage:
   type: file
 ```
