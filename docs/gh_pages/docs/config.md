@@ -59,8 +59,9 @@ reports:
   format: pdf
   renderer: xhtml2pdf
   outputDir: ~/.pebblo
-classifier:
   anonymizeSnippets: False
+classifier:
+  mode: all
 storage:
   type: file
 ```
