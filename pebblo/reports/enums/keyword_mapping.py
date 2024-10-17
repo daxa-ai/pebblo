@@ -42,4 +42,8 @@ topic_entity_mapping = {
     "azure-key-id": "Azure Key ID",
     "azure-client-secret": "Azure Client Secret",
     "google-api-key": "Google API Key",
+    "harmful": "Harmful",
+    "medical": "Medical",
+    "financial": "Financial",
+    "corporate-documents": "Corporate Documents",
 }

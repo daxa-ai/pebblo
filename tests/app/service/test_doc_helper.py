@@ -105,6 +105,37 @@ expected_output = {
 def test_get_classifier_response():
     loader_helper = LoaderHelper(app_details, data=data, load_id=data.get("load_id"))
     output = loader_helper._get_classifier_response(classifier_response_input_doc)
+    expected_output = {
+        "data": "Sachin's SSN is 222-85-4836. His passport ID is 5484880UA. His American express credit card number is\n371449635398431. AWS Access Key AKIAQIPT4PDORIRTV6PH. client-secret is de1d4a2d-d9fa-44f1-84bb-4f73c004afda\n",
+        "entityCount": 3,
+        "entities": {"us-ssn": 1, "credit-card-number": 1, "aws-access-key": 1},
+        "entityDetails": {
+            "us-ssn": [
+                {
+                    "location": "16_27",
+                    "confidence_score": "HIGH",
+                    "entity_group": "pii-identification",
+                }
+            ],
+            "credit-card-number": [
+                {
+                    "location": "102_117",
+                    "confidence_score": "HIGH",
+                    "entity_group": "pii-financial",
+                }
+            ],
+            "aws-access-key": [
+                {
+                    "location": "134_154",
+                    "confidence_score": "HIGH",
+                    "entity_group": "secrets_and_tokens",
+                }
+            ],
+        },
+        "topicCount": 1,
+        "topics": {"financial": 1},
+        "topicDetails": {"financial": [{"confidence_score": "MEDIUM"}]},
+    }
     assert output.model_dump() == expected_output
 
 
@@ -126,12 +157,15 @@ def test_get_classifier_response_classifier_mode_topic():
     output = loader_helper_classifier_mode_topic._get_classifier_response(
         classifier_response_input_doc
     )
-
     expected_output.update(
         {
+            "data": "Sachin's SSN is 222-85-4836. His passport ID is 5484880UA. His American express credit card number is\n371449635398431. AWS Access Key AKIAQIPT4PDORIRTV6PH. client-secret is de1d4a2d-d9fa-44f1-84bb-4f73c004afda\n",
             "entityCount": 0,
             "entities": {},
             "entityDetails": {},
+            "topicCount": 1,
+            "topics": {"financial": 1},
+            "topicDetails": {"financial": [{"confidence_score": "MEDIUM"}]},
         }
     )
     assert output.model_dump() == expected_output
@@ -148,31 +182,34 @@ def test_get_classifier_response_anonymize_true():
     expected_output.update(
         {
             "data": "Sachin's SSN is &lt;US_SSN&gt;. His passport ID is 5484880UA. His American express credit card number is\n&lt;CREDIT_CARD&gt;. AWS Access Key &lt;AWS_ACCESS_KEY&gt;. client-secret is de1d4a2d-d9fa-44f1-84bb-4f73c004afda\n",
-            "entities": {"aws-access-key": 1, "credit-card-number": 1, "us-ssn": 1},
             "entityCount": 3,
+            "entities": {"us-ssn": 1, "credit-card-number": 1, "aws-access-key": 1},
             "entityDetails": {
-                "aws-access-key": [
+                "us-ssn": [
                     {
+                        "location": "16_30",
                         "confidence_score": "HIGH",
-                        "entity_group": "secrets_and_tokens",
-                        "location": "141_163",
+                        "entity_group": "pii-identification",
                     }
                 ],
                 "credit-card-number": [
                     {
+                        "location": "105_124",
                         "confidence_score": "HIGH",
                         "entity_group": "pii-financial",
-                        "location": "105_124",
                     }
                 ],
-                "us-ssn": [
+                "aws-access-key": [
                     {
+                        "location": "141_163",
                         "confidence_score": "HIGH",
-                        "entity_group": "pii-identification",
-                        "location": "16_30",
+                        "entity_group": "secrets_and_tokens",
                     }
                 ],
             },
+            "topicCount": 1,
+            "topics": {"financial": 1},
+            "topicDetails": {"financial": [{"confidence_score": "MEDIUM"}]},
         }
     )
     assert output.model_dump() == expected_output
