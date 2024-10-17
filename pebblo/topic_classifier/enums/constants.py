@@ -27,6 +27,5 @@ topic_display_names = {
     "HARMFUL": "harmful",
     "MEDICAL": "medical",
     "FINANCIAL": "financial",
-    "CORPORATE_DOCUMENTS":"corporate-documents"
-
+    "CORPORATE_DOCUMENTS": "corporate-documents",
 }
