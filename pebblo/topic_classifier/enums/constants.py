@@ -24,4 +24,9 @@ topic_display_names = {
     "INTERNAL_PRODUCT_ROADMAP_AGREEMENT": "internal-product-roadmap-agreement",
     "SEXUAL_CONTENT": "sexual-content",
     "SEXUAL_INCIDENT_REPORT": "sexual-incident-report",
+    "HARMFUL": "harmful",
+    "MEDICAL": "medical",
+    "FINANCIAL": "financial",
+    "CORPORATE_DOCUMENTS":"corporate-documents"
+
 }
