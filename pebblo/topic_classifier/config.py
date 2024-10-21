@@ -18,5 +18,5 @@ CLASSIFIER_PATH = "daxa-ai/pebblo-classifier-v2"
 
 # Specific model version to use. Revision can be any identifier allowed by
 # git e.g. branch name, a tag name, or a commit id
-#https://huggingface.co/daxa-ai/pebblo-classifier-v2
-MODEL_REVISION = "a9a3816784cd6f5feb5a515e9536de78d64d6d49" #Pebblo classifier v2
+# https://huggingface.co/daxa-ai/pebblo-classifier-v2
+MODEL_REVISION = "a9a3816784cd6f5feb5a515e9536de78d64d6d49"  # Pebblo classifier v2
