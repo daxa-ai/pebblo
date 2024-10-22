@@ -29,7 +29,7 @@ data = {
     "chains": [
         {
             "name": "RetrievalQA",
-            "model": {"vendor": "openai", "name": "text-davinci-003"},
+            "model": {"vendor": "openai", "name": "gpt-3.5-turbo-instruct"},
             "vector_dbs": [
                 {
                     "name": "Chroma",
@@ -125,7 +125,7 @@ def test_fetch_chain_details(discovery):
                     },
                 }
             ],
-            "model": {"name": "text-davinci-003", "vendor": "openai"},
+            "model": {"name": "gpt-3.5-turbo-instruct", "vendor": "openai"},
         }
     ]
     output = discovery._fetch_chain_details(app_metadata=None)
@@ -173,7 +173,7 @@ def test_create_ai_apps_model(discovery, mock_pebblo_server_version):
                     },
                 }
             ],
-            "model": {"name": "text-davinci-003", "vendor": "openai"},
+            "model": {"name": "gpt-3.5-turbo-instruct", "vendor": "openai"},
         }
     ]
     expected_output = {
@@ -222,7 +222,7 @@ def test_create_ai_apps_model(discovery, mock_pebblo_server_version):
                         },
                     }
                 ],
-                "model": {"name": "text-davinci-003", "vendor": "openai"},
+                "model": {"name": "gpt-3.5-turbo-instruct", "vendor": "openai"},
             }
         ],
         "retrievals": [],
