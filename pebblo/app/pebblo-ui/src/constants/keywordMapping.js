@@ -29,6 +29,7 @@ export const KEYWORD_MAPPING = {
   "us-itin": "US ITIN",
   "github-token": "Github Token",
   "github-finegrained-token": "Github Finegrained Token",
+  "github-finergrained-token": "Github Finegrained Token",
   "private-key": "Private Key",
   "dsa-private-key": "DSA Private Key",
   "encrypted-private-key": "Encrypted Private Key",
