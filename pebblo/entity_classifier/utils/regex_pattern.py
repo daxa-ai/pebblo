@@ -6,7 +6,7 @@ These are all enums related to Regex Patterns.
 
 regex_secrets_patterns = {
     "github-token": r"""\b((?:ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]{36,255})\b""",
-    "github-finergrained-token": r"""\b((?:github_pat)_[a-zA-Z0-9_]{36,255})\b""",
+    "github-finegrained-token": r"""\b((?:github_pat)_[a-zA-Z0-9_]{36,255})\b""",
     "slack-token": r"""(xoxb|xoxp|xapp|xoxa|xoxr|xoxo|xoxs|xoxe)\-[0-9]{10,13}\-[a-zA-Z0-9\-]*""",
     # "Slack Token V2": r"""xox[baprs]-([0-9a-zA-Z]{10,48})?""",
     "aws-access-key": r"""\b((?:AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16})\b""",

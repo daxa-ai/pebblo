@@ -6,7 +6,7 @@ from enum import Enum
 
 secret_entities_context_mapping = {
     "github-token": ["github", "github_token", "git"],
-    "github-finergrained-token": ["github", "github_token", "git"],
+    "github-finegrained-token": ["github", "github_token", "git"],
     "slack-token": ["slack", "slack token", "slack_token"],
     "aws-access-key": ["aws_access_key", "aws_key", "access", "id", "api"],
     "aws-secret-key": ["aws_secret_key", "secret"],
@@ -49,7 +49,7 @@ class SecretEntities(Enum):
     AZURE_KEY_ID = "azure-key-id"
     AZURE_CLIENT_SECRET = "azure-client-secret"
     GOOGLE_API_KEY = "google-api-key"
-    GITHUB_FINEGRAINED_TOKEN = "github-finergrained-token"
+    GITHUB_FINEGRAINED_TOKEN = "github-finegrained-token"
 
 
 class PIIGroups(Enum):
