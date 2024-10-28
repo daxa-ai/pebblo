@@ -154,7 +154,7 @@ class PebbloSafeRAG:
             query=question, auth_context=auth_context, semantic_context=semantic_context
         )
         # Print chain input in formatted json
-        print(f"\nchain_input: {chain_input.json(indent=4)}")
+        print(f"\nchain_input: {chain_input.model_dump_json(indent=4)}")
         return self.retrieval_chain.invoke(chain_input.dict())
 
 
