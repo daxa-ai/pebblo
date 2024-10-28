@@ -28,7 +28,7 @@ topic_entity_mapping = {
     "iban-code": "IBAN code",
     "us-itin": "US ITIN",
     "github-token": "Github Token",
-    "github-finergrained-token": "Github Finergrained Token",
+    "github-finegrained-token": "Github Finegrained Token",
     "private-key": "Private Key",
     "dsa-private-key": "DSA Private Key",
     "encrypted-private-key": "Encrypted Private Key",
