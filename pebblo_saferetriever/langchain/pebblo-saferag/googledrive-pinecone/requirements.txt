@@ -1,0 +1,6 @@
+python-dotenv==1.0.0
+requests==2.31.0
+unstructured
+google-api-python-client # For Google Auth
+langchain-openai
+pinecone-client # for Pinecone VectorStore
