@@ -2,6 +2,7 @@
 Sample app to demonstrate the usage of PebbloSafeLoader, and PebbloRetrievalQA
 for semantic enforcement using Pinecone VectorDB in RAG.
 """
+import os
 
 import time
 from pathlib import Path
@@ -17,7 +18,7 @@ from langchain_community.chains.pebblo_retrieval.models import (
 )
 from langchain_community.document_loaders import UnstructuredFileIOLoader
 from langchain_community.document_loaders.pebblo import PebbloSafeLoader
-from langchain_community.vectorstores.pinecone import Pinecone as PineconeVectorStore
+from langchain_pinecone import PineconeVectorStore
 from langchain_google_community import GoogleDriveLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai.llms import OpenAI
@@ -25,7 +26,6 @@ from pinecone_index import create_pinecone_index
 from utils import describe_pebblo_semantic_stats, format_text, get_input_as_list
 
 load_dotenv()
-
 
 class SafeRetrieverSemanticRAG:
     """
@@ -64,7 +64,7 @@ class SafeRetrieverSemanticRAG:
                 credentials_path=Path("credentials/credentials.json"),
                 token_path=Path("./google_token.json"),
                 recursive=True,
-                file_loader_cls=UnstructuredFileIOLoader,
+                # file_loader_cls=UnstructuredFileIOLoader,
                 file_loader_kwargs={"mode": "elements"},
                 load_auth=True,
             ),
@@ -164,11 +164,12 @@ if __name__ == "__main__":
     print("Please enter ingestion user details for loading data...")
     print("Please enter admin user details...")
     ingestion_user_email_address = (
-        input(f"email address ({ing_user_email_def}): ") or ing_user_email_def
+        input(f"Email address ({ing_user_email_def}): ") or ing_user_email_def
     )
-    ingestion_user_service_account_path = (
-        input(f"service-account.json path ({service_acc_def}): ") or service_acc_def
+    service_account_file_path = (
+        input(f"Path to the service_account.json file ({service_acc_def}): ") or service_acc_def
     )
+    folder_id = input(f"Google Drive folder id ({folder_id}): ") or folder_id
     rag_app = SafeRetrieverSemanticRAG(folder_id, input_index_name)
 
     while True:
@@ -177,7 +178,7 @@ if __name__ == "__main__":
 
         auth_identifiers = get_authorized_identities(
             admin_user_email_address=ingestion_user_email_address,
-            credentials_file_path=ingestion_user_service_account_path,
+            service_account_file_path=service_account_file_path,
             user_email=end_user_email_address,
         )
 

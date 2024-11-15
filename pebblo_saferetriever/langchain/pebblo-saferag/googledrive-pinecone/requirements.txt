@@ -4,3 +4,4 @@ unstructured
 google-api-python-client # For Google Auth
 langchain-openai
 pinecone-client # for Pinecone VectorStore
+langchain-pinecone
