@@ -3,7 +3,7 @@ import json
 from fastapi import APIRouter, HTTPException
 
 from pebblo.app.config.config import var_server_config_dict
-from pebblo.app.service.data_gov import DataGov
+from pebblo.app.service.data_gov_apis.document_handler import DataGov
 from pebblo.app.service.local_ui_service import AppData
 
 config_details = var_server_config_dict.get()
