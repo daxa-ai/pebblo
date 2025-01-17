@@ -450,7 +450,7 @@ class AppData:
         Returns app details for an app.
         """
         storage_type = config_details.get("storage", {}).get(
-            "type", StorageTypes.FILE.value
+            "type", StorageTypes.DATABASE.value
         )
         if storage_type == StorageTypes.FILE.value:
             try:
