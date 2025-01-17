@@ -10,6 +10,7 @@ class DocsFindings(BaseModel):
     entities: Optional[list] = Field(default_factory=list)
     access_groups: Optional[list] = Field(default_factory=list)
 
+
 class DocResp(BaseModel):
     docs_at_risk: int = 0
     docs_findings: list[DocsFindings] = Field(default_factory=list)

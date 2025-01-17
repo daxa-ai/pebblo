@@ -1,9 +1,8 @@
 import json
 
-from pebblo.app.models.resp_models import DocsFindings, DocResp
+from pebblo.app.models.resp_models import DocResp, DocsFindings
 from pebblo.app.models.sqltables import AiDocumentTable
 from pebblo.app.storage.sqlite_db import SQLiteClient
-
 from pebblo.log import get_logger
 
 logger = get_logger(__name__)
@@ -18,10 +17,7 @@ class DataGov:
         self.db = SQLiteClient()
         self.app_name = app_name
         self.docs_at_risk = 0
-        self.doc_response = {
-            "docs_at_risk": 0,
-            "docs_findings": []
-        }
+        self.doc_response = {"docs_at_risk": 0, "docs_findings": []}
 
     def get_doc_findings(self, data: dict) -> DocsFindings:
         """
@@ -35,7 +31,7 @@ class DataGov:
             "topics": [],
             "entities": [],
             "total_snippets": 0,
-            "access_groups": data.get("userIdentities", [])
+            "access_groups": data.get("userIdentities", []),
         }
         if data.get("topics"):
             doc_data["at_risk"] = True
@@ -65,7 +61,7 @@ class DataGov:
         resp_dict = DocResp(**self.doc_response).model_dump()
         return resp_dict
 
-    def get_app_doc_data(self, app_name: str)-> list:
+    def get_app_doc_data(self, app_name: str) -> list:
         """
         This function return AiDocument data based on app name.
         :param app_name: App Name
