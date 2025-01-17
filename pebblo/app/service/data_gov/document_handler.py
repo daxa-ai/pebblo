@@ -8,10 +8,10 @@ from pebblo.log import get_logger
 logger = get_logger(__name__)
 
 
-class DataGov:
+class DocumentHandler:
     def __init__(self, app_name):
         """
-        Constructor for DataGov class
+        Constructor for DocumentHandler class
         :param app_name: App Name
         """
         self.db = SQLiteClient()
@@ -82,7 +82,7 @@ class DataGov:
 
     def get_document_info(self) -> str:
         """
-        This function return document info based on doc name
+        This function return document info based on app name
         :return: Doc Info
         """
         try:

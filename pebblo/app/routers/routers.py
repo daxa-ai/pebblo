@@ -68,3 +68,19 @@ data_gov_router_instance.router.add_api_route(
     response_model=dict,
     response_model_exclude_none=True,
 )
+
+data_gov_router_instance.router.add_api_route(
+    "/user/{app_name}",
+    DataGovApp.get_user_info,
+    methods=["GET"],
+    response_model=dict,
+    response_model_exclude_none=True,
+)
+
+data_gov_router_instance.router.add_api_route(
+    "/retrieval/{app_name}",
+    DataGovApp.get_retrieval_info,
+    methods=["GET"],
+    response_model=dict,
+    response_model_exclude_none=True,
+)
