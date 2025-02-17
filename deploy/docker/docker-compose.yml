@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  pebblo:
+    build:
+      context: ../../..  # Move up to `Pebblo1` (where `pebblo2/` is located)
+      dockerfile: pebblo/deploy/docker/Dockerfile.local
+    ports:
+      - "9000:9000"
+    depends_on:
+      - llm_server
+    environment:
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
+      - AWS_DEFAULT_REGION=us-east-1
+      - MODEL_NAME=daxa-ai/pebblo_classifier_v3
+      - HOSTED_VLLM_API_KEY=vllm-placeholder-key
+      - BACKEND=vllm
+      - API_BASE_URL=http://llm_server:8000/v1
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "6"
+    volumes:
+      - /home/ubuntu/pebblo_report:/opt/.pebblo
+
+  llm_server:
+    image: vllm/vllm-openai:v0.6.6
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - model_cache_huggingface:/root/.cache/huggingface/
+    ipc: host
+    command: --model daxa-ai/pebblo_classifier_v3 --max-model-len=3000 --gpu_memory_utilization=0.95
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "6"
+
+volumes:
+  model_cache_huggingface:
+  indexing_huggingface_model_cache:

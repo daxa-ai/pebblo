@@ -27,12 +27,24 @@ class App:
         return response
 
     @staticmethod
+    def discover_direct(data: ReqDiscover):
+        discover_obj = get_handler(handler_name="discover")
+        response = discover_obj.process_request(data.model_dump())
+        return response
+
+    @staticmethod
     def loader_doc(
         data: ReqLoaderDoc,
         loader_doc_obj=Depends(lambda: get_handler(handler_name="loader")),
     ):
         # "/loader/doc" API entrypoint
         # Execute loader doc object based on a storage type
+        response = loader_doc_obj.process_request(data.model_dump())
+        return response
+
+    @staticmethod
+    def loader_doc_direct(data: ReqLoaderDoc):
+        loader_doc_obj = get_handler(handler_name="loader")
         response = loader_doc_obj.process_request(data.model_dump())
         return response
 

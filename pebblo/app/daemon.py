@@ -6,6 +6,7 @@ import argparse
 import os
 import warnings
 
+import nltk
 from tqdm import tqdm
 
 from pebblo.app.config.config import (
@@ -15,6 +16,7 @@ from pebblo.app.config.config import (
 )
 from pebblo.app.utils.version import get_pebblo_version
 
+nltk.download("punkt_tab")
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 

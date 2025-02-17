@@ -3,11 +3,13 @@ import logging.handlers
 import os
 from threading import Lock
 
-from pebblo.app.config.config import var_server_config
+from pebblo.app.config.config import get_default_config_values, var_server_config
 
 g_config = var_server_config.get()
 
 DEFAULT_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
 
 class LoggerUtility:
@@ -65,6 +67,9 @@ class LoggerUtility:
 
 
 def get_logger(name: str):
+    global g_config
+    if g_config is None:
+        _, g_config = get_default_config_values()
     # Get logger from environment variables
     log_level = logging.getLevelName(g_config.logging.level.upper())
     log_file = g_config.logging.file

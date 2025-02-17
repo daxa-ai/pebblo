@@ -22,14 +22,26 @@ export const KEYWORD_MAPPING = {
   "us-ssn": "US SSN",
   "us-passport-number": "US Passport number",
   "us-drivers-license": "US Drivers License",
-  "credit-card-number": "Credit card number",
+
   "email-address": "Email Address",
+  "person-name": "Person",
+  "organization": "Organization",
+  "street-address": "Street Address",
+  "phone-number": "Phone Number",
+  "date-of-birth": "Date Of Birth",
+
+  "ip-address": "Ip Address",
+
+  "credit-card-number": "Credit card number",
   "us-bank-account-number": "US Bank Account Number",
   "iban-code": "IBAN code",
   "us-itin": "US ITIN",
+  "bank-routing-number": "Bank Routing Number",
+  "swift-code": "Swift Code",
+  "bban-code": "Bban Code",
+
   "github-token": "Github Token",
   "github-finegrained-token": "Github Finegrained Token",
-  "github-finergrained-token": "Github Finegrained Token",
   "private-key": "Private Key",
   "dsa-private-key": "DSA Private Key",
   "encrypted-private-key": "Encrypted Private Key",
@@ -43,8 +55,22 @@ export const KEYWORD_MAPPING = {
   "azure-key-id": "Azure Key ID",
   "azure-client-secret": "Azure Client Secret",
   "google-api-key": "Google API Key",
+  "api-key": "Api Key",
   "harmful": "Harmful",
   "medical": "Medical" ,
   "financial": "Financial",
-  "corporate-documents": "Corporate Documents"
+  "corporate-documents": "Corporate Documents",
+
+  "GOVERNANCE": "Governance",
+  "FINANCE" : "Finance",
+  "HR": "Hr",
+  "HEALTH": "Health",
+  "LEGAL" : "Legal",
+  "CUSTOMER" : "Customer",
+  "IP": "IP",
+  "PRODUCT" : "Product",
+  "MARKETING": "Marketing",
+  "SALES": "Sales",
+  "SECURITY": "Security",
+  "STRATEGY": "Strategy"
 };

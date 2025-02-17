@@ -16,6 +16,7 @@ from pebblo.app.routers.redirection_router import redirect_router_instance
 
 with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
     from pebblo.app.routers.routers import api_v1_router_instance, router_instance
+    from pebblo.tools.routers import router as tools_router_instance
 from pebblo.log import get_logger, get_uvicorn_logconfig
 
 logger = get_logger(__name__)
@@ -45,6 +46,7 @@ class Service:
         self.app.include_router(api_v1_router_instance.router)
         self.app.include_router(local_ui_router_instance.router)
         self.app.include_router(redirect_router_instance.router)
+        self.app.include_router(tools_router_instance)
         # Adding cors
         self.app.add_middleware(
             CORSMiddleware,
