@@ -55,7 +55,7 @@ async def document_report(
         app_name, load_id = parse_files(saved_files)
 
         # Determine report path based on format
-        report_base = Path.home() / ".pebblo" / app_name / load_id
+        report_base = Path("/opt/.pebblo") / app_name
         if output_format == "pdf":
             return serve_report(report_base / "pebblo_report.pdf", app_name, "pdf")
         return serve_report(report_base / "report.json", app_name, "json")

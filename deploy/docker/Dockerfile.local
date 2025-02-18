@@ -27,9 +27,6 @@ ENV PATH="/opt/pebblo/venv/bin:$PATH"
 # Build and install the package
 RUN python3 -m build --wheel && pip install dist/*.whl
 
-# Verify WeasyPrint installation
-RUN python3 -c "import weasyprint; print('WeasyPrint installed successfully!')"
-
 # Copy configuration files
 COPY pebblo/deploy/docker/config.yaml /opt/pebblo/config/config.yaml
 
