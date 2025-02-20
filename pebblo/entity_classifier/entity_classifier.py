@@ -93,9 +93,9 @@ class EntityClassifier:
                 2. A list of tuples where each tuple contains a group of overlapping entities.
         """
         # Analyze the text to detect entities using the Presidio analyzer
-        analyzer_results = self.analyzer.analyze(text=input_text, 
-                                                 entities=self.entities, 
-                                                 language="en")
+        analyzer_results = self.analyzer.analyze(
+            text=input_text, entities=self.entities, language="en"
+        )
 
         # Initialize the list to hold the final classified entities
         non_overlapping_results = []
