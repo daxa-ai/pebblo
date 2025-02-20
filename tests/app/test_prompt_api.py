@@ -90,7 +90,7 @@ def test_app_prompt_validation_errors(mock_write_json_to_file):
             "loc": ["body", "context", 0, "vector_db"],
             "msg": "Field required",
             "input": {"retrieved_from": "test_data.pdf", "doc": "This is test doc."},
-            'url': 'https://errors.pydantic.dev/2.8/v/missing',
+            "url": "https://errors.pydantic.dev/2.8/v/missing",
         }
     ]
 
