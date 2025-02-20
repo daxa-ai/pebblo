@@ -89,7 +89,7 @@ entity_group_conf_mapping = {
     # Financial
     Entities.US_ITIN.value: (0.6, PIIGroups.Financial.value),
     Entities.CREDIT_CARD.value: (0.8, PIIGroups.Financial.value),
-    Entities.US_BANK_NUMBER.value: (0.6, PIIGroups.Financial.value),
+    Entities.US_BANK_NUMBER.value: (0.4, PIIGroups.Financial.value),
     Entities.IBAN_CODE.value: (0.6, PIIGroups.Financial.value),
     Entities.ROUTING_NUMBER.value: (0.6, PIIGroups.Financial.value),
     Entities.SWIFT_CODE.value: (0.6, PIIGroups.Financial.value),

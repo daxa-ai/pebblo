@@ -4,7 +4,7 @@ services:
   pebblo:
     build:
       context: ../../..  # Move up to `Pebblo1` (where `pebblo2/` is located)
-      dockerfile: pebblo/deploy/docker/Dockerfile.local
+      dockerfile: pebblo/deploy/docker/Dockerfile.cli
     ports:
       - "9000:9000"
     depends_on:

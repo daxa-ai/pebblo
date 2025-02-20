@@ -154,7 +154,7 @@ def is_valid_length_for_entity(key_label, field_value):
     elif key_label == "phone_number":
         return 10 <= len(digit_value) <= 15
     elif key_label == "bank_account_number":
-        return 6 <= len(digit_value) <= 15
+        return 6 <= len(digit_value) <= 19
     return True
 
 
@@ -240,7 +240,8 @@ def validate_extracted_data(label, extracted_text):
         "US_BANK_NUMBER",
         "CREDIT_CARD",
         "US_SSN",
-        "US_ITIN" "PHONE_NUMBER",
+        "US_ITIN",
+        "PHONE_NUMBER",
     ] and (
         is_valid_numeric_field(extracted_text)
         or not is_valid_length_for_entity(label, extracted_text)

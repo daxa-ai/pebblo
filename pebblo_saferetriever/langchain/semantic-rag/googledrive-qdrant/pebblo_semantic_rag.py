@@ -157,7 +157,7 @@ if __name__ == "__main__":
         )
         response = rag_app.ask(prompt, topic_to_deny, entity_to_deny)
 
-        print(f"Response:\n" f"{format_text(response['result'])}")
+        print(f"Response:\n{format_text(response['result'])}")
 
         try:
             continue_or_exist = int(

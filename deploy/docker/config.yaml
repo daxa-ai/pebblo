@@ -6,9 +6,10 @@ logging:
 reports:
   format: pdf
   renderer: weasyprint
-  cacheDir: /opt/.pebblo
+  cacheDir: ~/.pebblo
   anonymizeSnippets: False
 classifier:
   mode: all
+  use_llm: True
 storage:
   type: file

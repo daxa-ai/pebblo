@@ -2,6 +2,7 @@ from presidio_analyzer import AnalyzerEngine
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 from presidio_anonymizer import AnonymizerEngine
 
+from pebblo.app.config.config import var_server_config_dict
 from pebblo.entity_classifier.custom_analyzer.cerdit_card_analyzer import (
     ExtendedCreditCardRecognizer,
 )
@@ -28,6 +29,8 @@ from pebblo.log import get_logger
 from pebblo.text_generation.text_generation import TextGeneration
 
 logger = get_logger(__name__)
+
+config_details = var_server_config_dict.get()
 
 
 class EntityClassifier:
@@ -61,9 +64,9 @@ class EntityClassifier:
         cc_recognizer = ExtendedCreditCardRecognizer()
         # Add the credit card recognizer to the Presidio Analyzer
         self.analyzer.registry.add_recognizer(cc_recognizer)
-
-        llm_recognizer = LLMRecognizer()
-        self.analyzer.registry.add_recognizer(llm_recognizer)
+        if config_details.get("classifier", {}).get("use_llm", False):
+            llm_recognizer = LLMRecognizer()
+            self.analyzer.registry.add_recognizer(llm_recognizer)
 
     # Function to check if two entities overlap based on their start and end positions
     def entities_overlap(self, entity1, entity2):
@@ -90,9 +93,10 @@ class EntityClassifier:
                 2. A list of tuples where each tuple contains a group of overlapping entities.
         """
         # Analyze the text to detect entities using the Presidio analyzer
-        analyzer_results = self.analyzer.analyze(
-            text=input_text, entities=self.entities, language="en"
-        )
+        analyzer_results = self.analyzer.analyze(text=input_text, 
+                                                 entities=self.entities, 
+                                                 language="en")
+
         # Initialize the list to hold the final classified entities
         non_overlapping_results = []
         overlapping_results = []
@@ -225,7 +229,7 @@ class EntityClassifier:
         between &gt; and > is 3 characters each, we add a total of 6 i.e., (3 + 3) to the end_location to account for
         the increased length after the replacements.
         """
-        location = f"{start+location_count}_{end+location_count+6}"
+        location = f"{start + location_count}_{end + location_count + 6}"
         location_count += 6
         return location, location_count
 

@@ -302,7 +302,7 @@ def timeit(func):
             response = func(*args, **kwargs)
             end_time = time.perf_counter()
             logger.debug(
-                f"Execution time of function <{func.__name__}> is {end_time-start_time} seconds."
+                f"Execution time of function <{func.__name__}> is {end_time - start_time} seconds."
             )
             return response
         else:

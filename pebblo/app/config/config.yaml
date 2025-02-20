@@ -10,5 +10,6 @@ reports:
   anonymizeSnippets: False
 classifier:
   mode: all
+  use_llm: True
 storage:
   type: file

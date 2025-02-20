@@ -9,6 +9,7 @@ import re
 from huggingface_hub import login
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 
+from pebblo.app.config.config import var_server_config_dict
 from pebblo.log import get_logger
 from pebblo.text_generation.text_generation import TextGeneration
 from pebblo.topic_classifier.config import (
@@ -19,7 +20,6 @@ from pebblo.topic_classifier.config import (
     TOPIC_CONFIDENCE_SCORE,
     TOPIC_MIN_TEXT_LENGTH,
     TOPICS_TO_EXCLUDE,
-    USE_LLM,
 )
 from pebblo.topic_classifier.enums.constants import topic_display_names
 from pebblo.topic_classifier.llm_classification_prompt import (
@@ -29,6 +29,7 @@ from pebblo.topic_classifier.llm_classification_prompt import (
 from pebblo.utils import ConfidenceScoreLabel, get_confidence_score_label
 
 logger = get_logger(__name__)
+config_details = var_server_config_dict.get()
 
 
 class TopicClassifier:
@@ -38,7 +39,7 @@ class TopicClassifier:
 
     def __init__(self):
         # Use os.environ.get() to retrieve the value of the environment variable
-        self.use_llm = USE_LLM
+        self.use_llm = config_details.get("classifier", {}).get("use_llm", False)
         self.txt_gen = TextGeneration()
         huggingface_token = os.environ.get("HF_TOKEN")
 

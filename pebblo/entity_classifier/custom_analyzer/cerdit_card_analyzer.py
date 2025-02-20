@@ -52,7 +52,8 @@ class ExtendedCreditCardRecognizer(CreditCardRecognizer):
     CONTEXT = [
         "credit",
         "credit_card",
-        "card" "debit",
+        "card",
+        "debit",
         "Visa",
         "Mastercard",
         "Amex",
