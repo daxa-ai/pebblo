@@ -85,7 +85,6 @@ class TextGeneration(metaclass=SingletonMeta):
         Returns:
             Dict[str, Any]: Response from the Bedrock API.
         """
-        logger.info("In Bedrock")
         response = completion(
             model=f"{os.environ.get('MODEL_NAME')}",
             messages=message,
@@ -93,7 +92,6 @@ class TextGeneration(metaclass=SingletonMeta):
             custom_llm_provider="bedrock",
             aws_bedrock_client=bedrock_client,
         )
-        logger.info("Out from Bedrock")
         return response.json()
 
     def generate(

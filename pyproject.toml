@@ -123,7 +123,16 @@ dependencies = [
   "nltk==3.9.1",
   "boto3==1.36.24",
   "json-repair==0.39.0",
-  "litellm==1.61.11"
+  "litellm==1.61.11",
+  "python-multipart==0.0.17",
+  "opencv-python-headless==4.11.0.86",
+  "unstructured==0.16.20",
+  "python-magic==0.4.27",
+  "langchain==0.3.18",
+  "pdf2image==1.17.0",
+  "paddlepaddle==3.0.0b1",
+  "unstructured.paddleocr==2.8.1.0",
+  "unstructured[pdf]"
 ]
 
 # List additional groups of dependencies here (e.g. development

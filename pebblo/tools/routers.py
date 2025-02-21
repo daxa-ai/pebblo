@@ -12,10 +12,12 @@ from unstructured.partition.auto import partition
 
 from pebblo.app.api.api import App
 from pebblo.app.api.req_models import Framework, ReqDiscover, ReqLoaderDoc, Runtime
+from pebblo.app.config.config import var_server_config_dict
 from pebblo.log import get_logger
 
 # Initialize logger
 logger = get_logger(__name__)
+config_details = var_server_config_dict.get()
 
 router = APIRouter(prefix="/tools")
 os.environ["OCR_AGENT"] = (
@@ -55,7 +57,10 @@ async def document_report(
         app_name, load_id = parse_files(saved_files)
 
         # Determine report path based on format
-        report_base = Path("/opt/.pebblo") / app_name
+        base_path = os.path.expanduser(
+            config_details.get("reports", {}).get("cacheDir", ".")
+        )
+        report_base = Path(base_path) / app_name
         if output_format == "pdf":
             return serve_report(report_base / "pebblo_report.pdf", app_name, "pdf")
         return serve_report(report_base / "report.json", app_name, "json")
@@ -77,9 +82,11 @@ def serve_report(report_path: Path, app_name: str, format_type: str):
     Returns:
         JSONResponse | Response: JSON report or downloadable PDF report.
     """
+
     if not report_path.exists():
         return JSONResponse(
-            {"error": f"{format_type.upper()} report not found"}, status_code=404
+            {"error": f"{format_type.upper()} report not found in {report_path}"},
+            status_code=404,
         )
 
     with open(report_path, "rb" if format_type == "pdf" else "r") as file:

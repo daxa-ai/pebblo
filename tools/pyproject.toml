@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pebblo-cli"
+version = "0.1.2"
+description = "CLI tool for Pebblo"
+authors = [{ name = "Pebblo Authors", email = "pebblo@daxa.ai" }]
+dependencies = ["requests"]
+requires-python = ">=3.9"
+license = {file = "LICENSE.txt"}
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Build Tools",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+
+[project.scripts]
+pebblo-report = "reporter.pebblo_report:main"
+
+[project.urls]
+Homepage = "https://github.com/daxa-ai/pebblo"
+Bug-Tracker = "https://github.com/daxa-ai/pebblo/issues"
+Funding = "https://donate.pypi.org"
+Source = "https://github.com/daxa-ai/pebblo/"
