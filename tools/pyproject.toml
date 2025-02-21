@@ -4,10 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pebblo-cli"
-version = "0.1.2"
+version = "0.1.0"
 description = "CLI tool for Pebblo"
 authors = [{ name = "Pebblo Authors", email = "pebblo@daxa.ai" }]
-dependencies = ["requests"]
+dependencies = ["requests", 
+                "PyYAML==6.0.2", 
+                "importlib-metadata==8.6.1"]
 requires-python = ">=3.9"
 license = {file = "LICENSE.txt"}
 
