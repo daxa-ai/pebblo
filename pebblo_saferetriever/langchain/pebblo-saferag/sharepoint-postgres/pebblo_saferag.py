@@ -154,8 +154,48 @@ class PebbloSafeRAG:
             query=question, auth_context=auth_context, semantic_context=semantic_context
         )
         # Print chain input in formatted json
-        print(f"\nchain_input: {chain_input.json(indent=4)}")
+        print(f"\nchain_input: {chain_input.model_dump_json(indent=4)}")
         return self.retrieval_chain.invoke(chain_input.dict())
+
+
+def select_drive(drives: list) -> tuple:
+    """
+    Select SharePoint drive from the available drives
+    """
+    if not drives:
+        print("No drives found for the site. Exiting ...")
+        exit(1)
+    elif len(drives) == 1:
+        _drive_id = drives[0].get("id")
+        _drive_name = drives[0].get("name")
+    else:
+        # Select "Documents" as a default drive
+        def_drive_idx = next(
+            (
+                idx
+                for idx, drive in enumerate(drives)
+                if drive.get("name") == "Documents"
+            ),
+            0,
+        )
+        # Select drive
+        # print("Select a drive ...")
+        print("Available drives on the site:")
+        for idx, drive in enumerate(drives):
+            print(f"\t{idx + 1}. {drive.get('name')}")
+
+        # Prompt user for drive index
+        _drive_idx = input(f"Enter drive index (default={def_drive_idx + 1}): ")
+        _drive_idx = int(_drive_idx) - 1 if _drive_idx else def_drive_idx
+        # Validate drive index and select default drive if invalid
+        if _drive_idx < 0 or _drive_idx >= len(drives):
+            print("Error. Invalid drive index! Selecting the default drive ...")
+            _drive_idx = def_drive_idx
+
+        # Get drive info
+        _drive_id = drives[_drive_idx].get("id")
+        _drive_name = drives[_drive_idx].get("name")
+    return _drive_id, _drive_name
 
 
 if __name__ == "__main__":
@@ -163,6 +203,7 @@ if __name__ == "__main__":
     _client_id = os.environ.get("O365_CLIENT_ID")
     _client_secret = os.environ.get("O365_CLIENT_SECRET")
     _tenant_id = os.environ.get("O365_TENANT_ID")
+    _site_url = os.environ.get("SHAREPOINT_SITE_URL")
 
     print("Please enter the app details to authenticate with Microsoft Graph API ...")
     app_client_id = input(f"App client id ({_client_id}): ") or _client_id
@@ -171,12 +212,41 @@ if __name__ == "__main__":
     )
     tenant_id = input(f"Tenant id ({_tenant_id}): ") or _tenant_id
 
-    print("\nPlease enter drive id for loading data...")
-    drive_id = input("Drive id : ")
+    print("\nInitializing SharepointADHelper ...")
+    sharepoint_helper = SharepointADHelper(
+        client_id=app_client_id,
+        client_secret=app_client_secret,
+        tenant_id=tenant_id,
+    )
+    print("SharepointADHelper initialized.\n")
 
+    site_url = (
+        input(f"Enter Sharepoint Site URL (default={_site_url}): ") or _site_url
+    )
+    if not site_url:
+        print("\nSite URL is required. Exiting ...")
+        exit(1)
+    # remove white spaces from the site url
+    site_url = site_url.strip()
+
+    # Get SharePoint Site ID using URL
+    site_id = sharepoint_helper.get_site_id(site_url)
+    print(f"Derived Site Id: {site_id}\n")
+
+    # Get drive info using site id
+    print("Fetching drive info ...\n")
+    drive_info = sharepoint_helper.get_drive_id(site_id)
+    drive_id, drive_name = select_drive(drive_info)
+    print(f"SharePoint Drive name: {drive_name}, Drive Id: {drive_id}\n")
+
+    # Enter Folder path
+    def_folder_path = "documents"
+    folder_path = input(f"Enter folder path (default='{def_folder_path}'): ") or def_folder_path
+
+    # Initialize PebbloSafeRAG app
     rag_app = PebbloSafeRAG(
         drive_id=drive_id,
-        folder_path="/document",
+        folder_path=folder_path,
         collection_name=input_collection_name,
     )
 
@@ -202,11 +272,9 @@ if __name__ == "__main__":
 
         prompt = input("Please provide the prompt : ")
 
-        authorized_identities = SharepointADHelper(
-            client_id=app_client_id,
-            client_secret=app_client_secret,
-            tenant_id=tenant_id,
-        ).get_authorized_identities(end_user_email_address)
+        authorized_identities = sharepoint_helper.get_authorized_identities(
+            end_user_email_address
+        )
 
         response = rag_app.ask(
             prompt,
