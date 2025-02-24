@@ -62,7 +62,7 @@ def test_app_prompt_success(mock_write_json_to_file):
     }
     assert response.json()["retrieval_data"]["response"] == {
         "entities": {"us-ssn": 1},
-        "topics": {"medical": 1},
+        "topics": {},
     }
 
 

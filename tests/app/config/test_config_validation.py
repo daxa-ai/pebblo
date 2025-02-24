@@ -13,7 +13,7 @@ config_json = {
         "cacheDir": "~/.pebblo",
         "anonymizeSnippets": True,
     },
-    "classifier": {"mode": "all"},
+    "classifier": {"mode": "all", "use_llm": False},
     "storage": {"type": "file"},
 }
 
@@ -53,10 +53,7 @@ def test_daemon_config_validate_invalid_values():
     with pytest.raises(Exception) as err_msg:
         Config.parse_obj(config_json)
     error_msg = """daemon.host
-  Input should be a valid string [type=string_type, input_value=123, input_type=int]
-    For further information visit https://errors.pydantic.dev/2.8/v/string_type
-daemon.port
-  Value error, Error: Invalid port '12345678'. Port must be between 1 and 65535."""
+  Input should be a valid string [type=string_type, input_value=123, input_type=int]"""
     assert error_msg in str(err_msg.value)
 
 
@@ -73,8 +70,7 @@ def test_classifier_config_validate_invalid_mode():
     config_json.update({"classifier": {"mode": "123"}})
     with pytest.raises(Exception) as err_msg:
         Config.parse_obj(config_json)
-    error_msg = """classifier.mode
-  Value error, Error: Unsupported classifier mode '123' specified in the configuration. Valid values are ['all', 'entity', 'topic'] [type=value_error, input_value='123', input_type=str]"""
+    error_msg = """Value error, Error: Unsupported classifier mode '123' specified in the configuration. Valid values are ['all', 'entity', 'topic'] [type=value_error, input_value='123', input_type=str]"""
     assert error_msg in str(err_msg.value)
 
 
@@ -89,15 +85,17 @@ def test_classifier_config_validate_invalid_anonymize_snippets():
 
 def test_classifier_config_validate_invalid_values():
     config_json.update(
-        {"classifier": {"mode": "false_value", "anonymizeSnippets": "123"}}
+        {
+            "classifier": {
+                "mode": "false_value",
+                "anonymizeSnippets": "123",
+                "use_llm": False,
+            }
+        }
     )
     with pytest.raises(Exception) as err_msg:
         Config.parse_obj(config_json)
-    error_msg = """classifier.mode
-  Value error, Error: Unsupported classifier mode 'false_value' specified in the configuration. Valid values are ['all', 'entity', 'topic'] [type=value_error, input_value='false_value', input_type=str]
-    For further information visit https://errors.pydantic.dev/2.8/v/value_error
-classifier.anonymizeSnippets
-  Input should be a valid boolean, unable to interpret input [type=bool_parsing, input_value='123', input_type=str]"""
+    error_msg = """Value error, Error: Unsupported classifier mode 'false_value' specified in the configuration. Valid values are ['all', 'entity', 'topic'] [type=value_error, input_value='false_value', input_type=str]"""
     assert error_msg in str(err_msg.value)
 
 

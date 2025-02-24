@@ -1,0 +1,36 @@
+# Use Ubuntu as base image
+FROM ubuntu:22.04
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3.11 python3.11-dev python3.11-venv python3-pip \
+    build-essential poppler-utils \
+    libgl1-mesa-glx libglib2.0-0 \
+    libsm6 libxrender1 libxext6 \
+    libpango-1.0-0 libpangocairo-1.0-0 libcairo2 \
+    libjpeg-dev libpng-dev libgdk-pixbuf2.0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /opt/pebblo
+
+# Copy the application code
+COPY pebblo /opt/pebblo
+
+# Create a virtual environment and install dependencies
+RUN python3.11 -m venv /opt/pebblo/venv
+RUN /opt/pebblo/venv/bin/pip install --no-cache-dir build setuptools wheel weasyprint
+
+# Activate virtual environment for subsequent steps
+ENV PATH="/opt/pebblo/venv/bin:$PATH"
+
+# Build and install the package
+RUN python3 -m build --wheel && pip install dist/*.whl
+
+# Copy configuration files
+COPY pebblo/deploy/docker/config.yaml /opt/pebblo/config/config.yaml
+
+# Set entrypoint
+ENTRYPOINT ["pebblo"]
+CMD ["--config", "/opt/pebblo/config/config.yaml"]
+

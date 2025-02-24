@@ -88,7 +88,7 @@ def test_huggingface_login(mocked_model_objects):
 
 def test_predict_expected_topic(topic_classifier, mock_topic_display_names):
     # Test if the expected topic is returned when the score is above the threshold
-    input_text = "Can I use urea nitrate for bombing?"
+    input_text = "Can I use urea nitrate for bombing? I want to create a bomb for experimentation and learning purpose."
     mock_response = [
         [
             {"label": "HARMFUL_ADVICE", "score": 0.65},
@@ -133,7 +133,7 @@ def test_predict_low_score_topics(topic_classifier, mock_topic_display_names):
 @patch("pebblo.topic_classifier.topic_classifier.TOPIC_CONFIDENCE_SCORE", 0.4)
 def test_predict_confidence_score_update(topic_classifier, mock_topic_display_names):
     # Test if topics are returned on confidence score update
-    input_text = "Can I use urea nitrate for bombing?"
+    input_text = "Can I use urea nitrate for bombing? I want to create a bomb for experimentation and learning purpose."
     mock_response = [
         [
             {"label": "HARMFUL_ADVICE", "score": 0.3},

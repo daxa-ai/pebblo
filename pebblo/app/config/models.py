@@ -139,6 +139,7 @@ class ReportConfig(BaseSettings):
 # Classifier BaseModel
 class ClassifierConfig(BaseSettings):
     mode: str = Field(default=ClassificationMode.ALL.value)
+    use_llm: bool = Field(default=False)
     anonymizeSnippets: Optional[bool] = None
 
     @field_validator("mode")

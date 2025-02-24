@@ -17,7 +17,7 @@ name = "pebblo"  # Required
 #
 # For a discussion on single-sourcing the version, see
 # https://packaging.python.org/guides/single-sourcing-package-version/
-version = "0.1.20"  # Required
+version = "0.1.21"  # Required
 
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
@@ -119,6 +119,20 @@ dependencies = [
   "python-bidi==0.4.2",
   "python-dateutil==2.9.0",
   "sqlalchemy==2.0.32",
+  "python-stdnum==1.20",
+  "nltk==3.9.1",
+  "boto3==1.36.24",
+  "json-repair==0.39.0",
+  "litellm==1.61.11",
+  "python-multipart==0.0.17",
+  "opencv-python-headless==4.11.0.86",
+  "unstructured==0.16.20",
+  "python-magic==0.4.27",
+  "langchain==0.3.18",
+  "pdf2image==1.17.0",
+  "paddlepaddle==3.0.0b1",
+  "unstructured.paddleocr==2.8.1.0",
+  "unstructured[pdf]"
 ]
 
 # List additional groups of dependencies here (e.g. development

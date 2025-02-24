@@ -24,6 +24,13 @@ class Entities(Enum):
 
     # contactinfo
     EMAIL_ADDRESS = "email-address"
+    # PERSON = "person-name"
+    LLM_PERSON = "person-name"
+    LLM_ORGANIZATION = "organization"
+    STREET_ADDRESS = "street-address"
+    PHONE_NUMBER = "phone-number"
+    DATE_OF_BIRTH = "date-of-birth"
+
     # network
     IP_ADDRESS = "ip-address"
 
@@ -32,6 +39,11 @@ class Entities(Enum):
     US_BANK_NUMBER = "us-bank-account-number"
     IBAN_CODE = "iban-code"
     US_ITIN = "us-itin"
+    ROUTING_NUMBER = "bank-routing-number"
+    SWIFT_CODE = "swift-code"
+    BBAN_CODE = "bban-code"
+
+    # Private keys
     PRIVATE_KEY = "private-key"
     DSA_PRIVATE_KEY = "dsa-private-key"
     ENCRYPTED_PRIVATE_KEY = "encrypted-private-key"
@@ -39,6 +51,7 @@ class Entities(Enum):
     OPENSSH_PRIVATE_KEY = "openssh-private-key"
     RSA_PRIVATE_KEY = "rsa-private-key"
     GOOGLE_PRIVATE_KEY = "google-private-key"
+    API_KEY = "api-key"
 
 
 class SecretEntities(Enum):
@@ -62,16 +75,25 @@ class PIIGroups(Enum):
 
 entity_group_conf_mapping = {
     # Identification
-    Entities.US_SSN.value: (0.8, PIIGroups.Identification.value),
-    Entities.US_PASSPORT.value: (0.4, PIIGroups.Identification.value),
-    Entities.US_DRIVER_LICENSE.value: (0.4, PIIGroups.Identification.value),
+    Entities.US_SSN.value: (0.6, PIIGroups.Identification.value),
+    Entities.US_PASSPORT.value: (0.6, PIIGroups.Identification.value),
+    Entities.US_DRIVER_LICENSE.value: (0.6, PIIGroups.Identification.value),
     # Contact
-    Entities.EMAIL_ADDRESS.value: (0.8, PIIGroups.Contact.value),
+    Entities.EMAIL_ADDRESS.value: (0.6, PIIGroups.Contact.value),
+    # Entities.PERSON.value: (0.8, PIIGroups.Contact.value),
+    Entities.LLM_PERSON.value: (0.8, PIIGroups.Contact.value),
+    Entities.LLM_ORGANIZATION.value: (0.8, PIIGroups.Contact.value),
+    Entities.STREET_ADDRESS.value: (0.6, PIIGroups.Contact.value),
+    Entities.PHONE_NUMBER.value: (0.6, PIIGroups.Contact.value),
+    Entities.DATE_OF_BIRTH.value: (0.6, PIIGroups.Contact.value),
     # Financial
-    Entities.US_ITIN.value: (0.8, PIIGroups.Financial.value),
+    Entities.US_ITIN.value: (0.6, PIIGroups.Financial.value),
     Entities.CREDIT_CARD.value: (0.8, PIIGroups.Financial.value),
     Entities.US_BANK_NUMBER.value: (0.4, PIIGroups.Financial.value),
-    Entities.IBAN_CODE.value: (0.8, PIIGroups.Financial.value),
+    Entities.IBAN_CODE.value: (0.6, PIIGroups.Financial.value),
+    Entities.ROUTING_NUMBER.value: (0.6, PIIGroups.Financial.value),
+    Entities.SWIFT_CODE.value: (0.6, PIIGroups.Financial.value),
+    Entities.BBAN_CODE.value: (0.8, PIIGroups.Financial.value),
     # Secret
     SecretEntities.GITHUB_TOKEN.value: (0.4, PIIGroups.Secrets.value),
     SecretEntities.SLACK_TOKEN.value: (0.8, PIIGroups.Secrets.value),
@@ -89,6 +111,7 @@ entity_group_conf_mapping = {
     Entities.OPENSSH_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
     Entities.RSA_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
     Entities.GOOGLE_PRIVATE_KEY.value: (0.4, PIIGroups.Secrets.value),
+    Entities.API_KEY.value: (0.4, PIIGroups.Secrets.value),
     # Network
     Entities.IP_ADDRESS.value: (0.4, PIIGroups.Network.value),
 }

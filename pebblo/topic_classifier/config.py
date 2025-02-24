@@ -20,3 +20,4 @@ CLASSIFIER_PATH = "daxa-ai/pebblo-classifier-v2"
 # git e.g. branch name, a tag name, or a commit id
 # https://huggingface.co/daxa-ai/pebblo-classifier-v2
 MODEL_REVISION = "a9a3816784cd6f5feb5a515e9536de78d64d6d49"  # Pebblo classifier v2
+TOPIC_CLASS_REGEX_STR = r"\b(GOVERNANCE|FINANCE|HR|HEALTH|LEGAL|CUSTOMER|IP|PRODUCT|MARKETING|SALES|SECURITY|STRATEGY|OTHER)\b"
