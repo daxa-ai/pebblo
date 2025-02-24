@@ -3,9 +3,9 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pebblo-cli"
+name = "pebblo-reporter"
 version = "0.1.0"
-description = "CLI tool for Pebblo"
+description = "Pebblo Reporter for generating sensitive information report"
 authors = [{ name = "Pebblo Authors", email = "pebblo@daxa.ai" }]
 dependencies = ["requests", 
                 "PyYAML==6.0.2", 
