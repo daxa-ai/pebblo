@@ -275,6 +275,7 @@ class AppLoaderDoc:
                 "modifiedAt": get_current_time(),
             },
             "sourcePath": loader_details.get("source_path"),
+            "sourceSize": loader_details.get("source_aggregate_size", 0),
             "sourceType": loader_details.get("source_type"),
             "loader": loader_details.get("loader"),
         }
