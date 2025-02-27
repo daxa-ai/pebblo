@@ -3,11 +3,13 @@ unstructured[all-docs] # For Docx, PDF loading
 pymupdf # For PDF loading
 tiktoken # OpenAI tokenizer
 
-langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
-langchain-community>=0.2.9 # for PebbloSafeLoader, PebbloRetrievalQA
+langchain-community>=0.3.1 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
+langchain-openai>=0.2.1 # For OpenAI LLM and OpenAIEmbeddings
 
 o365 # Sharepoint
 azure-identity # Sharepoint
 
 psycopg2-binary # For Postgres VectorStore
-langchain-postgres # For Postgres VectorStore
+langchain-postgres>=0.0.12 # For Postgres VectorStore
+#psycopg[binary,pool] # For Remote Postgres
+pgvector # Postgres Vector Extension

@@ -3,8 +3,8 @@ unstructured[all-docs] # For Docx, PDF loading
 pymupdf # For PDF loading
 tiktoken # OpenAI tokenizer
 
-langchain-openai>=0.1.7 # For OpenAI LLM and OpenAIEmbeddings
-langchain-community>=0.2.9 # For PebbloSafeLoader, PebbloRetrievalQA
+langchain-community>=0.3.1 # For PebbloSafeLoader, PebbloRetrievalQA, VectorStore
+langchain-openai>=0.2.1 # For OpenAI LLM and OpenAIEmbeddings
 
 o365 # Sharepoint
 azure-identity # Sharepoint
