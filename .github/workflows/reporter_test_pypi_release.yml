@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: reporter-package-distributions
-          path: tools/reporter/dist/
+          path: tools/dist/
 
   release-on-test-pypi:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: reporter-package-distributions
-          path: dist/
+          path: tools/dist/
 
       - name: Upload to Test PyPI
         run: |
