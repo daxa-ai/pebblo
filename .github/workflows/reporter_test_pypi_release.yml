@@ -1,0 +1,58 @@
+name: Build Reporter Package And Publish on Test PyPi
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: build_reporter_distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.x"
+
+      - name: Install pypa/build
+        run: |
+          DATE_TIME=$(date +'%Y%m%d%H%M')
+          PROJECT_FILE_PATH=tools/pyproject.toml
+          VERSION_FILE=$(grep -m 1 "version =" $PROJECT_FILE_PATH | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
+          VERSION="$VERSION_FILE$DATE_TIME"
+          awk -v new_version="$VERSION" '/^version = "/ {gsub(/"[^"]+"/, "\"" new_version "\"")} 1' "$PROJECT_FILE_PATH" > tmpfile && mv tmpfile "$PROJECT_FILE_PATH"
+          pip install build
+          cd tools
+          python -m build --wheel
+          ls -la 
+          ls -la dist/
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporter-package-distributions
+          path: tools/reporter/dist/
+
+  release-on-test-pypi:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: reporter-package-distributions
+          path: dist/
+
+      - name: Upload to Test PyPI
+        run: |
+          pip install twine==6.0.1
+          twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TEST_TOKEN }}
