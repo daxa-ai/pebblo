@@ -135,6 +135,7 @@ dependencies = [
   "paddlepaddle==3.0.0",
   "unstructured.paddleocr==2.10.0",
   "unstructured[pdf]==0.17.2",
+  "httpx>=0.28.1",
   "mcp==1.6.0",
   "mcp[cli]",
   "pyyaml>=6.0.2",
