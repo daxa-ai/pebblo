@@ -18,6 +18,7 @@ with redirect_stdout(StringIO()), redirect_stderr(StringIO()):
     from pebblo.app.routers.routers import api_v1_router_instance, router_instance
     from pebblo.tools.routers import router as tools_router_instance
 from pebblo.log import get_logger, get_uvicorn_logconfig
+from fastapi_mcp import FastApiMCP
 
 logger = get_logger(__name__)
 
@@ -61,6 +62,17 @@ class Service:
         self.host = self.config_details.get("daemon", {}).get("host", "localhost")
         self.log_level = self.config_details.get("logging", {}).get("level", "INFO")
         self.log_file = self.config_details.get("logging", {}).get("file", "")
+
+        #Adding MCP server to classify and pebblo reporter endpoints
+        mcp = FastApiMCP(self.app,
+                        name="Pebblo MCP Server",
+                        description="This MCP server extracts sensitive data information from files and text",
+                        #include_operations=["sensitive_data_report_tools_doc_report_post"], #"classify_data_api_v1_classify_post","Sensitive Data Report"],
+                        include_operations=["get_sensitive_data_report", "classify_data_api_v1_classify_post"],
+                        describe_all_responses=True,
+                        describe_full_response_schema=True
+)
+        mcp.mount()
 
     async def create_main_api_server(self):
         self.app.mount(

@@ -38,7 +38,7 @@ readme = "README.md" # Optional
 # 'Programming Language' classifiers above, 'pip install' will check this
 # and refuse to install the project if the version does not match. See
 # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-requires-python = ">=3.9"
+requires-python = ">=3.12.0"
 
 # This is either text indicating the license for the distribution, or a file
 # that contains the license
@@ -104,11 +104,14 @@ classifiers = [  # Optional
 #
 # For an analysis of this field vs pip's requirements files see:
 # https://packaging.python.org/discussions/install-requires-vs-requirements/
-dependencies = [ 
+dependencies = [
   "fastapi==0.109.1",
   "uvicorn==0.25.0",
   "pydantic==2.8.2",
-  "pydantic-settings==2.4.0",
+  "pydantic-settings==2.5.2",
+  "blis==0.7.11",
+  "numpy==1.26.4",
+  "spacy==3.7.5",
   "presidio-analyzer==2.2.351",
   "presidio-anonymizer==2.2.351",
   "torch>=2.1.2",
@@ -126,13 +129,17 @@ dependencies = [
   "litellm==1.61.11",
   "python-multipart==0.0.17",
   "opencv-python-headless==4.11.0.86",
-  "unstructured==0.16.20",
   "python-magic==0.4.27",
   "langchain==0.3.18",
   "pdf2image==1.17.0",
-  "paddlepaddle==3.0.0b1",
-  "unstructured.paddleocr==2.8.1.0",
-  "unstructured[pdf]"
+  "paddlepaddle==3.0.0",
+  "unstructured.paddleocr==2.10.0",
+  "unstructured[pdf]==0.17.2",
+  "mcp==1.6.0",
+  "mcp[cli]",
+  "pyyaml>=6.0.2",
+  "fastapi-mcp==0.3.3",
+  "fastmcp==2.2.2"
 ]
 
 # List additional groups of dependencies here (e.g. development
@@ -197,3 +204,4 @@ build-backend = "setuptools.build_meta"
 warn_return_any = false
 warn_unused_configs = true
 ignore_missing_imports = true
+

@@ -5,7 +5,7 @@ import uuid
 from pathlib import Path
 from typing import List, Tuple
 
-from fastapi import APIRouter, Form, Response, UploadFile
+from fastapi import APIRouter, Form, Response, UploadFile, File
 from fastapi.responses import JSONResponse
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from unstructured.partition.auto import partition
@@ -24,6 +24,59 @@ os.environ["OCR_AGENT"] = (
     "unstructured.partition.utils.ocr_models.paddle_ocr.OCRAgentPaddle"
 )
 
+
+@router.post("/scan", operation_id="get_sensitive_data_report")
+async def sensitive_data_report(folder_path: str, output_path: str = None):
+    """
+    Processes a given folder to generate a sensitive data report.
+
+    Args:
+        folder_path (str): Path to the folder containing files to scan for sensitive data.
+        output_path (str, optional): Path where intermediate files or outputs can be stored.
+                                     If not provided, defaults will be used.
+
+    Returns:
+        JSON/dict: Report content if successful, or an error message with status 500 if an exception occurs.
+    """
+    try:
+        # Create output directory if it doesn't exist
+        if output_path and not os.path.exists(output_path):
+            os.makedirs(output_path)
+
+        all_files = []
+        
+        # Walk through all files in the folder recursively
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                full_path = os.path.join(root, file)
+                # Only add valid files, ignore system files like .DS_Store
+                if os.path.isfile(full_path) and not full_path.endswith(".DS_Store"):
+                    all_files.append(full_path)
+
+        # Parse the collected files to extract app name and load ID
+        app_name, load_id = parse_files(all_files)
+
+        # Determine the base path where reports are stored (fallback to current directory)
+        base_path = os.path.expanduser(
+            config_details.get("reports", {}).get("cacheDir", ".")
+        )
+        
+        # Construct the full path to the report based on app name and load ID
+        report_base = Path(base_path) / app_name / load_id
+
+        # Serve the generated report
+        op = serve_report(report_base / "report.json", app_name, "json")
+
+        return op
+
+    except Exception as e:
+        # Return error response if any exception occurs
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500
+        )
+
+ 
 
 @router.post("/document_report")
 async def document_report(
@@ -84,15 +137,18 @@ def serve_report(report_path: Path, app_name: str, format_type: str):
     """
 
     if not report_path.exists():
+        logger.error(f"{format_type.upper()} report not found in {report_path}")
         return JSONResponse(
             {"error": f"{format_type.upper()} report not found in {report_path}"},
             status_code=404,
         )
 
     with open(report_path, "rb" if format_type == "pdf" else "r") as file:
+        logger.info(f"Serving {format_type.upper()} report from {report_path}")
         content = file.read()
 
     if format_type == "pdf":
+        logger.info(f"Serving PDF report from {report_path}")
         return Response(
             content=content,
             media_type="application/pdf",
@@ -163,7 +219,7 @@ def parse_files(file_paths: List[str]) -> Tuple[str, str]:
     for idx, file_path in enumerate(file_paths):
         full_text = extract_text(file_path)
         chunks = text_splitter.split_text(full_text)
-
+        logger.info(f"length of chunks {len(chunks)} for file {file_path}")
         docs = [
             {
                 "doc": chunk,
