@@ -5,7 +5,7 @@ import uuid
 from pathlib import Path
 from typing import List, Tuple
 
-from fastapi import APIRouter, Form, Response, UploadFile, File
+from fastapi import APIRouter, Form, Response, UploadFile
 from fastapi.responses import JSONResponse
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from unstructured.partition.auto import partition
@@ -44,7 +44,7 @@ async def sensitive_data_report(folder_path: str, output_path: str = None):
             os.makedirs(output_path)
 
         all_files = []
-        
+
         # Walk through all files in the folder recursively
         for root, dirs, files in os.walk(folder_path):
             for file in files:
@@ -60,7 +60,7 @@ async def sensitive_data_report(folder_path: str, output_path: str = None):
         base_path = os.path.expanduser(
             config_details.get("reports", {}).get("cacheDir", ".")
         )
-        
+
         # Construct the full path to the report based on app name and load ID
         report_base = Path(base_path) / app_name / load_id
 
@@ -71,12 +71,8 @@ async def sensitive_data_report(folder_path: str, output_path: str = None):
 
     except Exception as e:
         # Return error response if any exception occurs
-        return JSONResponse(
-            content={"error": str(e)},
-            status_code=500
-        )
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
- 
 
 @router.post("/document_report")
 async def document_report(
