@@ -6,20 +6,7 @@ and improvements to enrich its accuracy and effectiveness.
 
 # Topics Supported By Pebblo Topic Classifier
 
-The new Pebblo Topic Classifier now offers a streamlined set of document categories: Harmful, Financial, Corporate Documents, and Medical. This update aims to simplify classification, improve precision, and enhance performance by focusing on these key areas.
-
-## Current Supported Topics
-The classifier now supports the following four topics:
-
-1. Harmful
-1. Financial
-1. Corporate Documents
-1. Medical
-
-
-## Topics Supported by Previous Classifier
-
-Below is the list of `topics` supported by previous version of topic classifier model -
+Below is the list of `topics` supported by Pebblo -
 
 1. Medical Advice
 1. Harmful Advice
@@ -44,4 +31,3 @@ Different sections of Pebblo report such as , `Top Files With Most Findings`, `D
 For more details refer - [Reports](reports.md)
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=fa7fbe6b-f5a4-490b-8492-526b023d5cdc" />
-
