@@ -60,7 +60,7 @@ async def document_report(
         base_path = os.path.expanduser(
             config_details.get("reports", {}).get("cacheDir", ".")
         )
-        report_base = Path(base_path) / app_name
+        report_base = Path(base_path) / app_name / load_id
         if output_format == "pdf":
             return serve_report(report_base / "pebblo_report.pdf", app_name, "pdf")
         return serve_report(report_base / "report.json", app_name, "json")
