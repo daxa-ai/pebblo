@@ -1,0 +1,15 @@
+langchain-community>=0.2.9
+langchain-google-community>=1.0.4
+langchain-openai>=0.1.7 
+python-dotenv==1.0.0
+requests>=2.32.0
+Markdown==3.5
+unstructured[all-docs]
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+qdrant-client==1.10.1
+PyPDF2
+langchain_groq==0.1.10
+sentence-transformers==3.2.1
+langchain_huggingface==0.0.3
