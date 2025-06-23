@@ -3,7 +3,7 @@
 This solution uses:
 
 - PostgreSQL 15.7
-- langchain-community from daxa-ai/langchain branch(https://github.com/daxa-ai/langchain/tree/daxa_3.1)
+- langchain-community 0.2.9
 - LangChain Microsoft Sharepoint loader. See https://python.langchain.com/v0.2/docs/integrations/document_loaders/microsoft_sharepoint for details on specific steps required to be completed in Microsoft Office 365 and Azure Portal.
 
 ### Instructions
@@ -42,6 +42,7 @@ OPENAI_API_KEY=<YOUR OPENAI API KEY>
 O365_CLIENT_ID=<YOUR APPLICATION (CLIENT) ID>
 O365_CLIENT_SECRET=<YOUR CLIENT SECRET>
 O365_TENANT_ID=<YOUR TENANT ID>
+SHAREPOINT_SITE_URL=<YOUR SHAREPOINT SITE URL>
 
 # Postgres configuration
 PG_CONNECTION_STRING = "postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE-NAME>"
