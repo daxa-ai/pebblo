@@ -25,7 +25,7 @@ jobs:
   RunUnitTests:
     strategy:
       matrix:
-        python_version: ["3.9", "3.10", "3.11", "3.12.3", "3.12.5"]
+        python_version: ["3.10", "3.11", "3.12.3", "3.12.5"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
