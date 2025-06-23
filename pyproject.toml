@@ -139,8 +139,8 @@ dependencies = [
   "mcp==1.6.0",
   "mcp[cli]",
   "pyyaml>=6.0.2",
-  "fastapi-mcp==0.3.3",
-  "fastmcp==2.2.2"
+  "fastapi-mcp",
+  "fastmcp"
 ]
 
 # List additional groups of dependencies here (e.g. development
