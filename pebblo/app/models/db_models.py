@@ -149,6 +149,7 @@ class AiDataSource(BaseModel):
     loadId: str
     metadata: Metadata
     sourcePath: str
+    sourceSize: int
     sourceType: str
     loader: str
 
